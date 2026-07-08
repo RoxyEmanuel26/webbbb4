@@ -38,6 +38,7 @@
   .sort-bar {
     /* On mobile, switch to a compact dropdown feel */
     gap: 4px;
+    justify-content: flex-start;
   }
   .sort-btn { 
     padding: 5px 8px;

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { epornerApi } from '../services/api';
 import VideoCard from '../components/VideoCard';
-import { Eye, Star, Calendar, Clock, ArrowLeft } from 'lucide-react';
+import { Eye, Star, Calendar, Clock, ArrowLeft, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import './Pages.css';
 
 const formatViews = (n) => {
@@ -26,6 +26,67 @@ const VideoPlayer = () => {
   const [loading,    setLoading]      = useState(true);
   const [error,      setError]        = useState(false);
   const [related,    setRelated]      = useState([]);
+  const [selectedThumbIndex, setSelectedThumbIndex] = useState(null);
+
+  const thumbScrollRef = useRef(null);
+  const [showLeftThumb, setShowLeftThumb] = useState(false);
+  const [showRightThumb, setShowRightThumb] = useState(true);
+
+  const checkThumbScroll = () => {
+    if (thumbScrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = thumbScrollRef.current;
+      setShowLeftThumb(scrollLeft > 0);
+      setShowRightThumb(Math.ceil(scrollLeft) < scrollWidth - clientWidth);
+    }
+  };
+
+  const lightboxStripRef = useRef(null);
+  const [showLeftStrip, setShowLeftStrip] = useState(false);
+  const [showRightStrip, setShowRightStrip] = useState(true);
+
+  const checkStripScroll = () => {
+    if (lightboxStripRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = lightboxStripRef.current;
+      setShowLeftStrip(scrollLeft > 0);
+      setShowRightStrip(Math.ceil(scrollLeft) < scrollWidth - clientWidth);
+    }
+  };
+
+  useEffect(() => {
+    checkThumbScroll();
+    window.addEventListener('resize', checkThumbScroll);
+    window.addEventListener('resize', checkStripScroll);
+    return () => {
+      window.removeEventListener('resize', checkThumbScroll);
+      window.removeEventListener('resize', checkStripScroll);
+    };
+  }, [video]);
+
+  useEffect(() => {
+    if (selectedThumbIndex !== null) {
+      setTimeout(checkStripScroll, 50);
+    }
+  }, [selectedThumbIndex]);
+
+  const handleThumbScroll = (direction) => {
+    if (thumbScrollRef.current) {
+      const scrollAmount = 300;
+      thumbScrollRef.current.scrollBy({ 
+        left: direction === 'left' ? -scrollAmount : scrollAmount, 
+        behavior: 'smooth' 
+      });
+    }
+  };
+
+  const handleStripScroll = (direction) => {
+    if (lightboxStripRef.current) {
+      const scrollAmount = 200;
+      lightboxStripRef.current.scrollBy({ 
+        left: direction === 'left' ? -scrollAmount : scrollAmount, 
+        behavior: 'smooth' 
+      });
+    }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -126,10 +187,19 @@ const VideoPlayer = () => {
         {/* ─ Main Column ─ */}
         <div className="player-main">
           {/* Embed Player */}
-          <div
-            className="player-box"
-            dangerouslySetInnerHTML={{ __html: video.embed }}
-          />
+          <div className="player-box">
+            {video.embed && video.embed.includes('<iframe') ? (
+              <div dangerouslySetInnerHTML={{ __html: video.embed }} style={{ width: '100%', height: '100%' }} />
+            ) : (
+              <iframe 
+                src={video.embed} 
+                frameBorder="0" 
+                scrolling="no" 
+                allowFullScreen
+                title={video.title || "Video Player"}
+              />
+            )}
+          </div>
 
           {/* Video Info Card */}
           <div className="video-info-block">
@@ -173,10 +243,29 @@ const VideoPlayer = () => {
 
             {/* Preview Thumbnails */}
             {video.thumbs && video.thumbs.length > 1 && (
-              <div className="thumb-gallery" aria-label="Video preview thumbnails">
-                {video.thumbs.map((t, i) => (
-                  <img key={i} src={t.src} alt={`Preview ${i + 1}`} />
-                ))}
+              <div className="thumb-gallery-wrapper">
+                {showLeftThumb && (
+                  <button className="thumb-scroll-btn left" onClick={() => handleThumbScroll('left')} aria-label="Scroll left">
+                    <ChevronLeft size={18} />
+                  </button>
+                )}
+                <div className="thumb-gallery" aria-label="Video preview thumbnails" ref={thumbScrollRef} onScroll={checkThumbScroll}>
+                  {video.thumbs.map((t, i) => (
+                    <img 
+                      key={i} 
+                      src={t.src} 
+                      alt={`Preview ${i + 1}`} 
+                      onClick={() => setSelectedThumbIndex(i)}
+                      role="button"
+                      tabIndex={0}
+                    />
+                  ))}
+                </div>
+                {showRightThumb && (
+                  <button className="thumb-scroll-btn right" onClick={() => handleThumbScroll('right')} aria-label="Scroll right">
+                    <ChevronRight size={18} />
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -197,6 +286,86 @@ const VideoPlayer = () => {
           )}
         </aside>
       </div>
+
+      {/* Lightbox Overlay */}
+      {selectedThumbIndex !== null && (
+        <div 
+          className="thumb-lightbox-overlay" 
+          onClick={() => setSelectedThumbIndex(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="thumb-lightbox-main">
+
+            {selectedThumbIndex > 0 && (
+              <button 
+                className="thumb-lightbox-nav left"
+                onClick={(e) => { e.stopPropagation(); setSelectedThumbIndex(selectedThumbIndex - 1); }}
+                aria-label="Previous image"
+              >
+                <ChevronLeft size={32} />
+              </button>
+            )}
+
+            <div className="thumb-lightbox-img-wrapper" onClick={e => e.stopPropagation()}>
+              <button 
+                className="thumb-lightbox-close"
+                onClick={() => setSelectedThumbIndex(null)}
+                aria-label="Close image"
+              >
+                <X size={20} />
+              </button>
+              <img src={video.thumbs[selectedThumbIndex].src} alt="Enlarged preview" />
+            </div>
+
+            {selectedThumbIndex < video.thumbs.length - 1 && (
+              <button 
+                className="thumb-lightbox-nav right"
+                onClick={(e) => { e.stopPropagation(); setSelectedThumbIndex(selectedThumbIndex + 1); }}
+                aria-label="Next image"
+              >
+                <ChevronRight size={32} />
+              </button>
+            )}
+          </div>
+
+          <div className="thumb-lightbox-strip-wrapper" onClick={e => e.stopPropagation()}>
+            {showLeftStrip && (
+              <button 
+                className="thumb-scroll-btn left" 
+                onClick={() => handleStripScroll('left')} 
+                aria-label="Scroll left"
+                style={{ zIndex: 100 }}
+              >
+                <ChevronLeft size={18} />
+              </button>
+            )}
+
+            <div className="thumb-lightbox-strip" ref={lightboxStripRef} onScroll={checkStripScroll}>
+              {video.thumbs.map((t, i) => (
+                <img 
+                  key={i} 
+                  src={t.src} 
+                  alt={`Miniature ${i + 1}`}
+                  className={i === selectedThumbIndex ? 'active' : ''}
+                  onClick={() => setSelectedThumbIndex(i)}
+                />
+              ))}
+            </div>
+
+            {showRightStrip && (
+              <button 
+                className="thumb-scroll-btn right" 
+                onClick={() => handleStripScroll('right')} 
+                aria-label="Scroll right"
+                style={{ zIndex: 100 }}
+              >
+                <ChevronRight size={18} />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
