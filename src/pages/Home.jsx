@@ -9,11 +9,9 @@ import './Pages.css';
 
 const SORT_OPTIONS = [
   { value: 'latest',       label: '🕐 Latest' },
-  { value: 'top-rated',    label: '⭐ Top Rated' },
   { value: 'most-popular', label: '🔥 Most Viewed' },
   { value: 'top-weekly',   label: '📈 Top This Week' },
   { value: 'top-monthly',  label: '📅 Top This Month' },
-  { value: 'longest',      label: '⏱ Longest' },
 ];
 
 const Home = () => {
@@ -21,7 +19,9 @@ const Home = () => {
   const navigate = useNavigate();
 
   // Read state from URL so browser navigation works
-  const currentOrder = searchParams.get('order') || 'latest';
+  const rawOrderParam = searchParams.get('order');
+  const isValidOrder = SORT_OPTIONS.some(o => o.value === rawOrderParam);
+  const orderParam = isValidOrder ? rawOrderParam : null;
   const currentPage  = parseInt(searchParams.get('page') || '1', 10);
 
   const [videos,      setVideos]      = useState([]);
@@ -65,14 +65,79 @@ const Home = () => {
     setLoading(true);
     (async () => {
       try {
-        const res = await epornerApi.searchVideos({
-          order: currentOrder,
-          page:  currentPage,
-          per_page: 44, // Fetch buffer to account for client-side filtering
-          gay: 0,
-          lq: 1,
-          thumbsize: 'big',
-        });
+        let res;
+        
+        if (!orderParam) {
+          // If no order is specified (default Homepage), fetch both Top Weekly and Top Monthly
+          try {
+            const [resWeekly, resMonthly] = await Promise.all([
+              epornerApi.searchVideos({
+                order: 'top-weekly',
+                page:  currentPage,
+                per_page: 30, // Fetch a good amount to combine
+                gay: 0,
+                lq: 1,
+                thumbsize: 'big',
+              }),
+              epornerApi.searchVideos({
+                order: 'top-monthly',
+                page:  currentPage,
+                per_page: 30,
+                gay: 0,
+                lq: 1,
+                thumbsize: 'big',
+              })
+            ]);
+
+            const weeklyVideos = resWeekly?.videos || [];
+            const monthlyVideos = resMonthly?.videos || [];
+
+            // Interleave weekly and monthly videos
+            const combined = [];
+            const maxLen = Math.max(weeklyVideos.length, monthlyVideos.length);
+            for (let i = 0; i < maxLen; i++) {
+              if (i < weeklyVideos.length) combined.push(weeklyVideos[i]);
+              if (i < monthlyVideos.length) combined.push(monthlyVideos[i]);
+            }
+
+            // Deduplicate videos by ID
+            const seen = new Set();
+            const uniqueVideos = [];
+            for (const v of combined) {
+              if (!seen.has(v.id)) {
+                seen.add(v.id);
+                uniqueVideos.push(v);
+              }
+            }
+
+            res = {
+              videos: uniqueVideos,
+              total_pages: Math.max(resWeekly?.total_pages || 1, resMonthly?.total_pages || 1),
+              total_count: (resWeekly?.total_count || 0) + (resMonthly?.total_count || 0),
+            };
+          } catch (err) {
+            console.warn("Combined fetch failed, falling back to top-weekly", err);
+            res = await epornerApi.searchVideos({
+              order: 'top-weekly',
+              page:  currentPage,
+              per_page: 44,
+              gay: 0,
+              lq: 1,
+              thumbsize: 'big',
+            });
+          }
+        } else {
+          // Explicit sort parameter is set, fetch normally
+          res = await epornerApi.searchVideos({
+            order: orderParam,
+            page:  currentPage,
+            per_page: 44, // Fetch buffer to account for client-side filtering
+            gay: 0,
+            lq: 1,
+            thumbsize: 'big',
+          });
+        }
+
         // Slice exactly 36 items so the grid (4, 3, or 2 cols) never has an empty slot
         setVideos((res?.videos || []).slice(0, 36));
         setTotalPages(res?.total_pages || 1);
@@ -83,21 +148,25 @@ const Home = () => {
         setLoading(false);
       }
     })();
-  }, [currentOrder, currentPage]);
+  }, [orderParam, currentPage, searchParams]);
 
   const handleSortChange = (val) => {
     setSearchParams({ order: val, page: '1' });
   };
 
   const handlePageChange = (p) => {
-    setSearchParams({ order: currentOrder, page: String(p) });
+    if (orderParam) {
+      setSearchParams({ order: orderParam, page: String(p) });
+    } else {
+      setSearchParams({ page: String(p) }); // Preserve null order on home page
+    }
   };
 
   const handleTagClick = (tag) => {
     navigate(`/search?query=${encodeURIComponent(tag)}`);
   };
 
-  const sortLabel = SORT_OPTIONS.find(o => o.value === currentOrder)?.label || 'Videos';
+  const sortLabel = SORT_OPTIONS.find(o => o.value === orderParam)?.label || '📈 Top This Week';
 
   return (
     <div className="home-page">
@@ -112,13 +181,17 @@ const Home = () => {
 
         {/* Section Header */}
         <div className="section-header">
-          <div className="section-title-group">
-            <h1 className="section-title">{sortLabel}</h1>
-            {totalCount > 0 && (
-              <span className="section-count">{totalCount.toLocaleString()} videos</span>
-            )}
-          </div>
-          <SortBar value={currentOrder} options={SORT_OPTIONS} onChange={handleSortChange} />
+          {orderParam ? (
+            <div className="section-title-group">
+              <h1 className="section-title">{sortLabel}</h1>
+              {totalCount > 0 && (
+                <span className="section-count">{totalCount.toLocaleString()} videos</span>
+              )}
+            </div>
+          ) : (
+            <div />
+          )}
+          <SortBar value={orderParam} options={SORT_OPTIONS} onChange={handleSortChange} />
         </div>
 
         {/* Grid */}

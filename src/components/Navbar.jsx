@@ -4,11 +4,8 @@ import { Search, Flame, TrendingUp, Star, Clock, Heart } from 'lucide-react';
 import './Navbar.css';
 
 const NAV_LINKS = [
-  { label: 'Latest',       path: '/?order=latest',       order: 'latest' },
-  { label: 'Top Rated',    path: '/?order=top-rated',    order: 'top-rated' },
-  { label: 'Most Viewed',  path: '/?order=most-popular', order: 'most-popular' },
-  { label: 'Top Weekly',   path: '/?order=top-weekly',   order: 'top-weekly' },
-  { label: 'Top Monthly',  path: '/?order=top-monthly',  order: 'top-monthly' },
+  { label: 'Home',       path: '/' },
+  { label: 'Categories', path: '/cats/' },
 ];
 
 const Navbar = () => {
@@ -25,9 +22,8 @@ const Navbar = () => {
     }
   };
 
-  const isActive = (order) => {
-    const params = new URLSearchParams(location.search);
-    return params.get('order') === order;
+  const isActive = (path) => {
+    return location.pathname === path;
   };
 
   return (
@@ -43,9 +39,9 @@ const Navbar = () => {
         <nav className="navbar-links" aria-label="Main navigation">
           {NAV_LINKS.map((link) => (
             <Link
-              key={link.order}
+              key={link.path}
               to={link.path}
-              className={`navbar-link ${isActive(link.order) ? 'is-active' : ''}`}
+              className={`navbar-link ${isActive(link.path) ? 'is-active' : ''}`}
             >
               {link.label}
             </Link>

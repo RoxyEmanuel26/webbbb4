@@ -1,0 +1,123 @@
+/* ============================================
+   Categories.css
+   ============================================ */
+
+.categories-page {
+  width: 100%;
+}
+
+.categories-page .section-header {
+  border-bottom: none;
+  margin-bottom: var(--space-6);
+  padding-bottom: 0;
+}
+
+.categories-page .section-title-group {
+  align-items: center;
+}
+
+.section-icon {
+  color: var(--color-accent);
+}
+
+.cats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-5);
+  padding-bottom: var(--space-10);
+}
+
+.cat-card {
+  position: relative;
+  height: 140px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+}
+
+.cat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.1); /* Slight darkening by default */
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.cat-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.2), rgba(15, 23, 42, 0.7));
+  z-index: 2;
+  transition: opacity 0.3s ease;
+}
+
+.cat-card-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  transform: translateY(10px);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cat-icon {
+  font-size: 32px;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  transition: transform 0.4s ease;
+}
+
+.cat-name {
+  color: white;
+  font-size: var(--font-size-lg);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  margin: 0;
+}
+
+/* Hover Effects */
+.cat-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.cat-card:hover::before {
+  opacity: 0; /* Remove darkening on hover to make colors pop */
+}
+
+.cat-card:hover .cat-card-overlay {
+  opacity: 0.8; /* Slightly darker bottom gradient to make text readable */
+}
+
+.cat-card:hover .cat-card-content {
+  transform: translateY(0);
+}
+
+.cat-card:hover .cat-icon {
+  transform: scale(1.2) rotate(-5deg);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .cats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+  .cat-card {
+    height: 120px;
+  }
+  .cat-icon {
+    font-size: 26px;
+  }
+  .cat-name {
+    font-size: var(--font-size-base);
+  }
+}

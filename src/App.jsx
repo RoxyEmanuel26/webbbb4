@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AgeGateModal from './components/AgeGateModal';
 import Home from './pages/Home';
+import Categories from './pages/Categories';
 import SearchResults from './pages/SearchResults';
 import VideoPlayer from './pages/VideoPlayer';
 import Terms from './pages/Terms';
@@ -20,6 +21,7 @@ function App() {
       <main>
         <Routes>
           <Route path="/"          element={<Home />} />
+          <Route path="/cats/"     element={<Categories />} />
           <Route path="/search"    element={<SearchResults />} />
           <Route path="/video/:id" element={<VideoPlayer />} />
           <Route path="/terms"     element={<Terms />} />

@@ -77,10 +77,7 @@ const VideoCard = ({ video, compact = false }) => {
         </span>
         {/* HD Badge */}
         <span className="vcard__hd-badge">HD</span>
-        {/* Hover Overlay */}
-        <div className="vcard__overlay" aria-hidden="true">
-          <span className="vcard__play-icon">▶</span>
-        </div>
+        {/* Hover Overlay Removed as requested */}
       </div>
 
       {/* Info */}
@@ -95,9 +92,6 @@ const VideoCard = ({ video, compact = false }) => {
             <span className="vcard__meta-item vcard__rating">
               <Star size={11} aria-hidden="true" />
               {rating.toFixed(1)}
-              <span className="vcard__rating-bar" aria-label={`Rating ${ratingPct}%`}>
-                <span style={{ width: ratingPct + '%' }} />
-              </span>
             </span>
           )}
         </div>
