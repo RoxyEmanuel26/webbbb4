@@ -1,61 +1,93 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import './Pagination.css';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-  if (totalPages <= 1) return null;
+  if (!totalPages || totalPages <= 1) return null;
 
-  // Render a limited set of page numbers so it doesn't overflow on massive results
-  const renderPageNumbers = () => {
+  /* Build page number array with ellipsis */
+  const buildPages = () => {
     const pages = [];
-    const maxVisiblePages = 5;
-    
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-    
-    if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
+    const delta = 2;
+    const left  = Math.max(1, currentPage - delta);
+    const right = Math.min(totalPages, currentPage + delta);
 
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(
-        <button
-          key={i}
-          className={`page-btn ${currentPage === i ? 'active' : ''}`}
-          onClick={() => onPageChange(i)}
-          disabled={currentPage === i}
-        >
-          {i}
-        </button>
-      );
+    if (left > 1) {
+      pages.push(1);
+      if (left > 2) pages.push('…');
+    }
+    for (let i = left; i <= right; i++) pages.push(i);
+    if (right < totalPages) {
+      if (right < totalPages - 1) pages.push('…');
+      pages.push(totalPages);
     }
     return pages;
   };
 
+  const pages = buildPages();
+
   return (
-    <div className="pagination-container">
+    <nav className="pager" aria-label="Page navigation">
+      {/* First */}
       <button
-        className="page-nav-btn"
+        className="pager__btn pager__btn--icon"
+        onClick={() => onPageChange(1)}
+        disabled={currentPage <= 1}
+        aria-label="First page"
+        title="First page"
+      >
+        <ChevronsLeft size={15} />
+      </button>
+
+      {/* Prev */}
+      <button
+        className="pager__btn pager__btn--icon"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage <= 1}
-        aria-label="Previous Page"
+        aria-label="Previous page"
       >
-        &lt; Prev
+        <ChevronLeft size={15} />
       </button>
-      
-      <div className="page-numbers">
-        {renderPageNumbers()}
-      </div>
 
+      {/* Page Numbers */}
+      {pages.map((p, i) =>
+        p === '…' ? (
+          <span key={`ellipsis-${i}`} className="pager__ellipsis">…</span>
+        ) : (
+          <button
+            key={p}
+            className={`pager__btn ${currentPage === p ? 'is-current' : ''}`}
+            onClick={() => onPageChange(p)}
+            disabled={currentPage === p}
+            aria-label={`Page ${p}`}
+            aria-current={currentPage === p ? 'page' : undefined}
+          >
+            {p}
+          </button>
+        )
+      )}
+
+      {/* Next */}
       <button
-        className="page-nav-btn"
+        className="pager__btn pager__btn--icon"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage >= totalPages}
-        aria-label="Next Page"
+        aria-label="Next page"
       >
-        Next &gt;
+        <ChevronRight size={15} />
       </button>
-    </div>
+
+      {/* Last */}
+      <button
+        className="pager__btn pager__btn--icon"
+        onClick={() => onPageChange(totalPages)}
+        disabled={currentPage >= totalPages}
+        aria-label="Last page"
+        title="Last page"
+      >
+        <ChevronsRight size={15} />
+      </button>
+    </nav>
   );
 };
 

@@ -1,88 +1,108 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { epornerApi } from '../services/api';
 import VideoCard from '../components/VideoCard';
-import FilterPanel from '../components/FilterPanel';
 import Pagination from '../components/Pagination';
+import SortBar from '../components/SortBar';
 import './Pages.css';
+
+const SORT_OPTIONS = [
+  { value: 'latest',       label: '🕐 Latest' },
+  { value: 'top-rated',    label: '⭐ Top Rated' },
+  { value: 'most-popular', label: '🔥 Most Viewed' },
+  { value: 'top-weekly',   label: '📈 This Week' },
+  { value: 'top-monthly',  label: '📅 This Month' },
+  { value: 'longest',      label: '⏱ Longest' },
+];
 
 const SearchResults = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const query = searchParams.get('query') || 'all';
-  const page = parseInt(searchParams.get('page') || '1', 10);
-  
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const query      = searchParams.get('query') || 'all';
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const currentOrder = searchParams.get('order') || 'latest';
+
+  const [videos,     setVideos]     = useState([]);
+  const [loading,    setLoading]    = useState(true);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [order, setOrder] = useState(searchParams.get('order') || 'latest');
 
   useEffect(() => {
-    const fetchResults = async () => {
-      setLoading(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setLoading(true);
+    (async () => {
       try {
-        const data = await epornerApi.searchVideos({
+        const res = await epornerApi.searchVideos({
           query,
-          page,
-          order,
+          page: currentPage,
+          order: currentOrder,
+          per_page: 32,
           gay: 0,
           lq: 1,
-          per_page: 20
+          thumbsize: 'big',
         });
-        setVideos(data.videos || []);
-        setTotalPages(data.total_pages || 1);
-        setTotalCount(data.total_count || 0);
-      } catch (error) {
-        console.error("Search failed", error);
+        setVideos(res?.videos || []);
+        setTotalPages(res?.total_pages || 1);
+        setTotalCount(res?.total_count || 0);
+      } catch (_) {
+        setVideos([]);
       } finally {
         setLoading(false);
       }
-    };
+    })();
+  }, [query, currentPage, currentOrder]);
 
-    fetchResults();
-  }, [query, page, order]);
-
-  const handleOrderChange = (e) => {
-    setOrder(e.target.value);
-    setSearchParams({ query, page: 1, order: e.target.value });
+  const handleSortChange = (val) => {
+    setSearchParams({ query, page: '1', order: val });
   };
 
-  const handlePageChange = (newPage) => {
-    setSearchParams({ query, page: newPage, order });
-    window.scrollTo(0, 0);
+  const handlePageChange = (p) => {
+    setSearchParams({ query, page: String(p), order: currentOrder });
   };
 
   return (
-    <div className="page-container container" style={{ paddingTop: '2rem' }}>
-      <div className="search-header" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 className="section-title" style={{ margin: 0 }}>
-          Search results for: <span style={{ color: 'var(--primary)' }}>"{query}"</span>
-        </h2>
-        <FilterPanel 
-          order={order} 
-          onOrderChange={(newOrder) => handleOrderChange({ target: { value: newOrder } })} 
-          totalCount={totalCount}
-        />
-      </div>
+    <div className="search-page">
+      <div className="page-wrapper search-content">
 
-      {loading ? (
-        <div className="loading-state">Searching...</div>
-      ) : videos.length > 0 ? (
-        <>
-          <div className="video-grid">
-            {videos.map(video => (
-              <VideoCard key={video.id} video={video} />
-            ))}
+        {/* Header */}
+        <div className="section-header">
+          <div className="section-title-group">
+            <h1 className="section-title">
+              {query === 'all' ? 'All Videos' : `"${query}"`}
+            </h1>
+            {totalCount > 0 && (
+              <span className="section-count">{totalCount.toLocaleString()} results</span>
+            )}
           </div>
-          <Pagination 
-            currentPage={page} 
-            totalPages={totalPages} 
-            onPageChange={handlePageChange} 
-          />
-        </>
-      ) : (
-        <div className="empty-state">No videos found.</div>
-      )}
+          <SortBar value={currentOrder} options={SORT_OPTIONS} onChange={handleSortChange} />
+        </div>
+
+        {/* Grid */}
+        {loading ? (
+          <div className="loading-block">
+            <div className="spinner" />
+            <span>Searching…</span>
+          </div>
+        ) : videos.length > 0 ? (
+          <>
+            <div className="video-grid">
+              {videos.map(v => <VideoCard key={v.id} video={v} />)}
+            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.min(totalPages, 100)}
+              onPageChange={handlePageChange}
+            />
+          </>
+        ) : (
+          <div className="empty-block">
+            <p style={{ fontSize: '2rem' }}>🔍</p>
+            <p>No videos found for <strong>"{query}"</strong></p>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
+              Try different keywords or browse by category.
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

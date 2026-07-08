@@ -1,118 +1,148 @@
 import React, { useEffect, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { epornerApi } from '../services/api';
 import VideoCard from '../components/VideoCard';
-import FilterPanel from '../components/FilterPanel';
 import Pagination from '../components/Pagination';
-import TrendingTagsSlider from '../components/TrendingTagsSlider';
+import TagsBar from '../components/TagsBar';
+import SortBar from '../components/SortBar';
 import './Pages.css';
 
+const SORT_OPTIONS = [
+  { value: 'latest',       label: '🕐 Latest' },
+  { value: 'top-rated',    label: '⭐ Top Rated' },
+  { value: 'most-popular', label: '🔥 Most Viewed' },
+  { value: 'top-weekly',   label: '📈 Top This Week' },
+  { value: 'top-monthly',  label: '📅 Top This Month' },
+  { value: 'longest',      label: '⏱ Longest' },
+];
+
 const Home = () => {
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [order, setOrder] = useState('latest');
-  const [totalPages, setTotalPages] = useState(1);
-  const [trendingTags, setTrendingTags] = useState([]);
-  const [tagsLoading, setTagsLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
-  // Fetch trending tags once on mount
+  // Read state from URL so browser navigation works
+  const currentOrder = searchParams.get('order') || 'latest';
+  const currentPage  = parseInt(searchParams.get('page') || '1', 10);
+
+  const [videos,      setVideos]      = useState([]);
+  const [loading,     setLoading]     = useState(true);
+  const [totalPages,  setTotalPages]  = useState(1);
+  const [totalCount,  setTotalCount]  = useState(0);
+  const [trendTags,   setTrendTags]   = useState([]);
+  const [tagsReady,   setTagsReady]   = useState(false);
+
+  /* ─ Fetch trending tags once ─ */
   useEffect(() => {
-    const fetchTrendingTags = async () => {
+    (async () => {
       try {
-        const data = await epornerApi.searchVideos({
-          order: 'top-weekly',
-          per_page: 50,
-          gay: 0,
-          lq: 1
-        });
-        
-        if (data.videos) {
-          // Extract and count keywords
-          const allKeywords = data.videos
-            .flatMap(v => v.keywords.split(',').map(k => k.trim().toLowerCase()))
-            .filter(k => k.length > 2); // filter out very short junk tags
-            
-          const counts = {};
-          allKeywords.forEach(k => counts[k] = (counts[k] || 0) + 1);
-          
-          // Sort by frequency and take top 15
-          const topTags = Object.keys(counts)
-            .sort((a, b) => counts[b] - counts[a])
-            .slice(0, 15);
-            
-          setTrendingTags(topTags);
+        const res = await epornerApi.searchVideos({ order: 'top-weekly', per_page: 50, gay: 0, lq: 1 });
+        if (res?.videos) {
+          const freq = {};
+          const forbiddenWords = ['gay', 'shemale', 'tranny', 'ladyboy', 'ts', 'transsexual', 'transgender', 'boy', 'men', 'cock suck'];
+          res.videos.forEach(v =>
+            v.keywords.split(',').forEach(k => {
+              const kw = k.trim().toLowerCase();
+              if (kw.length > 2 && !forbiddenWords.some(word => kw.includes(word))) {
+                freq[kw] = (freq[kw] || 0) + 1;
+              }
+            })
+          );
+          setTrendTags(
+            Object.entries(freq)
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 20)
+              .map(([k]) => k)
+          );
         }
-      } catch (error) {
-        console.error("Failed to load trending tags", error);
-      } finally {
-        setTagsLoading(false);
-      }
-    };
-
-    fetchTrendingTags();
+      } catch (_) {}
+      setTagsReady(true);
+    })();
   }, []);
 
-  // Fetch videos on page/order change
+  /* ─ Fetch videos ─ */
   useEffect(() => {
-    const fetchVideos = async () => {
-      setLoading(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setLoading(true);
+    (async () => {
       try {
-        const data = await epornerApi.searchVideos({
-          order: order,
-          page: page,
-          per_page: 20,
+        const res = await epornerApi.searchVideos({
+          order: currentOrder,
+          page:  currentPage,
+          per_page: 32,
           gay: 0,
-          lq: 1
+          lq: 1,
+          thumbsize: 'big',
         });
-        setVideos(data.videos || []);
-        setTotalPages(data.total_pages || 1);
-      } catch (error) {
-        console.error("Failed to load top videos", error);
+        setVideos(res?.videos || []);
+        setTotalPages(res?.total_pages || 1);
+        setTotalCount(res?.total_count || 0);
+      } catch (_) {
+        setVideos([]);
       } finally {
         setLoading(false);
       }
-    };
+    })();
+  }, [currentOrder, currentPage]);
 
-    fetchVideos();
-    window.scrollTo(0, 0);
-  }, [page, order]);
-
-  const handleOrderChange = (newOrder) => {
-    setOrder(newOrder);
-    setPage(1);
+  const handleSortChange = (val) => {
+    setSearchParams({ order: val, page: '1' });
   };
 
+  const handlePageChange = (p) => {
+    setSearchParams({ order: currentOrder, page: String(p) });
+  };
+
+  const handleTagClick = (tag) => {
+    navigate(`/search?query=${encodeURIComponent(tag)}`);
+  };
+
+  const sortLabel = SORT_OPTIONS.find(o => o.value === currentOrder)?.label || 'Videos';
+
   return (
-    <div className="page-container container" style={{ paddingTop: '2rem' }}>
-      
-      {!tagsLoading && trendingTags.length > 0 && (
-        <TrendingTagsSlider tags={trendingTags} />
+    <div className="home-page">
+
+      {/* ─ Tags Horizontal Bar ─ */}
+      {tagsReady && trendTags.length > 0 && (
+        <TagsBar tags={trendTags} onTagClick={handleTagClick} />
       )}
 
-      <section className="home-section">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h2 className="section-title">New Videos</h2>
-          <FilterPanel order={order} onOrderChange={handleOrderChange} />
+      {/* ─ Main Content ─ */}
+      <div className="page-wrapper content-area">
+
+        {/* Section Header */}
+        <div className="section-header">
+          <div className="section-title-group">
+            <h1 className="section-title">{sortLabel}</h1>
+            {totalCount > 0 && (
+              <span className="section-count">{totalCount.toLocaleString()} videos</span>
+            )}
+          </div>
+          <SortBar value={currentOrder} options={SORT_OPTIONS} onChange={handleSortChange} />
         </div>
 
+        {/* Grid */}
         {loading ? (
-          <div className="loading-state">Loading videos...</div>
-        ) : (
+          <div className="loading-block">
+            <div className="spinner" />
+            <span>Loading videos…</span>
+          </div>
+        ) : videos.length > 0 ? (
           <>
             <div className="video-grid">
-              {videos.map(video => (
-                <VideoCard key={video.id} video={video} />
-              ))}
+              {videos.map(v => <VideoCard key={v.id} video={v} />)}
             </div>
-            
-            <Pagination 
-              currentPage={page} 
-              totalPages={totalPages} 
-              onPageChange={setPage} 
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.min(totalPages, 100)}
+              onPageChange={handlePageChange}
             />
           </>
+        ) : (
+          <div className="empty-block">
+            <p>No videos found.</p>
+          </div>
         )}
-      </section>
+      </div>
     </div>
   );
 };

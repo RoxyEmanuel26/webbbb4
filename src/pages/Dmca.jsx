@@ -1,21 +1,32 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './Pages.css';
 
-const Dmca = () => {
-  useEffect(() => { window.scrollTo(0, 0); }, []);
-  return (
-    <div className="page-container container legal-page">
-      <h1 className="page-title">DMCA / Copyright</h1>
-      <div className="legal-content">
-        <p>This website functions as an automated search engine and indexing tool. We do not host, store, or upload any video files on our servers. All videos are embedded directly from Eporner.com API.</p>
-        
-        <h3>Takedown Requests</h3>
-        <p>Since we do not host any of the media, we cannot remove videos from the source. To have a video completely removed from the Internet, you must contact the original host (Eporner).</p>
-        
-        <p>If you wish to request that we block a specific embed link from appearing in our search results, please contact us with the specific URL of the page on our site and proof of copyright ownership.</p>
-      </div>
+const Dmca = () => (
+  <div className="page-wrapper legal-page">
+    <div className="legal-card">
+      <h1>DMCA Notice & Takedown Policy</h1>
+      <span className="legal-date">Last Updated: January 1, 2025</span>
+
+      <h2>About Our Platform</h2>
+      <p>PORNAPI is an aggregator platform powered by the Eporner API. We do not host, upload, or store any video content on our servers. All videos are indexed and provided by Eporner.com.</p>
+
+      <h2>DMCA Compliance</h2>
+      <p>We respect the intellectual property rights of others and expect users of our site to do the same. It is our policy to respond to notices of alleged copyright infringement that comply with the Digital Millennium Copyright Act (DMCA).</p>
+
+      <h2>Filing a Takedown Notice</h2>
+      <p>Since we do not host the content ourselves, DMCA takedown requests should be directed to:</p>
+      <ul>
+        <li><strong>Eporner.com</strong> — the actual content host</li>
+        <li>Visit their DMCA page at: eporner.com/dmca/</li>
+      </ul>
+
+      <h2>Content Removal</h2>
+      <p>Upon receiving a valid DMCA notice that results in content being removed from Eporner, the corresponding videos will automatically no longer appear on our platform, as our content is served directly through their API.</p>
+
+      <h2>Counter-Notification</h2>
+      <p>If you believe content was removed in error, you may file a counter-notification in accordance with DMCA guidelines with the hosting provider.</p>
     </div>
-  );
-};
+  </div>
+);
 
 export default Dmca;

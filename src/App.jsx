@@ -10,6 +10,7 @@ import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import Usc2257 from './pages/Usc2257';
 import Dmca from './pages/Dmca';
+import './App.css';
 
 function App() {
   return (
@@ -18,13 +19,13 @@ function App() {
       <Navbar />
       <main>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/search" element={<SearchResults />} />
+          <Route path="/"          element={<Home />} />
+          <Route path="/search"    element={<SearchResults />} />
           <Route path="/video/:id" element={<VideoPlayer />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/usc2257" element={<Usc2257 />} />
-          <Route path="/dmca" element={<Dmca />} />
+          <Route path="/terms"     element={<Terms />} />
+          <Route path="/privacy"   element={<Privacy />} />
+          <Route path="/usc2257"   element={<Usc2257 />} />
+          <Route path="/dmca"      element={<Dmca />} />
         </Routes>
       </main>
       <Footer />

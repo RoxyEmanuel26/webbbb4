@@ -1,0 +1,46 @@
+.sort-bar {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--ease-fast);
+  white-space: nowrap;
+}
+
+.sort-btn:hover {
+  background: var(--color-bg-sidebar);
+  color: var(--color-text-primary);
+  border-color: var(--color-text-muted);
+}
+
+.sort-btn.is-active {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-btn);
+}
+
+@media (max-width: 768px) {
+  .sort-bar {
+    /* On mobile, switch to a compact dropdown feel */
+    gap: 4px;
+  }
+  .sort-btn { 
+    padding: 5px 8px;
+    font-size: 0.65rem;
+  }
+}

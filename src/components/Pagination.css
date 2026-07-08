@@ -1,61 +1,60 @@
-.pagination-container {
+.pager {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: var(--spacing-sm);
-  margin-top: var(--spacing-xxl);
-  padding: var(--spacing-md) 0;
+  justify-content: center;
+  gap: var(--space-1);
+  margin-top: var(--space-10);
+  flex-wrap: wrap;
 }
 
-.page-nav-btn {
-  display: flex;
+.pager__btn {
+  min-width: 36px;
+  height: 36px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: transparent;
-  color: var(--text-muted);
-  border: none;
-  font-size: 0.85rem;
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all var(--ease-fast);
+  padding: 0 var(--space-2);
+  user-select: none;
 }
 
-.page-nav-btn:hover:not(:disabled) {
-  color: var(--text-h);
+.pager__btn:hover:not(:disabled) {
+  background: var(--color-bg-sidebar);
+  color: var(--color-text-primary);
+  border-color: var(--color-text-muted);
 }
 
-.page-nav-btn:disabled {
-  opacity: 0.5;
+.pager__btn.is-current {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-btn);
+  pointer-events: none;
+}
+
+.pager__btn:disabled:not(.is-current) {
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
-.page-numbers {
-  display: flex;
-  gap: var(--spacing-xs);
-  align-items: center;
+.pager__btn--icon {
+  padding: 0;
 }
 
-.page-btn {
-  background-color: transparent;
-  color: var(--text-muted);
-  border: none;
-  border-radius: 2px;
-  min-width: 32px;
-  height: 32px;
-  display: flex;
+.pager__ellipsis {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 500;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.page-btn:hover:not(:disabled) {
-  color: var(--text-h);
-}
-
-.page-btn.active {
-  background-color: var(--primary);
-  color: #fff;
-  font-weight: 700;
+  min-width: 36px;
+  height: 36px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  user-select: none;
 }

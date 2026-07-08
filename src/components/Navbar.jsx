@@ -1,71 +1,77 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Heart } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Search, Flame, TrendingUp, Star, Clock, Heart } from 'lucide-react';
 import './Navbar.css';
+
+const NAV_LINKS = [
+  { label: 'Latest',       path: '/?order=latest',       order: 'latest' },
+  { label: 'Top Rated',    path: '/?order=top-rated',    order: 'top-rated' },
+  { label: 'Most Viewed',  path: '/?order=most-popular', order: 'most-popular' },
+  { label: 'Top Weekly',   path: '/?order=top-weekly',   order: 'top-weekly' },
+  { label: 'Top Monthly',  path: '/?order=top-monthly',  order: 'top-monthly' },
+];
 
 const Navbar = () => {
   const [query, setQuery] = useState('');
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [isFocused, setIsFocused] = useState(false);
+  const navigate   = useNavigate();
+  const location   = useLocation();
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (query.trim()) {
-      navigate(`/search?query=${encodeURIComponent(query)}`);
+      navigate(`/search?query=${encodeURIComponent(query.trim())}`);
+      setQuery('');
     }
   };
 
-  const navLinks = [
-    { label: 'New Videos', path: '/' },
-    { label: 'Top Rated', path: '/search?order=top-rated' },
-    { label: 'Most Viewed', path: '/search?order=most-popular' },
-    { label: 'Categories', path: '#' },
-    { label: 'Collections', path: '#' },
-    { label: 'Pornstars', path: '#' },
-    { label: 'Download', path: '#' },
-  ];
+  const isActive = (order) => {
+    const params = new URLSearchParams(location.search);
+    return params.get('order') === order;
+  };
 
   return (
-    <header className="navbar-wrapper">
-      <div className="navbar-top">
-        <div className="container navbar-container">
-          <Link to="/" className="navbar-brand">
-            <Heart size={24} color="var(--primary)" fill="var(--primary)" className="brand-icon" />
-            <span className="brand-text">PORNAPI</span>
-          </Link>
-          
-          <div className="search-container">
-            <form className="search-form" onSubmit={handleSearch}>
-              <input 
-                type="text" 
-                placeholder="Search" 
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
-              <button type="submit" aria-label="Search">
-                <Search size={18} />
-              </button>
-            </form>
-          </div>
+    <header className="navbar-root" role="banner">
+      <div className="page-wrapper navbar-inner">
+        {/* Brand */}
+        <Link to="/" className="navbar-brand" aria-label="Home">
+          <Heart size={18} fill="var(--color-accent)" color="var(--color-accent)" />
+          <span>PORNAPI</span>
+        </Link>
 
-          <div className="navbar-right-placeholder">
-            {/* EN, Register, Login removed as requested */}
-          </div>
-        </div>
-      </div>
-      
-      <div className="navbar-bottom">
-        <div className="container subnav-container">
-          {navLinks.map((link, idx) => (
-            <Link 
-              key={idx} 
-              to={link.path} 
-              className={`subnav-link ${location.pathname === link.path || (location.pathname === '/' && link.label === 'New Videos') ? 'active' : ''}`}
+        {/* Nav Links */}
+        <nav className="navbar-links" aria-label="Main navigation">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.order}
+              to={link.path}
+              className={`navbar-link ${isActive(link.order) ? 'is-active' : ''}`}
             >
               {link.label}
             </Link>
           ))}
-        </div>
+        </nav>
+
+        {/* Search */}
+        <form
+          className={`navbar-search ${isFocused ? 'is-focused' : ''}`}
+          onSubmit={handleSearch}
+          role="search"
+        >
+          <Search size={15} className="search-ico" aria-hidden="true" />
+          <input
+            type="search"
+            placeholder="Search videos..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            aria-label="Search videos"
+          />
+          <button type="submit" className="search-submit-btn" aria-label="Submit search">
+            Search
+          </button>
+        </form>
       </div>
     </header>
   );

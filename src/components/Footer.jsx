@@ -1,62 +1,88 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Flame, Heart } from 'lucide-react';
+import { Heart, Flame, ExternalLink } from 'lucide-react';
 import './Footer.css';
 
 const HOT_SEARCHES = [
-  'mom son', 'indian wife', 'cuckold', 'indian', 'anal', 'chinese', 'shemale', 'pov girl', 'threesome', 'solo', 'fendom', 'pissing', 'facefuck', 'pov', 'j-mac'
+  'teen', 'milf', 'anal', 'lesbian', 'threesome', 'pov', 'solo',
+  'amateur', 'hardcore', 'blowjob', 'creampie', 'asian', 'latina', 'bbw'
 ];
 
-const Footer = () => {
-  return (
-    <footer className="footer">
-      <div className="container footer-container">
-        
-        <div className="hot-search-section">
-          <h3 className="hot-search-title">
-            <Flame size={16} color="var(--primary)" /> HOT SEARCH
-          </h3>
-          <div className="hot-search-tags">
-            {HOT_SEARCHES.map((tag, idx) => (
-              <Link key={idx} to={`/search?query=${tag}`} className="hot-tag">
-                {tag}
-              </Link>
-            ))}
-          </div>
-        </div>
+const Footer = () => (
+  <footer className="site-footer" role="contentinfo">
+    <div className="page-wrapper footer-inner">
 
-        <div className="seo-text-section">
-          <h2>Handpicked Adult Videos in FHD, 4K & Free API</h2>
-          <p>
-            Welcome to <strong>PORN-API.COM</strong>. Explore a carefully curated library of premium adult movies, trending scenes, and high-quality releases selected for viewers who want fast streaming, sharp visuals, and content that hits hard. Browse fresh updates, popular categories, top performers, and standout studios in smooth FHD and 4K quality.
-          </p>
-          <p>
-            Every video is organized for quick discovery on desktop and mobile, with clean browsing, fast playback, and a constantly refreshed catalog of adult entertainment. From viral picks to niche collections, we bring together powerful recommendations and selected movies so you can find the right scene without wasting time.
-          </p>
-          <p>
-            We also provide a <strong>Free Public API</strong> for developers and third-party apps. Access movies, categories, pornstars, metadata, and more through a simple REST API with an API key, then build your own integrations, tools, or content-powered services.
-          </p>
-        </div>
-
-        <div className="footer-bottom-nav">
-          <Link to="/terms">TERMS</Link>
-          <Link to="/privacy">PRIVACY</Link>
-          <Link to="/dmca">DMCA</Link>
-          <Link to="#">CONTACT</Link>
-          <Link to="/usc2257">18 U.S.C. 2257</Link>
-        </div>
-
-        <div className="footer-logo">
-          <Heart size={20} color="var(--primary)" fill="var(--primary)" className="brand-icon" />
-          <span className="brand-text">PORNAPI</span>
-        </div>
-
-        <div className="footer-copyright">
-          &copy; {new Date().getFullYear()} All rights reserved. All models were 18 years of age or older.
+      {/* Top: Hot Searches */}
+      <div className="footer-hot">
+        <span className="footer-hot-label">
+          <Flame size={14} aria-hidden="true" /> Hot Searches:
+        </span>
+        <div className="footer-hot-tags">
+          {HOT_SEARCHES.map(tag => (
+            <Link
+              key={tag}
+              to={`/search?query=${encodeURIComponent(tag)}`}
+              className="footer-tag"
+            >
+              {tag}
+            </Link>
+          ))}
         </div>
       </div>
-    </footer>
-  );
-};
+
+      <hr className="footer-divider" />
+
+      {/* Middle: Brand + SEO Text */}
+      <div className="footer-body">
+        <div className="footer-brand-col">
+          <Link to="/" className="footer-brand">
+            <Heart size={18} fill="var(--color-accent)" color="var(--color-accent)" />
+            <span>PORNAPI</span>
+          </Link>
+          <p className="footer-brand-desc">
+            Your premium destination for free HD adult entertainment.
+            100,000+ videos updated daily. Fast streaming on all devices.
+          </p>
+        </div>
+
+        <div className="footer-links-col">
+          <h3 className="footer-col-heading">Browse</h3>
+          <nav>
+            <Link to="/?order=latest"       className="footer-nav-link">Latest Videos</Link>
+            <Link to="/?order=top-rated"    className="footer-nav-link">Top Rated</Link>
+            <Link to="/?order=most-popular" className="footer-nav-link">Most Popular</Link>
+            <Link to="/?order=top-weekly"   className="footer-nav-link">Top This Week</Link>
+            <Link to="/?order=top-monthly"  className="footer-nav-link">Top This Month</Link>
+          </nav>
+        </div>
+
+        <div className="footer-links-col">
+          <h3 className="footer-col-heading">Legal</h3>
+          <nav>
+            <Link to="/terms"    className="footer-nav-link">Terms of Service</Link>
+            <Link to="/privacy"  className="footer-nav-link">Privacy Policy</Link>
+            <Link to="/dmca"     className="footer-nav-link">DMCA</Link>
+            <Link to="/usc2257"  className="footer-nav-link">18 U.S.C. 2257</Link>
+          </nav>
+        </div>
+      </div>
+
+      <hr className="footer-divider" />
+
+      {/* Bottom: Copyright */}
+      <div className="footer-bottom">
+        <p className="footer-copyright">
+          © {new Date().getFullYear()} PORNAPI. All rights reserved.
+          All models appearing on this website are 18 years of age or older.
+        </p>
+        <p className="footer-disclaimer">
+          This site is powered by the <strong>Eporner API v2</strong> and contains
+          adult content intended for mature audiences only.
+        </p>
+      </div>
+
+    </div>
+  </footer>
+);
 
 export default Footer;
