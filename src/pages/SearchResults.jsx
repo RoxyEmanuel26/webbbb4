@@ -35,12 +35,13 @@ const SearchResults = () => {
           query,
           page: currentPage,
           order: currentOrder,
-          per_page: 32,
+          per_page: 44, // Fetch buffer to account for client-side filtering
           gay: 0,
           lq: 1,
           thumbsize: 'big',
         });
-        setVideos(res?.videos || []);
+        // Slice exactly 36 items so the grid (4, 3, or 2 cols) never has an empty slot
+        setVideos((res?.videos || []).slice(0, 36));
         setTotalPages(res?.total_pages || 1);
         setTotalCount(res?.total_count || 0);
       } catch (_) {

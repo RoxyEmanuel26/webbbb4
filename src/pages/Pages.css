@@ -9,7 +9,7 @@
 
 /* ─ Content Area ─ */
 .content-area {
-  padding-top: var(--space-5);
+  margin-top: var(--space-6);
   padding-bottom: var(--space-16);
 }
 
@@ -72,7 +72,7 @@
 }
 
 .search-content {
-  padding-top: var(--space-5);
+  margin-top: var(--space-6);
   padding-bottom: var(--space-16);
 }
 

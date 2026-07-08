@@ -69,11 +69,11 @@ export const epornerApi = {
         data.videos = data.videos.map(sanitizeVideo);
 
         // Strict client-side filtering to ensure no gay/shemale content slips through
-        const forbiddenWords = ['gay', 'shemale', 'tranny', 'ladyboy', 'ts', 'transsexual', 'transgender', 'boy', 'men', 'cock suck'];
+        const forbiddenRegex = /\b(gay|shemale|tranny|ladyboy|ts|transsexual|transgender|boy|men|cock suck|cock sucking)\b/i;
         data.videos = data.videos.filter(v => {
-          const kw = (v.keywords || '').toLowerCase();
-          const title = (v.title || '').toLowerCase();
-          return !forbiddenWords.some(word => kw.includes(word) || title.includes(word));
+          const kw = (v.keywords || '');
+          const title = (v.title || '');
+          return !forbiddenRegex.test(kw) && !forbiddenRegex.test(title);
         });
       }
       return data;

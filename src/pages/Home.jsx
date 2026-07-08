@@ -38,11 +38,11 @@ const Home = () => {
         const res = await epornerApi.searchVideos({ order: 'top-weekly', per_page: 50, gay: 0, lq: 1 });
         if (res?.videos) {
           const freq = {};
-          const forbiddenWords = ['gay', 'shemale', 'tranny', 'ladyboy', 'ts', 'transsexual', 'transgender', 'boy', 'men', 'cock suck'];
+          const forbiddenRegex = /\b(gay|shemale|tranny|ladyboy|ts|transsexual|transgender|boy|men|cock suck|cock sucking)\b/i;
           res.videos.forEach(v =>
             v.keywords.split(',').forEach(k => {
               const kw = k.trim().toLowerCase();
-              if (kw.length > 2 && !forbiddenWords.some(word => kw.includes(word))) {
+              if (kw.length > 2 && !forbiddenRegex.test(kw)) {
                 freq[kw] = (freq[kw] || 0) + 1;
               }
             })
@@ -68,12 +68,13 @@ const Home = () => {
         const res = await epornerApi.searchVideos({
           order: currentOrder,
           page:  currentPage,
-          per_page: 32,
+          per_page: 44, // Fetch buffer to account for client-side filtering
           gay: 0,
           lq: 1,
           thumbsize: 'big',
         });
-        setVideos(res?.videos || []);
+        // Slice exactly 36 items so the grid (4, 3, or 2 cols) never has an empty slot
+        setVideos((res?.videos || []).slice(0, 36));
         setTotalPages(res?.total_pages || 1);
         setTotalCount(res?.total_count || 0);
       } catch (_) {
