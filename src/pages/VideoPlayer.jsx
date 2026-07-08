@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { epornerApi } from '../services/api';
 import VideoCard from '../components/VideoCard';
 import { Eye, Star, Calendar, Clock, ArrowLeft } from 'lucide-react';
@@ -12,9 +12,16 @@ const formatViews = (n) => {
   return n + ' views';
 };
 
+const createSlug = (title) => {
+  if (!title) return '';
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+};
+
+
 const VideoPlayer = () => {
   const { id }       = useParams();
   const navigate     = useNavigate();
+  const location     = useLocation();
   const [video,      setVideo]        = useState(null);
   const [loading,    setLoading]      = useState(true);
   const [error,      setError]        = useState(false);
@@ -37,6 +44,13 @@ const VideoPlayer = () => {
         }
 
         setVideo(data);
+
+        // SEO: Enforce canonical URL redirect
+        const expectedSlug = createSlug(data.title);
+        const canonicalUrl = `/video/${id}/${expectedSlug}`;
+        if (location.pathname !== canonicalUrl) {
+          navigate(canonicalUrl, { replace: true });
+        }
 
         // Fetch related by first keyword
         if (data.keywords) {
@@ -148,7 +162,7 @@ const VideoPlayer = () => {
                 {keywords.slice(0, 20).map((kw, i) => (
                   <Link
                     key={i}
-                    to={`/search?query=${encodeURIComponent(kw)}`}
+                    to={`/tag/${kw.toLowerCase().replace(/\s+/g, '-')}`}
                     className="keyword-tag"
                   >
                     #{kw}

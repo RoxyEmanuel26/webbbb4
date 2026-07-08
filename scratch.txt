@@ -1,11 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Layers, List } from 'lucide-react';
-import { ALL_CATEGORIES } from '../data/allCategories';
-import './Categories.css';
-
 const CATEGORIES = [
-  { name: 'Japanese', image: 'https://static-sg-cdn.eporner.com/catimg/52.jpg' },
+  { name: 'Japanese', image: 'https://static-ca-cdn.eporner.com/flags/png/ENG.PNG' },
   { name: 'Anal', image: 'https://static-ca-cdn.eporner.com/catimg/3.jpg' },
   { name: 'HD Porn 1080p', image: 'https://static-ca-cdn.eporner.com/catimg/43.jpg' },
   { name: 'VR Porn', image: 'https://static-ca-cdn.eporner.com/catimg/72.jpg' },
@@ -72,6 +66,7 @@ const CATEGORIES = [
   { name: 'HQ Porn', image: 'https://static-ca-cdn.eporner.com/catimg/69.jpg' },
   { name: 'Footjob', image: 'https://static-ca-cdn.eporner.com/catimg/40.jpg' },
   { name: 'HD Sex', image: 'https://static-ca-cdn.eporner.com/catimg/70.jpg' },
+  { name: 'Bisexual', image: 'https://static-ca-cdn.eporner.com/catimg/46.jpg' },
   { name: 'ASMR', image: 'https://static-ca-cdn.eporner.com/catimg/31.jpg' },
   { name: 'Doctor', image: 'https://static-ca-cdn.eporner.com/catimg/34.jpg' },
   { name: 'Indonesia', image: 'https://static-ca-cdn.eporner.com/catimg/80.jpg' },
@@ -88,109 +83,3 @@ const CATEGORIES = [
   { name: 'Hotwife', image: 'https://static-ca-cdn.eporner.com/catimg/79.jpg' },
   { name: 'Gloryhole', image: 'https://static-ca-cdn.eporner.com/catimg/78.jpg' },
 ];
-
-const ALPHABET = ['#', ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))];
-
-const Categories = () => {
-  const navigate = useNavigate();
-  const [activeLetter, setActiveLetter] = useState('A');
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
-  const handleCatClick = (categoryName) => {
-    const formatted = categoryName.toLowerCase().replace(/\s+/g, '-');
-    navigate(`/cat/${formatted}`);
-  };
-
-  const handleTagClick = (tagName) => {
-    const formatted = tagName.toLowerCase().replace(/\s+/g, '-');
-    navigate(`/tag/${formatted}`);
-  };
-
-  const filteredCategories = ALL_CATEGORIES.filter((cat) => {
-    if (activeLetter === '#') {
-      return /^[0-9]/.test(cat.name);
-    }
-    return cat.name.toLowerCase().startsWith(activeLetter.toLowerCase());
-  });
-
-  return (
-    <div className="categories-page">
-      <div className="page-wrapper content-area">
-        
-        {/* Section Header */}
-        <div className="section-header">
-          <div className="section-title-group">
-            <Layers className="section-icon" size={28} />
-            <h1 className="section-title">Explore Categories</h1>
-          </div>
-        </div>
-
-        {/* Categories Grid */}
-        <div className="cats-grid">
-          {CATEGORIES.map((cat) => (
-            <div 
-              key={cat.name}
-              className="cat-card has-bg-img"
-              onClick={() => handleCatClick(cat.name)}
-              role="button"
-              tabIndex={0}
-            >
-              <img className="cat-card-bg" src={cat.image} alt={cat.name} loading="lazy" />
-              <div className="cat-card-overlay"></div>
-              <div className="cat-card-content">
-                <h3 className="cat-name">{cat.name}</h3>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* All Categories Section */}
-        <div className="all-categories-section" style={{ marginTop: 'var(--space-8)' }}>
-          <div className="section-header all-cats-header">
-            <div className="section-title-group">
-              <List className="section-icon" size={24} />
-              <h2 className="section-title">All Categories</h2>
-            </div>
-          </div>
-          
-          <div className="alphabet-bar">
-            {ALPHABET.map((letter) => (
-              <button
-                key={letter}
-                className={`alphabet-btn ${activeLetter === letter ? 'active' : ''}`}
-                onClick={() => setActiveLetter(letter)}
-              >
-                {letter}
-              </button>
-            ))}
-          </div>
-
-          <div className="all-cats-list">
-            {filteredCategories.length > 0 ? (
-              filteredCategories.map((cat) => (
-                <div
-                  key={cat.name}
-                  className="all-cat-item"
-                  onClick={() => handleTagClick(cat.name)}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <span className="all-cat-name">{cat.name}</span>
-                  <span className="all-cat-count">{cat.count}</span>
-                </div>
-              ))
-            ) : (
-              <div className="no-cats-msg">No categories found for {activeLetter}.</div>
-            )}
-          </div>
-        </div>
-
-      </div>
-    </div>
-  );
-};
-
-export default Categories;

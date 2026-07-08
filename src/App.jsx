@@ -23,11 +23,15 @@ function App() {
           <Route path="/"          element={<Home />} />
           <Route path="/cats/"     element={<Categories />} />
           <Route path="/search"    element={<SearchResults />} />
-          <Route path="/video/:id" element={<VideoPlayer />} />
+          <Route path="/cat/:catName" element={<SearchResults />} />
+          <Route path="/tag/:tagName" element={<SearchResults />} />
+          <Route path="/video/:id/:slug" element={<VideoPlayer />} />
+          <Route path="/video/:id"       element={<VideoPlayer />} />
           <Route path="/terms"     element={<Terms />} />
           <Route path="/privacy"   element={<Privacy />} />
           <Route path="/usc2257"   element={<Usc2257 />} />
           <Route path="/dmca"      element={<Dmca />} />
+          <Route path="/:id"       element={<VideoPlayer />} />
         </Routes>
       </main>
       <Footer />

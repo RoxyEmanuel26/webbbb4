@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useParams, useLocation } from 'react-router-dom';
 import { epornerApi } from '../services/api';
 import VideoCard from '../components/VideoCard';
 import Pagination from '../components/Pagination';
@@ -12,12 +12,21 @@ const SORT_OPTIONS = [
   { value: 'most-popular', label: '🔥 Most Viewed' },
   { value: 'top-weekly',   label: '📈 This Week' },
   { value: 'top-monthly',  label: '📅 This Month' },
-  { value: 'longest',      label: '⏱ Longest' },
 ];
 
 const SearchResults = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const query      = searchParams.get('query') || 'all';
+  const { catName, tagName } = useParams();
+  const location = useLocation();
+  
+  const isCat = location.pathname.startsWith('/cat/');
+  const isTag = location.pathname.startsWith('/tag/');
+
+  let derivedQuery = searchParams.get('query') || 'all';
+  if (isCat && catName) derivedQuery = catName.replace(/-/g, ' ');
+  if (isTag && tagName) derivedQuery = tagName.replace(/-/g, ' ');
+  const query = derivedQuery;
+
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const currentOrder = searchParams.get('order') || 'latest';
 
@@ -53,11 +62,23 @@ const SearchResults = () => {
   }, [query, currentPage, currentOrder]);
 
   const handleSortChange = (val) => {
-    setSearchParams({ query, page: '1', order: val });
+    const params = new URLSearchParams(searchParams);
+    params.set('page', '1');
+    params.set('order', val);
+    setSearchParams(params);
   };
 
   const handlePageChange = (p) => {
-    setSearchParams({ query, page: String(p), order: currentOrder });
+    const params = new URLSearchParams(searchParams);
+    params.set('page', String(p));
+    setSearchParams(params);
+  };
+
+  const getPageTitle = () => {
+    if (isCat) return <span style={{textTransform: 'capitalize'}}>Category: {query}</span>;
+    if (isTag) return <span style={{textTransform: 'capitalize'}}>Tag: {query}</span>;
+    if (query === 'all') return 'All Videos';
+    return `"${query}"`;
   };
 
   return (
@@ -68,7 +89,7 @@ const SearchResults = () => {
         <div className="section-header">
           <div className="section-title-group">
             <h1 className="section-title">
-              {query === 'all' ? 'All Videos' : `"${query}"`}
+              {getPageTitle()}
             </h1>
             {totalCount > 0 && (
               <span className="section-count">{totalCount.toLocaleString()} results</span>
@@ -97,7 +118,7 @@ const SearchResults = () => {
         ) : (
           <div className="empty-block">
             <p style={{ fontSize: '2rem' }}>🔍</p>
-            <p>No videos found for <strong>"{query}"</strong></p>
+            <p>No videos found for <strong style={{textTransform: 'capitalize'}}>"{query}"</strong></p>
             <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
               Try different keywords or browse by category.
             </p>

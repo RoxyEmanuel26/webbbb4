@@ -15,6 +15,11 @@ const ratingToPercent = (rate) => {
   return Math.round((r / 5) * 100);
 };
 
+const createSlug = (title) => {
+  if (!title) return '';
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+};
+
 const VideoCard = ({ video, compact = false }) => {
   const [thumbIdx, setThumbIdx] = useState(0);
   const hoverInterval = useRef(null);
@@ -52,10 +57,11 @@ const VideoCard = ({ video, compact = false }) => {
   const duration = video.length_min || '—';
   const views    = formatViews(video.views || 0);
   const ratingPct = ratingToPercent(rating);
+  const slug     = createSlug(video.title);
 
   return (
     <Link
-      to={`/video/${video.id}`}
+      to={`/video/${video.id}/${slug}`}
       className={`vcard ${compact ? 'vcard--compact' : ''}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
