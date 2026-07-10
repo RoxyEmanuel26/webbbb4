@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Layers, List } from 'lucide-react';
 import { ALL_CATEGORIES } from '../data/allCategories';
@@ -171,19 +171,17 @@ const Categories = () => {
         {/* Categories Grid */}
         <div className="cats-grid">
           {CATEGORIES.map((cat) => (
-            <div 
+            <Link 
+              to={`/cat/${cat.name.toLowerCase().replace(/\s+/g, '-')}`}
               key={cat.name}
               className="cat-card has-bg-img"
-              onClick={() => handleCatClick(cat.name)}
-              role="button"
-              tabIndex={0}
             >
               <img className="cat-card-bg" src={cat.image} alt={cat.name} loading="lazy" width="300" height="170" />
               <div className="cat-card-overlay"></div>
               <div className="cat-card-content">
                 <h3 className="cat-name">{cat.name}</h3>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
@@ -211,16 +209,14 @@ const Categories = () => {
           <div className="all-cats-list">
             {filteredCategories.length > 0 ? (
               filteredCategories.map((cat) => (
-                <div
+                <Link
+                  to={`/cat/${cat.name.toLowerCase().replace(/\s+/g, '-')}`}
                   key={cat.name}
                   className="all-cat-item"
-                  onClick={() => handleTagClick(cat.name)}
-                  role="button"
-                  tabIndex={0}
                 >
                   <span className="all-cat-name">{cat.name}</span>
                   <span className="all-cat-count">{cat.count}</span>
-                </div>
+                </Link>
               ))
             ) : (
               <div className="no-cats-msg">No categories found for {activeLetter}.</div>

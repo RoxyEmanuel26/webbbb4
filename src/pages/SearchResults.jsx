@@ -5,6 +5,7 @@ import { epornerApi } from '../services/api';
 import VideoCard from '../components/VideoCard';
 import Pagination from '../components/Pagination';
 import SortBar from '../components/SortBar';
+import { ALL_CATEGORIES } from '../data/allCategories';
 import './Pages.css';
 
 const SORT_OPTIONS = [
@@ -85,25 +86,40 @@ const SearchResults = () => {
   // SEO
   const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
   const seoQuery = capitalize(query.replace(/-/g, ' '));
+  const currentYear = new Date().getFullYear();
+
   const seoTitle = isCat
-    ? `${seoQuery} Videos — NICEVX`
+    ? `Free HD ${seoQuery} Porn Videos ${currentYear} — NICEVX`
     : isTag
-    ? `#${seoQuery} Videos — NICEVX`
+    ? `Free #${seoQuery} Porn Videos ${currentYear} — NICEVX`
     : query === 'all'
-    ? 'All Videos — NICEVX'
-    : `"${seoQuery}" Search Results — NICEVX`;
+    ? `All Free HD Porn Videos ${currentYear} — NICEVX`
+    : `"${seoQuery}" Free Porn Search Results ${currentYear} — NICEVX`;
 
   const seoDesc = isCat
-    ? `Watch free ${seoQuery} HD porn videos on NICEVX. Thousands of top-quality ${seoQuery} adult videos updated daily.`
+    ? `Watch free ${seoQuery} HD porn videos on NICEVX. Thousands of top-quality ${seoQuery} adult videos updated daily in ${currentYear}.`
     : isTag
-    ? `Explore free HD videos tagged #${seoQuery} on NICEVX. Updated daily with the best ${seoQuery} content.`
-    : `Search results for "${seoQuery}" on NICEVX. Find thousands of free HD porn videos matching your search.`;
+    ? `Explore free HD videos tagged #${seoQuery} on NICEVX. Updated daily with the best ${seoQuery} content in ${currentYear}.`
+    : `Search results for "${seoQuery}" on NICEVX. Find thousands of free HD porn videos matching your search in ${currentYear}.`;
 
-  const seoCanonical = isCat
+  let seoCanonical = isCat
     ? `https://nicevx.com/cat/${catName}`
     : isTag
     ? `https://nicevx.com/tag/${tagName}`
     : `https://nicevx.com/search?query=${encodeURIComponent(query)}`;
+
+  // De-duplicate tags that match categories
+  if (isTag && tagName) {
+    const isAlsoCat = ALL_CATEGORIES.some(c => c.name.toLowerCase().replace(/\s+/g, '-') === tagName);
+    if (isAlsoCat) {
+      seoCanonical = `https://nicevx.com/cat/${tagName}`;
+    }
+  }
+
+  // Self-referencing canonical for pagination
+  if (currentPage > 1) {
+    seoCanonical += (seoCanonical.includes('?') ? '&' : '?') + `page=${currentPage}`;
+  }
 
   return (
     <div className="search-page">
@@ -175,6 +191,18 @@ const SearchResults = () => {
           <SortBar value={currentOrder} options={SORT_OPTIONS} onChange={handleSortChange} />
         </div>
 
+        {/* SEO Category/Tag Description */}
+        {(isCat || isTag) && currentPage === 1 && (
+          <div className="seo-category-desc" style={{ marginBottom: 'var(--space-6)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', lineHeight: '1.6' }}>
+            <p>
+              Welcome to the best collection of <strong>{seoQuery}</strong> porn videos. 
+              NICEVX offers thousands of top-quality, free HD adult videos {isTag ? `tagged with #${seoQuery}` : `in the ${seoQuery} category`}. 
+              Our tube is updated daily with fresh content, ensuring you always have access to the newest and most popular {seoQuery} XXX movies. 
+              Use the filters above to sort by latest, top-rated, or most viewed.
+            </p>
+          </div>
+        )}
+
         {/* Grid */}
         {loading ? (
           <div className="loading-block">
@@ -184,12 +212,14 @@ const SearchResults = () => {
         ) : videos.length > 0 ? (
           <>
             <div className="video-grid">
-              {videos.map(v => <VideoCard key={v.id} video={v} />)}
+              {videos.map((v, idx) => (
+                <VideoCard key={v.id} video={v} priority={idx < 4} />
+              ))}
             </div>
             <Pagination
               currentPage={currentPage}
               totalPages={Math.min(totalPages, 100)}
-              onPageChange={handlePageChange}
+
             />
           </>
         ) : (

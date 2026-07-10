@@ -1,8 +1,12 @@
 import React from 'react';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import './Pagination.css';
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination = ({ currentPage, totalPages }) => {
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+
   if (!totalPages || totalPages <= 1) return null;
 
   /* Build page number array with ellipsis */
@@ -26,67 +30,62 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
   const pages = buildPages();
 
+  const getPageLink = (page) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', page);
+    return `${location.pathname}?${params.toString()}`;
+  };
+
+  const renderLink = (page, content, isDisabled, extraClass = '', ariaLabel, title) => {
+    if (isDisabled) {
+      return (
+        <span
+          className={`pager__btn ${extraClass} ${isDisabled && page === currentPage ? 'is-current' : ''}`}
+          aria-label={ariaLabel}
+          title={title}
+          aria-disabled="true"
+          style={page !== currentPage ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+        >
+          {content}
+        </span>
+      );
+    }
+    return (
+      <Link
+        to={getPageLink(page)}
+        className={`pager__btn ${extraClass}`}
+        aria-label={ariaLabel}
+        title={title}
+      >
+        {content}
+      </Link>
+    );
+  };
+
   return (
     <nav className="pager" aria-label="Page navigation">
       {/* First */}
-      <button
-        className="pager__btn pager__btn--icon"
-        onClick={() => onPageChange(1)}
-        disabled={currentPage <= 1}
-        aria-label="First page"
-        title="First page"
-      >
-        <ChevronsLeft size={15} />
-      </button>
-
+      {renderLink(1, <ChevronsLeft size={15} />, currentPage <= 1, 'pager__btn--icon', 'First page', 'First page')}
+      
       {/* Prev */}
-      <button
-        className="pager__btn pager__btn--icon"
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage <= 1}
-        aria-label="Previous page"
-      >
-        <ChevronLeft size={15} />
-      </button>
+      {renderLink(currentPage - 1, <ChevronLeft size={15} />, currentPage <= 1, 'pager__btn--icon', 'Previous page')}
 
       {/* Page Numbers */}
       {pages.map((p, i) =>
         p === '…' ? (
           <span key={`ellipsis-${i}`} className="pager__ellipsis">…</span>
         ) : (
-          <button
-            key={p}
-            className={`pager__btn ${currentPage === p ? 'is-current' : ''}`}
-            onClick={() => onPageChange(p)}
-            disabled={currentPage === p}
-            aria-label={`Page ${p}`}
-            aria-current={currentPage === p ? 'page' : undefined}
-          >
-            {p}
-          </button>
+          <React.Fragment key={p}>
+            {renderLink(p, p, currentPage === p, '', `Page ${p}`)}
+          </React.Fragment>
         )
       )}
 
       {/* Next */}
-      <button
-        className="pager__btn pager__btn--icon"
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage >= totalPages}
-        aria-label="Next page"
-      >
-        <ChevronRight size={15} />
-      </button>
+      {renderLink(currentPage + 1, <ChevronRight size={15} />, currentPage >= totalPages, 'pager__btn--icon', 'Next page')}
 
       {/* Last */}
-      <button
-        className="pager__btn pager__btn--icon"
-        onClick={() => onPageChange(totalPages)}
-        disabled={currentPage >= totalPages}
-        aria-label="Last page"
-        title="Last page"
-      >
-        <ChevronsRight size={15} />
-      </button>
+      {renderLink(totalPages, <ChevronsRight size={15} />, currentPage >= totalPages, 'pager__btn--icon', 'Last page', 'Last page')}
     </nav>
   );
 };

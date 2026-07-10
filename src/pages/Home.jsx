@@ -118,20 +118,18 @@ const Home = () => {
     }
   };
 
-  const handleTagClick = (tag) => {
-    navigate(`/search?query=${encodeURIComponent(tag)}`);
-  };
-
   const sortLabel = SORT_OPTIONS.find(o => o.value === orderParam)?.label || '📈 Top This Week';
+
+  const currentYear = new Date().getFullYear();
 
   // SEO: build dynamic title and description per sort
   const seoTitle = orderParam
-    ? `${sortLabel.replace(/^[^\w]+/, '').trim()} Videos — NICEVX`
-    : 'NICEVX — Free HD Porn Videos | 4M+ Videos Updated Daily';
+    ? `Free HD ${sortLabel.replace(/^[^\w]+/, '').trim()} Porn Videos ${currentYear} — NICEVX`
+    : `NICEVX — Free HD Porn Videos ${currentYear} | 4M+ Videos`;
 
   const seoDesc = orderParam
-    ? `Watch the ${sortLabel.replace(/^[^\w]+/, '').trim().toLowerCase()} free HD porn videos on NICEVX. Stream thousands of top-quality adult videos.`
-    : 'Watch free HD porn videos on NICEVX. Over 4 million videos updated daily — amateur, teen, MILF, Asian, hardcore and more in stunning 1080p quality.';
+    ? `Watch the ${sortLabel.replace(/^[^\w]+/, '').trim().toLowerCase()} free HD porn videos on NICEVX. Stream thousands of top-quality adult videos updated daily in ${currentYear}.`
+    : `Watch free HD porn videos on NICEVX. Over 4 million videos updated daily in ${currentYear} — amateur, teen, MILF, Asian, hardcore and more in stunning 1080p quality.`;
 
   const seoCanonical = orderParam
     ? `https://nicevx.com/?order=${orderParam}`
@@ -153,7 +151,7 @@ const Home = () => {
 
       {/* ─ Tags Horizontal Bar ─ */}
       {tagsReady && trendTags.length > 0 && (
-        <TagsBar tags={trendTags} onTagClick={handleTagClick} />
+        <TagsBar tags={trendTags} />
       )}
 
       {/* ─ Main Content ─ */}
@@ -181,12 +179,13 @@ const Home = () => {
         ) : videos.length > 0 ? (
           <>
             <div className="video-grid">
-              {videos.map(v => <VideoCard key={v.id} video={v} />)}
+              {videos.map((v, idx) => (
+                <VideoCard key={v.id} video={v} priority={idx < 4} />
+              ))}
             </div>
             <Pagination
               currentPage={currentPage}
               totalPages={Math.min(totalPages, 100)}
-              onPageChange={handlePageChange}
             />
           </>
         ) : (

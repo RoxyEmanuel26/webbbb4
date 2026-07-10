@@ -177,8 +177,9 @@ const VideoPlayer = () => {
   // SEO metadata for this video
   const videoSlug = createSlug(video.title);
   const canonicalUrl = `https://nicevx.com/video/${video.id}/${videoSlug}`;
-  const seoTitle = `${video.title} — NICEVX`;
-  const seoDesc = `Watch "${video.title}" free HD video on NICEVX. ${video.length_min || ''} ${video.views ? `${Number(video.views).toLocaleString()} views.` : ''} Stream in high quality.`;
+  const currentYear = new Date().getFullYear();
+  const seoTitle = `${video.title} - Free HD Porn Video ${currentYear} — NICEVX`;
+  const seoDesc = `Watch "${video.title}" free HD porn video on NICEVX. ${video.length_min || ''} ${video.views ? `${Number(video.views).toLocaleString()} views.` : ''} Stream top-quality adult content in ${currentYear}.`;
   const thumbSrc = video.default_thumb?.src || (video.thumbs?.[0]?.src) || '';
 
   // VideoObject structured data
@@ -274,10 +275,11 @@ const VideoPlayer = () => {
           {/* Embed Player */}
           <div className="player-box">
             {video.embed && video.embed.includes('<iframe') ? (
-              <div dangerouslySetInnerHTML={{ __html: video.embed }} style={{ width: '100%', height: '100%' }} />
+              <div dangerouslySetInnerHTML={{ __html: video.embed.replace('<iframe', '<iframe loading="lazy"') }} style={{ width: '100%', height: '100%' }} />
             ) : (
               <iframe 
                 src={video.embed} 
+                loading="lazy"
                 frameBorder="0" 
                 scrolling="no" 
                 allowFullScreen
@@ -325,6 +327,17 @@ const VideoPlayer = () => {
                 ))}
               </div>
             )}
+
+            {/* SEO Description Boilerplate */}
+            <div className="seo-description" style={{ marginTop: 'var(--space-4)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', lineHeight: '1.6' }}>
+              <p>
+                Watch the <strong>{video.title}</strong> video for free on NICEVX. 
+                {video.length_min && ` This HD porn video is ${video.length_min} long and `} 
+                {video.views && `has been viewed ${Number(video.views).toLocaleString()} times.`}
+                {keywords.length > 0 && ` Explore more related content in ${keywords.slice(0, 3).join(', ')} categories.`} 
+                We update our tube daily with the best high-quality adult videos.
+              </p>
+            </div>
 
             {/* Preview Thumbnails */}
             {video.thumbs && video.thumbs.length > 1 && (

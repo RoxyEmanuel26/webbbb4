@@ -20,7 +20,7 @@ const createSlug = (title) => {
   return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 };
 
-const VideoCard = ({ video, compact = false }) => {
+const VideoCard = ({ video, compact = false, priority = false }) => {
   const [thumbIdx, setThumbIdx] = useState(0);
   const hoverInterval = useRef(null);
   
@@ -59,21 +59,22 @@ const VideoCard = ({ video, compact = false }) => {
   const ratingPct = ratingToPercent(rating);
   const slug     = createSlug(video.title);
 
+  const primaryKeyword = video.keywords ? video.keywords.split(',')[0].trim() : '';
+
   return (
-    <Link
-      to={`/video/${video.id}/${slug}`}
+    <div
       className={`vcard ${compact ? 'vcard--compact' : ''}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      aria-label={video.title}
     >
       {/* Thumbnail */}
-      <div className="vcard__thumb-wrap">
+      <Link to={`/video/${video.id}/${slug}`} className="vcard__thumb-wrap" aria-label={video.title}>
         <img
           src={src}
           alt={video.title}
           className="vcard__thumb"
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
+          fetchpriority={priority ? "high" : "auto"}
           draggable="false"
           width="640"
           height="360"
@@ -85,12 +86,13 @@ const VideoCard = ({ video, compact = false }) => {
         </span>
         {/* HD Badge */}
         <span className="vcard__hd-badge">HD</span>
-        {/* Hover Overlay Removed as requested */}
-      </div>
+      </Link>
 
       {/* Info */}
       <div className="vcard__info">
-        <h3 className="vcard__title">{video.title}</h3>
+        <h3 className="vcard__title">
+          <Link to={`/video/${video.id}/${slug}`}>{video.title}</Link>
+        </h3>
         <div className="vcard__meta">
           <span className="vcard__meta-item vcard__views">
             <Eye size={11} aria-hidden="true" />
@@ -102,9 +104,18 @@ const VideoCard = ({ video, compact = false }) => {
               {rating.toFixed(1)}
             </span>
           )}
+          {primaryKeyword && (
+            <Link 
+              to={`/tag/${primaryKeyword.toLowerCase().replace(/\s+/g, '-')}`}
+              className="vcard__meta-item" 
+              style={{ color: 'var(--color-accent)', textDecoration: 'none', marginLeft: 'auto' }}
+            >
+              #{primaryKeyword}
+            </Link>
+          )}
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 

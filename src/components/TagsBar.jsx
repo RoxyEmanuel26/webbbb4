@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Hash, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import './TagsBar.css';
 
 const TagsBar = ({ tags, onTagClick }) => {
@@ -45,14 +46,15 @@ const TagsBar = ({ tags, onTagClick }) => {
           )}
           <div className="tags-bar-scroll" ref={scrollRef} onScroll={checkScroll}>
             {tags.map((tag) => (
-              <button
+              <Link
                 key={tag}
+                to={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
                 className="tag-pill"
-                onClick={() => onTagClick(tag)}
                 aria-label={`Browse ${tag}`}
+                style={{ textDecoration: 'none', color: 'inherit' }}
               >
                 {tag}
-              </button>
+              </Link>
             ))}
           </div>
           {showRight && (
