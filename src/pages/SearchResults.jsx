@@ -191,17 +191,7 @@ const SearchResults = () => {
           <SortBar value={currentOrder} options={SORT_OPTIONS} onChange={handleSortChange} />
         </div>
 
-        {/* SEO Category/Tag Description */}
-        {(isCat || isTag) && currentPage === 1 && (
-          <div className="seo-category-desc" style={{ marginBottom: 'var(--space-6)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', lineHeight: '1.6' }}>
-            <p>
-              Welcome to the best collection of <strong>{seoQuery}</strong> porn videos. 
-              NICEVX offers thousands of top-quality, free HD adult videos {isTag ? `tagged with #${seoQuery}` : `in the ${seoQuery} category`}. 
-              Our tube is updated daily with fresh content, ensuring you always have access to the newest and most popular {seoQuery} XXX movies. 
-              Use the filters above to sort by latest, top-rated, or most viewed.
-            </p>
-          </div>
-        )}
+
 
         {/* Grid */}
         {loading ? (

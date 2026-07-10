@@ -328,17 +328,6 @@ const VideoPlayer = () => {
               </div>
             )}
 
-            {/* SEO Description Boilerplate */}
-            <div className="seo-description" style={{ marginTop: 'var(--space-4)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', lineHeight: '1.6' }}>
-              <p>
-                Watch the <strong>{video.title}</strong> video for free on NICEVX. 
-                {video.length_min && ` This HD porn video is ${video.length_min} long and `} 
-                {video.views && `has been viewed ${Number(video.views).toLocaleString()} times.`}
-                {keywords.length > 0 && ` Explore more related content in ${keywords.slice(0, 3).join(', ')} categories.`} 
-                We update our tube daily with the best high-quality adult videos.
-              </p>
-            </div>
-
             {/* Preview Thumbnails */}
             {video.thumbs && video.thumbs.length > 1 && (
               <div className="thumb-gallery-wrapper">
