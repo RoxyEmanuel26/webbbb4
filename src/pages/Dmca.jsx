@@ -1,8 +1,16 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import './Pages.css';
 
 const Dmca = () => (
-  <div className="page-wrapper legal-page">
+  <>
+    <Helmet>
+      <title>DMCA Policy — NICEVX</title>
+      <meta name="description" content="DMCA Notice and Takedown Policy for NICEVX." />
+      <link rel="canonical" href="https://nicevx.com/dmca" />
+      <meta name="robots" content="noindex, follow" />
+    </Helmet>
+    <div className="page-wrapper legal-page">
     <div className="legal-card">
       <h1>DMCA Notice & Takedown Policy</h1>
       <span className="legal-date">Last Updated: January 1, 2025</span>
@@ -27,6 +35,7 @@ const Dmca = () => (
       <p>If you believe content was removed in error, you may file a counter-notification in accordance with DMCA guidelines with the hosting provider.</p>
     </div>
   </div>
+  </>
 );
 
 export default Dmca;

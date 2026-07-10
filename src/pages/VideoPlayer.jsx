@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { epornerApi } from '../services/api';
 import VideoCard from '../components/VideoCard';
 import { Eye, Star, Calendar, Clock, ArrowLeft, ChevronLeft, ChevronRight, X } from 'lucide-react';
@@ -172,8 +173,49 @@ const VideoPlayer = () => {
     ? video.keywords.split(',').map(k => k.trim()).filter(Boolean)
     : [];
 
+  // SEO metadata for this video
+  const videoSlug = createSlug(video.title);
+  const canonicalUrl = `https://nicevx.com/video/${video.id}/${videoSlug}`;
+  const seoTitle = `${video.title} — NICEVX`;
+  const seoDesc = `Watch "${video.title}" free HD video on NICEVX. ${video.length_min || ''} ${video.views ? `${Number(video.views).toLocaleString()} views.` : ''} Stream in high quality.`;
+  const thumbSrc = video.default_thumb?.src || (video.thumbs?.[0]?.src) || '';
+
+  // VideoObject structured data
+  const videoSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    name: video.title,
+    description: seoDesc,
+    thumbnailUrl: thumbSrc,
+    uploadDate: video.added || undefined,
+    duration: video.length_min ? `PT${video.length_min.replace(':', 'M')}S` : undefined,
+    contentUrl: canonicalUrl,
+    embedUrl: typeof video.embed === 'string' && !video.embed.includes('<iframe') ? video.embed : undefined,
+    interactionStatistic: video.views ? {
+      '@type': 'InteractionCounter',
+      interactionType: 'https://schema.org/WatchAction',
+      userInteractionCount: video.views,
+    } : undefined,
+    keywords: keywords.join(', '),
+  };
+
   return (
     <div className="page-wrapper player-page">
+      <Helmet>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDesc} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:type" content="video.other" />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDesc} />
+        <meta property="og:url" content={canonicalUrl} />
+        {thumbSrc && <meta property="og:image" content={thumbSrc} />}
+        {thumbSrc && <meta name="twitter:image" content={thumbSrc} />}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDesc} />
+        <script type="application/ld+json">{JSON.stringify(videoSchema)}</script>
+      </Helmet>
       {/* Back link */}
       <button
         className="back-btn"

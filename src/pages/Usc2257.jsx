@@ -1,8 +1,16 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import './Pages.css';
 
 const Usc2257 = () => (
-  <div className="page-wrapper legal-page">
+  <>
+    <Helmet>
+      <title>18 U.S.C. § 2257 — NICEVX</title>
+      <meta name="description" content="18 U.S.C. § 2257 Statement for NICEVX." />
+      <link rel="canonical" href="https://nicevx.com/usc2257" />
+      <meta name="robots" content="noindex, follow" />
+    </Helmet>
+    <div className="page-wrapper legal-page">
     <div className="legal-card">
       <h1>18 U.S.C. § 2257 Statement</h1>
       <span className="legal-date">Records Required Pursuant to 18 U.S.C. § 2257</span>
@@ -27,6 +35,7 @@ const Usc2257 = () => (
       <p>NICEVX qualifies as a secondary producer under 28 C.F.R. § 75.1(c)(2) and is exempt from the record-keeping requirements of 18 U.S.C. § 2257 to the extent applicable.</p>
     </div>
   </div>
+  </>
 );
 
 export default Usc2257;

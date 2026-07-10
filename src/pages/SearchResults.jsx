@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useParams, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { epornerApi } from '../services/api';
 import VideoCard from '../components/VideoCard';
 import Pagination from '../components/Pagination';
@@ -81,8 +82,44 @@ const SearchResults = () => {
     return `"${query}"`;
   };
 
+  // SEO
+  const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  const seoQuery = capitalize(query.replace(/-/g, ' '));
+  const seoTitle = isCat
+    ? `${seoQuery} Videos — NICEVX`
+    : isTag
+    ? `#${seoQuery} Videos — NICEVX`
+    : query === 'all'
+    ? 'All Videos — NICEVX'
+    : `"${seoQuery}" Search Results — NICEVX`;
+
+  const seoDesc = isCat
+    ? `Watch free ${seoQuery} HD porn videos on NICEVX. Thousands of top-quality ${seoQuery} adult videos updated daily.`
+    : isTag
+    ? `Explore free HD videos tagged #${seoQuery} on NICEVX. Updated daily with the best ${seoQuery} content.`
+    : `Search results for "${seoQuery}" on NICEVX. Find thousands of free HD porn videos matching your search.`;
+
+  const seoCanonical = isCat
+    ? `https://nicevx.com/cat/${catName}`
+    : isTag
+    ? `https://nicevx.com/tag/${tagName}`
+    : `https://nicevx.com/search?query=${encodeURIComponent(query)}`;
+
   return (
     <div className="search-page">
+      <Helmet>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDesc} />
+        <link rel="canonical" href={seoCanonical} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDesc} />
+        <meta property="og:url" content={seoCanonical} />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDesc} />
+        {/* Prevent pagination pages beyond page 1 from competing with main category */}
+        {currentPage > 1 && <meta name="robots" content="noindex, follow" />}
+      </Helmet>
       <div className="page-wrapper search-content">
 
         {/* Header */}

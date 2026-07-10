@@ -1,5 +1,21 @@
 const API_BASE = 'https://www.eporner.com/api/v2/video';
 
+// In-memory cache
+const cache = new Map();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+const getCached = (key) => {
+  const cached = cache.get(key);
+  if (cached && (Date.now() - cached.timestamp < CACHE_DURATION)) {
+    return cached.data;
+  }
+  return null;
+};
+
+const setCache = (key, data) => {
+  cache.set(key, { data, timestamp: Date.now() });
+};
+
 // Utility to fix Mojibake (UTF-8 bytes mistakenly interpreted as Latin-1) and HTML entities
 const fixEncoding = (str) => {
   if (!str) return str;
@@ -58,6 +74,10 @@ export const epornerApi = {
         }
       });
 
+      const cacheKey = url.toString();
+      const cachedData = getCached(cacheKey);
+      if (cachedData) return cachedData;
+
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -76,6 +96,8 @@ export const epornerApi = {
           return !forbiddenRegex.test(kw) && !forbiddenRegex.test(title);
         });
       }
+      
+      setCache(cacheKey, data);
       return data;
     } catch (error) {
       console.error('Error fetching videos:', error);
@@ -90,17 +112,24 @@ export const epornerApi = {
       url.searchParams.append('thumbsize', thumbsize);
       url.searchParams.append('format', 'json');
 
+      const cacheKey = url.toString();
+      const cachedData = getCached(cacheKey);
+      if (cachedData) return cachedData;
+
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
       
+      let finalData = data;
       // Fix encoding for single video
       if (data && data.id) {
-        return sanitizeVideo(data);
+        finalData = sanitizeVideo(data);
       }
-      return data;
+      
+      setCache(cacheKey, finalData);
+      return finalData;
     } catch (error) {
       console.error(`Error fetching video details for ID ${id}:`, error);
       throw error;

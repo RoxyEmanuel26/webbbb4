@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Layers, List } from 'lucide-react';
 import { ALL_CATEGORIES } from '../data/allCategories';
 import './Categories.css';
@@ -117,6 +118,15 @@ const Categories = () => {
   });
 
   return (
+    <>
+      <Helmet>
+        <title>All Porn Categories — NICEVX</title>
+        <meta name="description" content="Browse all free HD porn video categories on NICEVX. Explore teen, MILF, Asian, amateur, lesbian, anal, hardcore and 100+ more categories. Updated daily." />
+        <link rel="canonical" href="https://nicevx.com/cats/" />
+        <meta property="og:title" content="All Porn Categories — NICEVX" />
+        <meta property="og:description" content="Browse all free HD porn video categories on NICEVX. Updated daily with the best adult content." />
+        <meta property="og:url" content="https://nicevx.com/cats/" />
+      </Helmet>
     <div className="categories-page">
       <div className="page-wrapper content-area">
         
@@ -138,7 +148,7 @@ const Categories = () => {
               role="button"
               tabIndex={0}
             >
-              <img className="cat-card-bg" src={cat.image} alt={cat.name} loading="lazy" />
+              <img className="cat-card-bg" src={cat.image} alt={cat.name} loading="lazy" width="300" height="170" />
               <div className="cat-card-overlay"></div>
               <div className="cat-card-content">
                 <h3 className="cat-name">{cat.name}</h3>
@@ -190,6 +200,7 @@ const Categories = () => {
 
       </div>
     </div>
+    </>
   );
 };
 

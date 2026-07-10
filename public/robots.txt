@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Allow: /cats/
+Allow: /search
+Allow: /cat/
+Allow: /tag/
+Allow: /video/
+Allow: /terms
+Allow: /privacy
+Allow: /dmca
+Allow: /usc2257
+
+# Disallow API-like or low-value pages
+Disallow: /?order=*
+Disallow: /search?*
+
+Sitemap: https://nicevx.com/sitemap.xml

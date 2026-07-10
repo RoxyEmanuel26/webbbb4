@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { epornerApi } from '../services/api';
 import VideoCard from '../components/VideoCard';
 import Pagination from '../components/Pagination';
@@ -68,63 +69,18 @@ const Home = () => {
         let res;
         
         if (!orderParam) {
-          // If no order is specified (default Homepage), fetch both Top Weekly and Top Monthly
+          // If no order is specified (default Homepage), just fetch top-weekly for better performance
           try {
-            const [resWeekly, resMonthly] = await Promise.all([
-              epornerApi.searchVideos({
-                order: 'top-weekly',
-                page:  currentPage,
-                per_page: 30, // Fetch a good amount to combine
-                gay: 0,
-                lq: 1,
-                thumbsize: 'big',
-              }),
-              epornerApi.searchVideos({
-                order: 'top-monthly',
-                page:  currentPage,
-                per_page: 30,
-                gay: 0,
-                lq: 1,
-                thumbsize: 'big',
-              })
-            ]);
-
-            const weeklyVideos = resWeekly?.videos || [];
-            const monthlyVideos = resMonthly?.videos || [];
-
-            // Interleave weekly and monthly videos
-            const combined = [];
-            const maxLen = Math.max(weeklyVideos.length, monthlyVideos.length);
-            for (let i = 0; i < maxLen; i++) {
-              if (i < weeklyVideos.length) combined.push(weeklyVideos[i]);
-              if (i < monthlyVideos.length) combined.push(monthlyVideos[i]);
-            }
-
-            // Deduplicate videos by ID
-            const seen = new Set();
-            const uniqueVideos = [];
-            for (const v of combined) {
-              if (!seen.has(v.id)) {
-                seen.add(v.id);
-                uniqueVideos.push(v);
-              }
-            }
-
-            res = {
-              videos: uniqueVideos,
-              total_pages: Math.max(resWeekly?.total_pages || 1, resMonthly?.total_pages || 1),
-              total_count: (resWeekly?.total_count || 0) + (resMonthly?.total_count || 0),
-            };
-          } catch (err) {
-            console.warn("Combined fetch failed, falling back to top-weekly", err);
             res = await epornerApi.searchVideos({
               order: 'top-weekly',
               page:  currentPage,
-              per_page: 44,
+              per_page: 44, // Fetch buffer to account for client-side filtering
               gay: 0,
               lq: 1,
               thumbsize: 'big',
             });
+          } catch (err) {
+            console.warn("Fetch failed", err);
           }
         } else {
           // Explicit sort parameter is set, fetch normally
@@ -168,8 +124,32 @@ const Home = () => {
 
   const sortLabel = SORT_OPTIONS.find(o => o.value === orderParam)?.label || '📈 Top This Week';
 
+  // SEO: build dynamic title and description per sort
+  const seoTitle = orderParam
+    ? `${sortLabel.replace(/^[^\w]+/, '').trim()} Videos — NICEVX`
+    : 'NICEVX — Free HD Porn Videos | 4M+ Videos Updated Daily';
+
+  const seoDesc = orderParam
+    ? `Watch the ${sortLabel.replace(/^[^\w]+/, '').trim().toLowerCase()} free HD porn videos on NICEVX. Stream thousands of top-quality adult videos.`
+    : 'Watch free HD porn videos on NICEVX. Over 4 million videos updated daily — amateur, teen, MILF, Asian, hardcore and more in stunning 1080p quality.';
+
+  const seoCanonical = orderParam
+    ? `https://nicevx.com/?order=${orderParam}`
+    : 'https://nicevx.com/';
+
   return (
     <div className="home-page">
+      <Helmet>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDesc} />
+        <link rel="canonical" href={seoCanonical} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDesc} />
+        <meta property="og:url" content={seoCanonical} />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDesc} />
+      </Helmet>
 
       {/* ─ Tags Horizontal Bar ─ */}
       {tagsReady && trendTags.length > 0 && (
@@ -181,16 +161,14 @@ const Home = () => {
 
         {/* Section Header */}
         <div className="section-header">
-          {orderParam ? (
-            <div className="section-title-group">
-              <h1 className="section-title">{sortLabel}</h1>
-              {totalCount > 0 && (
-                <span className="section-count">{totalCount.toLocaleString()} videos</span>
-              )}
-            </div>
-          ) : (
-            <div />
-          )}
+          <div className="section-title-group">
+            <h1 className="section-title">
+              {orderParam ? sortLabel : '📈 Top Videos'}
+            </h1>
+            {totalCount > 0 && (
+              <span className="section-count">{totalCount.toLocaleString()} videos</span>
+            )}
+          </div>
           <SortBar value={orderParam} options={SORT_OPTIONS} onChange={handleSortChange} />
         </div>
 

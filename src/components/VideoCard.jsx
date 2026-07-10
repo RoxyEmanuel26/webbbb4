@@ -75,6 +75,8 @@ const VideoCard = ({ video, compact = false }) => {
           className="vcard__thumb"
           loading="lazy"
           draggable="false"
+          width="640"
+          height="360"
         />
         {/* Duration Badge */}
         <span className="vcard__duration" aria-label={`Duration: ${duration}`}>

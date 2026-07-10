@@ -1,9 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import './Pages.css';
 
 const Terms = () => (
-  <div className="page-wrapper legal-page">
+  <>
+    <Helmet>
+      <title>Terms of Service — NICEVX</title>
+      <meta name="description" content="Read the Terms of Service for NICEVX. By using our platform you agree to these terms." />
+      <link rel="canonical" href="https://nicevx.com/terms" />
+      <meta name="robots" content="noindex, follow" />
+    </Helmet>
+    <div className="page-wrapper legal-page">
     <div className="legal-card">
       <h1>Terms of Service</h1>
       <span className="legal-date">Last Updated: January 1, 2025</span>
@@ -33,6 +41,7 @@ const Terms = () => (
       <p>For any questions regarding these terms, please use the DMCA contact page.</p>
     </div>
   </div>
+  </>
 );
 
 export default Terms;

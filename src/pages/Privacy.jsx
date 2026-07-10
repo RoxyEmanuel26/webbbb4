@@ -1,8 +1,16 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import './Pages.css';
 
 const Privacy = () => (
-  <div className="page-wrapper legal-page">
+  <>
+    <Helmet>
+      <title>Privacy Policy — NICEVX</title>
+      <meta name="description" content="Read the Privacy Policy for NICEVX." />
+      <link rel="canonical" href="https://nicevx.com/privacy" />
+      <meta name="robots" content="noindex, follow" />
+    </Helmet>
+    <div className="page-wrapper legal-page">
     <div className="legal-card">
       <h1>Privacy Policy</h1>
       <span className="legal-date">Last Updated: January 1, 2025</span>
@@ -26,6 +34,7 @@ const Privacy = () => (
       <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.</p>
     </div>
   </div>
+  </>
 );
 
 export default Privacy;
