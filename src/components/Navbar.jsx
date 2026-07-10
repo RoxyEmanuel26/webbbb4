@@ -31,8 +31,14 @@ const Navbar = () => {
       <div className="page-wrapper navbar-inner">
         {/* Brand */}
         <Link to="/" className="navbar-brand" aria-label="Home">
-          <Heart size={18} fill="var(--color-accent)" color="var(--color-accent)" />
-          <span>PORNAPI</span>
+          <div className="brand-logo-mark">
+            <div className="brand-icon-glow"></div>
+            <Heart size={20} fill="var(--color-accent)" color="var(--color-accent)" />
+          </div>
+          <div className="brand-text">
+            <span className="brand-text-nice">NICE</span>
+            <span className="brand-text-vx">VX</span>
+          </div>
         </Link>
 
         {/* Nav Links */}

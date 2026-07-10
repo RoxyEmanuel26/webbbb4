@@ -9,7 +9,7 @@ const Terms = () => (
       <span className="legal-date">Last Updated: January 1, 2025</span>
 
       <h2>1. Acceptance of Terms</h2>
-      <p>By accessing and using PORNAPI, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
+      <p>By accessing and using NICEVX, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
 
       <h2>2. Age Requirement</h2>
       <p>You must be at least 18 years of age, or the age of majority in your jurisdiction (whichever is higher), to access and use this website. By using this site, you confirm and represent that you are of legal age.</p>

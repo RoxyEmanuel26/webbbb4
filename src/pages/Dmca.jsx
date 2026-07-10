@@ -8,7 +8,7 @@ const Dmca = () => (
       <span className="legal-date">Last Updated: January 1, 2025</span>
 
       <h2>About Our Platform</h2>
-      <p>PORNAPI is an aggregator platform powered by the Eporner API. We do not host, upload, or store any video content on our servers. All videos are indexed and provided by Eporner.com.</p>
+      <p>NICEVX is an aggregator platform powered by the Eporner API. We do not host, upload, or store any video content on our servers. All videos are indexed and provided by Eporner.com.</p>
 
       <h2>DMCA Compliance</h2>
       <p>We respect the intellectual property rights of others and expect users of our site to do the same. It is our policy to respond to notices of alleged copyright infringement that comply with the Digital Millennium Copyright Act (DMCA).</p>

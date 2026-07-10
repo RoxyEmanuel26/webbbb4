@@ -36,8 +36,14 @@ const Footer = () => (
       <div className="footer-body">
         <div className="footer-brand-col">
           <Link to="/" className="footer-brand">
-            <Heart size={18} fill="var(--color-accent)" color="var(--color-accent)" />
-            <span>PORNAPI</span>
+            <div className="footer-logo-mark">
+              <div className="footer-icon-glow"></div>
+              <Heart size={24} fill="var(--color-accent)" color="var(--color-accent)" />
+            </div>
+            <div className="footer-brand-text">
+              <span className="footer-text-nice">NICE</span>
+              <span className="footer-text-vx">VX</span>
+            </div>
           </Link>
           <p className="footer-brand-desc">
             Your premium destination for free HD adult entertainment.
@@ -72,7 +78,7 @@ const Footer = () => (
       {/* Bottom: Copyright */}
       <div className="footer-bottom">
         <p className="footer-copyright">
-          © {new Date().getFullYear()} PORNAPI. All rights reserved.
+          © {new Date().getFullYear()} NICEVX. All rights reserved.<br/>
           All models appearing on this website are 18 years of age or older.
         </p>
         <p className="footer-disclaimer">
