@@ -1,6 +1,0 @@
-{
-  "/page": "app/page.js",
-  "/cats/page": "app/cats/page.js",
-  "/cat/[catName]/page": "app/cat/[catName]/page.js",
-  "/video/[id]/[[...slug]]/page": "app/video/[id]/[[...slug]]/page.js"
-}
