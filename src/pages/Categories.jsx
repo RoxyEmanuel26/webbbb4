@@ -126,6 +126,36 @@ const Categories = () => {
         <meta property="og:title" content="All Porn Categories — NICEVX" />
         <meta property="og:description" content="Browse all free HD porn video categories on NICEVX. Updated daily with the best adult content." />
         <meta property="og:url" content="https://nicevx.com/cats/" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "CollectionPage",
+                "name": "All Porn Categories — NICEVX",
+                "description": "Browse all free HD porn video categories on NICEVX.",
+                "url": "https://nicevx.com/cats/"
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://nicevx.com/"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Categories",
+                    "item": "https://nicevx.com/cats/"
+                  }
+                ]
+              }
+            ]
+          })}
+        </script>
       </Helmet>
     <div className="categories-page">
       <div className="page-wrapper content-area">

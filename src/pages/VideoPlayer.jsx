@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { epornerApi } from '../services/api';
 import VideoCard from '../components/VideoCard';
 import { Eye, Star, Calendar, Clock, ArrowLeft, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ALL_CATEGORIES } from '../data/allCategories';
 import './Pages.css';
 
 const formatViews = (n) => {
@@ -199,6 +200,11 @@ const VideoPlayer = () => {
     keywords: keywords.join(', '),
   };
 
+  // Find related categories based on keywords for internal linking
+  const relatedCategories = ALL_CATEGORIES.filter(cat => 
+    keywords.some(kw => cat.name.toLowerCase() === kw.toLowerCase() || kw.toLowerCase().includes(cat.name.toLowerCase()))
+  ).slice(0, 5); // Limit to 5 categories
+
   return (
     <div className="page-wrapper player-page">
       <Helmet>
@@ -214,7 +220,44 @@ const VideoPlayer = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={seoTitle} />
         <meta name="twitter:description" content={seoDesc} />
-        <script type="application/ld+json">{JSON.stringify(videoSchema)}</script>
+        <script type="application/ld+json">
+          {JSON.stringify([
+            videoSchema,
+            {
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://nicevx.com/"
+                },
+                ...(keywords.length > 0 ? [
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": keywords[0].charAt(0).toUpperCase() + keywords[0].slice(1),
+                    "item": `https://nicevx.com/tag/${keywords[0].toLowerCase().replace(/\s+/g, '-')}`
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": video.title,
+                    "item": canonicalUrl
+                  }
+                ] : [
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": video.title,
+                    "item": canonicalUrl
+                  }
+                ])
+              ]
+            }
+          ])}
+        </script>
       </Helmet>
       {/* Back link */}
       <button
@@ -325,6 +368,25 @@ const VideoPlayer = () => {
             <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>
               No related videos found.
             </p>
+          )}
+
+          {/* Related Categories / Internal Linking */}
+          {relatedCategories.length > 0 && (
+            <>
+              <h2 className="sidebar-heading" style={{ marginTop: '2rem' }}>Related Categories</h2>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {relatedCategories.map(cat => (
+                  <Link
+                    key={cat.name}
+                    to={`/cat/${cat.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    className="keyword-tag"
+                    style={{ background: 'var(--color-bg-alt)', border: '1px solid var(--color-border)' }}
+                  >
+                    {cat.name}
+                  </Link>
+                ))}
+              </div>
+            </>
           )}
         </aside>
       </div>

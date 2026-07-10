@@ -119,6 +119,46 @@ const SearchResults = () => {
         <meta name="twitter:description" content={seoDesc} />
         {/* Prevent pagination pages beyond page 1 from competing with main category */}
         {currentPage > 1 && <meta name="robots" content="noindex, follow" />}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "CollectionPage",
+                "name": seoTitle,
+                "description": seoDesc,
+                "url": seoCanonical
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://nicevx.com/"
+                  },
+                  ...(isCat ? [{
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Categories",
+                    "item": "https://nicevx.com/cats/"
+                  }, {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": seoQuery,
+                    "item": seoCanonical
+                  }] : [{
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": seoQuery,
+                    "item": seoCanonical
+                  }])
+                ]
+              }
+            ]
+          })}
+        </script>
       </Helmet>
       <div className="page-wrapper search-content">
 
