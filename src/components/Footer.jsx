@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Heart, Flame, ExternalLink } from 'lucide-react';
 import './Footer.css';
 
@@ -21,7 +21,7 @@ const Footer = () => (
           {HOT_SEARCHES.map(tag => (
             <Link
               key={tag}
-              to={`/search?query=${encodeURIComponent(tag)}`}
+              href={`/search?query=${encodeURIComponent(tag)}`}
               className="footer-tag"
             >
               {tag}
@@ -35,7 +35,7 @@ const Footer = () => (
       {/* Middle: Brand + SEO Text */}
       <div className="footer-body">
         <div className="footer-brand-col">
-          <Link to="/" className="footer-brand">
+          <Link href="/" className="footer-brand">
             <div className="footer-logo-mark">
               <div className="footer-icon-glow"></div>
               <Heart size={24} fill="var(--color-accent)" color="var(--color-accent)" />
@@ -54,21 +54,21 @@ const Footer = () => (
         <div className="footer-links-col">
           <h3 className="footer-col-heading">Browse</h3>
           <nav>
-            <Link to="/?order=latest"       className="footer-nav-link">Latest Videos</Link>
-            <Link to="/?order=top-rated"    className="footer-nav-link">Top Rated</Link>
-            <Link to="/?order=most-popular" className="footer-nav-link">Most Popular</Link>
-            <Link to="/?order=top-weekly"   className="footer-nav-link">Top This Week</Link>
-            <Link to="/?order=top-monthly"  className="footer-nav-link">Top This Month</Link>
+            <Link href="/?order=latest"       className="footer-nav-link">Latest Videos</Link>
+            <Link href="/?order=top-rated"    className="footer-nav-link">Top Rated</Link>
+            <Link href="/?order=most-popular" className="footer-nav-link">Most Popular</Link>
+            <Link href="/?order=top-weekly"   className="footer-nav-link">Top This Week</Link>
+            <Link href="/?order=top-monthly"  className="footer-nav-link">Top This Month</Link>
           </nav>
         </div>
 
         <div className="footer-links-col">
           <h3 className="footer-col-heading">Legal</h3>
           <nav>
-            <Link to="/terms"    className="footer-nav-link">Terms of Service</Link>
-            <Link to="/privacy"  className="footer-nav-link">Privacy Policy</Link>
-            <Link to="/dmca"     className="footer-nav-link">DMCA</Link>
-            <Link to="/usc2257"  className="footer-nav-link">18 U.S.C. 2257</Link>
+            <Link href="/terms"    className="footer-nav-link">Terms of Service</Link>
+            <Link href="/privacy"  className="footer-nav-link">Privacy Policy</Link>
+            <Link href="/dmca"     className="footer-nav-link">DMCA</Link>
+            <Link href="/usc2257"  className="footer-nav-link">18 U.S.C. 2257</Link>
           </nav>
         </div>
       </div>

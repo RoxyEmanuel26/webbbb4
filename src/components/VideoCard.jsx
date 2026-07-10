@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Eye, Star, Clock } from 'lucide-react';
 import './VideoCard.css';
 
@@ -23,6 +25,7 @@ const createSlug = (title) => {
 const VideoCard = ({ video, compact = false, priority = false }) => {
   const [thumbIdx, setThumbIdx] = useState(0);
   const hoverInterval = useRef(null);
+  const isPrefetched = useRef(false);
   
   const thumbs = video.thumbs || [];
   const src    = thumbs[thumbIdx]?.src || video.default_thumb?.src || '';
@@ -34,18 +37,32 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
     };
   }, []);
 
-  /* Hover: cycle through preview thumbs */
-  const handleMouseEnter = () => {
+  /* Prefetch all images on interaction to prevent flicker */
+  const prefetchThumbs = () => {
+    if (!isPrefetched.current && thumbs.length > 1) {
+      thumbs.forEach((t) => {
+        const img = new Image();
+        img.src = t.src;
+      });
+      isPrefetched.current = true;
+    }
+  };
+
+  /* Hover & Touch: cycle through preview thumbs */
+  const handleStartInteraction = () => {
     if (thumbs.length > 1) {
+      prefetchThumbs();
       let currentIdx = 0;
-      hoverInterval.current = setInterval(() => {
-        currentIdx = (currentIdx + 1) % thumbs.length;
-        setThumbIdx(currentIdx);
-      }, 500); // ganti gambar setiap 500ms
+      if (!hoverInterval.current) {
+        hoverInterval.current = setInterval(() => {
+          currentIdx = (currentIdx + 1) % thumbs.length;
+          setThumbIdx(currentIdx);
+        }, 500); // ganti gambar setiap 500ms
+      }
     }
   };
   
-  const handleMouseLeave = () => {
+  const handleEndInteraction = () => {
     if (hoverInterval.current) {
       clearInterval(hoverInterval.current);
       hoverInterval.current = null;
@@ -64,17 +81,25 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
   return (
     <div
       className={`vcard ${compact ? 'vcard--compact' : ''}`}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={handleStartInteraction}
+      onMouseLeave={handleEndInteraction}
+      onTouchStart={handleStartInteraction}
+      onTouchEnd={handleEndInteraction}
+      onTouchCancel={handleEndInteraction}
     >
       {/* Thumbnail */}
-      <Link to={`/video/${video.id}/${slug}`} className="vcard__thumb-wrap" aria-label={video.title}>
+      <Link 
+        href={`/video/${video.id}/${slug}`} 
+        className="vcard__thumb-wrap" 
+        aria-label={video.title}
+        onContextMenu={(e) => e.preventDefault()} // Prevent long-press from opening menu on mobile
+      >
         <img
           src={src}
           alt={video.title}
           className="vcard__thumb"
           loading={priority ? "eager" : "lazy"}
-          fetchpriority={priority ? "high" : "auto"}
+          fetchPriority={priority ? "high" : "auto"}
           draggable="false"
           width="640"
           height="360"
@@ -91,7 +116,7 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
       {/* Info */}
       <div className="vcard__info">
         <h3 className="vcard__title">
-          <Link to={`/video/${video.id}/${slug}`}>{video.title}</Link>
+          <Link href={`/video/${video.id}/${slug}`}>{video.title}</Link>
         </h3>
         <div className="vcard__meta">
           <span className="vcard__meta-item vcard__views">
@@ -106,7 +131,7 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
           )}
           {primaryKeyword && (
             <Link 
-              to={`/tag/${primaryKeyword.toLowerCase().replace(/\s+/g, '-')}`}
+              href={`/tag/${primaryKeyword.toLowerCase().replace(/\s+/g, '-')}`}
               className="vcard__meta-item" 
               style={{ color: 'var(--color-accent)', textDecoration: 'none', marginLeft: 'auto' }}
             >

@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useRef, useState, useEffect } from 'react';
 import { Hash, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import './TagsBar.css';
 
 const TagsBar = ({ tags, onTagClick }) => {
@@ -48,7 +50,7 @@ const TagsBar = ({ tags, onTagClick }) => {
             {tags.map((tag) => (
               <Link
                 key={tag}
-                to={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                href={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
                 className="tag-pill"
                 aria-label={`Browse ${tag}`}
                 style={{ textDecoration: 'none', color: 'inherit' }}

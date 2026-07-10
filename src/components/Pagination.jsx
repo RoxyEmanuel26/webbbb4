@@ -1,11 +1,14 @@
+"use client";
+
 import React from 'react';
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import './Pagination.css';
 
 const Pagination = ({ currentPage, totalPages }) => {
-  const location = useLocation();
-  const [searchParams] = useSearchParams();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   if (!totalPages || totalPages <= 1) return null;
 
@@ -31,9 +34,9 @@ const Pagination = ({ currentPage, totalPages }) => {
   const pages = buildPages();
 
   const getPageLink = (page) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams.toString());
     params.set('page', page);
-    return `${location.pathname}?${params.toString()}`;
+    return `${pathname}?${params.toString()}`;
   };
 
   const renderLink = (page, content, isDisabled, extraClass = '', ariaLabel, title) => {
@@ -52,7 +55,7 @@ const Pagination = ({ currentPage, totalPages }) => {
     }
     return (
       <Link
-        to={getPageLink(page)}
+        href={getPageLink(page)}
         className={`pager__btn ${extraClass}`}
         aria-label={ariaLabel}
         title={title}
