@@ -50,10 +50,16 @@ export const epornerServerApi = {
     });
 
     const response = await fetch(url.toString(), {
-      cache: 'no-store'
+      cache: 'no-store',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
     });
     
-    if (!response.ok) throw new Error('Failed to fetch videos');
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Failed to fetch videos: ${response.status} ${response.statusText} - ${errText}`);
+    }
     const data = await response.json();
     
     if (data && data.videos) {
@@ -75,10 +81,16 @@ export const epornerServerApi = {
     url.searchParams.append('format', 'json');
 
     const response = await fetch(url.toString(), {
-      cache: 'no-store'
+      cache: 'no-store',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
     });
     
-    if (!response.ok) throw new Error('Failed to fetch video details');
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Failed to fetch video details: ${response.status} ${response.statusText} - ${errText}`);
+    }
     const data = await response.json();
     return data && data.id ? sanitizeVideo(data) : data;
   }

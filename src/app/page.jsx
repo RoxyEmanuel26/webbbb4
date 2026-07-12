@@ -88,6 +88,7 @@ export default async function Home({ searchParams }) {
 
   // Fetch videos
   let videos = [];
+  let errorMsg = null;
   let totalPages = 1;
   let totalCount = 0;
   
@@ -102,10 +103,13 @@ export default async function Home({ searchParams }) {
     };
     
     const res = await epornerServerApi.searchVideos(fetchParams);
-    videos = res?.videos || [];
-    totalPages = res?.total_pages || 1;
-    totalCount = res?.total_count || 0;
-  } catch (_) {}
+    videos = res.videos || [];
+    totalPages = res.total_pages || 0;
+    totalCount = res.total_count || 0;
+  } catch (error) {
+    console.error('Home Page Error:', error);
+    errorMsg = error.message;
+  }
 
   return (
     <div className="home-page">
@@ -138,7 +142,11 @@ export default async function Home({ searchParams }) {
           <SortBar value={orderParam} options={SORT_OPTIONS} />
         </div>
 
-        {videos.length > 0 ? (
+        {errorMsg ? (
+          <div className="empty-block">
+            <p>Error fetching videos: {errorMsg}</p>
+          </div>
+        ) : videos.length > 0 ? (
           <>
             <div className="video-grid">
               {videos.map((v, idx) => (
