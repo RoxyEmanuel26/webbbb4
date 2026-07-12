@@ -5,6 +5,7 @@ import Pagination from '@/components/Pagination';
 import TagsBar from '@/components/TagsBar';
 import SortBar from '@/components/SortBar';
 import AdBanner from '@/components/AdBanner';
+import AdNative from '@/components/AdNative';
 import '../pages/Pages.css';
 
 const SORT_OPTIONS = [
@@ -151,6 +152,8 @@ export default async function Home({ searchParams }) {
                 </React.Fragment>
               ))}
             </div>
+            {/* ── Native Banner (4:1 layout) di atas pagination ── */}
+            <AdNative widgetId="fb2c6ae06d2ab4be82435961f6263160" />
             <Pagination currentPage={page} totalPages={totalPages} />
           </>
         ) : (

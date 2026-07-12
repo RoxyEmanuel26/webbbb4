@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import VideoCard from '@/components/VideoCard';
 import AdBanner from '@/components/AdBanner';
+import AdNative from '@/components/AdNative';
 import { Eye, Star, Calendar, Clock, ArrowLeft, ChevronLeft, ChevronRight, X, AlertTriangle } from 'lucide-react';
 import '../../../../pages/Pages.css';
 
@@ -259,6 +260,14 @@ const VideoPlayerClient = ({ video, related, relatedCategories, keywords }) => {
             </>
           )}
         </aside>
+      </div>
+
+      {/* ── Native Banner (4:1 layout) di bawah player layout (desktop & mobile) ── */}
+      <div style={{ marginTop: '2rem' }}>
+        <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--color-text-primary)', fontWeight: '600' }}>
+          Recommended Content
+        </h3>
+        <AdNative widgetId="fb2c6ae06d2ab4be82435961f6263160" />
       </div>
 
       {selectedThumbIndex !== null && (

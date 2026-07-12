@@ -4,6 +4,7 @@ import { ALL_CATEGORIES } from '@/data/allCategories';
 import VideoCard from '@/components/VideoCard';
 import Pagination from '@/components/Pagination';
 import SortBar from '@/components/SortBar';
+import AdNative from '@/components/AdNative';
 import '../pages/Pages.css';
 
 const SORT_OPTIONS = [
@@ -163,6 +164,8 @@ export default async function SearchResultsShared({ query, isCat, isTag, page, c
                 <VideoCard key={`${v.id}-${idx}`} video={v} priority={idx < 4} />
               ))}
             </div>
+            {/* ── Native Banner (4:1 layout) di atas pagination ── */}
+            <AdNative widgetId="fb2c6ae06d2ab4be82435961f6263160" />
             <Pagination currentPage={page} totalPages={totalPages} />
           </>
         ) : (
