@@ -119,7 +119,7 @@ const VideoPlayerClient = ({ id }) => {
       setIframeStatus(prev => prev === 'loading' ? 'error' : prev);
     }, 12000); 
     return () => clearTimeout(timer);
-  }, [video.id]);
+  }, [video?.id]);
 
   useEffect(() => {
     if (selectedThumbIndex !== null) {
