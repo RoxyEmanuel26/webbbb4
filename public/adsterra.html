@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Advertisement</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const key = params.get('key');
+      const w = params.get('w');
+      const h = params.get('h');
+      
+      if (key && w && h) {
+        window.atOptions = {
+          'key': key,
+          'format': 'iframe',
+          'height': parseInt(h, 10),
+          'width': parseInt(w, 10),
+          'params': {}
+        };
+        
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://glamournakedemployee.com/' + key + '/invoke.js';
+        script.async = true;
+        document.body.appendChild(script);
+      }
+    })();
+  </script>
+</body>
+</html>
