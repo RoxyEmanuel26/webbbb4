@@ -317,24 +317,6 @@ const VideoPlayerClient = ({ id }) => {
               No related videos found.
             </p>
           )}
-
-          {relatedCategories.length > 0 && (
-            <>
-              <h2 className="sidebar-heading" style={{ marginTop: '2rem' }}>Related Categories</h2>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {relatedCategories.map(cat => (
-                  <Link
-                    key={cat.name}
-                    href={`/cat/${cat.name.toLowerCase().replace(/\s+/g, '-')}`}
-                    className="keyword-tag"
-                    style={{ background: 'var(--color-bg-alt)', border: '1px solid var(--color-border)' }}
-                  >
-                    {cat.name}
-                  </Link>
-                ))}
-              </div>
-            </>
-          )}
         </aside>
       </div>
 
