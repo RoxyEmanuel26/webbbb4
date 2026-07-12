@@ -1,6 +1,7 @@
 export const runtime = 'edge';
 import { Suspense } from 'react';
-import SearchResultsShared, { getSearchMetadata } from '@/components/SearchResultsShared';
+import SearchResultsShared from '@/components/SearchResultsShared';
+import { getSearchMetadata } from '@/utils/seo';
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;

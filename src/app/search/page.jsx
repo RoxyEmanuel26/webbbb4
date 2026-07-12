@@ -1,6 +1,7 @@
 export const runtime = 'edge';
 import React from 'react';
-import SearchResultsShared, { getSearchMetadata } from '@/components/SearchResultsShared';
+import SearchResultsShared from '@/components/SearchResultsShared';
+import { getSearchMetadata } from '@/utils/seo';
 
 export async function generateMetadata({ searchParams }) {
   const resolvedSearchParams = await searchParams;
