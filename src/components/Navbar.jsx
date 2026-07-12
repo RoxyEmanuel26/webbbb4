@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { Search, Flame, TrendingUp, Star, Clock, Heart } from 'lucide-react';
+import { Search, Flame, TrendingUp, Star, Clock } from 'lucide-react';
 import './Navbar.css';
 
 const NAV_LINKS = [
@@ -93,7 +93,7 @@ const Navbar = () => {
         <Link href="/" className="navbar-brand" aria-label="Home">
           <div className="brand-logo-mark">
             <div className="brand-icon-glow"></div>
-            <Heart size={20} fill="var(--color-accent)" color="var(--color-accent)" />
+            <img src="/logo.webp" alt="Logo" width="22" height="22" style={{ position: 'relative', zIndex: 1, objectFit: 'contain' }} />
           </div>
           <div className="brand-text">
             <span className="brand-text-nice">NICE</span>
