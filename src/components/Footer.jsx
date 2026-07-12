@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Heart, Flame, ExternalLink } from 'lucide-react';
+import { Flame, ExternalLink } from 'lucide-react';
 import './Footer.css';
 
 const HOT_SEARCHES = [
@@ -36,10 +36,10 @@ const Footer = () => (
       <div className="footer-body">
         <div className="footer-brand-col">
           <Link href="/" className="footer-brand">
-            <div className="footer-logo-mark">
-              <div className="footer-icon-glow"></div>
-              <Heart size={24} fill="var(--color-accent)" color="var(--color-accent)" />
-            </div>
+          <div className="footer-logo-mark">
+            <div className="footer-icon-glow"></div>
+            <img src="/logo.webp" alt="Logo" width="36" height="36" style={{ position: 'relative', zIndex: 1, objectFit: 'contain' }} />
+          </div>
             <div className="footer-brand-text">
               <span className="footer-text-nice">NICE</span>
               <span className="footer-text-vx">VX</span>
