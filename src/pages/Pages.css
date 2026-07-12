@@ -436,6 +436,13 @@
   border: 1px solid var(--color-border-card);
   box-shadow: var(--shadow-card);
   max-width: 860px;
+  margin: 0 auto; /* Center the card horizontally */
+}
+
+@media (max-width: 768px) {
+  .legal-card {
+    padding: var(--space-5); /* Reduce padding on mobile */
+  }
 }
 
 .legal-card h1 {
