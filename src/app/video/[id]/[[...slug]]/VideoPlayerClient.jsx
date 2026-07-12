@@ -363,7 +363,7 @@ const VideoPlayerClient = ({ id }) => {
               <img src={video.thumbs?.[selectedThumbIndex]?.src || ''} alt="Enlarged preview" />
             </div>
 
-            {selectedThumbIndex < video.thumbs.length - 1 && (
+            {selectedThumbIndex < (video.thumbs?.length || 0) - 1 && (
               <button 
                 className="thumb-lightbox-nav right"
                 onClick={(e) => { e.stopPropagation(); setSelectedThumbIndex(selectedThumbIndex + 1); }}
@@ -387,7 +387,7 @@ const VideoPlayerClient = ({ id }) => {
             )}
 
             <div className="thumb-lightbox-strip" ref={lightboxStripRef} onScroll={checkStripScroll}>
-              {video.thumbs.map((t, i) => (
+              {(video.thumbs || []).map((t, i) => (
                 <img 
                   key={i} 
                   src={t.src} 
