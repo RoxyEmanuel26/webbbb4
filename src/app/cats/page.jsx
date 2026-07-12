@@ -6,12 +6,12 @@ export const metadata = {
   title: 'All Porn Categories — NICEVX',
   description: 'Browse all free HD porn video categories on NICEVX. Explore teen, MILF, Asian, amateur, lesbian, anal, hardcore and 100+ more categories. Updated daily.',
   alternates: {
-    canonical: 'https://nicevx.com/cats/'
+    canonical: 'https://nicevx.com/cats'
   },
   openGraph: {
     title: 'All Porn Categories — NICEVX',
     description: 'Browse all free HD porn video categories on NICEVX. Updated daily with the best adult content.',
-    url: 'https://nicevx.com/cats/',
+    url: 'https://nicevx.com/cats',
     type: 'website',
   },
 };
@@ -31,7 +31,7 @@ export default function CategoriesPage() {
         "@type": "ListItem",
         "position": 2,
         "name": "Categories",
-        "item": "https://nicevx.com/cats/"
+        "item": "https://nicevx.com/cats"
       }
     ]
   };
@@ -46,7 +46,7 @@ export default function CategoriesPage() {
             "@type": "CollectionPage",
             "name": "All Porn Categories — NICEVX",
             "description": "Browse all free HD porn video categories on NICEVX.",
-            "url": "https://nicevx.com/cats/"
+            "url": "https://nicevx.com/cats"
           },
           breadcrumbsSchema
         ]) }}

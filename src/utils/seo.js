@@ -20,15 +20,15 @@ export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName 
     : `Search results for "${seoQuery}" on NICEVX. Find thousands of free HD porn videos matching your search in ${currentYear}.`;
 
   let seoCanonical = isCat
-    ? `https://nicevx.com/cat/${catName}`
+    ? `https://nicevx.com/cat/${catName.toLowerCase()}`
     : isTag
-    ? `https://nicevx.com/tag/${tagName}`
-    : `https://nicevx.com/search?query=${encodeURIComponent(query)}`;
+    ? `https://nicevx.com/tag/${tagName.toLowerCase()}`
+    : `https://nicevx.com/search?query=${encodeURIComponent(query.toLowerCase())}`;
 
   if (isTag && tagName) {
-    const isAlsoCat = ALL_CATEGORIES.some(c => c.name?.toLowerCase().replace(/\s+/g, '-') === tagName);
+    const isAlsoCat = ALL_CATEGORIES.some(c => c.name?.toLowerCase().replace(/\s+/g, '-') === tagName.toLowerCase());
     if (isAlsoCat) {
-      seoCanonical = `https://nicevx.com/cat/${tagName}`;
+      seoCanonical = `https://nicevx.com/cat/${tagName.toLowerCase()}`;
     }
   }
 
