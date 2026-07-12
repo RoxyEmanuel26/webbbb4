@@ -162,3 +162,87 @@ img { max-width: 100%; display: block; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #c0c5cc; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #9ea5af; }
+
+/* =============================================
+   Adsterra Ad Layout Helpers
+   ============================================= */
+
+/* Row wrapper untuk banner horizontal */
+.ad-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0.75rem 0;
+  overflow: hidden;
+}
+
+.ad-row--top {
+  margin-bottom: 1rem;
+}
+
+/* Tampilkan hanya di desktop (>= 768px) */
+.ad-desktop-only {
+  display: none;
+}
+@media (min-width: 768px) {
+  .ad-desktop-only {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+/* Tampilkan hanya di mobile (< 768px) */
+.ad-mobile-only {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .ad-mobile-only {
+    display: none;
+  }
+}
+
+/* Sticky bottom bar khusus mobile */
+.ad-sticky-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  background: rgba(26, 26, 46, 0.92);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 0;
+  backdrop-filter: blur(4px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Banner 300x250 yang disisipkan di dalam grid video */
+.ad-ingrid-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-column: 1 / -1; /* Span seluruh lebar grid */
+  padding: 0.5rem 0;
+}
+
+/* Banner di bawah player: tampil di mobile, sembunyikan di desktop (sidebar sudah punya) */
+.ad-below-player {
+  display: flex;
+}
+@media (min-width: 900px) {
+  .ad-below-player {
+    display: none;
+  }
+}
+
+/* Padding bawah body agar konten tidak tertutup sticky ad mobile */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: 60px;
+  }
+}

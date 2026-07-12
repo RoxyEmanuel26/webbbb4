@@ -4,6 +4,7 @@ import VideoCard from '@/components/VideoCard';
 import Pagination from '@/components/Pagination';
 import TagsBar from '@/components/TagsBar';
 import SortBar from '@/components/SortBar';
+import AdBanner from '@/components/AdBanner';
 import '../pages/Pages.css';
 
 const SORT_OPTIONS = [
@@ -111,6 +112,18 @@ export default async function Home({ searchParams }) {
       )}
 
       <div className="page-wrapper content-area">
+        {/* ── Banner 728x90 Desktop / 320x50 Mobile ── */}
+        <div className="ad-row ad-row--top">
+          {/* Desktop: 728x90 */}
+          <div className="ad-desktop-only">
+            <AdBanner adKey="6cb50045b61eddee00e504ba14847190" width={728} height={90} />
+          </div>
+          {/* Mobile: 320x50 */}
+          <div className="ad-mobile-only">
+            <AdBanner adKey="05f054fa88f5e6d6b183797a8f9213f9" width={320} height={50} />
+          </div>
+        </div>
+
         <div className="section-header">
           <div className="section-title-group">
             <h1 className="section-title">
@@ -127,7 +140,15 @@ export default async function Home({ searchParams }) {
           <>
             <div className="video-grid">
               {videos.map((v, idx) => (
-                <VideoCard key={`${v.id}-${idx}`} video={v} priority={idx < 4} />
+                <React.Fragment key={`${v.id}-${idx}`}>
+                  <VideoCard video={v} priority={idx < 4} />
+                  {/* ── Banner 300x250 setelah video ke-12 (baris ke-3) ── */}
+                  {idx === 11 && (
+                    <div className="ad-ingrid-wrap">
+                      <AdBanner adKey="a2d1d9869741533064aff0b41e9dbb6f" width={300} height={250} className="ad-ingrid" />
+                    </div>
+                  )}
+                </React.Fragment>
               ))}
             </div>
             <Pagination currentPage={page} totalPages={totalPages} />
@@ -137,6 +158,11 @@ export default async function Home({ searchParams }) {
             <p>No videos found.</p>
           </div>
         )}
+      </div>
+
+      {/* ── Sticky Bottom Banner Mobile 320x50 ── */}
+      <div className="ad-sticky-bottom ad-mobile-only">
+        <AdBanner adKey="05f054fa88f5e6d6b183797a8f9213f9" width={320} height={50} />
       </div>
     </div>
   );

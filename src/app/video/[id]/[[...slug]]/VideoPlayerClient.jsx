@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import VideoCard from '@/components/VideoCard';
+import AdBanner from '@/components/AdBanner';
 import { Eye, Star, Calendar, Clock, ArrowLeft, ChevronLeft, ChevronRight, X, AlertTriangle } from 'lucide-react';
 import '../../../../pages/Pages.css';
 
@@ -216,9 +217,18 @@ const VideoPlayerClient = ({ video, related, relatedCategories, keywords }) => {
               </div>
             )}
           </div>
+
+          {/* ── Banner 300x250 bawah player (mobile tampil di sini, desktop tersembunyi karena sidebar ada) ── */}
+          <div className="ad-row ad-below-player">
+            <AdBanner adKey="a2d1d9869741533064aff0b41e9dbb6f" width={300} height={250} />
+          </div>
         </div>
 
         <aside className="player-sidebar">
+          {/* ── Banner 300x250 di atas Related Videos (sidebar) ── */}
+          <div style={{ marginBottom: '1.5rem' }}>
+            <AdBanner adKey="a2d1d9869741533064aff0b41e9dbb6f" width={300} height={250} />
+          </div>
           <h2 className="sidebar-heading">Related Videos</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
             {related.map(v => (

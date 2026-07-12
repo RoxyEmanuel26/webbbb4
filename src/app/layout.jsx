@@ -3,6 +3,8 @@ import '../App.css';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import AgeGateModal from '../components/AgeGateModal';
+import AdPopunder from '../components/AdPopunder';
+import AdSocialBar from '../components/AdSocialBar';
 
 export const runtime = 'edge';
 
@@ -25,6 +27,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
+        <AdPopunder />
+        <AdSocialBar />
         <AgeGateModal />
         <Navbar />
         <main>
