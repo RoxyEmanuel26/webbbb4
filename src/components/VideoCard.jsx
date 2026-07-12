@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { Eye, Star, Clock } from 'lucide-react';
 import './VideoCard.css';
 
-/* ─ Helpers ─ */
+const FORBIDDEN_REGEX = /\b(gay|shemale|tranny|ladyboy|ts|transsexual|transgender|boy|men|cock suck|cock sucking)\b/i;
+
 const formatViews = (n) => {
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
   if (n >= 1_000)     return (n / 1_000).toFixed(0) + 'K';
@@ -76,7 +77,15 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
   const ratingPct = ratingToPercent(rating);
   const slug     = createSlug(video.title);
 
-  const primaryKeyword = video.keywords ? String(video.keywords).split(',')[0].trim() : '';
+  const getPrimaryKeyword = () => {
+    if (!video.keywords) return '';
+    const kws = String(video.keywords)
+      .split(',')
+      .map(k => k.trim())
+      .filter(k => k.length > 2 && k.length < 25 && k.split(/\s+/).length <= 2 && !FORBIDDEN_REGEX.test(k));
+    return kws[0] || '';
+  };
+  const primaryKeyword = getPrimaryKeyword();
 
   return (
     <div

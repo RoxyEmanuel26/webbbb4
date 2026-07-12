@@ -100,7 +100,7 @@ export default function HomeClient() {
             tagData.videos.forEach(v =>
               String(v.keywords || '').split(',').forEach(k => {
                 const kw = k.trim().toLowerCase();
-                if (kw.length > 2 && !FORBIDDEN_REGEX.test(kw)) {
+                if (kw.length > 2 && kw.length < 25 && kw.split(/\s+/).length <= 2 && !FORBIDDEN_REGEX.test(kw)) {
                   freq[kw] = (freq[kw] || 0) + 1;
                 }
               })
