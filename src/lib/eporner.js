@@ -50,8 +50,7 @@ export const epornerServerApi = {
     });
 
     const response = await fetch(url.toString(), {
-      next: { revalidate: 3600 }, // Next.js App Router caching
-      cf: { cacheEverything: true, cacheTtl: 3600 } // Cloudflare caching
+      cache: 'no-store'
     });
     
     if (!response.ok) throw new Error('Failed to fetch videos');
@@ -76,8 +75,7 @@ export const epornerServerApi = {
     url.searchParams.append('format', 'json');
 
     const response = await fetch(url.toString(), {
-      next: { revalidate: 3600 },
-      cf: { cacheEverything: true, cacheTtl: 3600 }
+      cache: 'no-store'
     });
     
     if (!response.ok) throw new Error('Failed to fetch video details');

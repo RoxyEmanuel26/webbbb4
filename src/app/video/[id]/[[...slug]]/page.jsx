@@ -4,7 +4,7 @@ import { epornerServerApi } from '@/lib/eporner';
 import { ALL_CATEGORIES } from '@/data/allCategories';
 import VideoPlayerClient from './VideoPlayerClient';
 
-export const revalidate = 3600; // Cache for 1 hour
+
 
 const createSlug = (title) => {
   if (!title) return '';
