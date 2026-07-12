@@ -7,6 +7,7 @@ import VideoCard from '@/components/VideoCard';
 import Pagination from '@/components/Pagination';
 import SortBar from '@/components/SortBar';
 import AdNative from '@/components/AdNative';
+import AdBanner from '@/components/AdBanner';
 import '../pages/Pages.css';
 
 const API_BASE = 'https://www.eporner.com/api/v2/video';
