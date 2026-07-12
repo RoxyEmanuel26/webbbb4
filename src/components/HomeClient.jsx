@@ -58,44 +58,41 @@ export default function HomeClient() {
 
     try {
       // Fetch main videos
-      const params = new URLSearchParams({
-        action: 'search',
-        query: 'all',
-        order: orderParam || 'top-weekly',
-        page: page,
-        per_page: 36,
-        thumbsize: 'big',
-        gay: 0,
-        lq: 1
-      });
+      const url = new URL(`${API_BASE}/search/`);
+      url.searchParams.append('query', 'all');
+      url.searchParams.append('order', orderParam || 'top-weekly');
+      url.searchParams.append('page', page);
+      url.searchParams.append('per_page', 36);
+      url.searchParams.append('thumbsize', 'big');
+      url.searchParams.append('gay', 0);
+      url.searchParams.append('lq', 1);
+      url.searchParams.append('format', 'json');
 
-      const res = await fetch(`/api/eporner?${params.toString()}`);
+      const res = await fetch(url.toString());
       if (!res.ok) throw new Error(`API error: ${res.status}`);
       const data = await res.json();
 
-      if (data?.videos) {
-        const filtered = data.videos
-          .map(v => ({ ...v, title: fixEncoding(v.title), keywords: fixEncoding(v.keywords) }))
-          .filter(v => !FORBIDDEN_REGEX.test(v.keywords || '') && !FORBIDDEN_REGEX.test(v.title || ''));
-        setVideos(filtered);
-        setTotalPages(data.total_pages || 1);
-        setTotalCount(data.total_count || 0);
-      } else {
-        setVideos([]);
+      if (data && data.videos) {
+        setVideos(
+          data.videos
+            .map(sanitizeVideo)
+            .filter(v => !FORBIDDEN_REGEX.test(v.keywords || '') && !FORBIDDEN_REGEX.test(v.title || ''))
+        );
       }
+      setTotalPages(data?.total_pages || 1);
+      setTotalCount(data?.total_count || 0);
 
       // Fetch trend tags (separate request)
       if (page === 1) {
         try {
-          const tagParams = new URLSearchParams({
-            action: 'search',
-            query: 'all',
-            order: 'top-weekly',
-            per_page: 50,
-            gay: 0,
-            lq: 1
-          });
-          const tagRes = await fetch(`/api/eporner?${tagParams.toString()}`);
+          const tagUrl = new URL(`${API_BASE}/search/`);
+          tagUrl.searchParams.append('query', 'all');
+          tagUrl.searchParams.append('order', 'top-weekly');
+          tagUrl.searchParams.append('per_page', 50);
+          tagUrl.searchParams.append('gay', 0);
+          tagUrl.searchParams.append('lq', 1);
+          tagUrl.searchParams.append('format', 'json');
+          const tagRes = await fetch(tagUrl.toString());
           const tagData = await tagRes.json();
           if (tagData?.videos) {
             const freq = {};

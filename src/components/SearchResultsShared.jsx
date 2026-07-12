@@ -62,18 +62,17 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({
-        action: 'search',
-        query: query === 'all' ? 'all' : query,
-        order: currentOrder,
-        page: page,
-        per_page: 36,
-        thumbsize: 'big',
-        gay: 0,
-        lq: 1
-      });
+      const url = new URL(`${API_BASE}/search/`);
+      url.searchParams.append('query', query === 'all' ? 'all' : query);
+      url.searchParams.append('order', currentOrder);
+      url.searchParams.append('page', page);
+      url.searchParams.append('per_page', 36);
+      url.searchParams.append('thumbsize', 'big');
+      url.searchParams.append('gay', 0);
+      url.searchParams.append('lq', 1);
+      url.searchParams.append('format', 'json');
 
-      const res = await fetch(`/api/eporner?${params.toString()}`);
+      const res = await fetch(url.toString());
       if (!res.ok) throw new Error(`API error: ${res.status}`);
       const data = await res.json();
 
