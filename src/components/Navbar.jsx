@@ -140,43 +140,37 @@ const Navbar = () => {
           </form>
 
           {/* Auto-Suggest Dropdown */}
-          {isFocused && query.trim() && (
+          {isFocused && query.trim() && suggestions.length > 0 && (
             <div className="navbar-autosuggest">
-              {loadingSuggestions ? (
-                <div className="autosuggest-loading">Searching...</div>
-              ) : suggestions.length > 0 ? (
-                <div className="autosuggest-list">
-                  {suggestions.map((video) => (
-                    <div 
-                      key={video.id} 
-                      className="autosuggest-item"
-                      onMouseDown={(e) => {
-                        e.preventDefault(); // prevent blur
-                        handleSuggestionClick(video);
-                      }}
-                    >
-                      <img src={video.default_thumb?.src || ''} alt="" className="autosuggest-thumb" loading="lazy" />
-                      <div className="autosuggest-info">
-                        <div className="autosuggest-title">{video.title}</div>
-                        <div className="autosuggest-meta">
-                          <Clock size={10} /> {video.length_min} • {video.views ? (video.views / 1000).toFixed(0) + 'K views' : ''}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+              <div className="autosuggest-list">
+                {suggestions.map((video) => (
                   <div 
-                    className="autosuggest-item autosuggest-see-all"
+                    key={video.id} 
+                    className="autosuggest-item"
                     onMouseDown={(e) => {
-                      e.preventDefault();
-                      handleSearch(e);
+                      e.preventDefault(); // prevent blur
+                      handleSuggestionClick(video);
                     }}
                   >
-                    <Search size={14} /> See all results for "{query}"
+                    <img src={video.default_thumb?.src || ''} alt="" className="autosuggest-thumb" loading="lazy" />
+                    <div className="autosuggest-info">
+                      <div className="autosuggest-title">{video.title}</div>
+                      <div className="autosuggest-meta">
+                        <Clock size={10} /> {video.length_min} • {video.views ? (video.views / 1000).toFixed(0) + 'K views' : ''}
+                      </div>
+                    </div>
                   </div>
+                ))}
+                <div 
+                  className="autosuggest-item autosuggest-see-all"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    handleSearch(e);
+                  }}
+                >
+                  <Search size={14} /> See all results for "{query}"
                 </div>
-              ) : (
-                <div className="autosuggest-empty">No results found</div>
-              )}
+              </div>
             </div>
           )}
         </div>
