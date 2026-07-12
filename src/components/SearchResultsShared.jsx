@@ -36,8 +36,6 @@ function fixEncoding(str) {
     .replace(/&gt;/g, '>');
 }
 
-import { getSearchMetadata } from '@/utils/seo';
-
 export default function SearchResultsShared({ query: propQuery, isCat, isTag, page: propPage, currentOrder: propOrder, seoTitle: propSeoTitle, seoDesc: propSeoDesc, seoCanonical: propSeoCanonical, seoQuery: propSeoQuery }) {
   const searchParams = useSearchParams();
 
@@ -50,12 +48,10 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
   const rawOrder = propOrder ?? searchParams.get('order');
   const isValidOrder = SORT_OPTIONS.some(o => o.value === rawOrder);
   const currentOrder = isValidOrder ? rawOrder : 'top-weekly';
-
-  const generatedSeo = getSearchMetadata({ query, isCat, isTag, page, catName: query, tagName: query });
   
-  const seoTitle = propSeoTitle ?? generatedSeo.title;
-  const seoDesc = propSeoDesc ?? generatedSeo.description;
-  const seoCanonical = propSeoCanonical ?? generatedSeo.alternates.canonical;
+  const seoTitle = propSeoTitle ?? `Watch Free HD Porn Videos — NICEVX`;
+  const seoDesc = propSeoDesc ?? `Watch free HD porn videos on NICEVX. Stream top-quality adult content.`;
+  const seoCanonical = propSeoCanonical ?? `https://nicevx.com/search?query=${encodeURIComponent(query)}`;
   const seoQuery = propSeoQuery ?? query;
 
   const [videos, setVideos] = useState([]);
