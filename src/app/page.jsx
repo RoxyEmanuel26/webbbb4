@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import React from 'react';
 import { epornerServerApi } from '@/lib/eporner';
 import VideoCard from '@/components/VideoCard';
