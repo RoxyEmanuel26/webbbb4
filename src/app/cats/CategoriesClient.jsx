@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Layers, List } from 'lucide-react';
 import { ALL_CATEGORIES } from '@/data/allCategories';
+import '../../pages/Pages.css';
 import '../../pages/Categories.css';
 
 const CATEGORIES = [
