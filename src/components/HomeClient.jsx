@@ -168,17 +168,19 @@ export default function HomeClient() {
               {videos.map((v, idx) => (
                 <React.Fragment key={`${v.id}-${idx}`}>
                   <VideoCard video={v} priority={idx < 4} />
-                  {/* ── Banner 300x250 setelah video ke-12 ── */}
+                  {/* ── Native Banner di tengah video (setelah video ke-12) ── */}
                   {idx === 11 && (
-                    <div className="ad-ingrid-wrap">
-                      <AdBanner adKey="a2d1d9869741533064aff0b41e9dbb6f" width={300} height={250} className="ad-ingrid" />
+                    <div className="native-ad-wrapper" style={{ gridColumn: '1 / -1', margin: '20px 0' }}>
+                      <AdNative widgetId="fb2c6ae06d2ab4be82435961f6263160" />
                     </div>
                   )}
                 </React.Fragment>
               ))}
             </div>
-            {/* ── Native Banner ── */}
-            <AdNative widgetId="fb2c6ae06d2ab4be82435961f6263160" />
+            {/* ── Banner 300x250 di atas pagination ── */}
+            <div style={{ display: 'flex', justifyContent: 'center', margin: '30px 0' }}>
+              <AdBanner adKey="a2d1d9869741533064aff0b41e9dbb6f" width={300} height={250} />
+            </div>
             <Pagination currentPage={page} totalPages={totalPages} />
           </>
         ) : (
