@@ -14,7 +14,7 @@ const FORBIDDEN_REGEX = /\b(gay|shemale|tranny|ladyboy|ts|transsexual|transgende
 
 function fixEncoding(str) {
   if (!str) return str;
-  let fixed = str;
+  let fixed = String(str);
   try { if (/[\x80-\xFF]/.test(fixed)) fixed = decodeURIComponent(escape(fixed)); } catch (_) {}
   return fixed.replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&#039;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>');
 }
@@ -248,7 +248,7 @@ const VideoPlayerClient = ({ id }) => {
               {video.added && (
                 <span className="meta-chip">
                   <Calendar size={14} />
-                  {video.added.split(' ')[0]}
+                  {String(video.added).split(' ')[0]}
                 </span>
               )}
             </div>
@@ -355,7 +355,7 @@ const VideoPlayerClient = ({ id }) => {
               >
                 <X size={20} />
               </button>
-              <img src={video.thumbs[selectedThumbIndex].src} alt="Enlarged preview" />
+              <img src={video.thumbs?.[selectedThumbIndex]?.src || ''} alt="Enlarged preview" />
             </div>
 
             {selectedThumbIndex < video.thumbs.length - 1 && (

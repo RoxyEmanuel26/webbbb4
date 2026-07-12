@@ -8,8 +8,9 @@ export function generateMetadata({ params }) {
   return getSearchMetadata({ query, isCat: false, isTag: true, page: 1, tagName });
 }
 
-export default function TagPage({ params }) {
-  const tagName = params?.tagName || '';
+export default async function TagPage({ params }) {
+  const resolvedParams = await params;
+  const tagName = resolvedParams?.tagName || '';
   const query = tagName.replace(/-/g, ' ');
   return (
     <Suspense fallback={<div className="loading-block"><div className="loading-spinner" /></div>}>

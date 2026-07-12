@@ -8,8 +8,9 @@ export function generateMetadata({ params }) {
   return getSearchMetadata({ query, isCat: true, isTag: false, page: 1, catName });
 }
 
-export default function CategoryPage({ params }) {
-  const catName = params?.catName || '';
+export default async function CategoryPage({ params }) {
+  const resolvedParams = await params;
+  const catName = resolvedParams?.catName || '';
   const query = catName.replace(/-/g, ' ');
   return (
     <Suspense fallback={<div className="loading-block"><div className="loading-spinner" /></div>}>

@@ -10,8 +10,9 @@ export function generateMetadata({ params }) {
   };
 }
 
-export default function VideoPage({ params }) {
-  const id = params?.id || '';
+export default async function VideoPage({ params }) {
+  const resolvedParams = await params;
+  const id = resolvedParams?.id || '';
   return (
     <Suspense fallback={<div className="loading-block"><div className="loading-spinner" /></div>}>
       <VideoPlayerClient id={id} />

@@ -83,8 +83,11 @@ export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName 
   };
 };
 
-export default function SearchResultsShared({ query, isCat, isTag, page: propPage, currentOrder: propOrder, seoTitle, seoDesc, seoCanonical, seoQuery }) {
+export default function SearchResultsShared({ query: propQuery, isCat, isTag, page: propPage, currentOrder: propOrder, seoTitle: propSeoTitle, seoDesc: propSeoDesc, seoCanonical: propSeoCanonical, seoQuery: propSeoQuery }) {
   const searchParams = useSearchParams();
+
+  const rawQuery = propQuery ?? (searchParams.get('query') || 'all');
+  const query = rawQuery;
 
   const rawPage = propPage ?? parseInt(searchParams.get('page') || '1');
   const page = !isNaN(rawPage) && rawPage > 0 ? rawPage : 1;
@@ -92,6 +95,13 @@ export default function SearchResultsShared({ query, isCat, isTag, page: propPag
   const rawOrder = propOrder ?? searchParams.get('order');
   const isValidOrder = SORT_OPTIONS.some(o => o.value === rawOrder);
   const currentOrder = isValidOrder ? rawOrder : 'top-weekly';
+
+  const generatedSeo = getSearchMetadata({ query, isCat, isTag, page, catName: query, tagName: query });
+  
+  const seoTitle = propSeoTitle ?? generatedSeo.title;
+  const seoDesc = propSeoDesc ?? generatedSeo.description;
+  const seoCanonical = propSeoCanonical ?? generatedSeo.alternates.canonical;
+  const seoQuery = propSeoQuery ?? query;
 
   const [videos, setVideos] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -102,7 +112,7 @@ export default function SearchResultsShared({ query, isCat, isTag, page: propPag
     setLoading(true);
     try {
       const url = new URL(`${API_BASE}/search/`);
-      url.searchParams.append('query', query || 'all');
+      url.searchParams.append('query', query === 'all' ? 'all' : query);
       url.searchParams.append('order', currentOrder);
       url.searchParams.append('page', page);
       url.searchParams.append('per_page', 36);
