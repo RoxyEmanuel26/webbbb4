@@ -1,11 +1,15 @@
-import React from 'react';
-import { epornerServerApi } from '@/lib/eporner';
+'use client';
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { ALL_CATEGORIES } from '@/data/allCategories';
 import VideoCard from '@/components/VideoCard';
 import Pagination from '@/components/Pagination';
 import SortBar from '@/components/SortBar';
 import AdNative from '@/components/AdNative';
 import '../pages/Pages.css';
+
+const API_BASE = 'https://www.eporner.com/api/v2/video';
 
 const SORT_OPTIONS = [
   { value: 'latest',       label: '🕐 Latest' },
@@ -15,7 +19,23 @@ const SORT_OPTIONS = [
   { value: 'top-monthly',  label: '📅 This Month' },
 ];
 
-export const getSearchMetadata = async ({ query, isCat, isTag, page, catName, tagName }) => {
+const FORBIDDEN_REGEX = /\b(gay|shemale|tranny|ladyboy|ts|transsexual|transgender|boy|men|cock suck|cock sucking)\b/i;
+
+function fixEncoding(str) {
+  if (!str) return str;
+  let fixed = str;
+  try {
+    if (/[\x80-\xFF]/.test(fixed)) fixed = decodeURIComponent(escape(fixed));
+  } catch (_) {}
+  return fixed
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&#039;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+}
+
+export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName }) => {
   const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
   const seoQuery = capitalize(query.replace(/-/g, ' '));
   const currentYear = new Date().getFullYear();
@@ -57,41 +77,79 @@ export const getSearchMetadata = async ({ query, isCat, isTag, page, catName, ta
     title: seoTitle,
     description: seoDesc,
     robots,
-    alternates: {
-      canonical: seoCanonical
-    },
-    openGraph: {
-      title: seoTitle,
-      description: seoDesc,
-      url: seoCanonical,
-      type: 'website',
-    },
-    twitter: {
-      title: seoTitle,
-      description: seoDesc,
-    }
+    alternates: { canonical: seoCanonical },
+    openGraph: { title: seoTitle, description: seoDesc, url: seoCanonical, type: 'website' },
+    twitter: { title: seoTitle, description: seoDesc },
   };
 };
 
-export default async function SearchResultsShared({ query, isCat, isTag, page, currentOrder, seoTitle, seoDesc, seoCanonical, seoQuery }) {
-  let videos = [];
-  let totalPages = 1;
-  let totalCount = 0;
+export default function SearchResultsShared({ query, isCat, isTag, page: propPage, currentOrder: propOrder, seoTitle, seoDesc, seoCanonical, seoQuery }) {
+  const searchParams = useSearchParams();
 
-  try {
-    const res = await epornerServerApi.searchVideos({
-      query,
-      page,
-      order: currentOrder,
-      per_page: 36,
-      gay: 0,
-      lq: 1,
-      thumbsize: 'big',
-    });
-    videos = res?.videos || [];
-    totalPages = res?.total_pages || 1;
-    totalCount = res?.total_count || 0;
-  } catch (_) {}
+  const rawPage = propPage ?? parseInt(searchParams.get('page') || '1');
+  const page = !isNaN(rawPage) && rawPage > 0 ? rawPage : 1;
+
+  const rawOrder = propOrder ?? searchParams.get('order');
+  const isValidOrder = SORT_OPTIONS.some(o => o.value === rawOrder);
+  const currentOrder = isValidOrder ? rawOrder : 'top-weekly';
+
+  const [videos, setVideos] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const url = new URL(`${API_BASE}/search/`);
+      url.searchParams.append('query', query || 'all');
+      url.searchParams.append('order', currentOrder);
+      url.searchParams.append('page', page);
+      url.searchParams.append('per_page', 36);
+      url.searchParams.append('thumbsize', 'big');
+      url.searchParams.append('gay', 0);
+      url.searchParams.append('lq', 1);
+      url.searchParams.append('format', 'json');
+
+      const res = await fetch(url.toString());
+      if (!res.ok) throw new Error(`API error: ${res.status}`);
+      const data = await res.json();
+
+      if (data?.videos) {
+        const filtered = data.videos
+          .map(v => ({ ...v, title: fixEncoding(v.title), keywords: fixEncoding(v.keywords) }))
+          .filter(v => !FORBIDDEN_REGEX.test(v.keywords || '') && !FORBIDDEN_REGEX.test(v.title || ''));
+        setVideos(filtered);
+        setTotalPages(data.total_pages || 1);
+        setTotalCount(data.total_count || 0);
+      } else {
+        setVideos([]);
+      }
+    } catch (err) {
+      console.error('SearchResultsShared fetch error:', err);
+      setVideos([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [query, currentOrder, page]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const breadcrumbsSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://nicevx.com/" },
+      ...(isCat ? [
+        { "@type": "ListItem", "position": 2, "name": "Categories", "item": "https://nicevx.com/cats/" },
+        { "@type": "ListItem", "position": 3, "name": seoQuery, "item": seoCanonical }
+      ] : [
+        { "@type": "ListItem", "position": 2, "name": seoQuery, "item": seoCanonical }
+      ])
+    ]
+  };
 
   const getPageTitle = () => {
     if (isCat) return <span style={{textTransform: 'capitalize'}}>Category: {query}</span>;
@@ -100,56 +158,19 @@ export default async function SearchResultsShared({ query, isCat, isTag, page, c
     return `"${query}"`;
   };
 
-  const breadcrumbsSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://nicevx.com/"
-      },
-      ...(isCat ? [{
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Categories",
-        "item": "https://nicevx.com/cats/"
-      }, {
-        "@type": "ListItem",
-        "position": 3,
-        "name": seoQuery,
-        "item": seoCanonical
-      }] : [{
-        "@type": "ListItem",
-        "position": 2,
-        "name": seoQuery,
-        "item": seoCanonical
-      }])
-    ]
-  };
-
   return (
     <div className="search-page">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify([
-          {
-            "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            "name": seoTitle,
-            "description": seoDesc,
-            "url": seoCanonical
-          },
+          { "@context": "https://schema.org", "@type": "CollectionPage", "name": seoTitle, "description": seoDesc, "url": seoCanonical },
           breadcrumbsSchema
         ]).replace(/</g, '\\u003c') }}
       />
       <div className="page-wrapper search-content">
         <div className="section-header">
           <div className="section-title-group">
-            <h1 className="section-title">
-              {getPageTitle()}
-            </h1>
+            <h1 className="section-title">{getPageTitle()}</h1>
             {totalCount > 0 && (
               <span className="section-count">{totalCount.toLocaleString()} results</span>
             )}
@@ -157,14 +178,18 @@ export default async function SearchResultsShared({ query, isCat, isTag, page, c
           <SortBar value={currentOrder} options={SORT_OPTIONS} />
         </div>
 
-        {videos.length > 0 ? (
+        {loading ? (
+          <div className="loading-block">
+            <div className="loading-spinner" />
+            <p>Loading videos...</p>
+          </div>
+        ) : videos.length > 0 ? (
           <>
             <div className="video-grid">
               {videos.map((v, idx) => (
                 <VideoCard key={`${v.id}-${idx}`} video={v} priority={idx < 4} />
               ))}
             </div>
-            {/* ── Native Banner (4:1 layout) di atas pagination ── */}
             <AdNative widgetId="fb2c6ae06d2ab4be82435961f6263160" />
             <Pagination currentPage={page} totalPages={totalPages} />
           </>

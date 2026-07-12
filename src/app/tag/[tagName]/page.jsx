@@ -1,37 +1,19 @@
 export const runtime = 'edge';
-import React from 'react';
+import { Suspense } from 'react';
 import SearchResultsShared, { getSearchMetadata } from '@/components/SearchResultsShared';
 
-export async function generateMetadata({ params, searchParams }) {
-  const { tagName } = await params;
-  const sParams = await searchParams;
+export function generateMetadata({ params }) {
+  const tagName = params?.tagName || '';
   const query = tagName.replace(/-/g, ' ');
-  const page = parseInt(sParams.page) || 1;
-  return getSearchMetadata({ query, isCat: false, isTag: true, page, tagName });
+  return getSearchMetadata({ query, isCat: false, isTag: true, page: 1, tagName });
 }
 
-export default async function TagPage({ params, searchParams }) {
-  const { tagName } = await params;
-  const sParams = await searchParams;
+export default function TagPage({ params }) {
+  const tagName = params?.tagName || '';
   const query = tagName.replace(/-/g, ' ');
-  const rawPage = parseInt(sParams.page);
-  const page = !isNaN(rawPage) && rawPage > 0 ? rawPage : 1;
-  const currentOrder = sParams.order || 'latest';
-
-  const metadata = await getSearchMetadata({ query, isCat: false, isTag: true, page, tagName });
-  const seoQuery = query.charAt(0).toUpperCase() + query.slice(1);
-
   return (
-    <SearchResultsShared 
-      query={query} 
-      isCat={false} 
-      isTag={true} 
-      page={page} 
-      currentOrder={currentOrder} 
-      seoTitle={metadata.title}
-      seoDesc={metadata.description}
-      seoCanonical={metadata.alternates.canonical}
-      seoQuery={seoQuery}
-    />
+    <Suspense fallback={<div className="loading-block"><div className="loading-spinner" /></div>}>
+      <SearchResultsShared isCat={false} isTag={true} query={query} seoQuery={query} seoTitle="" seoDesc="" seoCanonical={`https://nicevx.com/tag/${tagName}`} />
+    </Suspense>
   );
 }

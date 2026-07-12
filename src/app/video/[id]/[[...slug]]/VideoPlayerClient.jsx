@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import VideoCard from '@/components/VideoCard';
@@ -9,6 +9,16 @@ import AdNative from '@/components/AdNative';
 import { Eye, Star, Calendar, Clock, ArrowLeft, ChevronLeft, ChevronRight, X, AlertTriangle } from 'lucide-react';
 import '../../../../pages/Pages.css';
 
+const API_BASE = 'https://www.eporner.com/api/v2/video';
+const FORBIDDEN_REGEX = /\b(gay|shemale|tranny|ladyboy|ts|transsexual|transgender|boy|men|cock suck|cock sucking)\b/i;
+
+function fixEncoding(str) {
+  if (!str) return str;
+  let fixed = str;
+  try { if (/[\x80-\xFF]/.test(fixed)) fixed = decodeURIComponent(escape(fixed)); } catch (_) {}
+  return fixed.replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&#039;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+}
+
 const formatViews = (n) => {
   if (!n) return '0';
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M views';
@@ -16,7 +26,54 @@ const formatViews = (n) => {
   return n + ' views';
 };
 
-const VideoPlayerClient = ({ video, related, relatedCategories, keywords }) => {
+const VideoPlayerClient = ({ id }) => {
+  const [video, setVideo] = useState(null);
+  const [related, setRelated] = useState([]);
+  const [keywords, setKeywords] = useState([]);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [pageError, setPageError] = useState(null);
+
+  const fetchVideo = useCallback(async () => {
+    if (!id) return;
+    setPageLoading(true);
+    setPageError(null);
+    try {
+      const res = await fetch(`${API_BASE}/id/?id=${id}&thumbsize=big&format=json`);
+      if (!res.ok) throw new Error(`API error: ${res.status}`);
+      const data = await res.json();
+      if (!data || !data.id) throw new Error('Video not found');
+      const v = { ...data, title: fixEncoding(data.title), keywords: fixEncoding(data.keywords) };
+      setVideo(v);
+      const kws = (v.keywords || '').split(',').map(k => k.trim()).filter(k => k.length > 2 && !FORBIDDEN_REGEX.test(k));
+      setKeywords(kws);
+
+      // Fetch related
+      const relUrl = new URL(`${API_BASE}/search/`);
+      relUrl.searchParams.append('query', kws.slice(0, 3).join(' ') || 'all');
+      relUrl.searchParams.append('per_page', 12);
+      relUrl.searchParams.append('order', 'top-weekly');
+      relUrl.searchParams.append('gay', 0);
+      relUrl.searchParams.append('lq', 1);
+      relUrl.searchParams.append('thumbsize', 'medium');
+      relUrl.searchParams.append('format', 'json');
+      const relRes = await fetch(relUrl.toString());
+      const relData = await relRes.json();
+      if (relData?.videos) {
+        setRelated(
+          relData.videos
+            .map(rv => ({ ...rv, title: fixEncoding(rv.title), keywords: fixEncoding(rv.keywords) }))
+            .filter(rv => rv.id !== id && !FORBIDDEN_REGEX.test(rv.keywords || '') && !FORBIDDEN_REGEX.test(rv.title || ''))
+            .slice(0, 12)
+        );
+      }
+    } catch (err) {
+      setPageError(err.message);
+    } finally {
+      setPageLoading(false);
+    }
+  }, [id]);
+
+  useEffect(() => { fetchVideo(); }, [fetchVideo]);
   const router = useRouter();
   const [iframeStatus, setIframeStatus] = useState('loading'); 
   const [selectedThumbIndex, setSelectedThumbIndex] = useState(null);
@@ -90,6 +147,25 @@ const VideoPlayerClient = ({ video, related, relatedCategories, keywords }) => {
       });
     }
   };
+
+
+  if (pageLoading) {
+    return (
+      <div className="loading-block">
+        <div className="loading-spinner" />
+        <p>Loading video...</p>
+      </div>
+    );
+  }
+
+  if (pageError || !video) {
+    return (
+      <div className="empty-block">
+        <p style={{ fontSize: '2rem' }}>⚠️</p>
+        <p>Could not load this video. Please go back and try another.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="page-wrapper player-page">
