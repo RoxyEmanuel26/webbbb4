@@ -17,6 +17,11 @@ export const metadata = {
     url: 'https://nicevx.com',
     type: 'website',
   },
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 };
 
 export const viewport = {
