@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Native Advertisement</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      overflow: hidden;
+    }
+    #ad-container {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="ad-container"></div>
+
+  <script>
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const widgetId = params.get('widgetId');
+      
+      if (widgetId) {
+        const container = document.getElementById('ad-container');
+        
+        // Create the targeting container element
+        const adTarget = document.createElement('div');
+        adTarget.id = 'container-' + widgetId;
+        container.appendChild(adTarget);
+        
+        // Create and append the script
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://glamournakedemployee.com/' + widgetId + '/invoke.js';
+        script.async = true;
+        script.setAttribute('data-cfasync', 'false');
+        container.appendChild(script);
+
+        // Notify parent about size changes
+        const sendHeight = () => {
+          // Add a small buffer to prevent scrollbars or truncation
+          const height = document.body.offsetHeight || document.documentElement.scrollHeight;
+          if (height > 0) {
+            window.parent.postMessage({
+              type: 'adsterra-native-resize',
+              widgetId: widgetId,
+              height: height + 8
+            }, '*');
+          }
+        };
+
+        // Watch for changes (images loading, ads rendering, etc)
+        const observer = new MutationObserver(sendHeight);
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+          attributes: true
+        });
+
+        // Fallbacks
+        window.addEventListener('load', sendHeight);
+        
+        // Repeated check for 4 seconds to catch final rendering heights
+        let checkCount = 0;
+        const interval = setInterval(() => {
+          sendHeight();
+          checkCount++;
+          if (checkCount > 20) clearInterval(interval);
+        }, 200);
+      }
+    })();
+  </script>
+</body>
+</html>

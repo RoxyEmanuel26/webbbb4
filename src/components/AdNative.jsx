@@ -1,57 +1,64 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 /**
  * AdNative – Client component for Adsterra Native Ads.
- * It dynamically appends the Adsterra script into the container 
- * and targets a DOM element with `id="container-${widgetId}"`.
+ * It uses an isolated same-origin iframe to ensure native ads re-execute and render 
+ * correctly when users navigate between pages (SPA routing).
+ * Height is adjusted dynamically via message listener communication.
  */
 export default function AdNative({ widgetId, className = '' }) {
-  const containerRef = useRef(null);
-  const injected = useRef(false);
+  const [height, setHeight] = useState(120); // Default initial height
 
   useEffect(() => {
-    // Avoid double injection during React Dev StrictMode
-    if (injected.current || !containerRef.current) return;
-    injected.current = true;
-
-    const container = containerRef.current;
-    
-    // Clear out any stale content before injecting
-    container.innerHTML = '';
-
-    // Create the script element
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = `https://glamournakedemployee.com/${widgetId}/invoke.js`;
-    script.async = true;
-    script.setAttribute('data-cfasync', 'false');
-
-    // Create the targeting container element inside containerRef
-    const adTarget = document.createElement('div');
-    adTarget.id = `container-${widgetId}`;
-    
-    container.appendChild(adTarget);
-    container.appendChild(script);
-
-    return () => {
-      if (container) {
-        container.innerHTML = '';
+    const handleMessage = (event) => {
+      // Validate event type and widgetId matching
+      if (
+        event.data && 
+        event.data.type === 'adsterra-native-resize' && 
+        event.data.widgetId === widgetId
+      ) {
+        const newHeight = parseInt(event.data.height, 10);
+        if (newHeight > 20) {
+          setHeight(newHeight);
+        }
       }
-      injected.current = false;
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => {
+      window.removeEventListener('message', handleMessage);
     };
   }, [widgetId]);
 
   return (
     <div 
-      ref={containerRef} 
       className={`ad-native-wrapper ${className}`} 
       style={{ 
         width: '100%', 
         margin: '1.5rem 0',
-        minHeight: '120px'
+        minHeight: `${height}px`,
+        transition: 'min-height 0.2s ease-out',
+        overflow: 'hidden'
       }} 
-    />
+    >
+      <iframe
+        title={`ad-native-${widgetId}`}
+        src={`/adsterra-native.html?widgetId=${widgetId}`}
+        width="100%"
+        height={height}
+        frameBorder="0"
+        scrolling="no"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+        style={{
+          border: 'none',
+          overflow: 'hidden',
+          width: '100%',
+          height: `${height}px`,
+          transition: 'height 0.2s ease-out'
+        }}
+      />
+    </div>
   );
 }
