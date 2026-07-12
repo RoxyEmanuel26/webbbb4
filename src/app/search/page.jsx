@@ -1,5 +1,5 @@
 export const runtime = 'edge';
-import React from 'react';
+import { Suspense } from 'react';
 import SearchResultsShared from '@/components/SearchResultsShared';
 import { getSearchMetadata } from '@/utils/seo';
 
@@ -11,5 +11,9 @@ export async function generateMetadata({ searchParams }) {
 }
 
 export default function SearchPage() {
-  return <SearchResultsShared isCat={false} isTag={false} />;
+  return (
+    <Suspense fallback={<div className="loading-block"><div className="loading-spinner" /></div>}>
+      <SearchResultsShared isCat={false} isTag={false} />
+    </Suspense>
+  );
 }

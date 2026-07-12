@@ -38,7 +38,7 @@ const VideoPlayerClient = ({ id }) => {
     setPageLoading(true);
     setPageError(null);
     try {
-      const res = await fetch(`${API_BASE}/id/?id=${id}&thumbsize=big&format=json`);
+      const res = await fetch(`/api/eporner?action=id&id=${id}&thumbsize=big`);
       if (!res.ok) throw new Error(`API error: ${res.status}`);
       const data = await res.json();
       if (!data || !data.id) throw new Error('Video not found');
@@ -51,15 +51,16 @@ const VideoPlayerClient = ({ id }) => {
       setKeywords(kws);
 
       // Fetch related
-      const relUrl = new URL(`${API_BASE}/search/`);
-      relUrl.searchParams.append('query', kws.slice(0, 3).join(' ') || 'all');
-      relUrl.searchParams.append('per_page', 12);
-      relUrl.searchParams.append('order', 'top-weekly');
-      relUrl.searchParams.append('gay', 0);
-      relUrl.searchParams.append('lq', 1);
-      relUrl.searchParams.append('thumbsize', 'medium');
-      relUrl.searchParams.append('format', 'json');
-      const relRes = await fetch(relUrl.toString());
+      const relParams = new URLSearchParams({
+        action: 'search',
+        query: kws.slice(0, 3).join(' ') || 'all',
+        per_page: 12,
+        order: 'top-weekly',
+        gay: 0,
+        lq: 1,
+        thumbsize: 'medium'
+      });
+      const relRes = await fetch(`/api/eporner?${relParams.toString()}`);
       const relData = await relRes.json();
       if (relData?.videos) {
         setRelated(
