@@ -2,8 +2,9 @@ export const runtime = 'edge';
 import { Suspense } from 'react';
 import SearchResultsShared, { getSearchMetadata } from '@/components/SearchResultsShared';
 
-export function generateMetadata({ params }) {
-  const catName = params?.catName || '';
+export async function generateMetadata({ params }) {
+  const resolvedParams = await params;
+  const catName = resolvedParams?.catName || '';
   const query = catName.replace(/-/g, ' ');
   return getSearchMetadata({ query, isCat: true, isTag: false, page: 1, catName });
 }
