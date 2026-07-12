@@ -49,12 +49,7 @@ export const epornerServerApi = {
       }
     });
 
-    const response = await fetch(url.toString(), {
-      cache: 'no-store',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      }
-    });
+    const response = await fetch(url.toString());
     
     if (!response.ok) {
       const errText = await response.text();
@@ -80,12 +75,7 @@ export const epornerServerApi = {
     url.searchParams.append('thumbsize', thumbsize);
     url.searchParams.append('format', 'json');
 
-    const response = await fetch(url.toString(), {
-      cache: 'no-store',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      }
-    });
+    const response = await fetch(url.toString());
     
     if (!response.ok) {
       const errText = await response.text();
