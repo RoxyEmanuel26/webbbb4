@@ -44,7 +44,7 @@ const VideoPlayerClient = ({ id }) => {
       if (!data || !data.id) throw new Error('Video not found');
       const v = { ...data, title: fixEncoding(data.title), keywords: fixEncoding(data.keywords) };
       setVideo(v);
-      const kws = (v.keywords || '').split(',').map(k => k.trim()).filter(k => k.length > 2 && !FORBIDDEN_REGEX.test(k));
+      const kws = String(v.keywords || '').split(',').map(k => k.trim()).filter(k => k.length > 2 && !FORBIDDEN_REGEX.test(k));
       setKeywords(kws);
 
       // Fetch related

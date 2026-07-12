@@ -24,7 +24,7 @@ const FORBIDDEN_REGEX = /\b(gay|shemale|tranny|ladyboy|ts|transsexual|transgende
 
 function fixEncoding(str) {
   if (!str) return str;
-  let fixed = str;
+  let fixed = String(str);
   try {
     if (/[\x80-\xFF]/.test(fixed)) fixed = decodeURIComponent(escape(fixed));
   } catch (_) {}

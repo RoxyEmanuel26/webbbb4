@@ -22,7 +22,7 @@ const FORBIDDEN_REGEX = /\b(gay|shemale|tranny|ladyboy|ts|transsexual|transgende
 
 function fixEncoding(str) {
   if (!str) return str;
-  let fixed = str;
+  let fixed = String(str);
   try {
     if (/[\x80-\xFF]/.test(fixed)) fixed = decodeURIComponent(escape(fixed));
   } catch (_) {}
@@ -98,7 +98,7 @@ export default function HomeClient() {
           if (tagData?.videos) {
             const freq = {};
             tagData.videos.forEach(v =>
-              (v.keywords || '').split(',').forEach(k => {
+              String(v.keywords || '').split(',').forEach(k => {
                 const kw = k.trim().toLowerCase();
                 if (kw.length > 2 && !FORBIDDEN_REGEX.test(kw)) {
                   freq[kw] = (freq[kw] || 0) + 1;

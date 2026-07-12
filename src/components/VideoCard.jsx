@@ -76,7 +76,7 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
   const ratingPct = ratingToPercent(rating);
   const slug     = createSlug(video.title);
 
-  const primaryKeyword = video.keywords ? video.keywords.split(',')[0].trim() : '';
+  const primaryKeyword = video.keywords ? String(video.keywords).split(',')[0].trim() : '';
 
   return (
     <div
