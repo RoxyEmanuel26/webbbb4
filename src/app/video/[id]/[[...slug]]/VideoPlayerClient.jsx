@@ -169,15 +169,6 @@ const VideoPlayerClient = ({ id }) => {
 
   return (
     <div className="page-wrapper player-page">
-      {/* ── Banner 728x90 (Desktop) & 320x50 (Mobile) di atas tombol back ── */}
-      <div className="ad-row" style={{ marginBottom: '1rem' }}>
-        <div className="ad-desktop-only">
-          <AdBanner adKey="6cb50045b61eddee00e504ba14847190" width={728} height={90} />
-        </div>
-        <div className="ad-mobile-only">
-          <AdBanner adKey="05f054fa88f5e6d6b183797a8f9213f9" width={320} height={50} />
-        </div>
-      </div>
 
       <button
         className="back-btn"

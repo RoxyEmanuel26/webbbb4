@@ -131,15 +131,6 @@ export default function HomeClient() {
       {trendTags.length > 0 && <TagsBar tags={trendTags} />}
 
       <div className="page-wrapper content-area">
-        {/* ── Banner 728x90 Desktop / 320x50 Mobile ── */}
-        <div className="ad-row ad-row--top">
-          <div className="ad-desktop-only">
-            <AdBanner adKey="6cb50045b61eddee00e504ba14847190" width={728} height={90} />
-          </div>
-          <div className="ad-mobile-only">
-            <AdBanner adKey="05f054fa88f5e6d6b183797a8f9213f9" width={320} height={50} />
-          </div>
-        </div>
 
         <div className="section-header">
           <div className="section-title-group">
