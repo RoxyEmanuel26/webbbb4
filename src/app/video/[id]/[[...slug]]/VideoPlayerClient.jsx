@@ -42,9 +42,12 @@ const VideoPlayerClient = ({ id }) => {
       if (!res.ok) throw new Error(`API error: ${res.status}`);
       const data = await res.json();
       if (!data || !data.id) throw new Error('Video not found');
-      const v = { ...data, title: fixEncoding(data.title), keywords: fixEncoding(data.keywords) };
-      setVideo(v);
-      const kws = String(v.keywords || '')
+
+      if (data.title) data.title = fixEncoding(data.title);
+      if (data.keywords) data.keywords = fixEncoding(data.keywords);
+
+      setVideo(data);
+      const kws = String(data.keywords || '')
         .split(',')
         .map(k => k.trim())
         .filter(k => k.length > 2 && k.length < 25 && k.split(/\s+/).length <= 2 && !FORBIDDEN_REGEX.test(k));

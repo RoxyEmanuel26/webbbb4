@@ -72,15 +72,16 @@ export default function HomeClient() {
       if (!res.ok) throw new Error(`API error: ${res.status}`);
       const data = await res.json();
 
-      if (data && data.videos) {
-        setVideos(
-          data.videos
-            .map(sanitizeVideo)
-            .filter(v => !FORBIDDEN_REGEX.test(v.keywords || '') && !FORBIDDEN_REGEX.test(v.title || ''))
-        );
+      if (data?.videos) {
+        const filtered = data.videos
+          .map(v => ({ ...v, title: fixEncoding(v.title), keywords: fixEncoding(v.keywords) }))
+          .filter(v => !FORBIDDEN_REGEX.test(v.keywords || '') && !FORBIDDEN_REGEX.test(v.title || ''));
+        setVideos(filtered);
+        setTotalPages(data.total_pages || 1);
+        setTotalCount(data.total_count || 0);
+      } else {
+        setVideos([]);
       }
-      setTotalPages(data?.total_pages || 1);
-      setTotalCount(data?.total_count || 0);
 
       // Fetch trend tags (separate request)
       if (page === 1) {
