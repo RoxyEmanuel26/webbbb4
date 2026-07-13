@@ -40,7 +40,7 @@ export default function AdBanner({ adKey, width, height, className = '' }) {
         height={height}
         frameBorder="0"
         scrolling="no"
-        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation allow-storage-access-by-user-activation"
         style={{
           border: 'none',
           overflow: 'hidden',

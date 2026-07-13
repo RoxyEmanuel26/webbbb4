@@ -408,6 +408,10 @@ const VideoPlayerClient = ({ id }) => {
           </div>
         </div>
       )}
+      {/* ── Sticky Bottom Banner Mobile (Video Page) ── */}
+      <div className="ad-sticky-bottom ad-mobile-only">
+        <AdBanner adKey="05f054fa88f5e6d6b183797a8f9213f9" width={320} height={50} />
+      </div>
     </div>
   );
 };

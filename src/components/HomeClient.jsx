@@ -173,6 +173,10 @@ export default function HomeClient() {
               <AdBanner adKey="a2d1d9869741533064aff0b41e9dbb6f" width={300} height={250} />
             </div>
             <Pagination currentPage={page} totalPages={totalPages} />
+            {/* ── Native Banner ke-2 di bawah pagination (max impressions) ── */}
+            <div className="native-ad-wrapper" style={{ margin: '24px 0' }}>
+              <AdNative widgetId="fb2c6ae06d2ab4be82435961f6263160" />
+            </div>
           </>
         ) : (
           <div className="empty-block">
