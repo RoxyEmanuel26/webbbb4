@@ -12,6 +12,10 @@ export default function AdPopunder() {
   const injected = useRef(false);
 
   useEffect(() => {
+    // --- PAUSED BY USER (Do not delete) ---
+    // Remove the early return below to re-enable the popunder ad.
+    return;
+    
     if (injected.current) return;
     injected.current = true;
 
