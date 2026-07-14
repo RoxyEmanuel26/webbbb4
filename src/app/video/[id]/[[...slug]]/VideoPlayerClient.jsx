@@ -6,7 +6,7 @@ import Link from 'next/link';
 import VideoCard from '@/components/VideoCard';
 import AdBanner from '@/components/AdBanner';
 import AdNative from '@/components/AdNative';
-import { Eye, Star, Calendar, Clock, ArrowLeft, ChevronLeft, ChevronRight, X, AlertTriangle } from 'lucide-react';
+import { Eye, Star, Calendar, Clock, ArrowLeft, ChevronLeft, ChevronRight, X, AlertTriangle, Download } from 'lucide-react';
 import '../../../../pages/Pages.css';
 
 const API_BASE = 'https://www.eporner.com/api/v2/video';
@@ -239,25 +239,52 @@ const VideoPlayerClient = ({ id }) => {
           <div className="video-info-block">
             <h1 className="video-info-title">{video.title}</h1>
 
-            <div className="video-info-meta">
-              <span className="meta-chip">
-                <Eye size={14} />
-                {formatViews(video.views)}
-              </span>
-              <span className="meta-chip rating">
-                <Star size={14} />
-                {parseFloat(video.rate || 0).toFixed(1)} / 5.0
-              </span>
-              <span className="meta-chip">
-                <Clock size={14} />
-                {video.length_min || `${video.length_sec}s`}
-              </span>
-              {video.added && (
+            <div className="video-info-meta" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-4)', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', alignItems: 'center' }}>
                 <span className="meta-chip">
-                  <Calendar size={14} />
-                  {String(video.added).split(' ')[0]}
+                  <Eye size={14} />
+                  {formatViews(video.views)}
                 </span>
-              )}
+                <span className="meta-chip rating">
+                  <Star size={14} />
+                  {parseFloat(video.rate || 0).toFixed(1)} / 5.0
+                </span>
+                <span className="meta-chip">
+                  <Clock size={14} />
+                  {video.length_min || `${video.length_sec}s`}
+                </span>
+                {video.added && (
+                  <span className="meta-chip">
+                    <Calendar size={14} />
+                    {String(video.added).split(' ')[0]}
+                  </span>
+                )}
+              </div>
+              <a 
+                href="https://glamournakedemployee.com/i55dh5pc?key=dc0dba53bc73a8f967e369df108afe96" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  padding: '8px 16px',
+                  borderRadius: 'var(--radius-md)',
+                  fontWeight: '600',
+                  textDecoration: 'none',
+                  fontSize: '0.85rem',
+                  transition: 'opacity 0.2s',
+                  boxShadow: '0 2px 4px rgba(34,197,94,0.3)',
+                  marginLeft: 'auto'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.opacity = 0.9}
+                onMouseOut={(e) => e.currentTarget.style.opacity = 1}
+              >
+                <Download size={16} />
+                Download
+              </a>
             </div>
 
             {keywords.length > 0 && (
