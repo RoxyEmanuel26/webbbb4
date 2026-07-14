@@ -263,7 +263,8 @@ const VideoPlayerClient = ({ id }) => {
               <a 
                 href="https://glamournakedemployee.com/i55dh5pc?key=dc0dba53bc73a8f967e369df108afe96" 
                 target="_blank" 
-                rel="noopener noreferrer"
+                rel="noopener"
+                referrerPolicy="no-referrer-when-downgrade"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
