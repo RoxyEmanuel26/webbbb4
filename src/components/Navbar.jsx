@@ -9,6 +9,7 @@ import './Navbar.css';
 const NAV_LINKS = [
   { label: 'Home',       path: '/' },
   { label: 'Categories', path: '/cats/' },
+  { label: 'Free JAV',   path: 'https://www.missav-j.web.id', external: true },
 ];
 
 const Navbar = () => {
@@ -104,13 +105,25 @@ const Navbar = () => {
         {/* Nav Links */}
         <nav className="navbar-links" aria-label="Main navigation">
           {NAV_LINKS.map((link) => (
-            <Link
-              key={link.path}
-              className={`navbar-link ${isActive(link.path) ? 'is-active' : ''}`}
-              href={link.path}
-            >
-              {link.label}
-            </Link>
+            link.external ? (
+              <a
+                key={link.path}
+                className="navbar-link external-link"
+                href={link.path}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {link.label}
+              </a>
+            ) : (
+              <Link
+                key={link.path}
+                className={`navbar-link ${isActive(link.path) ? 'is-active' : ''}`}
+                href={link.path}
+              >
+                {link.label}
+              </Link>
+            )
           ))}
         </nav>
 
