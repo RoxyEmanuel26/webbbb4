@@ -112,7 +112,7 @@ const CategoriesClient = () => {
         <div className="section-header">
           <div className="section-title-group">
             <Layers className="section-icon" size={28} />
-            <h1 className="section-title">Explore Categories</h1>
+            <h1 className="section-title">Free HD Porn Categories & Sex Tube</h1>
           </div>
         </div>
 

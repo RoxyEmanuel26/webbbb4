@@ -135,7 +135,9 @@ export default function HomeClient() {
         <div className="section-header">
           <div className="section-title-group">
             <h1 className="section-title">
-              {orderParam ? sortLabel : '📈 Top Videos'}
+              {orderParam 
+                ? `Free HD Porn Videos & Sex Tube — ${sortLabel}` 
+                : 'Free HD Porn Videos & Sex Tube — Top Videos'}
             </h1>
             {totalCount > 0 && (
               <span className="section-count">{totalCount.toLocaleString()} videos</span>

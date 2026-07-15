@@ -10,6 +10,7 @@ import AdBanner from '../components/AdBanner';
 export const runtime = 'edge';
 
 export const metadata = {
+  metadataBase: new URL('https://nicevx.com'),
   title: 'NICEVX — Free HD Porn Videos | 4M+ Videos',
   description: 'Watch free HD porn videos on NICEVX. Over 4 million videos updated daily.',
   openGraph: {
@@ -22,6 +23,9 @@ export const metadata = {
     icon: '/favicon.webp',
     shortcut: '/favicon.webp',
     apple: '/favicon.webp',
+  },
+  alternates: {
+    canonical: '/',
   },
 };
 
