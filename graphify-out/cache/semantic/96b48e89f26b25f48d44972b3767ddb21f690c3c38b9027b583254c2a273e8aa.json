@@ -1,0 +1,1 @@
+{"nodes": [{"id": "public_pwa_512x512", "label": "PWA Icon 512x512", "file_type": "image", "source_file": "public/pwa-512x512.png", "source_location": null}], "edges": [{"source": "public_pwa_512x512", "target": "public_favicon", "relation": "semantically_similar_to", "confidence": "INFERRED", "confidence_score": 0.8, "source_file": "public/pwa-512x512.png"}], "hyperedges": []}
