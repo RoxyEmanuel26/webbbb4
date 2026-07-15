@@ -5,7 +5,7 @@ import '../../pages/Pages.css';
 export const metadata = {
   title: '18 U.S.C. § 2257 — NICEVX',
   description: '18 U.S.C. § 2257 Statement for NICEVX.',
-  robots: 'noindex, follow',
+  robots: 'index, follow',
   alternates: {
     canonical: 'https://nicevx.com/usc2257'
   }

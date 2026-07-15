@@ -5,7 +5,7 @@ import '../../pages/Pages.css';
 export const metadata = {
   title: 'Terms of Service — NICEVX',
   description: 'Read the Terms of Service for NICEVX. By using our platform you agree to these terms.',
-  robots: 'noindex, follow',
+  robots: 'index, follow',
   alternates: {
     canonical: 'https://nicevx.com/terms'
   }

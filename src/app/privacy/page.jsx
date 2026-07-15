@@ -5,7 +5,7 @@ import '../../pages/Pages.css';
 export const metadata = {
   title: 'Privacy Policy — NICEVX',
   description: 'Read the Privacy Policy for NICEVX.',
-  robots: 'noindex, follow',
+  robots: 'index, follow',
   alternates: {
     canonical: 'https://nicevx.com/privacy'
   }
