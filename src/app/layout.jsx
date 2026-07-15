@@ -94,6 +94,7 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
+        <script src="https://analytics.ahrefs.com/analytics.js" data-key="VdAtEZ/WUhk9qsBEzocURw" async></script>
       </head>
       <body>
         <AdPopunder />
