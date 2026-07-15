@@ -498,3 +498,46 @@
   color: var(--color-text-primary);
   border-color: var(--color-text-muted);
 }
+
+/* Related categories cross-link block on /cat/<slug> pages.
+   Server-rendered internal links that give category pages incoming links
+   beyond the /cats hub (fixes Ahrefs "Orphan page" internal-linking gap). */
+.related-cats {
+  margin: var(--space-8, 32px) 0 var(--space-6, 24px);
+}
+
+.related-cats-title {
+  font-size: var(--font-size-lg, 18px);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4, 16px);
+}
+
+.related-cats-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+
+.related-cat-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm, 8px);
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.12));
+  color: var(--color-text-secondary, #b9b9c6);
+  font-size: var(--font-size-sm, 14px);
+  text-decoration: none;
+  text-transform: capitalize;
+  transition: all var(--ease-fast, 0.15s ease);
+}
+
+.related-cat-link:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-muted, #8a8a9a);
+}
+
+.related-cat-all {
+  font-weight: 700;
+}
