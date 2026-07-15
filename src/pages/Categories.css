@@ -197,6 +197,13 @@
   transition: opacity 0.2s ease;
 }
 
+/* All category links are always in the DOM (crawlable, prevents orphaned
+   /cat/<slug> pages); the alphabet bar toggles visibility via [hidden].
+   `display: flex` above would otherwise override the hidden attribute. */
+.all-cat-item[hidden] {
+  display: none;
+}
+
 .all-cat-item:hover {
   opacity: 0.7;
 }

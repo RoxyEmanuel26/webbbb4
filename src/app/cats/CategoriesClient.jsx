@@ -97,12 +97,15 @@ const ALPHABET = ['#', ...Array.from({ length: 26 }, (_, i) => String.fromCharCo
 const CategoriesClient = () => {
   const [activeLetter, setActiveLetter] = useState('A');
 
-  const filteredCategories = ALL_CATEGORIES.filter((cat) => {
-    if (activeLetter === '#') {
-      return /^[0-9]/.test(cat.name);
-    }
-    return cat.name.toLowerCase().startsWith(activeLetter.toLowerCase());
-  });
+  // Bucket every category by its leading letter (digits -> '#') so we can render
+  // ALL of them into the server HTML. The alphabet bar only toggles visibility
+  // (via the `hidden` attribute) — it never conditionally renders links. This
+  // keeps every /cat/<slug> link crawlable regardless of the active letter,
+  // which is what prevents these pages from being orphaned.
+  const letterOf = (cat) => {
+    const first = (cat.name || '').charAt(0).toLowerCase();
+    return /[0-9]/.test(first) ? '#' : first;
+  };
 
   return (
     <div className="categories-page">
@@ -155,18 +158,19 @@ const CategoriesClient = () => {
           </div>
 
           <div className="all-cats-list">
-            {filteredCategories.length > 0 ? (
-              filteredCategories.map((cat) => (
-                <Link
-                  href={`/cat/${cat.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  key={cat.name}
-                  className="all-cat-item"
-                >
-                  <span className="all-cat-name">{cat.name}</span>
-                  <span className="all-cat-count">{cat.count}</span>
-                </Link>
-              ))
-            ) : (
+            {ALL_CATEGORIES.map((cat) => (
+              <Link
+                href={`/cat/${cat.name.toLowerCase().replace(/\s+/g, '-')}`}
+                key={cat.name}
+                className="all-cat-item"
+                data-letter={letterOf(cat)}
+                hidden={letterOf(cat) !== activeLetter.toLowerCase()}
+              >
+                <span className="all-cat-name">{cat.name}</span>
+                <span className="all-cat-count">{cat.count}</span>
+              </Link>
+            ))}
+            {!ALL_CATEGORIES.some((cat) => letterOf(cat) === activeLetter.toLowerCase()) && (
               <div className="no-cats-msg">No categories found for {activeLetter}.</div>
             )}
           </div>
