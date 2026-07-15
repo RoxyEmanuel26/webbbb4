@@ -14,9 +14,9 @@ export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName 
     : `"${seoQuery}" Free Porn Search Results ${currentYear} — NICEVX`;
 
   const seoDesc = isCat
-    ? `Watch free ${seoQuery} HD porn videos on NICEVX. Thousands of top-quality ${seoQuery} adult videos updated daily in ${currentYear}.`
+    ? `Watch free ${seoQuery} HD porn videos on NICEVX. Thousands of top-quality ${seoQuery} adult videos updated daily in ${currentYear}. Stream free in 1080p quality.`
     : isTag
-    ? `Explore free HD videos tagged #${seoQuery} on NICEVX. Updated daily with the best ${seoQuery} content in ${currentYear}.`
+    ? `Explore free HD videos tagged #${seoQuery} on NICEVX. Updated daily with the best ${seoQuery} content in ${currentYear}. Stream free in HD quality.`
     : `Search results for "${seoQuery}" on NICEVX. Find thousands of free HD porn videos matching your search in ${currentYear}.`;
 
   let seoCanonical = isCat
@@ -38,12 +38,34 @@ export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName 
 
   const robots = (!isCat && !isTag) ? 'noindex, nofollow' : (page > 1 ? 'noindex, follow' : 'index, follow');
 
+  const ogImage = [
+    {
+      url: '/favicon.webp',
+      width: 512,
+      height: 512,
+      alt: `${seoQuery} — NICEVX Free HD Porn Videos`,
+    },
+  ];
+
   return {
     title: seoTitle,
     description: seoDesc,
     robots,
     alternates: { canonical: seoCanonical },
-    openGraph: { title: seoTitle, description: seoDesc, url: seoCanonical, type: 'website' },
-    twitter: { title: seoTitle, description: seoDesc },
+    openGraph: {
+      title: seoTitle,
+      description: seoDesc,
+      url: seoCanonical,
+      siteName: 'NICEVX',
+      type: 'website',
+      locale: 'en_US',
+      images: ogImage,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: seoTitle,
+      description: seoDesc,
+      images: ['/favicon.webp'],
+    },
   };
 };

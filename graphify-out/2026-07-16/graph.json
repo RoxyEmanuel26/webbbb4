@@ -33,6 +33,171 @@
   },
   "nodes": [
     {
+      "label": "AGENTS.md",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents",
+      "community": 27,
+      "community_name": "AGENTS.md",
+      "norm_label": "agents.md"
+    },
+    {
+      "label": "AGENTS.md",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_agents_md",
+      "community": 27,
+      "community_name": "AGENTS.md",
+      "norm_label": "agents.md"
+    },
+    {
+      "label": "GRAPHIFY IS THE SOURCE OF TRUTH",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "agents_graphify_is_the_source_of_truth",
+      "community": 27,
+      "community_name": "AGENTS.md",
+      "norm_label": "graphify is the source of truth"
+    },
+    {
+      "label": "MANDATORY WORKFLOW",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "agents_mandatory_workflow",
+      "community": 27,
+      "community_name": "AGENTS.md",
+      "norm_label": "mandatory workflow"
+    },
+    {
+      "label": "WHEN GRAPH MUST BE UPDATED",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L26",
+      "_origin": "ast",
+      "id": "agents_when_graph_must_be_updated",
+      "community": 27,
+      "community_name": "AGENTS.md",
+      "norm_label": "when graph must be updated"
+    },
+    {
+      "label": "DEBUGGING RULE",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L53",
+      "_origin": "ast",
+      "id": "agents_debugging_rule",
+      "community": 27,
+      "community_name": "AGENTS.md",
+      "norm_label": "debugging rule"
+    },
+    {
+      "label": "FEATURE RULE",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L68",
+      "_origin": "ast",
+      "id": "agents_feature_rule",
+      "community": 27,
+      "community_name": "AGENTS.md",
+      "norm_label": "feature rule"
+    },
+    {
+      "label": "REFACTOR RULE",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L83",
+      "_origin": "ast",
+      "id": "agents_refactor_rule",
+      "community": 27,
+      "community_name": "AGENTS.md",
+      "norm_label": "refactor rule"
+    },
+    {
+      "label": "PERFORMANCE RULE",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L91",
+      "_origin": "ast",
+      "id": "agents_performance_rule",
+      "community": 27,
+      "community_name": "AGENTS.md",
+      "norm_label": "performance rule"
+    },
+    {
+      "label": "SECURITY RULE",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L102",
+      "_origin": "ast",
+      "id": "agents_security_rule",
+      "community": 27,
+      "community_name": "AGENTS.md",
+      "norm_label": "security rule"
+    },
+    {
+      "label": "REQUIRED RESPONSE FORMAT",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L114",
+      "_origin": "ast",
+      "id": "agents_required_response_format",
+      "community": 27,
+      "community_name": "AGENTS.md",
+      "norm_label": "required response format"
+    },
+    {
+      "label": "FINAL RULE",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L125",
+      "_origin": "ast",
+      "id": "agents_final_rule",
+      "community": 27,
+      "community_name": "AGENTS.md",
+      "norm_label": "final rule"
+    },
+    {
+      "label": "Navbar.jsx",
+      "file_type": "code",
+      "source_file": "src/components/Navbar.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_components_navbar",
+      "community": 3,
+      "community_name": "Root Layout and Global Ads",
+      "norm_label": "navbar.jsx"
+    },
+    {
+      "label": "NAV_LINKS",
+      "file_type": "code",
+      "source_file": "src/components/Navbar.jsx",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "src_components_navbar_nav_links",
+      "community": 3,
+      "community_name": "Root Layout and Global Ads",
+      "norm_label": "nav_links"
+    },
+    {
+      "label": "Navbar()",
+      "file_type": "code",
+      "source_file": "src/components/Navbar.jsx",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "src_components_navbar_navbar",
+      "community": 3,
+      "community_name": "Root Layout and Global Ads",
+      "norm_label": "navbar()"
+    },
+    {
       "label": ".eslintrc.json",
       "file_type": "code",
       "source_file": ".eslintrc.json",
@@ -1661,39 +1826,6 @@
       "id": "src_components_homeclient_homeclient"
     },
     {
-      "label": "Navbar.jsx",
-      "file_type": "code",
-      "source_file": "src/components/Navbar.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 3,
-      "norm_label": "navbar.jsx",
-      "community_name": "Root Layout and Global Ads",
-      "id": "src_components_navbar"
-    },
-    {
-      "label": "NAV_LINKS",
-      "file_type": "code",
-      "source_file": "src/components/Navbar.jsx",
-      "source_location": "L9",
-      "_origin": "ast",
-      "community": 3,
-      "norm_label": "nav_links",
-      "community_name": "Root Layout and Global Ads",
-      "id": "src_components_navbar_nav_links"
-    },
-    {
-      "label": "Navbar()",
-      "file_type": "code",
-      "source_file": "src/components/Navbar.jsx",
-      "source_location": "L14",
-      "_origin": "ast",
-      "community": 3,
-      "norm_label": "navbar()",
-      "community_name": "Root Layout and Global Ads",
-      "id": "src_components_navbar_navbar"
-    },
-    {
       "label": "Pagination.jsx",
       "file_type": "code",
       "source_file": "src/components/Pagination.jsx",
@@ -2035,15 +2167,6 @@
       "id": "vercel_headers"
     },
     {
-      "label": "AGENTS.md",
-      "file_type": "document",
-      "source_file": "AGENTS.md",
-      "community": 18,
-      "norm_label": "agents.md",
-      "community_name": "Project Documentation",
-      "id": "agents_md"
-    },
-    {
       "label": "README.md",
       "file_type": "document",
       "source_file": "README.md",
@@ -2144,6 +2267,185 @@
     }
   ],
   "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents",
+      "target": "agents_agents_md",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L53",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_agents_md",
+      "target": "agents_debugging_rule",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_agents_md",
+      "target": "agents_feature_rule",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L125",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_agents_md",
+      "target": "agents_final_rule",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_agents_md",
+      "target": "agents_graphify_is_the_source_of_truth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_agents_md",
+      "target": "agents_mandatory_workflow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L91",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_agents_md",
+      "target": "agents_performance_rule",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L83",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_agents_md",
+      "target": "agents_refactor_rule",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L114",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_agents_md",
+      "target": "agents_required_response_format",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L102",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_agents_md",
+      "target": "agents_security_rule",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_agents_md",
+      "target": "agents_when_graph_must_be_updated",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "src_app_layout",
+      "target": "src_components_navbar"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Navbar.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_components_navbar",
+      "target": "ref_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Navbar.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_components_navbar",
+      "target": "src_components_navbar_nav_links",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Navbar.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_components_navbar",
+      "target": "src_components_navbar_navbar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "src_app_layout",
+      "target": "src_components_navbar_navbar"
+    },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
@@ -2450,18 +2752,6 @@
       "_origin": "ast",
       "confidence_score": 1.0,
       "source": "src_components_homeclient",
-      "target": "ref_react"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/Navbar.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_components_navbar",
       "target": "ref_react"
     },
     {
@@ -3648,30 +3938,6 @@
       "target": "src_components_footer_footer"
     },
     {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_navbar"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_navbar_navbar"
-    },
-    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/page.jsx",
@@ -4042,28 +4308,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/components/Navbar.jsx",
-      "source_location": "L9",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_components_navbar",
-      "target": "src_components_navbar_nav_links"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/Navbar.jsx",
-      "source_location": "L14",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_components_navbar",
-      "target": "src_components_navbar_navbar"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "src/components/Pagination.jsx",
       "source_location": "L9",
       "weight": 1.0,
@@ -4366,14 +4610,6 @@
       "target": "vercel_headers"
     },
     {
-      "relation": "conceptually_related_to",
-      "confidence": "INFERRED",
-      "confidence_score": 0.7,
-      "source_file": "AGENTS.md",
-      "source": "agents_md",
-      "target": "readme_md"
-    },
-    {
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -4450,5 +4686,5 @@
       "source_file": "curl_nicevx.html"
     }
   ],
-  "built_at_commit": "5fec140e747569df730f3005dea9cc23f92798ca"
+  "built_at_commit": "a9177d5d9df10cf14b11ed5d6d66b909e931f0a4"
 }

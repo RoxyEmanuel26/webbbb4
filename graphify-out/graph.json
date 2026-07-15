@@ -33,15 +33,136 @@
   },
   "nodes": [
     {
-      "label": "AGENTS.md",
-      "file_type": "document",
-      "source_file": "AGENTS.md",
+      "label": "CategoriesClient.jsx",
+      "file_type": "code",
+      "source_file": "src/app/cats/CategoriesClient.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "agents",
-      "community": 27,
-      "community_name": "AGENTS.md",
-      "norm_label": "agents.md"
+      "id": "src_app_cats_categoriesclient",
+      "community": 9,
+      "community_name": "Category Listing Components",
+      "norm_label": "categoriesclient.jsx"
+    },
+    {
+      "label": "CATEGORIES",
+      "file_type": "code",
+      "source_file": "src/app/cats/CategoriesClient.jsx",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "src_app_cats_categoriesclient_categories",
+      "community": 9,
+      "community_name": "Category Listing Components",
+      "norm_label": "categories"
+    },
+    {
+      "label": "ALPHABET",
+      "file_type": "code",
+      "source_file": "src/app/cats/CategoriesClient.jsx",
+      "source_location": "L95",
+      "_origin": "ast",
+      "id": "src_app_cats_categoriesclient_alphabet",
+      "community": 9,
+      "community_name": "Category Listing Components",
+      "norm_label": "alphabet"
+    },
+    {
+      "label": "CategoriesClient()",
+      "file_type": "code",
+      "source_file": "src/app/cats/CategoriesClient.jsx",
+      "source_location": "L97",
+      "_origin": "ast",
+      "id": "src_app_cats_categoriesclient_categoriesclient",
+      "community": 9,
+      "community_name": "Category Listing Components",
+      "norm_label": "categoriesclient()"
+    },
+    {
+      "label": "layout.jsx",
+      "file_type": "code",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_app_layout",
+      "community": 3,
+      "community_name": "Root Layout and Global Ads",
+      "norm_label": "layout.jsx"
+    },
+    {
+      "label": "metadata",
+      "file_type": "code",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "src_app_layout_metadata",
+      "community": 3,
+      "community_name": "Root Layout and Global Ads",
+      "norm_label": "metadata"
+    },
+    {
+      "label": "viewport",
+      "file_type": "code",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L32",
+      "_origin": "ast",
+      "id": "src_app_layout_viewport",
+      "community": 3,
+      "community_name": "Root Layout and Global Ads",
+      "norm_label": "viewport"
+    },
+    {
+      "label": "RootLayout()",
+      "file_type": "code",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L36",
+      "_origin": "ast",
+      "id": "src_app_layout_rootlayout",
+      "community": 3,
+      "community_name": "Root Layout and Global Ads",
+      "norm_label": "rootlayout()"
+    },
+    {
+      "label": "HomeClient.jsx",
+      "file_type": "code",
+      "source_file": "src/components/HomeClient.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_components_homeclient",
+      "community": 13,
+      "community_name": "Home Page Client Logic",
+      "norm_label": "homeclient.jsx"
+    },
+    {
+      "label": "SORT_OPTIONS",
+      "file_type": "code",
+      "source_file": "src/components/HomeClient.jsx",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "src_components_homeclient_sort_options",
+      "community": 13,
+      "community_name": "Home Page Client Logic",
+      "norm_label": "sort_options"
+    },
+    {
+      "label": "fixEncoding()",
+      "file_type": "code",
+      "source_file": "src/components/HomeClient.jsx",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "src_components_homeclient_fixencoding",
+      "community": 13,
+      "community_name": "Home Page Client Logic",
+      "norm_label": "fixencoding()"
+    },
+    {
+      "label": "HomeClient()",
+      "file_type": "code",
+      "source_file": "src/components/HomeClient.jsx",
+      "source_location": "L37",
+      "_origin": "ast",
+      "id": "src_components_homeclient_homeclient",
+      "community": 13,
+      "community_name": "Home Page Client Logic",
+      "norm_label": "homeclient()"
     },
     {
       "label": "AGENTS.md",
@@ -49,10 +170,21 @@
       "source_file": "AGENTS.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "agents_agents_md",
       "community": 27,
       "community_name": "AGENTS.md",
-      "norm_label": "agents.md"
+      "norm_label": "agents.md",
+      "id": "agents"
+    },
+    {
+      "label": "AGENTS.md",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 27,
+      "community_name": "AGENTS.md",
+      "norm_label": "agents.md",
+      "id": "agents_agents_md"
     },
     {
       "label": "GRAPHIFY IS THE SOURCE OF TRUTH",
@@ -60,10 +192,10 @@
       "source_file": "AGENTS.md",
       "source_location": "L3",
       "_origin": "ast",
-      "id": "agents_graphify_is_the_source_of_truth",
       "community": 27,
       "community_name": "AGENTS.md",
-      "norm_label": "graphify is the source of truth"
+      "norm_label": "graphify is the source of truth",
+      "id": "agents_graphify_is_the_source_of_truth"
     },
     {
       "label": "MANDATORY WORKFLOW",
@@ -71,10 +203,10 @@
       "source_file": "AGENTS.md",
       "source_location": "L16",
       "_origin": "ast",
-      "id": "agents_mandatory_workflow",
       "community": 27,
       "community_name": "AGENTS.md",
-      "norm_label": "mandatory workflow"
+      "norm_label": "mandatory workflow",
+      "id": "agents_mandatory_workflow"
     },
     {
       "label": "WHEN GRAPH MUST BE UPDATED",
@@ -82,10 +214,10 @@
       "source_file": "AGENTS.md",
       "source_location": "L26",
       "_origin": "ast",
-      "id": "agents_when_graph_must_be_updated",
       "community": 27,
       "community_name": "AGENTS.md",
-      "norm_label": "when graph must be updated"
+      "norm_label": "when graph must be updated",
+      "id": "agents_when_graph_must_be_updated"
     },
     {
       "label": "DEBUGGING RULE",
@@ -93,10 +225,10 @@
       "source_file": "AGENTS.md",
       "source_location": "L53",
       "_origin": "ast",
-      "id": "agents_debugging_rule",
       "community": 27,
       "community_name": "AGENTS.md",
-      "norm_label": "debugging rule"
+      "norm_label": "debugging rule",
+      "id": "agents_debugging_rule"
     },
     {
       "label": "FEATURE RULE",
@@ -104,10 +236,10 @@
       "source_file": "AGENTS.md",
       "source_location": "L68",
       "_origin": "ast",
-      "id": "agents_feature_rule",
       "community": 27,
       "community_name": "AGENTS.md",
-      "norm_label": "feature rule"
+      "norm_label": "feature rule",
+      "id": "agents_feature_rule"
     },
     {
       "label": "REFACTOR RULE",
@@ -115,10 +247,10 @@
       "source_file": "AGENTS.md",
       "source_location": "L83",
       "_origin": "ast",
-      "id": "agents_refactor_rule",
       "community": 27,
       "community_name": "AGENTS.md",
-      "norm_label": "refactor rule"
+      "norm_label": "refactor rule",
+      "id": "agents_refactor_rule"
     },
     {
       "label": "PERFORMANCE RULE",
@@ -126,10 +258,10 @@
       "source_file": "AGENTS.md",
       "source_location": "L91",
       "_origin": "ast",
-      "id": "agents_performance_rule",
       "community": 27,
       "community_name": "AGENTS.md",
-      "norm_label": "performance rule"
+      "norm_label": "performance rule",
+      "id": "agents_performance_rule"
     },
     {
       "label": "SECURITY RULE",
@@ -137,10 +269,10 @@
       "source_file": "AGENTS.md",
       "source_location": "L102",
       "_origin": "ast",
-      "id": "agents_security_rule",
       "community": 27,
       "community_name": "AGENTS.md",
-      "norm_label": "security rule"
+      "norm_label": "security rule",
+      "id": "agents_security_rule"
     },
     {
       "label": "REQUIRED RESPONSE FORMAT",
@@ -148,10 +280,10 @@
       "source_file": "AGENTS.md",
       "source_location": "L114",
       "_origin": "ast",
-      "id": "agents_required_response_format",
       "community": 27,
       "community_name": "AGENTS.md",
-      "norm_label": "required response format"
+      "norm_label": "required response format",
+      "id": "agents_required_response_format"
     },
     {
       "label": "FINAL RULE",
@@ -159,10 +291,10 @@
       "source_file": "AGENTS.md",
       "source_location": "L125",
       "_origin": "ast",
-      "id": "agents_final_rule",
       "community": 27,
       "community_name": "AGENTS.md",
-      "norm_label": "final rule"
+      "norm_label": "final rule",
+      "id": "agents_final_rule"
     },
     {
       "label": "Navbar.jsx",
@@ -170,10 +302,10 @@
       "source_file": "src/components/Navbar.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "src_components_navbar",
-      "community": 3,
-      "community_name": "Root Layout and Global Ads",
-      "norm_label": "navbar.jsx"
+      "community": 30,
+      "community_name": "Navbar.jsx",
+      "norm_label": "navbar.jsx",
+      "id": "src_components_navbar"
     },
     {
       "label": "NAV_LINKS",
@@ -181,10 +313,10 @@
       "source_file": "src/components/Navbar.jsx",
       "source_location": "L9",
       "_origin": "ast",
-      "id": "src_components_navbar_nav_links",
-      "community": 3,
-      "community_name": "Root Layout and Global Ads",
-      "norm_label": "nav_links"
+      "community": 30,
+      "community_name": "Navbar.jsx",
+      "norm_label": "nav_links",
+      "id": "src_components_navbar_nav_links"
     },
     {
       "label": "Navbar()",
@@ -192,10 +324,10 @@
       "source_file": "src/components/Navbar.jsx",
       "source_location": "L15",
       "_origin": "ast",
-      "id": "src_components_navbar_navbar",
-      "community": 3,
-      "community_name": "Root Layout and Global Ads",
-      "norm_label": "navbar()"
+      "community": 30,
+      "community_name": "Navbar.jsx",
+      "norm_label": "navbar()",
+      "id": "src_components_navbar_navbar"
     },
     {
       "label": ".eslintrc.json",
@@ -1199,50 +1331,6 @@
       "id": "src_app_cat_catname_page_categorypage"
     },
     {
-      "label": "CategoriesClient.jsx",
-      "file_type": "code",
-      "source_file": "src/app/cats/CategoriesClient.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 9,
-      "norm_label": "categoriesclient.jsx",
-      "community_name": "Category Listing Components",
-      "id": "src_app_cats_categoriesclient"
-    },
-    {
-      "label": "CATEGORIES",
-      "file_type": "code",
-      "source_file": "src/app/cats/CategoriesClient.jsx",
-      "source_location": "L10",
-      "_origin": "ast",
-      "community": 9,
-      "norm_label": "categories",
-      "community_name": "Category Listing Components",
-      "id": "src_app_cats_categoriesclient_categories"
-    },
-    {
-      "label": "ALPHABET",
-      "file_type": "code",
-      "source_file": "src/app/cats/CategoriesClient.jsx",
-      "source_location": "L95",
-      "_origin": "ast",
-      "community": 9,
-      "norm_label": "alphabet",
-      "community_name": "Category Listing Components",
-      "id": "src_app_cats_categoriesclient_alphabet"
-    },
-    {
-      "label": "CategoriesClient()",
-      "file_type": "code",
-      "source_file": "src/app/cats/CategoriesClient.jsx",
-      "source_location": "L97",
-      "_origin": "ast",
-      "community": 9,
-      "norm_label": "categoriesclient()",
-      "community_name": "Category Listing Components",
-      "id": "src_app_cats_categoriesclient_categoriesclient"
-    },
-    {
       "label": "page.jsx",
       "file_type": "code",
       "source_file": "src/app/cats/page.jsx",
@@ -1309,50 +1397,6 @@
       "id": "src_app_dmca_page_dmcapage"
     },
     {
-      "label": "layout.jsx",
-      "file_type": "code",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 3,
-      "norm_label": "layout.jsx",
-      "community_name": "Root Layout and Global Ads",
-      "id": "src_app_layout"
-    },
-    {
-      "label": "metadata",
-      "file_type": "code",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L12",
-      "_origin": "ast",
-      "community": 3,
-      "norm_label": "metadata",
-      "community_name": "Root Layout and Global Ads",
-      "id": "src_app_layout_metadata"
-    },
-    {
-      "label": "viewport",
-      "file_type": "code",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L28",
-      "_origin": "ast",
-      "community": 3,
-      "norm_label": "viewport",
-      "community_name": "Root Layout and Global Ads",
-      "id": "src_app_layout_viewport"
-    },
-    {
-      "label": "RootLayout()",
-      "file_type": "code",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L32",
-      "_origin": "ast",
-      "community": 3,
-      "norm_label": "rootlayout()",
-      "community_name": "Root Layout and Global Ads",
-      "id": "src_app_layout_rootlayout"
-    },
-    {
       "label": "page.jsx",
       "file_type": "code",
       "source_file": "src/app/page.jsx",
@@ -1402,9 +1446,9 @@
       "source_file": "src/app/privacy/page.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 0,
+      "community": 28,
       "norm_label": "page.jsx",
-      "community_name": "Static and Legal Pages",
+      "community_name": "page.jsx",
       "id": "src_app_privacy_page"
     },
     {
@@ -1413,9 +1457,9 @@
       "source_file": "src/app/privacy/page.jsx",
       "source_location": "L5",
       "_origin": "ast",
-      "community": 0,
+      "community": 28,
       "norm_label": "metadata",
-      "community_name": "Static and Legal Pages",
+      "community_name": "page.jsx",
       "id": "src_app_privacy_page_metadata"
     },
     {
@@ -1424,9 +1468,9 @@
       "source_file": "src/app/privacy/page.jsx",
       "source_location": "L14",
       "_origin": "ast",
-      "community": 0,
+      "community": 28,
       "norm_label": "privacypage()",
-      "community_name": "Static and Legal Pages",
+      "community_name": "page.jsx",
       "id": "src_app_privacy_page_privacypage"
     },
     {
@@ -1644,9 +1688,9 @@
       "source_file": "src/components/AdBanner.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 3,
+      "community": 0,
       "norm_label": "adbanner.jsx",
-      "community_name": "Root Layout and Global Ads",
+      "community_name": "Static and Legal Pages",
       "id": "src_components_adbanner"
     },
     {
@@ -1655,9 +1699,9 @@
       "source_file": "src/components/AdBanner.jsx",
       "source_location": "L14",
       "_origin": "ast",
-      "community": 3,
+      "community": 0,
       "norm_label": "adbanner()",
-      "community_name": "Root Layout and Global Ads",
+      "community_name": "Static and Legal Pages",
       "id": "src_components_adbanner_adbanner"
     },
     {
@@ -1688,9 +1732,9 @@
       "source_file": "src/components/AdPopunder.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 3,
+      "community": 0,
       "norm_label": "adpopunder.jsx",
-      "community_name": "Root Layout and Global Ads",
+      "community_name": "Static and Legal Pages",
       "id": "src_components_adpopunder"
     },
     {
@@ -1699,9 +1743,9 @@
       "source_file": "src/components/AdPopunder.jsx",
       "source_location": "L11",
       "_origin": "ast",
-      "community": 3,
+      "community": 0,
       "norm_label": "adpopunder()",
-      "community_name": "Root Layout and Global Ads",
+      "community_name": "Static and Legal Pages",
       "id": "src_components_adpopunder_adpopunder"
     },
     {
@@ -1710,9 +1754,9 @@
       "source_file": "src/components/AdSocialBar.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 3,
+      "community": 0,
       "norm_label": "adsocialbar.jsx",
-      "community_name": "Root Layout and Global Ads",
+      "community_name": "Static and Legal Pages",
       "id": "src_components_adsocialbar"
     },
     {
@@ -1721,9 +1765,9 @@
       "source_file": "src/components/AdSocialBar.jsx",
       "source_location": "L9",
       "_origin": "ast",
-      "community": 3,
+      "community": 0,
       "norm_label": "adsocialbar()",
-      "community_name": "Root Layout and Global Ads",
+      "community_name": "Static and Legal Pages",
       "id": "src_components_adsocialbar_adsocialbar"
     },
     {
@@ -1732,9 +1776,9 @@
       "source_file": "src/components/AgeGateModal.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 3,
+      "community": 0,
       "norm_label": "agegatemodal.jsx",
-      "community_name": "Root Layout and Global Ads",
+      "community_name": "Static and Legal Pages",
       "id": "src_components_agegatemodal"
     },
     {
@@ -1743,9 +1787,9 @@
       "source_file": "src/components/AgeGateModal.jsx",
       "source_location": "L5",
       "_origin": "ast",
-      "community": 3,
+      "community": 0,
       "norm_label": "agegatemodal()",
-      "community_name": "Root Layout and Global Ads",
+      "community_name": "Static and Legal Pages",
       "id": "src_components_agegatemodal_agegatemodal"
     },
     {
@@ -1754,9 +1798,9 @@
       "source_file": "src/components/Footer.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 3,
+      "community": 29,
       "norm_label": "footer.jsx",
-      "community_name": "Root Layout and Global Ads",
+      "community_name": "Footer.jsx",
       "id": "src_components_footer"
     },
     {
@@ -1765,9 +1809,9 @@
       "source_file": "src/components/Footer.jsx",
       "source_location": "L6",
       "_origin": "ast",
-      "community": 3,
+      "community": 29,
       "norm_label": "hot_searches",
-      "community_name": "Root Layout and Global Ads",
+      "community_name": "Footer.jsx",
       "id": "src_components_footer_hot_searches"
     },
     {
@@ -1776,54 +1820,10 @@
       "source_file": "src/components/Footer.jsx",
       "source_location": "L11",
       "_origin": "ast",
-      "community": 3,
+      "community": 29,
       "norm_label": "footer()",
-      "community_name": "Root Layout and Global Ads",
+      "community_name": "Footer.jsx",
       "id": "src_components_footer_footer"
-    },
-    {
-      "label": "HomeClient.jsx",
-      "file_type": "code",
-      "source_file": "src/components/HomeClient.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 13,
-      "norm_label": "homeclient.jsx",
-      "community_name": "Home Page Client Logic",
-      "id": "src_components_homeclient"
-    },
-    {
-      "label": "SORT_OPTIONS",
-      "file_type": "code",
-      "source_file": "src/components/HomeClient.jsx",
-      "source_location": "L14",
-      "_origin": "ast",
-      "community": 13,
-      "norm_label": "sort_options",
-      "community_name": "Home Page Client Logic",
-      "id": "src_components_homeclient_sort_options"
-    },
-    {
-      "label": "fixEncoding()",
-      "file_type": "code",
-      "source_file": "src/components/HomeClient.jsx",
-      "source_location": "L23",
-      "_origin": "ast",
-      "community": 13,
-      "norm_label": "fixencoding()",
-      "community_name": "Home Page Client Logic",
-      "id": "src_components_homeclient_fixencoding"
-    },
-    {
-      "label": "HomeClient()",
-      "file_type": "code",
-      "source_file": "src/components/HomeClient.jsx",
-      "source_location": "L37",
-      "_origin": "ast",
-      "community": 13,
-      "norm_label": "homeclient()",
-      "community_name": "Home Page Client Logic",
-      "id": "src_components_homeclient_homeclient"
     },
     {
       "label": "Pagination.jsx",
@@ -2268,15 +2268,186 @@
   ],
   "links": [
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/cats/CategoriesClient.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_cats_categoriesclient",
+      "target": "ref_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/cats/CategoriesClient.jsx",
+      "source_location": "L95",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_cats_categoriesclient",
+      "target": "src_app_cats_categoriesclient_alphabet",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/cats/CategoriesClient.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_cats_categoriesclient",
+      "target": "src_app_cats_categoriesclient_categories",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/cats/CategoriesClient.jsx",
+      "source_location": "L97",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_cats_categoriesclient",
+      "target": "src_app_cats_categoriesclient_categoriesclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/cats/page.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "src_app_cats_page",
+      "target": "src_app_cats_categoriesclient"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/cats/page.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "src_app_cats_page",
+      "target": "src_app_cats_categoriesclient_categoriesclient"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_layout",
+      "target": "src_app_layout_metadata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L36",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_layout",
+      "target": "src_app_layout_rootlayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L32",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_layout",
+      "target": "src_app_layout_viewport",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/HomeClient.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_components_homeclient",
+      "target": "ref_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/HomeClient.jsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_components_homeclient",
+      "target": "src_components_homeclient_fixencoding",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/HomeClient.jsx",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_components_homeclient",
+      "target": "src_components_homeclient_homeclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/HomeClient.jsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_components_homeclient",
+      "target": "src_components_homeclient_sort_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/HomeClient.jsx",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_components_homeclient_homeclient",
+      "target": "src_components_homeclient_sort_options"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/HomeClient.jsx",
+      "source_location": "L77",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_components_homeclient_homeclient",
+      "target": "src_components_homeclient_fixencoding",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AGENTS.md",
       "source_location": "L1",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "agents",
-      "target": "agents_agents_md",
-      "confidence_score": 1.0
+      "target": "agents_agents_md"
     },
     {
       "relation": "contains",
@@ -2285,9 +2456,9 @@
       "source_location": "L53",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "agents_agents_md",
-      "target": "agents_debugging_rule",
-      "confidence_score": 1.0
+      "target": "agents_debugging_rule"
     },
     {
       "relation": "contains",
@@ -2296,9 +2467,9 @@
       "source_location": "L68",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "agents_agents_md",
-      "target": "agents_feature_rule",
-      "confidence_score": 1.0
+      "target": "agents_feature_rule"
     },
     {
       "relation": "contains",
@@ -2307,9 +2478,9 @@
       "source_location": "L125",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "agents_agents_md",
-      "target": "agents_final_rule",
-      "confidence_score": 1.0
+      "target": "agents_final_rule"
     },
     {
       "relation": "contains",
@@ -2318,9 +2489,9 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "agents_agents_md",
-      "target": "agents_graphify_is_the_source_of_truth",
-      "confidence_score": 1.0
+      "target": "agents_graphify_is_the_source_of_truth"
     },
     {
       "relation": "contains",
@@ -2329,9 +2500,9 @@
       "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "agents_agents_md",
-      "target": "agents_mandatory_workflow",
-      "confidence_score": 1.0
+      "target": "agents_mandatory_workflow"
     },
     {
       "relation": "contains",
@@ -2340,9 +2511,9 @@
       "source_location": "L91",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "agents_agents_md",
-      "target": "agents_performance_rule",
-      "confidence_score": 1.0
+      "target": "agents_performance_rule"
     },
     {
       "relation": "contains",
@@ -2351,9 +2522,9 @@
       "source_location": "L83",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "agents_agents_md",
-      "target": "agents_refactor_rule",
-      "confidence_score": 1.0
+      "target": "agents_refactor_rule"
     },
     {
       "relation": "contains",
@@ -2362,9 +2533,9 @@
       "source_location": "L114",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "agents_agents_md",
-      "target": "agents_required_response_format",
-      "confidence_score": 1.0
+      "target": "agents_required_response_format"
     },
     {
       "relation": "contains",
@@ -2373,9 +2544,9 @@
       "source_location": "L102",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "agents_agents_md",
-      "target": "agents_security_rule",
-      "confidence_score": 1.0
+      "target": "agents_security_rule"
     },
     {
       "relation": "contains",
@@ -2384,21 +2555,9 @@
       "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "agents_agents_md",
-      "target": "agents_when_graph_must_be_updated",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
       "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_navbar"
+      "source": "agents_agents_md",
+      "target": "agents_when_graph_must_be_updated"
     },
     {
       "relation": "imports_from",
@@ -2408,9 +2567,9 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "src_components_navbar",
-      "target": "ref_react",
-      "confidence_score": 1.0
+      "target": "ref_react"
     },
     {
       "relation": "contains",
@@ -2419,9 +2578,9 @@
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "src_components_navbar",
-      "target": "src_components_navbar_nav_links",
-      "confidence_score": 1.0
+      "target": "src_components_navbar_nav_links"
     },
     {
       "relation": "contains",
@@ -2430,20 +2589,8 @@
       "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "src_components_navbar",
-      "target": "src_components_navbar_navbar",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
       "confidence_score": 1.0,
-      "source": "src_app_layout",
+      "source": "src_components_navbar",
       "target": "src_components_navbar_navbar"
     },
     {
@@ -2536,18 +2683,6 @@
       "_origin": "ast",
       "confidence_score": 1.0,
       "source": "src_app_cat_catname_page",
-      "target": "ref_react"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/cats/CategoriesClient.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_cats_categoriesclient",
       "target": "ref_react"
     },
     {
@@ -2740,18 +2875,6 @@
       "_origin": "ast",
       "confidence_score": 1.0,
       "source": "src_components_footer",
-      "target": "ref_react"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/HomeClient.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_components_homeclient",
       "target": "ref_react"
     },
     {
@@ -3686,63 +3809,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/app/cats/CategoriesClient.jsx",
-      "source_location": "L95",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_cats_categoriesclient",
-      "target": "src_app_cats_categoriesclient_alphabet"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/cats/CategoriesClient.jsx",
-      "source_location": "L10",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_cats_categoriesclient",
-      "target": "src_app_cats_categoriesclient_categories"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/cats/CategoriesClient.jsx",
-      "source_location": "L97",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_cats_categoriesclient",
-      "target": "src_app_cats_categoriesclient_categoriesclient"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/cats/page.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_cats_page",
-      "target": "src_app_cats_categoriesclient"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/cats/page.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_cats_page",
-      "target": "src_app_cats_categoriesclient_categoriesclient"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "src/app/cats/page.jsx",
       "source_location": "L19",
       "weight": 1.0,
@@ -3783,159 +3849,6 @@
       "confidence_score": 1.0,
       "source": "src_app_dmca_page",
       "target": "src_app_dmca_page_metadata"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L12",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_app_layout_metadata"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L32",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_app_layout_rootlayout"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L28",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_app_layout_viewport"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_adbanner"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_adbanner_adbanner"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_adpopunder"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_adpopunder_adpopunder"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_adsocialbar"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_adsocialbar_adsocialbar"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_agegatemodal"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_agegatemodal_agegatemodal"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_footer"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_footer_footer"
     },
     {
       "relation": "contains",
@@ -4259,51 +4172,6 @@
       "confidence_score": 1.0,
       "source": "src_components_footer",
       "target": "src_components_footer_hot_searches"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/HomeClient.jsx",
-      "source_location": "L23",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_components_homeclient",
-      "target": "src_components_homeclient_fixencoding"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/HomeClient.jsx",
-      "source_location": "L37",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_components_homeclient",
-      "target": "src_components_homeclient_homeclient"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/HomeClient.jsx",
-      "source_location": "L14",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_components_homeclient",
-      "target": "src_components_homeclient_sort_options"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/HomeClient.jsx",
-      "source_location": "L77",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_components_homeclient_homeclient",
-      "target": "src_components_homeclient_fixencoding"
     },
     {
       "relation": "contains",
@@ -4686,5 +4554,5 @@
       "source_file": "curl_nicevx.html"
     }
   ],
-  "built_at_commit": "a9177d5d9df10cf14b11ed5d6d66b909e931f0a4"
+  "built_at_commit": "2950dcc61468d23be077727d97bf686b329ae3b0"
 }

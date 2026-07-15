@@ -1,16 +1,16 @@
 # Graph Report - kumpulenak4  (2026-07-16)
 
 ## Corpus Check
-- 43 files · ~20,811 words
+- 43 files · ~20,839 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 205 nodes · 212 edges · 28 communities (21 shown, 7 thin omitted)
+- 205 nodes · 201 edges · 31 communities (20 shown, 11 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 3 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a9177d5d`
+- Built from commit: `2950dcc6`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -39,6 +39,9 @@
 - Horizontal Brand Logo
 - Hero Section Graphics
 - AGENTS.md
+- page.jsx
+- Footer.jsx
+- Navbar.jsx
 
 ## God Nodes (most connected - your core abstractions)
 1. `react` - 27 edges
@@ -48,9 +51,9 @@
 5. `lib` - 4 edges
 6. `VideoPlayerClient()` - 4 edges
 7. `VideoCard()` - 4 edges
-8. `plugins` - 3 edges
-9. `rules` - 3 edges
-10. `ALL_CATEGORIES` - 3 edges
+8. `HomeClient()` - 3 edges
+9. `plugins` - 3 edges
+10. `rules` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `NICEVX Home Page` --references--> `Adsterra Banner Ad Wrapper`  [INFERRED]
@@ -71,11 +74,11 @@
 - **Adsterra Monetization Integration** — public_adsterra_html, public_adsterra_native_html, public_adsterra_service [EXTRACTED 1.00]
 - **Eporner Content Integration** — curl_nicevx_html, scratch_txt, eporner_api [INFERRED 0.85]
 
-## Communities (28 total, 7 thin omitted)
+## Communities (31 total, 11 thin omitted)
 
 ### Community 0 - "Static and Legal Pages"
-Cohesion: 0.06
-Nodes (5): react, metadata, metadata, metadata, metadata
+Cohesion: 0.05
+Nodes (4): react, metadata, metadata, metadata
 
 ### Community 1 - "Project Scripts and Metadata"
 Cohesion: 0.10
@@ -84,10 +87,6 @@ Nodes (19): oxlint, devDependencies, oxlint, @types/react, @types/react-dom, nam
 ### Community 2 - "TypeScript Compiler Configuration"
 Cohesion: 0.11
 Nodes (19): compilerOptions, allowJs, baseUrl, esModuleInterop, forceConsistentCasingInFileNames, incremental, isolatedModules, jsx (+11 more)
-
-### Community 3 - "Root Layout and Global Ads"
-Cohesion: 0.15
-Nodes (10): metadata, viewport, AdBanner(), AdPopunder(), AdSocialBar(), AgeGateModal(), Footer(), HOT_SEARCHES (+2 more)
 
 ### Community 4 - "Cloudflare and Core Dependencies"
 Cohesion: 0.13
@@ -122,7 +121,7 @@ Cohesion: 0.70
 Nodes (4): createSlug(), formatViews(), ratingToPercent(), VideoCard()
 
 ### Community 13 - "Home Page Client Logic"
-Cohesion: 0.67
+Cohesion: 0.83
 Nodes (3): fixEncoding(), HomeClient(), SORT_OPTIONS
 
 ### Community 14 - "Search Results Shared Logic"
@@ -142,23 +141,23 @@ Cohesion: 0.17
 Nodes (10): DEBUGGING RULE, FEATURE RULE, FINAL RULE, GRAPHIFY IS THE SOURCE OF TRUTH, MANDATORY WORKFLOW, PERFORMANCE RULE, REFACTOR RULE, REQUIRED RESPONSE FORMAT (+2 more)
 
 ## Knowledge Gaps
-- **89 isolated node(s):** `GRAPHIFY IS THE SOURCE OF TRUTH`, `MANDATORY WORKFLOW`, `WHEN GRAPH MUST BE UPDATED`, `DEBUGGING RULE`, `FEATURE RULE` (+84 more)
+- **88 isolated node(s):** `CATEGORIES`, `ALPHABET`, `metadata`, `viewport`, `GRAPHIFY IS THE SOURCE OF TRUTH` (+83 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **11 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `Static and Legal Pages` to `Root Layout and Global Ads`, `Linter Rules and Plugins`, `Category Listing Components`, `Video Playback Pages`, `Video Card UI Components`, `Home Page Metadata`, `Home Page Client Logic`, `Search Results Shared Logic`?**
-  _High betweenness centrality (0.172) - this node is a cross-community bridge._
+- **Why does `react` connect `Static and Legal Pages` to `Linter Rules and Plugins`, `Category Listing Components`, `Video Playback Pages`, `Video Card UI Components`, `Home Page Metadata`, `Home Page Client Logic`, `Search Results Shared Logic`, `page.jsx`, `Footer.jsx`, `Navbar.jsx`?**
+  _High betweenness centrality (0.162) - this node is a cross-community bridge._
 - **Why does `plugins` connect `Linter Rules and Plugins` to `Static and Legal Pages`?**
-  _High betweenness centrality (0.028) - this node is a cross-community bridge._
+  _High betweenness centrality (0.026) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `Cloudflare and Core Dependencies` to `Project Scripts and Metadata`?**
   _High betweenness centrality (0.018) - this node is a cross-community bridge._
-- **What connects `GRAPHIFY IS THE SOURCE OF TRUTH`, `MANDATORY WORKFLOW`, `WHEN GRAPH MUST BE UPDATED` to the rest of the system?**
-  _89 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `CATEGORIES`, `ALPHABET`, `metadata` to the rest of the system?**
+  _88 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Static and Legal Pages` be split into smaller, more focused modules?**
-  _Cohesion score 0.0625 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05405405405405406 - nodes in this community are weakly interconnected._
 - **Should `Project Scripts and Metadata` be split into smaller, more focused modules?**
   _Cohesion score 0.1 - nodes in this community are weakly interconnected._
 - **Should `TypeScript Compiler Configuration` be split into smaller, more focused modules?**

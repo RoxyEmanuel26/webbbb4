@@ -4,8 +4,20 @@ import { Flame, ExternalLink } from 'lucide-react';
 import './Footer.css';
 
 const HOT_SEARCHES = [
-  'teen', 'milf', 'anal', 'lesbian', 'threesome', 'pov', 'solo',
-  'amateur', 'hardcore', 'blowjob', 'creampie', 'asian', 'latina', 'bbw'
+  { label: 'teen',        href: '/cat/teen' },
+  { label: 'milf',        href: '/cat/milf' },
+  { label: 'anal',        href: '/cat/anal' },
+  { label: 'lesbian',     href: '/cat/lesbian' },
+  { label: 'threesome',   href: '/cat/threesome' },
+  { label: 'pov',         href: '/cat/pov' },
+  { label: 'amateur',     href: '/cat/amateur' },
+  { label: 'hardcore',    href: '/cat/hardcore' },
+  { label: 'blowjob',     href: '/cat/blowjob' },
+  { label: 'creampie',    href: '/cat/creampie' },
+  { label: 'asian',       href: '/cat/asian' },
+  { label: 'latina',      href: '/cat/latina' },
+  { label: 'bbw',         href: '/cat/bbw' },
+  { label: 'japanese',    href: '/cat/japanese' },
 ];
 
 const Footer = () => (
@@ -15,16 +27,16 @@ const Footer = () => (
       {/* Top: Hot Searches */}
       <div className="footer-hot">
         <span className="footer-hot-label">
-          <Flame size={14} aria-hidden="true" /> Hot Searches:
+          <Flame size={14} aria-hidden="true" /> Hot Categories:
         </span>
         <div className="footer-hot-tags">
           {HOT_SEARCHES.map(tag => (
             <Link
-              key={tag}
-              href={`/search?query=${encodeURIComponent(tag)}`}
+              key={tag.href}
+              href={tag.href}
               className="footer-tag"
             >
-              {tag}
+              {tag.label}
             </Link>
           ))}
         </div>
@@ -46,8 +58,9 @@ const Footer = () => (
             </div>
           </Link>
           <p className="footer-brand-desc">
-            Your premium destination for free HD adult entertainment.
-            100,000+ videos updated daily. Fast streaming on all devices.
+            NICEVX is your premium destination for free HD adult entertainment.
+            Stream over 4 million free porn videos updated daily — teen, MILF, amateur,
+            Asian, hardcore, lesbian, anal, and more. Fast HD streaming on all devices.
           </p>
         </div>
 

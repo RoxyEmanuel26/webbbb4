@@ -1,15 +1,16 @@
-# Graph Report - .  (2026-07-15)
+# Graph Report - kumpulenak4  (2026-07-16)
 
 ## Corpus Check
-- cluster-only mode — file stats not available
+- 43 files · ~20,811 words
+- Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 194 nodes · 202 edges · 27 communities (20 shown, 7 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.82)
-- Token cost: 770 input · 287 output
+- 205 nodes · 212 edges · 28 communities (21 shown, 7 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 3 edges (avg confidence: 0.87)
+- Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `5fec140e`
+- Built from commit: `a9177d5d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -37,6 +38,7 @@
 - Circular Brand Logo
 - Horizontal Brand Logo
 - Hero Section Graphics
+- AGENTS.md
 
 ## God Nodes (most connected - your core abstractions)
 1. `react` - 27 edges
@@ -69,7 +71,7 @@
 - **Adsterra Monetization Integration** — public_adsterra_html, public_adsterra_native_html, public_adsterra_service [EXTRACTED 1.00]
 - **Eporner Content Integration** — curl_nicevx_html, scratch_txt, eporner_api [INFERRED 0.85]
 
-## Communities (27 total, 7 thin omitted)
+## Communities (28 total, 7 thin omitted)
 
 ### Community 0 - "Static and Legal Pages"
 Cohesion: 0.06
@@ -135,8 +137,12 @@ Nodes (3): epornerServerApi, fixEncoding(), sanitizeVideo()
 Cohesion: 0.67
 Nodes (3): enqueueAd(), processQueue(), queue
 
+### Community 27 - "AGENTS.md"
+Cohesion: 0.17
+Nodes (10): DEBUGGING RULE, FEATURE RULE, FINAL RULE, GRAPHIFY IS THE SOURCE OF TRUTH, MANDATORY WORKFLOW, PERFORMANCE RULE, REFACTOR RULE, REQUIRED RESPONSE FORMAT (+2 more)
+
 ## Knowledge Gaps
-- **79 isolated node(s):** `extends`, `next/core-web-vitals`, `$schema`, `oxc`, `react/rules-of-hooks` (+74 more)
+- **89 isolated node(s):** `GRAPHIFY IS THE SOURCE OF TRUTH`, `MANDATORY WORKFLOW`, `WHEN GRAPH MUST BE UPDATED`, `DEBUGGING RULE`, `FEATURE RULE` (+84 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -144,13 +150,13 @@ Nodes (3): enqueueAd(), processQueue(), queue
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `react` connect `Static and Legal Pages` to `Root Layout and Global Ads`, `Linter Rules and Plugins`, `Category Listing Components`, `Video Playback Pages`, `Video Card UI Components`, `Home Page Metadata`, `Home Page Client Logic`, `Search Results Shared Logic`?**
-  _High betweenness centrality (0.192) - this node is a cross-community bridge._
+  _High betweenness centrality (0.172) - this node is a cross-community bridge._
 - **Why does `plugins` connect `Linter Rules and Plugins` to `Static and Legal Pages`?**
-  _High betweenness centrality (0.031) - this node is a cross-community bridge._
+  _High betweenness centrality (0.028) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `Cloudflare and Core Dependencies` to `Project Scripts and Metadata`?**
-  _High betweenness centrality (0.020) - this node is a cross-community bridge._
-- **What connects `extends`, `next/core-web-vitals`, `$schema` to the rest of the system?**
-  _79 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _High betweenness centrality (0.018) - this node is a cross-community bridge._
+- **What connects `GRAPHIFY IS THE SOURCE OF TRUTH`, `MANDATORY WORKFLOW`, `WHEN GRAPH MUST BE UPDATED` to the rest of the system?**
+  _89 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Static and Legal Pages` be split into smaller, more focused modules?**
   _Cohesion score 0.0625 - nodes in this community are weakly interconnected._
 - **Should `Project Scripts and Metadata` be split into smaller, more focused modules?**
