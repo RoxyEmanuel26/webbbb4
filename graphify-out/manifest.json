@@ -65,9 +65,9 @@
     "semantic_hash": "71ac1e87db0b47c495e4b1520f32be60"
   },
   "src/app/layout.jsx": {
-    "mtime": 1784144054.4372885,
-    "ast_hash": "7f4119efe0e3be8b744d73ad2c2a3183",
-    "semantic_hash": "7f4119efe0e3be8b744d73ad2c2a3183"
+    "mtime": 1784145587.2634854,
+    "ast_hash": "947b812a140aa3a16fd562a5fbf09259",
+    "semantic_hash": ""
   },
   "src/app/page.jsx": {
     "mtime": 1783885978.855783,

@@ -422,17 +422,17 @@
   "questions": [
     {
       "type": "bridge_node",
-      "question": "Why does `react` connect `react` to `layout.jsx`, `Linter Rules and Plugins`, `CategoriesClient.jsx`, `VideoCard.jsx`, `page.jsx`, `VideoPlayerClient.jsx`, `Home Page Client Logic`, `Search Results Shared Logic`, `page.jsx`, `page.jsx`?",
+      "question": "Why does `react` connect `Frontend Pages and Components` to `Global Layout and Navigation`, `Linter Rules and Configuration`, `Category Listing Components`, `Video Card UI Component`, `Home Page Logic`, `Video Player Client Component`, `Home Client Component`, `Search Results Component`, `Category Page Logic`, `DMCA Page Logic`?",
       "why": "High betweenness centrality (0.175) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
-      "question": "Why does `plugins` connect `Linter Rules and Plugins` to `react`?",
+      "question": "Why does `plugins` connect `Linter Rules and Configuration` to `Frontend Pages and Components`?",
       "why": "High betweenness centrality (0.027) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
-      "question": "Why does `dependencies` connect `dependencies` to `Project Scripts and Metadata`?",
+      "question": "Why does `dependencies` connect `Cloudflare Deployment Dependencies` to `Project Scripts and Dependencies`?",
       "why": "High betweenness centrality (0.017) - this node is a cross-community bridge."
     },
     {
@@ -442,12 +442,12 @@
     },
     {
       "type": "low_cohesion",
-      "question": "Should `react` be split into smaller, more focused modules?",
+      "question": "Should `Frontend Pages and Components` be split into smaller, more focused modules?",
       "why": "Cohesion score 0.05405405405405406 - nodes in this community are weakly interconnected."
     },
     {
       "type": "low_cohesion",
-      "question": "Should `Project Scripts and Metadata` be split into smaller, more focused modules?",
+      "question": "Should `Project Scripts and Dependencies` be split into smaller, more focused modules?",
       "why": "Cohesion score 0.1 - nodes in this community are weakly interconnected."
     },
     {

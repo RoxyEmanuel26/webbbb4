@@ -47,6 +47,50 @@
   },
   "nodes": [
     {
+      "label": "layout.jsx",
+      "file_type": "code",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_app_layout",
+      "community": 4,
+      "community_name": "Global Layout and Navigation",
+      "norm_label": "layout.jsx"
+    },
+    {
+      "label": "metadata",
+      "file_type": "code",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "src_app_layout_metadata",
+      "community": 4,
+      "community_name": "Global Layout and Navigation",
+      "norm_label": "metadata"
+    },
+    {
+      "label": "viewport",
+      "file_type": "code",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L66",
+      "_origin": "ast",
+      "id": "src_app_layout_viewport",
+      "community": 4,
+      "community_name": "Global Layout and Navigation",
+      "norm_label": "viewport"
+    },
+    {
+      "label": "RootLayout()",
+      "file_type": "code",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L73",
+      "_origin": "ast",
+      "id": "src_app_layout_rootlayout",
+      "community": 4,
+      "community_name": "Global Layout and Navigation",
+      "norm_label": "rootlayout()"
+    },
+    {
       "label": ".eslintrc.json",
       "file_type": "code",
       "source_file": ".eslintrc.json",
@@ -1229,9 +1273,9 @@
       "source_file": "src/app/tag/[tagName]/page.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 0,
+      "community": 41,
       "norm_label": "page.jsx",
-      "community_name": "Frontend Pages and Components",
+      "community_name": "page.jsx",
       "id": "src_app_tag_tagname_page"
     },
     {
@@ -1240,9 +1284,9 @@
       "source_file": "src/app/tag/[tagName]/page.jsx",
       "source_location": "L6",
       "_origin": "ast",
-      "community": 0,
+      "community": 41,
       "norm_label": "generatemetadata()",
-      "community_name": "Frontend Pages and Components",
+      "community_name": "page.jsx",
       "id": "src_app_tag_tagname_page_generatemetadata"
     },
     {
@@ -1251,9 +1295,9 @@
       "source_file": "src/app/tag/[tagName]/page.jsx",
       "source_location": "L13",
       "_origin": "ast",
-      "community": 0,
+      "community": 41,
       "norm_label": "tagpage()",
-      "community_name": "Frontend Pages and Components",
+      "community_name": "page.jsx",
       "id": "src_app_tag_tagname_page_tagpage"
     },
     {
@@ -1840,50 +1884,6 @@
       "id": "src_app_cats_categoriesclient_categoriesclient"
     },
     {
-      "label": "layout.jsx",
-      "file_type": "code",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 4,
-      "norm_label": "layout.jsx",
-      "community_name": "Global Layout and Navigation",
-      "id": "src_app_layout"
-    },
-    {
-      "label": "metadata",
-      "file_type": "code",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L12",
-      "_origin": "ast",
-      "community": 4,
-      "norm_label": "metadata",
-      "community_name": "Global Layout and Navigation",
-      "id": "src_app_layout_metadata"
-    },
-    {
-      "label": "viewport",
-      "file_type": "code",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L66",
-      "_origin": "ast",
-      "community": 4,
-      "norm_label": "viewport",
-      "community_name": "Global Layout and Navigation",
-      "id": "src_app_layout_viewport"
-    },
-    {
-      "label": "RootLayout()",
-      "file_type": "code",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L73",
-      "_origin": "ast",
-      "community": 4,
-      "norm_label": "rootlayout()",
-      "community_name": "Global Layout and Navigation",
-      "id": "src_app_layout_rootlayout"
-    },
-    {
       "label": "page.jsx",
       "file_type": "code",
       "source_file": "src/app/video/[id]/[[...slug]]/page.jsx",
@@ -1922,9 +1922,9 @@
       "source_file": "src/components/Footer.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 4,
+      "community": 42,
       "norm_label": "footer.jsx",
-      "community_name": "Global Layout and Navigation",
+      "community_name": "Footer.jsx",
       "id": "src_components_footer"
     },
     {
@@ -1933,9 +1933,9 @@
       "source_file": "src/components/Footer.jsx",
       "source_location": "L6",
       "_origin": "ast",
-      "community": 4,
+      "community": 42,
       "norm_label": "hot_searches",
-      "community_name": "Global Layout and Navigation",
+      "community_name": "Footer.jsx",
       "id": "src_components_footer_hot_searches"
     },
     {
@@ -1944,9 +1944,9 @@
       "source_file": "src/components/Footer.jsx",
       "source_location": "L23",
       "_origin": "ast",
-      "community": 4,
+      "community": 42,
       "norm_label": "footer()",
-      "community_name": "Global Layout and Navigation",
+      "community_name": "Footer.jsx",
       "id": "src_components_footer_footer"
     },
     {
@@ -1999,9 +1999,9 @@
       "source_file": "src/components/Navbar.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 4,
+      "community": 0,
       "norm_label": "navbar.jsx",
-      "community_name": "Global Layout and Navigation",
+      "community_name": "Frontend Pages and Components",
       "id": "src_components_navbar"
     },
     {
@@ -2010,9 +2010,9 @@
       "source_file": "src/components/Navbar.jsx",
       "source_location": "L9",
       "_origin": "ast",
-      "community": 4,
+      "community": 0,
       "norm_label": "nav_links",
-      "community_name": "Global Layout and Navigation",
+      "community_name": "Frontend Pages and Components",
       "id": "src_components_navbar_nav_links"
     },
     {
@@ -2021,9 +2021,9 @@
       "source_file": "src/components/Navbar.jsx",
       "source_location": "L15",
       "_origin": "ast",
-      "community": 4,
+      "community": 0,
       "norm_label": "navbar()",
-      "community_name": "Global Layout and Navigation",
+      "community_name": "Frontend Pages and Components",
       "id": "src_components_navbar_navbar"
     },
     {
@@ -2279,6 +2279,39 @@
     }
   ],
   "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_layout",
+      "target": "src_app_layout_metadata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_layout",
+      "target": "src_app_layout_rootlayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout.jsx",
+      "source_location": "L66",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_layout",
+      "target": "src_app_layout_viewport",
+      "confidence_score": 1.0
+    },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
@@ -4168,87 +4201,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L12",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_app_layout_metadata"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L73",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_app_layout_rootlayout"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L66",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_app_layout_viewport"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_footer"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_footer_footer"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_navbar"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/layout.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_layout",
-      "target": "src_components_navbar_navbar"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "src/app/video/[id]/[[...slug]]/page.jsx",
       "source_location": "L5",
       "weight": 1.0,
@@ -4495,5 +4447,5 @@
       "source_file": "public/icons.svg"
     }
   ],
-  "built_at_commit": "c1d523be7e53ec971ebc8a2c41125bfbbe165462"
+  "built_at_commit": "32d69673bb67389bb63c55738baf8d2e3bf9ca81"
 }
