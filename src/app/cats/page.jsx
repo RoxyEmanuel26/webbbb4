@@ -13,6 +13,13 @@ export const metadata = {
     description: 'Browse all free HD porn video categories on NICEVX. Updated daily with the best adult content.',
     url: 'https://nicevx.com/cats',
     type: 'website',
+    images: [{ url: '/favicon.webp', width: 512, height: 512, alt: 'All Porn Categories — NICEVX' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'All Porn Categories — NICEVX',
+    description: 'Browse all free HD porn video categories on NICEVX. Updated daily with the best adult content.',
+    images: ['/favicon.webp'],
   },
 };
 

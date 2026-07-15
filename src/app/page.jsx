@@ -35,8 +35,8 @@ export async function generateMetadata({ searchParams }) {
     title: seoTitle,
     description: seoDesc,
     alternates: { canonical: seoCanonical },
-    openGraph: { title: seoTitle, description: seoDesc, url: seoCanonical, type: 'website' },
-    twitter: { title: seoTitle, description: seoDesc },
+    openGraph: { title: seoTitle, description: seoDesc, url: seoCanonical, type: 'website', images: [{ url: '/favicon.webp', width: 512, height: 512, alt: 'NICEVX' }] },
+    twitter: { title: seoTitle, description: seoDesc, images: ['/favicon.webp'] },
   };
 }
 
