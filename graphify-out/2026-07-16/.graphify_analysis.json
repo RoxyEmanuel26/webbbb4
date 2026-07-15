@@ -2,12 +2,13 @@
   "communities": {
     "0": [
       "ref_react",
+      "src_app_page",
+      "src_app_page_generatemetadata",
+      "src_app_page_home",
+      "src_app_page_sort_options",
       "src_app_privacy_page",
       "src_app_privacy_page_metadata",
       "src_app_privacy_page_privacypage",
-      "src_app_search_page",
-      "src_app_search_page_generatemetadata",
-      "src_app_search_page_searchpage",
       "src_app_tag_tagname_page",
       "src_app_tag_tagname_page_generatemetadata",
       "src_app_tag_tagname_page_tagpage",
@@ -17,9 +18,6 @@
       "src_app_usc2257_page",
       "src_app_usc2257_page_metadata",
       "src_app_usc2257_page_usc2257page",
-      "src_app_video_id_slug_page",
-      "src_app_video_id_slug_page_generatemetadata",
-      "src_app_video_id_slug_page_videopage",
       "src_components_adbanner",
       "src_components_adbanner_adbanner",
       "src_components_adnative",
@@ -30,6 +28,12 @@
       "src_components_adsocialbar_adsocialbar",
       "src_components_agegatemodal",
       "src_components_agegatemodal_agegatemodal",
+      "src_components_footer",
+      "src_components_footer_footer",
+      "src_components_footer_hot_searches",
+      "src_components_navbar",
+      "src_components_navbar_nav_links",
+      "src_components_navbar_navbar",
       "src_components_pagination",
       "src_components_pagination_pagination",
       "src_components_skeletoncard",
@@ -100,18 +104,6 @@
       "wrangler"
     ],
     "4": [
-      "src_app_layout",
-      "src_app_layout_metadata",
-      "src_app_layout_rootlayout",
-      "src_app_layout_viewport",
-      "src_components_footer",
-      "src_components_footer_footer",
-      "src_components_footer_hot_searches",
-      "src_components_navbar",
-      "src_components_navbar_nav_links",
-      "src_components_navbar_navbar"
-    ],
-    "5": [
       "scripts_generate_sitemap",
       "scripts_generate_sitemap_allroutes",
       "scripts_generate_sitemap_categoryroutes",
@@ -122,7 +114,7 @@
       "src_data_allcategories",
       "src_data_allcategories_all_categories"
     ],
-    "6": [
+    "5": [
       "jsconfig",
       "jsconfig_exclude",
       "jsconfig_include",
@@ -132,7 +124,7 @@
       "ref_next_types_ts",
       "ref_node_modules"
     ],
-    "7": [
+    "6": [
       "oxlintrc",
       "oxlintrc_plugins",
       "oxlintrc_rules",
@@ -142,7 +134,7 @@
       "ref_oxc",
       "ref_warn"
     ],
-    "8": [
+    "7": [
       "src_app_cats_categoriesclient",
       "src_app_cats_categoriesclient_alphabet",
       "src_app_cats_categoriesclient_categories",
@@ -151,13 +143,20 @@
       "src_app_cats_page_categoriespage",
       "src_app_cats_page_metadata"
     ],
-    "9": [
+    "8": [
       "curl_nicevx_html",
       "eporner_api",
       "public_adsterra_html",
       "public_adsterra_native_html",
       "public_adsterra_service",
       "scratch_txt"
+    ],
+    "9": [
+      "src_app_cat_catname_page",
+      "src_app_cat_catname_page_categorypage",
+      "src_app_cat_catname_page_generatemetadata",
+      "src_app_cat_catname_page_getrelatedcategories",
+      "src_app_cat_catname_page_toslug"
     ],
     "10": [
       "src_components_videocard",
@@ -167,10 +166,10 @@
       "src_components_videocard_videocard"
     ],
     "11": [
-      "src_app_page",
-      "src_app_page_generatemetadata",
-      "src_app_page_home",
-      "src_app_page_sort_options"
+      "src_app_layout",
+      "src_app_layout_metadata",
+      "src_app_layout_rootlayout",
+      "src_app_layout_viewport"
     ],
     "12": [
       "src_app_video_id_slug_videoplayerclient",
@@ -213,93 +212,98 @@
       "public_pwa_512x512"
     ],
     "19": [
-      "src_app_cat_catname_page",
-      "src_app_cat_catname_page_categorypage",
-      "src_app_cat_catname_page_generatemetadata"
-    ],
-    "20": [
       "src_app_dmca_page",
       "src_app_dmca_page_dmcapage",
       "src_app_dmca_page_metadata"
     ],
+    "20": [
+      "src_app_search_page",
+      "src_app_search_page_generatemetadata",
+      "src_app_search_page_searchpage"
+    ],
     "21": [
+      "src_app_video_id_slug_page",
+      "src_app_video_id_slug_page_generatemetadata",
+      "src_app_video_id_slug_page_videopage"
+    ],
+    "22": [
       "agents_md",
       "readme_md"
     ],
-    "22": [
+    "23": [
       "next_config",
       "next_config_nextconfig"
     ],
-    "23": [
+    "24": [
       "scratch",
       "scratch_fix"
     ],
-    "24": [
+    "25": [
       "src_app_api_eporner_route",
       "src_app_api_eporner_route_get"
     ],
-    "25": [
+    "26": [
       "src_utils_seo",
       "src_utils_seo_getsearchmetadata"
     ],
-    "26": [
+    "27": [
       "vercel",
       "vercel_headers"
     ],
-    "27": [
+    "28": [
       "parse_cats"
     ],
-    "28": [
+    "29": [
       "public_favicon_webp"
     ],
-    "29": [
+    "30": [
       "public_icons"
     ],
-    "30": [
+    "31": [
       "public_icons_bluesky_icon"
     ],
-    "31": [
+    "32": [
       "public_icons_discord_icon"
     ],
-    "32": [
+    "33": [
       "public_icons_documentation_icon"
     ],
-    "33": [
+    "34": [
       "public_icons_github_icon"
     ],
-    "34": [
+    "35": [
       "public_icons_social_icon"
     ],
-    "35": [
+    "36": [
       "public_icons_x_icon"
     ],
-    "36": [
+    "37": [
       "public_logo_webp"
     ],
-    "37": [
+    "38": [
       "public_robots"
     ],
-    "38": [
+    "39": [
       "src_assets_hero_png"
     ],
-    "39": [
+    "40": [
       "src_assets_react"
     ],
-    "40": [
+    "41": [
       "src_assets_vite"
     ]
   },
   "cohesion": {
-    "0": 0.05405405405405406,
+    "0": 0.04878048780487805,
     "1": 0.1,
     "2": 0.10526315789473684,
     "3": 0.13333333333333333,
-    "4": 0.24444444444444444,
+    "4": 0.25,
     "5": 0.25,
     "6": 0.25,
-    "7": 0.25,
+    "7": 0.3333333333333333,
     "8": 0.3333333333333333,
-    "9": 0.3333333333333333,
+    "9": 0.7,
     "10": 0.7,
     "11": 0.5,
     "12": 0.8333333333333334,
@@ -311,7 +315,7 @@
     "18": 0.6666666666666666,
     "19": 0.6666666666666666,
     "20": 0.6666666666666666,
-    "21": 1.0,
+    "21": 0.6666666666666666,
     "22": 1.0,
     "23": 1.0,
     "24": 1.0,
@@ -330,7 +334,8 @@
     "37": 1.0,
     "38": 1.0,
     "39": 1.0,
-    "40": 1.0
+    "40": 1.0,
+    "41": 1.0
   },
   "gods": [
     {
@@ -422,13 +427,13 @@
   "questions": [
     {
       "type": "bridge_node",
-      "question": "Why does `react` connect `Frontend Pages and Components` to `Global Layout and Navigation`, `Linter Rules and Configuration`, `Category Listing Components`, `Video Card UI Component`, `Home Page Logic`, `Video Player Client Component`, `Home Client Component`, `Search Results Component`, `Category Page Logic`, `DMCA Page Logic`?",
-      "why": "High betweenness centrality (0.175) - this node is a cross-community bridge."
+      "question": "Why does `react` connect `react` to `.oxlintrc.json`, `CategoriesClient.jsx`, `page.jsx`, `Video Card UI Component`, `Video Player Client Component`, `Home Client Component`, `Search Results Component`, `page.jsx`, `page.jsx`, `page.jsx`?",
+      "why": "High betweenness centrality (0.165) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
-      "question": "Why does `plugins` connect `Linter Rules and Configuration` to `Frontend Pages and Components`?",
-      "why": "High betweenness centrality (0.027) - this node is a cross-community bridge."
+      "question": "Why does `plugins` connect `.oxlintrc.json` to `react`?",
+      "why": "High betweenness centrality (0.026) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
@@ -442,8 +447,8 @@
     },
     {
       "type": "low_cohesion",
-      "question": "Should `Frontend Pages and Components` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.05405405405405406 - nodes in this community are weakly interconnected."
+      "question": "Should `react` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.04878048780487805 - nodes in this community are weakly interconnected."
     },
     {
       "type": "low_cohesion",
