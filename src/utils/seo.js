@@ -14,9 +14,9 @@ export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName 
     : `"${seoQuery}" Free Porn Search Results ${currentYear} — NICEVX`;
 
   const seoDesc = isCat
-    ? `Watch free ${seoQuery} HD porn videos on NICEVX. Thousands of top-quality ${seoQuery} adult videos updated daily in ${currentYear}. Stream free in 1080p quality.`
+    ? `Watch free ${seoQuery} HD porn videos. Explore top-quality ${seoQuery} adult content updated daily in ${currentYear} on NICEVX.`
     : isTag
-    ? `Explore free HD videos tagged #${seoQuery} on NICEVX. Updated daily with the best ${seoQuery} content in ${currentYear}. Stream free in HD quality.`
+    ? `Watch free #${seoQuery} HD porn videos on NICEVX. Explore the best ${seoQuery} adult content updated daily in ${currentYear}.`
     : `Search results for "${seoQuery}" on NICEVX. Find thousands of free HD porn videos matching your search in ${currentYear}.`;
 
   let seoCanonical = isCat
