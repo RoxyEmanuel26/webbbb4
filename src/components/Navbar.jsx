@@ -15,70 +15,9 @@ const NAV_LINKS = [
 const Navbar = () => {
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [suggestions, setSuggestions] = useState([]);
-  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
-  
-  const router     = useRouter();
-  const pathname   = usePathname();
-  const searchTimeout = useRef(null);
-  const abortControllerRef = useRef(null);
 
-// Cache to store previous autocomplete results
-const suggestionCache = new Map();
-
-  // Debounced API Call
-  useEffect(() => {
-    const trimmedQuery = query.trim();
-    if (trimmedQuery.length < 3 || !isFocused) {
-      setSuggestions([]);
-      setLoadingSuggestions(false);
-      if (abortControllerRef.current) abortControllerRef.current.abort();
-      return;
-    }
-
-    setLoadingSuggestions(true);
-    if (searchTimeout.current) clearTimeout(searchTimeout.current);
-    if (abortControllerRef.current) abortControllerRef.current.abort();
-
-    searchTimeout.current = setTimeout(async () => {
-      const cacheKey = trimmedQuery.toLowerCase();
-      if (suggestionCache.has(cacheKey)) {
-        setSuggestions(suggestionCache.get(cacheKey));
-        setLoadingSuggestions(false);
-        return;
-      }
-
-      abortControllerRef.current = new AbortController();
-      try {
-        const params = new URLSearchParams({
-          action: 'search',
-          query: trimmedQuery,
-          per_page: 5,
-          order: 'relevance'
-        });
-        const res = await fetch(`/api/eporner?${params}`, {
-          headers: { 'x-internal-request': 'nicevx' },
-          signal: abortControllerRef.current.signal
-        });
-        if (!res.ok) throw new Error('API error');
-        const data = await res.json();
-        const results = data.videos || [];
-        suggestionCache.set(cacheKey, results);
-        setSuggestions(results);
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          setSuggestions([]);
-        }
-      } finally {
-        setLoadingSuggestions(false);
-      }
-    }, 500);
-
-    return () => {
-      if (searchTimeout.current) clearTimeout(searchTimeout.current);
-      if (abortControllerRef.current) abortControllerRef.current.abort();
-    };
-  }, [query, isFocused]);
+  const router = useRouter();
+  const pathname = usePathname();
 
   const handleSearch = (e) => {
     if (e && e.preventDefault) e.preventDefault();
@@ -89,12 +28,7 @@ const suggestionCache = new Map();
     }
   };
 
-  const handleSuggestionClick = (video) => {
-    setIsFocused(false);
-    setQuery('');
-    const slug = video.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-    router.push(`/video/${video.id}/${slug}`);
-  };
+
 
   const isActive = (path) => {
     return pathname === path;
@@ -165,40 +99,6 @@ const suggestionCache = new Map();
             </button>
           </form>
 
-          {/* Auto-Suggest Dropdown */}
-          {isFocused && query.trim() && suggestions.length > 0 && (
-            <div className="navbar-autosuggest">
-              <div className="autosuggest-list">
-                {suggestions.map((video) => (
-                  <div 
-                    key={video.id} 
-                    className="autosuggest-item"
-                    onMouseDown={(e) => {
-                      e.preventDefault(); // prevent blur
-                      handleSuggestionClick(video);
-                    }}
-                  >
-                    <img src={video.default_thumb?.src || ''} alt="" className="autosuggest-thumb" loading="lazy" />
-                    <div className="autosuggest-info">
-                      <div className="autosuggest-title">{video.title}</div>
-                      <div className="autosuggest-meta">
-                        <Clock size={10} /> {video.length_min} • {video.views ? (video.views / 1000).toFixed(0) + 'K views' : ''}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                <div 
-                  className="autosuggest-item autosuggest-see-all"
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    handleSearch(e);
-                  }}
-                >
-                  <Search size={14} /> See all results for "{query}"
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </header>
