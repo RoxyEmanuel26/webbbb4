@@ -23,9 +23,13 @@ const Navbar = () => {
   const searchTimeout = useRef(null);
   const abortControllerRef = useRef(null);
 
+// Cache to store previous autocomplete results
+const suggestionCache = new Map();
+
   // Debounced API Call
   useEffect(() => {
-    if (!query.trim() || !isFocused) {
+    const trimmedQuery = query.trim();
+    if (trimmedQuery.length < 3 || !isFocused) {
       setSuggestions([]);
       setLoadingSuggestions(false);
       if (abortControllerRef.current) abortControllerRef.current.abort();
@@ -37,11 +41,18 @@ const Navbar = () => {
     if (abortControllerRef.current) abortControllerRef.current.abort();
 
     searchTimeout.current = setTimeout(async () => {
+      const cacheKey = trimmedQuery.toLowerCase();
+      if (suggestionCache.has(cacheKey)) {
+        setSuggestions(suggestionCache.get(cacheKey));
+        setLoadingSuggestions(false);
+        return;
+      }
+
       abortControllerRef.current = new AbortController();
       try {
         const params = new URLSearchParams({
           action: 'search',
-          query: query.trim(),
+          query: trimmedQuery,
           per_page: 5,
           order: 'relevance'
         });
@@ -51,7 +62,9 @@ const Navbar = () => {
         });
         if (!res.ok) throw new Error('API error');
         const data = await res.json();
-        setSuggestions(data.videos || []);
+        const results = data.videos || [];
+        suggestionCache.set(cacheKey, results);
+        setSuggestions(results);
       } catch (err) {
         if (err.name !== 'AbortError') {
           setSuggestions([]);
