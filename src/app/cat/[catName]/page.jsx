@@ -70,12 +70,13 @@ export default async function CategoryPage({ params, searchParams }) {
                 <Link
                   key={cat.name}
                   href={`/cat/${toSlug(cat.name)}`}
+                  prefetch={false}
                   className="related-cat-link"
                 >
                   {cat.name}
                 </Link>
               ))}
-              <Link href="/cats" className="related-cat-link related-cat-all">
+              <Link href="/cats" prefetch={false} className="related-cat-link related-cat-all">
                 All Categories
               </Link>
             </div>

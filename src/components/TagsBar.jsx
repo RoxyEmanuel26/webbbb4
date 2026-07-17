@@ -51,6 +51,7 @@ const TagsBar = ({ tags, onTagClick }) => {
               <Link
                 key={tag}
                 href={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                prefetch={false}
                 className="tag-pill"
                 aria-label={`Browse ${tag}`}
                 style={{ textDecoration: 'none', color: 'inherit' }}

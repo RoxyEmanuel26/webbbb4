@@ -125,6 +125,7 @@ const CategoriesClient = () => {
             <Link 
               href={`/cat/${cat.name.toLowerCase().replace(/\s+/g, '-')}`}
               key={cat.name}
+              prefetch={false}
               className="cat-card has-bg-img"
             >
               <img className="cat-card-bg" src={cat.image} alt={cat.name} loading="lazy" width="300" height="170" />
@@ -162,6 +163,7 @@ const CategoriesClient = () => {
               <Link
                 href={`/cat/${cat.name.toLowerCase().replace(/\s+/g, '-')}`}
                 key={cat.name}
+                prefetch={false}
                 className="all-cat-item"
                 data-letter={letterOf(cat)}
                 hidden={letterOf(cat) !== activeLetter.toLowerCase()}

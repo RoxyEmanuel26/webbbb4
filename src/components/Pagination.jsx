@@ -56,6 +56,7 @@ const Pagination = ({ currentPage, totalPages }) => {
     return (
       <Link
         href={getPageLink(page)}
+        prefetch={false}
         className={`pager__btn ${extraClass}`}
         aria-label={ariaLabel}
         title={title}

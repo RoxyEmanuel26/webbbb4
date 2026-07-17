@@ -99,6 +99,7 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
       {/* Thumbnail */}
       <Link 
         href={`/video/${video.id}/${slug}`} 
+        prefetch={false}
         className="vcard__thumb-wrap" 
         aria-label={video.title}
         onContextMenu={(e) => e.preventDefault()} // Prevent long-press from opening menu on mobile
@@ -125,7 +126,7 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
       {/* Info */}
       <div className="vcard__info">
         <h3 className="vcard__title">
-          <Link href={`/video/${video.id}/${slug}`}>{video.title}</Link>
+          <Link href={`/video/${video.id}/${slug}`} prefetch={false}>{video.title}</Link>
         </h3>
         <div className="vcard__meta">
           <span className="vcard__meta-item vcard__views">
@@ -141,6 +142,7 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
           {primaryKeyword && (
             <Link 
               href={`/tag/${primaryKeyword.toLowerCase().replace(/\s+/g, '-')}`}
+              prefetch={false}
               className="vcard__meta-item" 
               style={{ color: 'var(--color-accent)', textDecoration: 'none', marginLeft: 'auto' }}
             >
