@@ -23,55 +23,59 @@
     (function() {
       const params = new URLSearchParams(window.location.search);
       const widgetId = params.get('widgetId');
-      
-      if (widgetId) {
-        const container = document.getElementById('ad-container');
-        
-        // Create the targeting container element
-        const adTarget = document.createElement('div');
-        adTarget.id = 'container-' + widgetId;
-        container.appendChild(adTarget);
-        
-        // Create and append the script
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://glamournakedemployee.com/' + widgetId + '/invoke.js';
-        script.async = true;
-        script.setAttribute('data-cfasync', 'false');
-        container.appendChild(script);
 
-        // Notify parent about size changes
-        const sendHeight = () => {
-          // Add a small buffer to prevent scrollbars or truncation
-          const height = document.body.offsetHeight || document.documentElement.scrollHeight;
-          if (height > 0) {
-            window.parent.postMessage({
-              type: 'adsterra-native-resize',
-              widgetId: widgetId,
-              height: height + 8
-            }, '*');
-          }
-        };
+      if (!widgetId) return;
 
-        // Watch for changes (images loading, ads rendering, etc)
-        const observer = new MutationObserver(sendHeight);
-        observer.observe(document.body, {
-          childList: true,
-          subtree: true,
-          attributes: true
-        });
+      const container = document.getElementById('ad-container');
 
-        // Fallbacks
-        window.addEventListener('load', sendHeight);
-        
-        // Repeated check for 4 seconds to catch final rendering heights
-        let checkCount = 0;
-        const interval = setInterval(() => {
-          sendHeight();
-          checkCount++;
-          if (checkCount > 20) clearInterval(interval);
-        }, 200);
+      // Buat elemen target untuk Adsterra
+      const adTarget = document.createElement('div');
+      adTarget.id = 'container-' + widgetId;
+      container.appendChild(adTarget);
+
+      // Muat script Adsterra
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://glamournakedemployee.com/' + widgetId + '/invoke.js';
+      script.async = true;
+      script.setAttribute('data-cfasync', 'false');
+      container.appendChild(script);
+
+      // ─── Pengiriman tinggi yang efisien ────────────────────────────────────
+      // Sebelumnya: setInterval 200ms × 21 = 42 postMessage per halaman (boros)
+      // Sekarang: ResizeObserver (event-driven) + 4 fallback timeout saja
+
+      let lastHeight = 0;
+
+      const sendHeight = () => {
+        const h = document.body.offsetHeight || document.documentElement.scrollHeight;
+        // Hanya kirim jika tinggi benar-benar berubah (hindari kiriman duplikat)
+        if (h > 0 && h !== lastHeight) {
+          lastHeight = h;
+          window.parent.postMessage({
+            type: 'adsterra-native-resize',
+            widgetId: widgetId,
+            height: h + 8 // buffer kecil agar tidak terpotong
+          }, '*');
+        }
+      };
+
+      // 1. MutationObserver: pantau perubahan DOM (gambar dimuat, iklan render, dsb.)
+      const mo = new MutationObserver(sendHeight);
+      mo.observe(document.body, { childList: true, subtree: true, attributes: true });
+
+      // 2. ResizeObserver: pantau perubahan ukuran elemen (lebih efisien dari polling)
+      if (window.ResizeObserver) {
+        const ro = new ResizeObserver(sendHeight);
+        ro.observe(document.body);
       }
+
+      // 3. Fallback: hanya 4 checkpoint (bukan 21) untuk menangkap render akhir
+      window.addEventListener('load', sendHeight);
+      [300, 800, 1500, 3000].forEach(function(ms) {
+        setTimeout(sendHeight, ms);
+      });
+
     })();
   </script>
 </body>
