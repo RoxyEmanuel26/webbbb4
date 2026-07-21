@@ -29,19 +29,6 @@
         "confidence": "INFERRED",
         "confidence_score": 0.85,
         "source_file": "curl_nicevx.html"
-      },
-      {
-        "id": "monetization_flow",
-        "label": "Adsterra Monetization Integration",
-        "nodes": [
-          "public_adsterra_html",
-          "public_adsterra_native_html",
-          "public_adsterra_service"
-        ],
-        "relation": "participate_in",
-        "confidence": "EXTRACTED",
-        "confidence_score": 1.0,
-        "source_file": "public/adsterra.html"
       }
     ]
   },
@@ -61,7 +48,7 @@
       "label": "AdPopunder()",
       "file_type": "code",
       "source_file": "src/components/AdPopunder.jsx",
-      "source_location": "L13",
+      "source_location": "L18",
       "_origin": "ast",
       "id": "src_components_adpopunder_adpopunder",
       "community": 0,
@@ -69,13 +56,57 @@
       "norm_label": "adpopunder()"
     },
     {
+      "label": "AdBanner.jsx",
+      "file_type": "code",
+      "source_file": "src/components/AdBanner.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "react",
+      "norm_label": "adbanner.jsx",
+      "id": "src_components_adbanner"
+    },
+    {
+      "label": "AdBanner()",
+      "file_type": "code",
+      "source_file": "src/components/AdBanner.jsx",
+      "source_location": "L14",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "react",
+      "norm_label": "adbanner()",
+      "id": "src_components_adbanner_adbanner"
+    },
+    {
+      "label": "AdNative.jsx",
+      "file_type": "code",
+      "source_file": "src/components/AdNative.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "react",
+      "norm_label": "adnative.jsx",
+      "id": "src_components_adnative"
+    },
+    {
+      "label": "AdNative()",
+      "file_type": "code",
+      "source_file": "src/components/AdNative.jsx",
+      "source_location": "L11",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "react",
+      "norm_label": "adnative()",
+      "id": "src_components_adnative_adnative"
+    },
+    {
       "label": "CategoriesClient.jsx",
       "file_type": "code",
       "source_file": "src/app/cats/CategoriesClient.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
+      "community": 5,
+      "community_name": "JavaScript Project Configuration",
       "norm_label": "categoriesclient.jsx",
       "id": "src_app_cats_categoriesclient"
     },
@@ -85,8 +116,8 @@
       "source_file": "src/app/cats/CategoriesClient.jsx",
       "source_location": "L12",
       "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
+      "community": 5,
+      "community_name": "JavaScript Project Configuration",
       "norm_label": "categories",
       "id": "src_app_cats_categoriesclient_categories"
     },
@@ -96,8 +127,8 @@
       "source_file": "src/app/cats/CategoriesClient.jsx",
       "source_location": "L97",
       "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
+      "community": 5,
+      "community_name": "JavaScript Project Configuration",
       "norm_label": "alphabet",
       "id": "src_app_cats_categoriesclient_alphabet"
     },
@@ -107,8 +138,8 @@
       "source_file": "src/app/cats/CategoriesClient.jsx",
       "source_location": "L99",
       "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
+      "community": 5,
+      "community_name": "JavaScript Project Configuration",
       "norm_label": "categoriesclient()",
       "id": "src_app_cats_categoriesclient_categoriesclient"
     },
@@ -338,8 +369,8 @@
       "source_file": "jsconfig.json",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 5,
-      "community_name": "JavaScript Project Configuration",
+      "community": 2,
+      "community_name": "TypeScript Compiler Settings",
       "norm_label": "jsconfig.json",
       "id": "jsconfig"
     },
@@ -558,8 +589,8 @@
       "source_file": "jsconfig.json",
       "source_location": "L21",
       "_origin": "ast",
-      "community": 5,
-      "community_name": "JavaScript Project Configuration",
+      "community": 2,
+      "community_name": "TypeScript Compiler Settings",
       "norm_label": "include",
       "id": "jsconfig_include"
     },
@@ -569,8 +600,8 @@
       "source_file": "jsconfig.json",
       "source_location": "L21",
       "_origin": "ast",
-      "community": 5,
-      "community_name": "JavaScript Project Configuration",
+      "community": 2,
+      "community_name": "TypeScript Compiler Settings",
       "norm_label": "next-env.d.ts",
       "id": "ref_next_env_d_ts"
     },
@@ -580,8 +611,8 @@
       "source_file": "jsconfig.json",
       "source_location": "L21",
       "_origin": "ast",
-      "community": 5,
-      "community_name": "JavaScript Project Configuration",
+      "community": 2,
+      "community_name": "TypeScript Compiler Settings",
       "norm_label": "**/*.js",
       "id": "ref_js"
     },
@@ -591,8 +622,8 @@
       "source_file": "jsconfig.json",
       "source_location": "L21",
       "_origin": "ast",
-      "community": 5,
-      "community_name": "JavaScript Project Configuration",
+      "community": 2,
+      "community_name": "TypeScript Compiler Settings",
       "norm_label": "**/*.jsx",
       "id": "ref_jsx"
     },
@@ -602,8 +633,8 @@
       "source_file": "jsconfig.json",
       "source_location": "L21",
       "_origin": "ast",
-      "community": 5,
-      "community_name": "JavaScript Project Configuration",
+      "community": 2,
+      "community_name": "TypeScript Compiler Settings",
       "norm_label": ".next/types/**/*.ts",
       "id": "ref_next_types_ts"
     },
@@ -613,8 +644,8 @@
       "source_file": "jsconfig.json",
       "source_location": "L27",
       "_origin": "ast",
-      "community": 5,
-      "community_name": "JavaScript Project Configuration",
+      "community": 2,
+      "community_name": "TypeScript Compiler Settings",
       "norm_label": "exclude",
       "id": "jsconfig_exclude"
     },
@@ -624,8 +655,8 @@
       "source_file": "jsconfig.json",
       "source_location": "L27",
       "_origin": "ast",
-      "community": 5,
-      "community_name": "JavaScript Project Configuration",
+      "community": 2,
+      "community_name": "TypeScript Compiler Settings",
       "norm_label": "node_modules",
       "id": "ref_node_modules"
     },
@@ -1229,8 +1260,8 @@
       "source_file": "src/app/cats/page.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
+      "community": 5,
+      "community_name": "JavaScript Project Configuration",
       "norm_label": "page.jsx",
       "id": "src_app_cats_page"
     },
@@ -1240,8 +1271,8 @@
       "source_file": "src/app/cats/page.jsx",
       "source_location": "L5",
       "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
+      "community": 5,
+      "community_name": "JavaScript Project Configuration",
       "norm_label": "metadata",
       "id": "src_app_cats_page_metadata"
     },
@@ -1251,8 +1282,8 @@
       "source_file": "src/app/cats/page.jsx",
       "source_location": "L26",
       "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
+      "community": 5,
+      "community_name": "JavaScript Project Configuration",
       "norm_label": "categoriespage()",
       "id": "src_app_cats_page_categoriespage"
     },
@@ -1295,8 +1326,8 @@
       "source_file": "src/app/page.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 12,
-      "community_name": "page.jsx",
+      "community": 0,
+      "community_name": "react",
       "norm_label": "page.jsx",
       "id": "src_app_page"
     },
@@ -1306,8 +1337,8 @@
       "source_file": "src/app/page.jsx",
       "source_location": "L7",
       "_origin": "ast",
-      "community": 12,
-      "community_name": "page.jsx",
+      "community": 0,
+      "community_name": "react",
       "norm_label": "sort_options",
       "id": "src_app_page_sort_options"
     },
@@ -1317,8 +1348,8 @@
       "source_file": "src/app/page.jsx",
       "source_location": "L14",
       "_origin": "ast",
-      "community": 12,
-      "community_name": "page.jsx",
+      "community": 0,
+      "community_name": "react",
       "norm_label": "generatemetadata()",
       "id": "src_app_page_generatemetadata"
     },
@@ -1328,8 +1359,8 @@
       "source_file": "src/app/page.jsx",
       "source_location": "L43",
       "_origin": "ast",
-      "community": 12,
-      "community_name": "page.jsx",
+      "community": 0,
+      "community_name": "react",
       "norm_label": "home()",
       "id": "src_app_page_home"
     },
@@ -1532,50 +1563,6 @@
       "id": "src_app_video_id_slug_page_videopage"
     },
     {
-      "label": "AdBanner.jsx",
-      "file_type": "code",
-      "source_file": "src/components/AdBanner.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "norm_label": "adbanner.jsx",
-      "id": "src_components_adbanner"
-    },
-    {
-      "label": "AdBanner()",
-      "file_type": "code",
-      "source_file": "src/components/AdBanner.jsx",
-      "source_location": "L14",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "norm_label": "adbanner()",
-      "id": "src_components_adbanner_adbanner"
-    },
-    {
-      "label": "AdNative.jsx",
-      "file_type": "code",
-      "source_file": "src/components/AdNative.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "norm_label": "adnative.jsx",
-      "id": "src_components_adnative"
-    },
-    {
-      "label": "AdNative()",
-      "file_type": "code",
-      "source_file": "src/components/AdNative.jsx",
-      "source_location": "L11",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "norm_label": "adnative()",
-      "id": "src_components_adnative_adnative"
-    },
-    {
       "label": "AdSocialBar.jsx",
       "file_type": "code",
       "source_file": "src/components/AdSocialBar.jsx",
@@ -1658,8 +1645,8 @@
       "source_file": "src/components/HomeClient.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 13,
-      "community_name": "Home Page Client Components",
+      "community": 0,
+      "community_name": "react",
       "norm_label": "homeclient.jsx",
       "id": "src_components_homeclient"
     },
@@ -1669,8 +1656,8 @@
       "source_file": "src/components/HomeClient.jsx",
       "source_location": "L14",
       "_origin": "ast",
-      "community": 13,
-      "community_name": "Home Page Client Components",
+      "community": 0,
+      "community_name": "react",
       "norm_label": "sort_options",
       "id": "src_components_homeclient_sort_options"
     },
@@ -1680,8 +1667,8 @@
       "source_file": "src/components/HomeClient.jsx",
       "source_location": "L23",
       "_origin": "ast",
-      "community": 13,
-      "community_name": "Home Page Client Components",
+      "community": 0,
+      "community_name": "react",
       "norm_label": "fixencoding()",
       "id": "src_components_homeclient_fixencoding"
     },
@@ -1691,8 +1678,8 @@
       "source_file": "src/components/HomeClient.jsx",
       "source_location": "L37",
       "_origin": "ast",
-      "community": 13,
-      "community_name": "Home Page Client Components",
+      "community": 0,
+      "community_name": "react",
       "norm_label": "homeclient()",
       "id": "src_components_homeclient_homeclient"
     },
@@ -2274,15 +2261,6 @@
       "id": "eporner_api"
     },
     {
-      "label": "Adsterra Native Ad Wrapper",
-      "file_type": "code",
-      "source_file": "public/adsterra-native.html",
-      "community": 8,
-      "norm_label": "adsterra native ad wrapper",
-      "community_name": "External API and Ads",
-      "id": "public_adsterra_native_html"
-    },
-    {
       "label": "Adsterra Banner Ad Wrapper",
       "file_type": "code",
       "source_file": "public/adsterra.html",
@@ -2484,12 +2462,58 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/components/AdPopunder.jsx",
-      "source_location": "L13",
+      "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_components_adpopunder",
       "target": "src_components_adpopunder_adpopunder",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdBanner.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "src_components_adbanner",
+      "target": "ref_react"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdBanner.jsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "src_components_adbanner",
+      "target": "src_components_adbanner_adbanner"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdNative.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "src_components_adnative",
+      "target": "ref_react"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdNative.jsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "src_components_adnative",
+      "target": "src_components_adnative_adnative"
     },
     {
       "relation": "imports_from",
@@ -2884,30 +2908,6 @@
       "_origin": "ast",
       "confidence_score": 1.0,
       "source": "src_app_video_id_slug_page",
-      "target": "ref_react"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/AdBanner.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_components_adbanner",
-      "target": "ref_react"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/AdNative.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_components_adnative",
       "target": "ref_react"
     },
     {
@@ -4169,28 +4169,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/components/AdBanner.jsx",
-      "source_location": "L14",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_components_adbanner",
-      "target": "src_components_adbanner_adbanner"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/AdNative.jsx",
-      "source_location": "L11",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_components_adnative",
-      "target": "src_components_adnative_adnative"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "src/components/AdSocialBar.jsx",
       "source_location": "L9",
       "weight": 1.0,
@@ -4793,14 +4771,6 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "public/adsterra-native.html",
-      "source": "public_adsterra_native_html",
-      "target": "public_adsterra_service"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
       "source_file": "public/adsterra.html",
       "source": "public_adsterra_html",
       "target": "public_adsterra_service"
@@ -4857,20 +4827,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.85,
       "source_file": "curl_nicevx.html"
-    },
-    {
-      "id": "monetization_flow",
-      "label": "Adsterra Monetization Integration",
-      "nodes": [
-        "public_adsterra_html",
-        "public_adsterra_native_html",
-        "public_adsterra_service"
-      ],
-      "relation": "participate_in",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "public/adsterra.html"
     }
   ],
-  "built_at_commit": "58609babb37ffb66340eda4b7be8341b30c7358f"
+  "built_at_commit": "c4d3bce26ab1f32710131e0bdcbf1f68bb02398e"
 }

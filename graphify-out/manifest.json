@@ -110,18 +110,18 @@
     "semantic_hash": "b8da09d24e6ff030c9f3a0925f9ff4c4"
   },
   "src/components/AdBanner.jsx": {
-    "mtime": 1783968076.915723,
-    "ast_hash": "e4fd1c1e52c324f0ebd9bedcb72b7000",
-    "semantic_hash": "e4fd1c1e52c324f0ebd9bedcb72b7000"
+    "mtime": 1784658453.570351,
+    "ast_hash": "951d60f96231310f6ed787ef44fd660e",
+    "semantic_hash": ""
   },
   "src/components/AdNative.jsx": {
-    "mtime": 1783968081.6533248,
-    "ast_hash": "98fa8e1e0d3a174826eb719bc341898b",
-    "semantic_hash": "98fa8e1e0d3a174826eb719bc341898b"
+    "mtime": 1784658458.9044251,
+    "ast_hash": "72345adf4e0bf7dfb421f85fd74cb5ff",
+    "semantic_hash": ""
   },
   "src/components/AdPopunder.jsx": {
-    "mtime": 1784657572.7878368,
-    "ast_hash": "93473ebaf4d9efdd17b1b0aac04f6b95",
+    "mtime": 1784658793.728109,
+    "ast_hash": "20994a641e969734e1147e9986bcd9cf",
     "semantic_hash": ""
   },
   "src/components/AdSocialBar.jsx": {
@@ -220,9 +220,9 @@
     "semantic_hash": "9326566bd560f8f66fa12bf91555f1cb"
   },
   "public/adsterra-native.html": {
-    "mtime": 1783897641.2206037,
-    "ast_hash": "b8ca7a5c478f6177e364509faac82852",
-    "semantic_hash": "b8ca7a5c478f6177e364509faac82852"
+    "mtime": 1784658445.636949,
+    "ast_hash": "bdd9ccb2ed9d6f2a2fed3819a9a40bd7",
+    "semantic_hash": ""
   },
   "public/adsterra.html": {
     "mtime": 1783968148.846144,
