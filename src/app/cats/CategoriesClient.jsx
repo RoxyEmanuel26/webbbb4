@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Layers, List } from 'lucide-react';
 import { ALL_CATEGORIES } from '@/data/allCategories';
+import AdBanner from '@/components/AdBanner';
+import AdNative from '@/components/AdNative';
 import '../../pages/Pages.css';
 import '../../pages/Categories.css';
 
@@ -137,6 +139,14 @@ const CategoriesClient = () => {
           ))}
         </div>
 
+        {/* ── Banner 300x250 + Native Ad antara grid dan daftar kategori ── */}
+        <div style={{ display: 'flex', justifyContent: 'center', margin: '2rem 0 1rem' }}>
+          <AdBanner adKey="a2d1d9869741533064aff0b41e9dbb6f" width={300} height={250} />
+        </div>
+        <div style={{ margin: '0 0 2rem' }}>
+          <AdNative widgetId="fb2c6ae06d2ab4be82435961f6263160" />
+        </div>
+
         {/* All Categories Section */}
         <div className="all-categories-section" style={{ marginTop: 'var(--space-8)' }}>
           <div className="section-header all-cats-header">
@@ -177,6 +187,10 @@ const CategoriesClient = () => {
             )}
           </div>
         </div>
+      </div>
+      {/* ── Sticky Bottom Banner Mobile (/cats) ── */}
+      <div className="ad-sticky-bottom ad-mobile-only">
+        <AdBanner adKey="05f054fa88f5e6d6b183797a8f9213f9" width={320} height={50} />
       </div>
     </div>
   );

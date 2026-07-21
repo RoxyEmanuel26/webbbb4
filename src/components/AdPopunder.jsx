@@ -1,31 +1,32 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 /**
- * AdPopunder – Memuat skrip Popunder Adsterra satu kali per sesi.
- * Diletakkan di layout.jsx agar berjalan di semua halaman.
- * Menggunakan sessionStorage agar popunder hanya muncul sekali per sesi,
- * tidak mengganggu pengguna yang berpindah halaman.
+ * AdPopunder – Memuat skrip Popunder Adsterra satu kali per sesi browser.
+ * Dipasang HANYA di halaman video (/video/...) agar tidak mengganggu
+ * pengunjung yang sedang browsing halaman utama atau kategori.
+ *
+ * Menggunakan sessionStorage sebagai kunci satu-sesi:
+ * - Muncul 1x saat pengunjung pertama kali membuka halaman video.
+ * - Tidak muncul lagi meski pengunjung berpindah ke video lain.
+ * - Muncul kembali saat pengunjung membuka tab/sesi browser baru.
  */
 export default function AdPopunder() {
-  const injected = useRef(false);
-
   useEffect(() => {
-    // --- PAUSED BY USER (Do not delete) ---
-    // Remove the early return below to re-enable the popunder ad.
-    return;
-    
-    if (injected.current) return;
-    injected.current = true;
+    const SESSION_KEY = 'adsterra_popunder_v1';
+
+    // Jika sudah pernah ditembakkan di sesi ini, jangan ulangi lagi.
+    if (sessionStorage.getItem(SESSION_KEY)) return;
+
+    // Tandai sesi ini sudah menerima popunder.
+    sessionStorage.setItem(SESSION_KEY, '1');
 
     const script = document.createElement('script');
     script.type = 'text/javascript';
     script.src = 'https://glamournakedemployee.com/c5/d4/ca/c5d4ca9c6ad3af9bb2af16d5405c0a02.js';
     script.async = true;
     document.head.appendChild(script);
-
-    // Tidak perlu cleanup karena popunder hanya boleh dimuat satu kali
   }, []);
 
   return null; // Tidak merender apapun secara visual

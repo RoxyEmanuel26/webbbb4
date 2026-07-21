@@ -6,6 +6,7 @@ import Link from 'next/link';
 import VideoCard from '@/components/VideoCard';
 import AdBanner from '@/components/AdBanner';
 import AdNative from '@/components/AdNative';
+import AdPopunder from '@/components/AdPopunder';
 import { Eye, Star, Calendar, Clock, ArrowLeft, ChevronLeft, ChevronRight, X, AlertTriangle, Download } from 'lucide-react';
 import '../../../../pages/Pages.css';
 
@@ -175,6 +176,8 @@ const VideoPlayerClient = ({ id }) => {
 
   return (
     <div className="page-wrapper player-page">
+      {/* ── Popunder: hanya aktif di halaman video, 1x per sesi ── */}
+      <AdPopunder />
 
       <button
         className="back-btn"
@@ -301,6 +304,11 @@ const VideoPlayerClient = ({ id }) => {
                 ))}
               </div>
             )}
+
+            {/* ── Banner 300x250 di bawah tags (zona klik tertinggi setelah video) ── */}
+            <div style={{ display: 'flex', justifyContent: 'center', margin: '1.5rem 0 0.5rem' }}>
+              <AdBanner adKey="a2d1d9869741533064aff0b41e9dbb6f" width={300} height={250} />
+            </div>
 
             {video.thumbs && video.thumbs.length > 1 && (
               <div className="thumb-gallery-wrapper">

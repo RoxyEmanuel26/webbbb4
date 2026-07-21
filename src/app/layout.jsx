@@ -3,7 +3,7 @@ import '../App.css';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import AgeGateModal from '../components/AgeGateModal';
-import AdPopunder from '../components/AdPopunder';
+
 import AdSocialBar from '../components/AdSocialBar';
 import AdBanner from '../components/AdBanner';
 
@@ -97,7 +97,7 @@ export default function RootLayout({ children }) {
         <script src="https://analytics.ahrefs.com/analytics.js" data-key="VdAtEZ/WUhk9qsBEzocURw" async></script>
       </head>
       <body>
-        <AdPopunder />
+
         <AdSocialBar />
         <AgeGateModal />
         <Navbar />
