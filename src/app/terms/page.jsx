@@ -8,6 +8,15 @@ export const metadata = {
   robots: 'index, follow',
   alternates: {
     canonical: 'https://nicevx.com/terms'
+  },
+  openGraph: {
+    title: 'Terms of Service — NICEVX',
+    description: 'Read the Terms of Service for NICEVX. By using our platform you agree to these terms.',
+    url: 'https://nicevx.com/terms',
+    siteName: 'NICEVX',
+    type: 'website',
+    locale: 'en_US',
+    images: [{ url: '/favicon.webp', width: 512, height: 512, alt: 'NICEVX' }],
   }
 };
 

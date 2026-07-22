@@ -8,6 +8,15 @@ export const metadata = {
   robots: 'index, follow',
   alternates: {
     canonical: 'https://nicevx.com/privacy'
+  },
+  openGraph: {
+    title: 'Privacy Policy — NICEVX',
+    description: 'Read the Privacy Policy for NICEVX.',
+    url: 'https://nicevx.com/privacy',
+    siteName: 'NICEVX',
+    type: 'website',
+    locale: 'en_US',
+    images: [{ url: '/favicon.webp', width: 512, height: 512, alt: 'NICEVX' }],
   }
 };
 
