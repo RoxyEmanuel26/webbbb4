@@ -82,7 +82,12 @@ const VideoPlayerClient = ({ id }) => {
 
   useEffect(() => { fetchVideo(); }, [fetchVideo]);
   const router = useRouter();
-  const [iframeStatus, setIframeStatus] = useState('loading'); 
+  const [iframeStatus, setIframeStatus] = useState('loading');
+  // Overlay transparan di atas video player untuk menangkap klik pertama user.
+  // Klik user di dalam iframe (cross-origin) tidak mencapai document listener Adsterra.
+  // Overlay ini menangkap klik di level main document (trusted event) dan
+  // mendispatch click ke document secara sinkron agar Adsterra dapat memicunya.
+  const [showPopunderOverlay, setShowPopunderOverlay] = useState(true);
   const [selectedThumbIndex, setSelectedThumbIndex] = useState(null);
 
   const thumbScrollRef = useRef(null);
@@ -234,6 +239,35 @@ const VideoPlayerClient = ({ id }) => {
                     onLoad={() => setIframeStatus('loaded')}
                     onError={() => setIframeStatus('error')}
                   />
+                  {/* ── Popunder Overlay ──────────────────────────────────────────────
+                   * Div transparan di atas iframe. Semua klik di dalam iframe
+                   * (cross-origin, eporner.com) tidak pernah mencapai document
+                   * listener Adsterra di halaman kita. Overlay ini menangkap klik
+                   * pertama user di level main document (trusted event), lalu
+                   * mendispatch click ke document secara SINKRON agar Adsterra
+                   * dapat memicunya, kemudian menghilang sendiri.
+                   * ─────────────────────────────────────────────────────────────── */}
+                  {showPopunderOverlay && (
+                    <div
+                      aria-hidden="true"
+                      onClick={() => {
+                        // Sembunyikan overlay agar user bisa berinteraksi dengan video
+                        setShowPopunderOverlay(false);
+                        // Dispatch click ke document secara sinkron dalam konteks
+                        // trusted event ini — Adsterra's listener akan menangkapnya
+                        document.dispatchEvent(
+                          new MouseEvent('click', { bubbles: true, cancelable: true, view: window })
+                        );
+                      }}
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        zIndex: 5,
+                        cursor: 'pointer',
+                        background: 'transparent',
+                      }}
+                    />
+                  )}
                 </div>
               );
             })()}

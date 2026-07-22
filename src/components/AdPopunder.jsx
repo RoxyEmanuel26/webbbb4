@@ -3,24 +3,30 @@
 import { useEffect } from 'react';
 
 /**
- * AdPopunder – Memuat skrip Popunder Adsterra setiap kali halaman video dibuka.
- * Dipasang HANYA di halaman video (/video/...).
+ * AdPopunder – Memuat skrip Popunder Adsterra.
  *
- * FIX KRITIS:
- * 1. Tidak ada cleanup function — script popunder HARUS tetap hidup di DOM
- *    selama user berada di halaman video. Cleanup function (return () => removeChild)
- *    justru membunuh script sebelum sempat mendeteksi klik user.
- * 2. Script dipasang di document.body (bukan head) — sesuai rekomendasi Adsterra
- *    agar event listener bisa menangkap klik pada elemen DOM dengan benar.
- * 3. Cek via data-attribute untuk mencegah duplikasi script jika terjadi
- *    double-render (React Strict Mode di development).
+ * ARSITEKTUR:
+ * Script ini mendaftarkan click listener pada document.
+ * NAMUN karena video player adalah cross-origin iframe (eporner.com),
+ * klik user di dalam player TIDAK mencapai document listener ini.
+ *
+ * Solusi: VideoPlayerClient memasang transparent overlay di atas iframe.
+ * Overlay menangkap klik pertama user (trusted event), lalu secara
+ * sinkron mendispatch click ke document agar Adsterra bisa memicunya.
+ *
+ * Komponen ini hanya bertugas memuat dan me-refresh script Adsterra
+ * setiap kali user membuka halaman video.
  */
 export default function AdPopunder() {
   useEffect(() => {
     const ATTR = 'data-adsterra-popunder';
 
-    // Hindari injeksi duplikat (React Strict Mode dev double-invoke)
-    if (document.querySelector(`script[${ATTR}]`)) return;
+    // Hapus script lama agar click listener lama juga ikut terhapus.
+    // Ini penting agar setiap halaman video mendapat listener yang segar.
+    const old = document.querySelector(`script[${ATTR}]`);
+    if (old) {
+      try { old.remove(); } catch (_) {}
+    }
 
     const script = document.createElement('script');
     script.type = 'text/javascript';
@@ -28,12 +34,10 @@ export default function AdPopunder() {
     script.async = true;
     script.setAttribute(ATTR, '1');
 
-    // Pasang di body (bukan head) — sesuai standar Adsterra
+    // Pasang di body sesuai standar Adsterra
     document.body.appendChild(script);
 
-    // TIDAK ADA cleanup function di sini.
-    // Menghapus script (removeChild) justru mematikan popunder sebelum sempat
-    // mendeteksi klik user. Biarkan script hidup selama komponen ini terpasang.
+    // Tidak ada cleanup — biarkan script tetap hidup hingga halaman diganti
   }, []);
 
   return null;
