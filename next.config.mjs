@@ -23,7 +23,13 @@ const nextConfig = {
           },
           {
             key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
+            // no-referrer-when-downgrade: kirim full URL (termasuk path & query) ke
+            // Adsterra melalui Referer header. Ini penting agar Adsterra bisa
+            // mendeteksi konteks halaman (mis. /video/xxx-sexy-milf) dan menampilkan
+            // iklan yang relevan → CPM lebih tinggi.
+            // JANGAN gunakan strict-origin-when-cross-origin — itu memotong path/query
+            // sehingga Adsterra hanya menerima origin (nicevx.com) tanpa konteks.
+            value: 'no-referrer-when-downgrade'
           }
         ]
       }
