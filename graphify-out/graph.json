@@ -34,6 +34,50 @@
   },
   "nodes": [
     {
+      "label": "VideoPlayerClient.jsx",
+      "file_type": "code",
+      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_app_video_id_slug_videoplayerclient",
+      "community": 19,
+      "community_name": "page.jsx",
+      "norm_label": "videoplayerclient.jsx"
+    },
+    {
+      "label": "fixEncoding()",
+      "file_type": "code",
+      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "src_app_video_id_slug_videoplayerclient_fixencoding",
+      "community": 19,
+      "community_name": "page.jsx",
+      "norm_label": "fixencoding()"
+    },
+    {
+      "label": "formatViews()",
+      "file_type": "code",
+      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "src_app_video_id_slug_videoplayerclient_formatviews",
+      "community": 19,
+      "community_name": "page.jsx",
+      "norm_label": "formatviews()"
+    },
+    {
+      "label": "VideoPlayerClient()",
+      "file_type": "code",
+      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "src_app_video_id_slug_videoplayerclient_videoplayerclient",
+      "community": 19,
+      "community_name": "page.jsx",
+      "norm_label": "videoplayerclient()"
+    },
+    {
       "label": "AdPopunder.jsx",
       "file_type": "code",
       "source_file": "src/components/AdPopunder.jsx",
@@ -48,7 +92,7 @@
       "label": "AdPopunder()",
       "file_type": "code",
       "source_file": "src/components/AdPopunder.jsx",
-      "source_location": "L18",
+      "source_location": "L20",
       "_origin": "ast",
       "id": "src_components_adpopunder_adpopunder",
       "community": 0,
@@ -186,50 +230,6 @@
       "community_name": "layout.jsx",
       "norm_label": "rootlayout()",
       "id": "src_app_layout_rootlayout"
-    },
-    {
-      "label": "VideoPlayerClient.jsx",
-      "file_type": "code",
-      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "page.jsx",
-      "norm_label": "videoplayerclient.jsx",
-      "id": "src_app_video_id_slug_videoplayerclient"
-    },
-    {
-      "label": "fixEncoding()",
-      "file_type": "code",
-      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
-      "source_location": "L16",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "page.jsx",
-      "norm_label": "fixencoding()",
-      "id": "src_app_video_id_slug_videoplayerclient_fixencoding"
-    },
-    {
-      "label": "formatViews()",
-      "file_type": "code",
-      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
-      "source_location": "L23",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "page.jsx",
-      "norm_label": "formatviews()",
-      "id": "src_app_video_id_slug_videoplayerclient_formatviews"
-    },
-    {
-      "label": "VideoPlayerClient()",
-      "file_type": "code",
-      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
-      "source_location": "L30",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "page.jsx",
-      "norm_label": "videoplayerclient()",
-      "id": "src_app_video_id_slug_videoplayerclient_videoplayerclient"
     },
     {
       "label": ".eslintrc.json",
@@ -2450,6 +2450,99 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "src/app/video/[id]/[[...slug]]/page.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "src_app_video_id_slug_page",
+      "target": "src_app_video_id_slug_videoplayerclient"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_video_id_slug_videoplayerclient",
+      "target": "ref_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_video_id_slug_videoplayerclient",
+      "target": "src_app_video_id_slug_videoplayerclient_fixencoding",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_video_id_slug_videoplayerclient",
+      "target": "src_app_video_id_slug_videoplayerclient_formatviews",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_video_id_slug_videoplayerclient",
+      "target": "src_app_video_id_slug_videoplayerclient_videoplayerclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
+      "source_location": "L47",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_video_id_slug_videoplayerclient_videoplayerclient",
+      "target": "src_app_video_id_slug_videoplayerclient_fixencoding",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
+      "source_location": "L283",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_video_id_slug_videoplayerclient_videoplayerclient",
+      "target": "src_app_video_id_slug_videoplayerclient_formatviews",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/video/[id]/[[...slug]]/page.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "src_app_video_id_slug_page",
+      "target": "src_app_video_id_slug_videoplayerclient_videoplayerclient"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "src/components/AdPopunder.jsx",
       "source_location": "L3",
       "weight": 1.0,
@@ -2462,7 +2555,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/components/AdPopunder.jsx",
-      "source_location": "L18",
+      "source_location": "L20",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_components_adpopunder",
@@ -2616,99 +2709,6 @@
       "confidence_score": 1.0,
       "source": "src_app_layout",
       "target": "src_app_layout_viewport"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/video/[id]/[[...slug]]/page.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_video_id_slug_page",
-      "target": "src_app_video_id_slug_videoplayerclient"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_video_id_slug_videoplayerclient",
-      "target": "ref_react"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_video_id_slug_videoplayerclient",
-      "target": "src_app_video_id_slug_videoplayerclient_fixencoding"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
-      "source_location": "L23",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_video_id_slug_videoplayerclient",
-      "target": "src_app_video_id_slug_videoplayerclient_formatviews"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
-      "source_location": "L30",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_video_id_slug_videoplayerclient",
-      "target": "src_app_video_id_slug_videoplayerclient_videoplayerclient"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
-      "source_location": "L47",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_video_id_slug_videoplayerclient_videoplayerclient",
-      "target": "src_app_video_id_slug_videoplayerclient_fixencoding"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/video/[id]/[[...slug]]/VideoPlayerClient.jsx",
-      "source_location": "L249",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_video_id_slug_videoplayerclient_videoplayerclient",
-      "target": "src_app_video_id_slug_videoplayerclient_formatviews"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/video/[id]/[[...slug]]/page.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_app_video_id_slug_page",
-      "target": "src_app_video_id_slug_videoplayerclient_videoplayerclient"
     },
     {
       "relation": "contains",
@@ -4829,5 +4829,5 @@
       "source_file": "curl_nicevx.html"
     }
   ],
-  "built_at_commit": "c4d3bce26ab1f32710131e0bdcbf1f68bb02398e"
+  "built_at_commit": "ca94461689eb486f42bda42acb3ce20d6b85e27e"
 }

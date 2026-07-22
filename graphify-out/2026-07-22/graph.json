@@ -34,15 +34,37 @@
   },
   "nodes": [
     {
+      "label": "AdPopunder.jsx",
+      "file_type": "code",
+      "source_file": "src/components/AdPopunder.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_components_adpopunder",
+      "community": 0,
+      "community_name": "react",
+      "norm_label": "adpopunder.jsx"
+    },
+    {
+      "label": "AdPopunder()",
+      "file_type": "code",
+      "source_file": "src/components/AdPopunder.jsx",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "src_components_adpopunder_adpopunder",
+      "community": 0,
+      "community_name": "react",
+      "norm_label": "adpopunder()"
+    },
+    {
       "label": "AdBanner.jsx",
       "file_type": "code",
       "source_file": "src/components/AdBanner.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "src_components_adbanner",
       "community": 0,
       "community_name": "react",
-      "norm_label": "adbanner.jsx"
+      "norm_label": "adbanner.jsx",
+      "id": "src_components_adbanner"
     },
     {
       "label": "AdBanner()",
@@ -50,10 +72,10 @@
       "source_file": "src/components/AdBanner.jsx",
       "source_location": "L14",
       "_origin": "ast",
-      "id": "src_components_adbanner_adbanner",
       "community": 0,
       "community_name": "react",
-      "norm_label": "adbanner()"
+      "norm_label": "adbanner()",
+      "id": "src_components_adbanner_adbanner"
     },
     {
       "label": "AdNative.jsx",
@@ -61,10 +83,10 @@
       "source_file": "src/components/AdNative.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "src_components_adnative",
       "community": 0,
       "community_name": "react",
-      "norm_label": "adnative.jsx"
+      "norm_label": "adnative.jsx",
+      "id": "src_components_adnative"
     },
     {
       "label": "AdNative()",
@@ -72,32 +94,10 @@
       "source_file": "src/components/AdNative.jsx",
       "source_location": "L11",
       "_origin": "ast",
-      "id": "src_components_adnative_adnative",
       "community": 0,
       "community_name": "react",
-      "norm_label": "adnative()"
-    },
-    {
-      "label": "AdPopunder.jsx",
-      "file_type": "code",
-      "source_file": "src/components/AdPopunder.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "norm_label": "adpopunder.jsx",
-      "id": "src_components_adpopunder"
-    },
-    {
-      "label": "AdPopunder()",
-      "file_type": "code",
-      "source_file": "src/components/AdPopunder.jsx",
-      "source_location": "L13",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "norm_label": "adpopunder()",
-      "id": "src_components_adpopunder_adpopunder"
+      "norm_label": "adnative()",
+      "id": "src_components_adnative_adnative"
     },
     {
       "label": "CategoriesClient.jsx",
@@ -2450,13 +2450,36 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "src/components/AdPopunder.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_components_adpopunder",
+      "target": "ref_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdPopunder.jsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_components_adpopunder",
+      "target": "src_components_adpopunder_adpopunder",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "src/components/AdBanner.jsx",
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "src_components_adbanner",
-      "target": "ref_react",
-      "confidence_score": 1.0
+      "target": "ref_react"
     },
     {
       "relation": "contains",
@@ -2465,9 +2488,9 @@
       "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "src_components_adbanner",
-      "target": "src_components_adbanner_adbanner",
-      "confidence_score": 1.0
+      "target": "src_components_adbanner_adbanner"
     },
     {
       "relation": "imports_from",
@@ -2477,9 +2500,9 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "src_components_adnative",
-      "target": "ref_react",
-      "confidence_score": 1.0
+      "target": "ref_react"
     },
     {
       "relation": "contains",
@@ -2488,32 +2511,9 @@
       "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "src_components_adnative",
-      "target": "src_components_adnative_adnative",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/AdPopunder.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_components_adpopunder",
-      "target": "ref_react"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/AdPopunder.jsx",
-      "source_location": "L13",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "src_components_adpopunder",
-      "target": "src_components_adpopunder_adpopunder"
+      "target": "src_components_adnative_adnative"
     },
     {
       "relation": "imports_from",
@@ -4829,5 +4829,5 @@
       "source_file": "curl_nicevx.html"
     }
   ],
-  "built_at_commit": "56676eb5e4f42f4c61eccaaaf32ef14a69bdd22b"
+  "built_at_commit": "c4d3bce26ab1f32710131e0bdcbf1f68bb02398e"
 }

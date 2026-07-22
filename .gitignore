@@ -27,3 +27,4 @@ dist-ssr
 .agents
 .next
 .vercel
+graphify-out
