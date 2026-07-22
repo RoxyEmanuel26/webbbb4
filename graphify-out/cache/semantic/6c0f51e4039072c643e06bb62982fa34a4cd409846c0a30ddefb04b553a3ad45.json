@@ -1,1 +1,0 @@
-{"nodes": [{"id": "public_adsterra_native_html", "label": "Adsterra Native Ad Wrapper", "file_type": "code", "source_file": "public/adsterra-native.html"}], "edges": [{"source": "public_adsterra_native_html", "target": "adsterra_service", "relation": "calls", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "public/adsterra-native.html"}], "hyperedges": []}

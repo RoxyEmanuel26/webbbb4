@@ -1,1 +1,0 @@
-{"nodes": [{"id": "public_robots", "label": "robots.txt", "file_type": "document", "source_file": "public/robots.txt", "source_location": null}], "edges": [{"source": "public_robots", "target": "public_robots", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "public/robots.txt"}], "hyperedges": []}
