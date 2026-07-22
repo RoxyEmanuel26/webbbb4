@@ -102,14 +102,15 @@ export default function RootLayout({ children }) {
         <AgeGateModal />
         <Navbar />
         
-        {/* Global Top Banner (728x90 Desktop / 320x50 Mobile) */}
+        {/* Global Top Banner — Desktop only (728x90)
+            Mobile: setiap halaman sudah punya sticky-bottom 320x50 sendiri.
+            Tidak dipasang top banner mobile di sini untuk menghindari
+            duplikasi zone ID yang sama dengan sticky-bottom → Adsterra
+            bisa mendeteksinya sebagai impresi tidak valid → CPM turun. */}
         <div className="page-wrapper" style={{ marginTop: '1.5rem' }}>
           <div className="ad-row ad-row--top">
             <div className="ad-desktop-only">
               <AdBanner adKey="6cb50045b61eddee00e504ba14847190" width={728} height={90} />
-            </div>
-            <div className="ad-mobile-only">
-              <AdBanner adKey="05f054fa88f5e6d6b183797a8f9213f9" width={320} height={50} />
             </div>
           </div>
         </div>
