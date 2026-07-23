@@ -30,12 +30,13 @@ export default function AdPopunder() {
 
     const script = document.createElement('script');
     script.type = 'text/javascript';
+    script.setAttribute('data-cfasync', 'false');
     script.src = 'https://glamournakedemployee.com/c5/d4/ca/c5d4ca9c6ad3af9bb2af16d5405c0a02.js';
     script.async = true;
     script.setAttribute(ATTR, '1');
 
-    // Pasang di body sesuai standar Adsterra
-    document.body.appendChild(script);
+    // Pasang di head sesuai standar Adsterra (sebelum </head>)
+    document.head.appendChild(script);
 
     // Tidak ada cleanup — biarkan script tetap hidup hingga halaman diganti
   }, []);
