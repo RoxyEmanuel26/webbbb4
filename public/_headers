@@ -4,14 +4,20 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: no-referrer-when-downgrade
 
+/ads.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=3600, must-revalidate
+
 /adsterra.html
   X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   Referrer-Policy: unsafe-url
   Content-Security-Policy: default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; frame-ancestors 'self'
+  Cache-Control: no-cache, must-revalidate
 
 /adsterra-native.html
   X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   Referrer-Policy: unsafe-url
   Content-Security-Policy: default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; frame-ancestors 'self'
+  Cache-Control: no-cache, must-revalidate
