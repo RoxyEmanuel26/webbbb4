@@ -6,8 +6,7 @@ import { ALL_CATEGORIES } from '@/data/allCategories';
 import VideoCard from '@/components/VideoCard';
 import Pagination from '@/components/Pagination';
 import SortBar from '@/components/SortBar';
-import AdNative from '@/components/AdNative';
-import AdBanner from '@/components/AdBanner';
+
 import '../pages/Pages.css';
 
 const API_BASE = 'https://www.eporner.com/api/v2/video';
@@ -150,24 +149,13 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
               {videos.map((v, idx) => (
                 <React.Fragment key={`${v.id}-${idx}`}>
                   <VideoCard video={v} priority={idx < 4} />
-                  {/* ── Native Banner di tengah video (setelah video ke-12) ── */}
-                  {idx === 11 && (
-                    <div className="native-ad-wrapper" style={{ gridColumn: '1 / -1', margin: '20px 0' }}>
-                      <AdNative widgetId="fb2c6ae06d2ab4be82435961f6263160" />
-                    </div>
-                  )}
+
                 </React.Fragment>
               ))}
             </div>
-            {/* ── Banner 300x250 di atas pagination ── */}
-            <div style={{ display: 'flex', justifyContent: 'center', margin: '30px 0' }}>
-              <AdBanner adKey="a2d1d9869741533064aff0b41e9dbb6f" width={300} height={250} />
-            </div>
+
             <Pagination currentPage={page} totalPages={totalPages} />
-            {/* ── Native Banner ke-2 di bawah pagination (max impressions) ── */}
-            <div className="native-ad-wrapper" style={{ margin: '24px 0' }}>
-              <AdNative widgetId="fb2c6ae06d2ab4be82435961f6263160" />
-            </div>
+
           </>
         ) : (
           <div className="empty-block">
@@ -179,10 +167,7 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
           </div>
         )}
       </div>
-      {/* ── Sticky Bottom Banner Mobile (Search, Cat, Tag pages) ── */}
-      <div className="ad-sticky-bottom ad-mobile-only">
-        <AdBanner adKey="05f054fa88f5e6d6b183797a8f9213f9" width={320} height={50} />
-      </div>
+
     </div>
   );
 }

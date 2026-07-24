@@ -4,8 +4,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import VideoCard from '@/components/VideoCard';
-import AdBanner from '@/components/AdBanner';
-import AdNative from '@/components/AdNative';
+
 import { Eye, Star, Calendar, Clock, ArrowLeft, ChevronLeft, ChevronRight, X, AlertTriangle, Download } from 'lucide-react';
 import '../../../../pages/Pages.css';
 
@@ -336,10 +335,7 @@ const VideoPlayerClient = ({ id }) => {
               </div>
             )}
 
-            {/* ── Banner 300x250 di bawah tags (zona klik tertinggi setelah video) ── */}
-            <div style={{ display: 'flex', justifyContent: 'center', margin: '1.5rem 0 0.5rem' }}>
-              <AdBanner adKey="a2d1d9869741533064aff0b41e9dbb6f" width={300} height={250} />
-            </div>
+
 
             {video.thumbs && video.thumbs.length > 1 && (
               <div className="thumb-gallery-wrapper">
@@ -371,10 +367,7 @@ const VideoPlayerClient = ({ id }) => {
         </div>
 
         <aside className="player-sidebar">
-          {/* ── Banner 300x250 di atas Related Videos (sidebar) ── */}
-          <div style={{ marginBottom: '1.5rem' }}>
-            <AdBanner adKey="a2d1d9869741533064aff0b41e9dbb6f" width={300} height={250} />
-          </div>
+
           <h2 className="sidebar-heading">Related Videos</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
             {related.map(v => (
@@ -389,13 +382,7 @@ const VideoPlayerClient = ({ id }) => {
         </aside>
       </div>
 
-      {/* ── Native Banner (4:1 layout) di bawah player layout (desktop & mobile) ── */}
-      <div style={{ marginTop: '2rem' }}>
-        <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--color-text-primary)', fontWeight: '600' }}>
-          Recommended Content
-        </h3>
-        <AdNative widgetId="fb2c6ae06d2ab4be82435961f6263160" />
-      </div>
+
 
       {selectedThumbIndex !== null && (
         <div 
@@ -475,10 +462,7 @@ const VideoPlayerClient = ({ id }) => {
           </div>
         </div>
       )}
-      {/* ── Sticky Bottom Banner Mobile (Video Page) ── */}
-      <div className="ad-sticky-bottom ad-mobile-only">
-        <AdBanner adKey="05f054fa88f5e6d6b183797a8f9213f9" width={320} height={50} />
-      </div>
+
     </div>
   );
 };
