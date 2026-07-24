@@ -6,7 +6,6 @@ import Link from 'next/link';
 import VideoCard from '@/components/VideoCard';
 import AdBanner from '@/components/AdBanner';
 import AdNative from '@/components/AdNative';
-import AdPopunder from '@/components/AdPopunder';
 import { Eye, Star, Calendar, Clock, ArrowLeft, ChevronLeft, ChevronRight, X, AlertTriangle, Download } from 'lucide-react';
 import '../../../../pages/Pages.css';
 
@@ -181,8 +180,6 @@ const VideoPlayerClient = ({ id }) => {
 
   return (
     <div className="page-wrapper player-page">
-      {/* ── Popunder: hanya aktif di halaman video, 1x per sesi ── */}
-      <AdPopunder />
 
       <button
         className="back-btn"
