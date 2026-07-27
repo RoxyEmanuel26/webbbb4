@@ -14,31 +14,34 @@ import { useEffect } from 'react';
  * Overlay menangkap klik pertama user (trusted event), lalu secara
  * sinkron mendispatch click ke document agar Adsterra bisa memicunya.
  *
- * Komponen ini hanya bertugas memuat dan me-refresh script Adsterra
- * setiap kali user membuka halaman video.
+ * FIXED:
+ * - Sebelumnya script dihapus+diinjeksi ulang setiap render.
+ * - Sekarang kita cek DOM secara langsung — jika script sudah ada
+ *   (misal dari SPA navigation sebelumnya), tidak perlu re-inject.
+ * - Jika belum ada (misal setelah reload penuh), script diinjeksi fresh.
+ * - Listener lama otomatis hilang bersama script lama saat reload penuh,
+ *   jadi tidak ada risiko listener ganda.
  */
+
+const POPUNDER_SRC = 'https://glamournakedemployee.com/c5/d4/ca/c5d4ca9c6ad3af9bb2af16d5405c0a02.js';
+const POPUNDER_ATTR = 'data-adsterra-popunder';
+
 export default function AdPopunder() {
   useEffect(() => {
-    const ATTR = 'data-adsterra-popunder';
-
-    // Hapus script lama agar click listener lama juga ikut terhapus.
-    // Ini penting agar setiap halaman video mendapat listener yang segar.
-    const old = document.querySelector(`script[${ATTR}]`);
-    if (old) {
-      try { old.remove(); } catch (_) {}
+    // Cek DOM langsung apakah script sudah ada
+    if (document.querySelector(`script[${POPUNDER_ATTR}]`)) {
+      return; // Sudah ada, skip — listener Adsterra masih aktif
     }
 
     const script = document.createElement('script');
     script.type = 'text/javascript';
     script.setAttribute('data-cfasync', 'false');
-    script.src = 'https://glamournakedemployee.com/c5/d4/ca/c5d4ca9c6ad3af9bb2af16d5405c0a02.js';
+    script.src = POPUNDER_SRC;
     script.async = true;
-    script.setAttribute(ATTR, '1');
+    script.setAttribute(POPUNDER_ATTR, '1');
 
     // Pasang di head sesuai standar Adsterra (sebelum </head>)
     document.head.appendChild(script);
-
-    // Tidak ada cleanup — biarkan script tetap hidup hingga halaman diganti
   }, []);
 
   return null;

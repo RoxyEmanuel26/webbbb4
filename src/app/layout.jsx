@@ -103,9 +103,6 @@ export default function RootLayout({ children }) {
         <AgeGateModal />
         <Navbar />
         
-        <div className="page-wrapper" style={{ marginTop: '1.5rem' }}>
-        </div>
-
         <main>
           {children}
         </main>
