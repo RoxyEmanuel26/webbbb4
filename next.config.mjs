@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+// Build: 2026-07-29
 const nextConfig = {
   reactStrictMode: true,
   images: {
