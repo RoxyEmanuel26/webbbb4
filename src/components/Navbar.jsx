@@ -38,7 +38,7 @@ const Navbar = () => {
     <header className="navbar-root" role="banner">
       <div className="page-wrapper navbar-inner">
         {/* Brand */}
-        <Link href="/" className="navbar-brand" aria-label="Home">
+        <Link href="/" className="navbar-brand" aria-label="Home" prefetch={false}>
           <div className="brand-logo-mark">
             <div className="brand-icon-glow"></div>
             <img src="/logo.webp" alt="Logo" width="34" height="34" style={{ position: 'relative', zIndex: 1, objectFit: 'contain' }} />
@@ -67,6 +67,7 @@ const Navbar = () => {
                 key={link.path}
                 className={`navbar-link ${isActive(link.path) ? 'is-active' : ''}`}
                 href={link.path}
+                prefetch={false}
               >
                 {link.label}
               </Link>

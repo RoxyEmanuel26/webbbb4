@@ -1,5 +1,5 @@
-export const runtime = 'edge';
 import React from 'react';
+
 import '../../pages/Pages.css';
 
 export const metadata = {

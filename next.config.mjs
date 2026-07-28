@@ -7,33 +7,63 @@ const nextConfig = {
   },
   async headers() {
     return [
+      // ── Security headers untuk semua route ──────────────────────────────
       {
         source: '/:path*',
         headers: [
-          {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN'
-          },
-          {
-            key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self';"
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
-          },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Content-Security-Policy', value: "frame-ancestors 'self';" },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
           {
             key: 'Referrer-Policy',
-            // no-referrer-when-downgrade: kirim full URL (termasuk path & query) ke
-            // Adsterra melalui Referer header. Ini penting agar Adsterra bisa
-            // mendeteksi konteks halaman (mis. /video/xxx-sexy-milf) dan menampilkan
-            // iklan yang relevan → CPM lebih tinggi.
-            // JANGAN gunakan strict-origin-when-cross-origin — itu memotong path/query
-            // sehingga Adsterra hanya menerima origin (nicevx.com) tanpa konteks.
+            // no-referrer-when-downgrade: kirim full URL ke Adsterra via Referer header.
+            // Penting agar Adsterra deteksi konteks halaman → CPM lebih tinggi.
             value: 'no-referrer-when-downgrade'
-          }
-        ]
-      }
+          },
+        ],
+      },
+      // ── Cache halaman STATIS (terms, privacy, dmca, usc2257, cats) ───────
+      // s-maxage: Cloudflare CDN cache 24 jam → Worker TIDAK dijalankan ulang
+      // stale-while-revalidate: perpanjang cache sambil refresh di background
+      {
+        source: '/(terms|privacy|dmca|usc2257|cats)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=86400' },
+        ],
+      },
+      // ── Cache halaman DINAMIS (home, video, cat, search, tag) ───────────
+      // s-maxage=600: Cloudflare CDN cache 10 menit → bot yg crawl URL sama
+      // dalam 10 menit hanya memanggil Worker 1x, sisanya dari cache CDN.
+      {
+        source: '/',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=600, stale-while-revalidate=300' },
+        ],
+      },
+      {
+        source: '/video/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=600, stale-while-revalidate=300' },
+        ],
+      },
+      {
+        source: '/cat/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=600, stale-while-revalidate=300' },
+        ],
+      },
+      {
+        source: '/search',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=300, stale-while-revalidate=60' },
+        ],
+      },
+      {
+        source: '/tag/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=600, stale-while-revalidate=300' },
+        ],
+      },
     ];
   }
 };
