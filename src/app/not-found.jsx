@@ -38,10 +38,8 @@ export default function NotFound() {
             borderRadius: '6px', 
             textDecoration: 'none',
             fontWeight: '600',
-            transition: 'background-color 0.2s'
+            transition: 'opacity 0.2s'
           }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#be123c'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#e11d48'}
         >
           Return to Homepage
         </Link>
