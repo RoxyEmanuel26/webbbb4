@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { permanentRedirect } from 'next/navigation';
 import HomeClient from '@/components/HomeClient';
 import SkeletonGrid from '@/components/SkeletonGrid';
 import '../pages/Pages.css';
@@ -41,7 +42,26 @@ export async function generateMetadata({ searchParams }) {
   };
 }
 
-export default function Home() {
+export default async function Home({ searchParams }) {
+  const params = await searchParams;
+  
+  // Deteksi parameter pelacakan (utm_*, fbclid, gclid, ref)
+  const hasTracking = Object.keys(params).some(key => 
+    key.startsWith('utm_') || key === 'fbclid' || key === 'gclid' || key === 'ref'
+  );
+
+  // Jika ada parameter pelacakan, lakukan redirect 308 (permanen) ke URL bersih
+  if (hasTracking) {
+    const newParams = new URLSearchParams();
+    for (const [key, value] of Object.entries(params)) {
+      if (!key.startsWith('utm_') && key !== 'fbclid' && key !== 'gclid' && key !== 'ref') {
+        newParams.append(key, value);
+      }
+    }
+    const queryString = newParams.toString();
+    permanentRedirect(queryString ? `/?${queryString}` : '/');
+  }
+
   return (
     <Suspense fallback={<SkeletonGrid />}>
       <HomeClient />
