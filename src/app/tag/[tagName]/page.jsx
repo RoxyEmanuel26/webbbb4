@@ -1,7 +1,8 @@
-export const runtime = 'edge';
 import { Suspense } from 'react';
+import SkeletonGrid from '@/components/SkeletonGrid';
 import SearchResultsShared from '@/components/SearchResultsShared';
 import { getSearchMetadata } from '@/utils/seo';
+export const runtime = 'edge';
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
@@ -21,7 +22,7 @@ export default async function TagPage({ params, searchParams }) {
   const seo = getSearchMetadata({ query, isCat: false, isTag: true, page, tagName });
 
   return (
-    <Suspense fallback={<div className="loading-block"><div className="loading-spinner" /></div>}>
+    <Suspense fallback={<SkeletonGrid />}>
       <SearchResultsShared 
         isCat={false} 
         isTag={true} 

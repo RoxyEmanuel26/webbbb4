@@ -1,8 +1,9 @@
-export const runtime = 'edge';
-
 import { Suspense } from 'react';
 import HomeClient from '@/components/HomeClient';
+import SkeletonGrid from '@/components/SkeletonGrid';
 import '../pages/Pages.css';
+
+export const runtime = 'edge';
 
 const SORT_OPTIONS = [
   { value: 'latest',       label: 'Latest' },
@@ -42,7 +43,7 @@ export async function generateMetadata({ searchParams }) {
 
 export default function Home() {
   return (
-    <Suspense fallback={<div className="loading-block"><div className="loading-spinner" /><p>Loading...</p></div>}>
+    <Suspense fallback={<SkeletonGrid />}>
       <HomeClient />
     </Suspense>
   );

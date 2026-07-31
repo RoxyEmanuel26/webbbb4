@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ALL_CATEGORIES } from '@/data/allCategories';
 import VideoCard from '@/components/VideoCard';
+import SkeletonCard from '@/components/SkeletonCard';
 import Pagination from '@/components/Pagination';
 import SortBar from '@/components/SortBar';
 
@@ -139,9 +140,10 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
         </div>
 
         {loading ? (
-          <div className="loading-block">
-            <div className="loading-spinner" />
-            <p>Loading videos...</p>
+          <div className="video-grid">
+            {Array.from({ length: 36 }).map((_, idx) => (
+              <SkeletonCard key={`skel-${idx}`} />
+            ))}
           </div>
         ) : videos.length > 0 ? (
           <>

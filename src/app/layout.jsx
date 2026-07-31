@@ -7,6 +7,8 @@ import AgeGateModal from '../components/AgeGateModal';
 import AdSocialBar from '../components/AdSocialBar';
 import AdPopunder from '../components/AdPopunder';
 
+import Script from 'next/script';
+
 export const runtime = 'edge';
 
 export const metadata = {
@@ -90,14 +92,18 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href="https://static-ca-cdn.eporner.com" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
-        <script src="https://analytics.ahrefs.com/analytics.js" data-key="VdAtEZ/WUhk9qsBEzocURw" async></script>
       </head>
       <body>
-
+        <Script 
+          src="https://analytics.ahrefs.com/analytics.js" 
+          data-key="VdAtEZ/WUhk9qsBEzocURw" 
+          strategy="lazyOnload" 
+        />
         <AdSocialBar />
         <AdPopunder />
         <AgeGateModal />

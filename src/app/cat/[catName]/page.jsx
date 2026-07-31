@@ -1,8 +1,9 @@
-export const runtime = 'edge';
 import { Suspense } from 'react';
+import SkeletonGrid from '@/components/SkeletonGrid';
 import Link from 'next/link';
 import SearchResultsShared from '@/components/SearchResultsShared';
 import { getSearchMetadata } from '@/utils/seo';
+export const runtime = 'edge';
 import { ALL_CATEGORIES } from '@/data/allCategories';
 
 const toSlug = (name) => name.toLowerCase().replace(/\s+/g, '-');
@@ -47,7 +48,7 @@ export default async function CategoryPage({ params, searchParams }) {
 
   return (
     <>
-      <Suspense fallback={<div className="loading-block"><div className="loading-spinner" /></div>}>
+      <Suspense fallback={<SkeletonGrid />}>
         <SearchResultsShared 
           isCat={true} 
           isTag={false} 

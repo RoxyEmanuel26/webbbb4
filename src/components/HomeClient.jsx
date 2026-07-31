@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import VideoCard from '@/components/VideoCard';
 import Pagination from '@/components/Pagination';
+import SkeletonCard from '@/components/SkeletonCard';
 import TagsBar from '@/components/TagsBar';
 import SortBar from '@/components/SortBar';
 
@@ -146,9 +147,10 @@ export default function HomeClient() {
         </div>
 
         {loading ? (
-          <div className="loading-block">
-            <div className="loading-spinner" />
-            <p>Loading videos...</p>
+          <div className="video-grid">
+            {Array.from({ length: 36 }).map((_, idx) => (
+              <SkeletonCard key={`skel-${idx}`} />
+            ))}
           </div>
         ) : error ? (
           <div className="empty-block">
