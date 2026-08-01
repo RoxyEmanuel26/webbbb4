@@ -45,22 +45,8 @@ export async function generateMetadata({ searchParams }) {
 export default async function Home({ searchParams }) {
   const params = await searchParams;
   
-  // Deteksi parameter pelacakan (utm_*, fbclid, gclid, ref)
-  const hasTracking = Object.keys(params).some(key => 
-    key.startsWith('utm_') || key === 'fbclid' || key === 'gclid' || key === 'ref'
-  );
-
-  // Jika ada parameter pelacakan, lakukan redirect 308 (permanen) ke URL bersih
-  if (hasTracking) {
-    const newParams = new URLSearchParams();
-    for (const [key, value] of Object.entries(params)) {
-      if (!key.startsWith('utm_') && key !== 'fbclid' && key !== 'gclid' && key !== 'ref') {
-        newParams.append(key, value);
-      }
-    }
-    const queryString = newParams.toString();
-    permanentRedirect(queryString ? `/?${queryString}` : '/');
-  }
+  // Parameter tracking (utm_, fbclid, dll) sekarang dihandle secara client-side di layout.jsx
+  // untuk mencegah masalah cache dan error 500 di Cloudflare Pages.
 
   return (
     <Suspense fallback={<SkeletonGrid />}>

@@ -30,7 +30,8 @@ export default function AdSocialBar() {
     script.async = true;
     script.setAttribute(SOCIAL_BAR_ATTR, '1');
 
-    document.head.appendChild(script);
+    // Pasang di body sesuai standar Adsterra (tepat di atas </body>)
+    document.body.appendChild(script);
   }, []);
 
   return null;

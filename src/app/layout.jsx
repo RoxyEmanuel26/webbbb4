@@ -97,6 +97,28 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            (function() {
+              try {
+                var search = window.location.search;
+                if (search.includes('utm_') || search.includes('fbclid') || search.includes('gclid') || search.includes('ref=')) {
+                  var params = new URLSearchParams(search);
+                  var keys = Array.from(params.keys());
+                  for (var i = 0; i < keys.length; i++) {
+                    var key = keys[i];
+                    if (key.startsWith('utm_') || key === 'fbclid' || key === 'gclid' || key === 'ref') {
+                      params.delete(key);
+                    }
+                  }
+                  var newSearch = params.toString();
+                  var newUrl = window.location.pathname + (newSearch ? '?' + newSearch : '') + window.location.hash;
+                  window.history.replaceState(null, '', newUrl);
+                }
+              } catch (e) {}
+            })();
+          `
+        }} />
       </head>
       <body>
         <Script 

@@ -82,6 +82,19 @@ const VideoPlayerClient = ({ id }) => {
   const router = useRouter();
   const [iframeStatus, setIframeStatus] = useState('loading');
   const [selectedThumbIndex, setSelectedThumbIndex] = useState(null);
+  
+  // Overlay untuk memicu Adsterra Popunder pada klik pertama
+  const [overlayActive, setOverlayActive] = useState(true);
+
+  const handleOverlayClick = () => {
+    setOverlayActive(false);
+    // Dispatch click event manual ke document agar script Adsterra mendeteksinya
+    document.dispatchEvent(new MouseEvent('click', {
+      view: window,
+      bubbles: true,
+      cancelable: true
+    }));
+  };
 
   const thumbScrollRef = useRef(null);
   const [showLeftThumb, setShowLeftThumb] = useState(false);
@@ -218,6 +231,20 @@ const VideoPlayerClient = ({ id }) => {
                          Buka di Tab Baru
                        </button>
                     </div>
+                  )}
+                  {overlayActive && (
+                    <div 
+                      onClick={handleOverlayClick}
+                      style={{
+                        position: 'absolute',
+                        top: 0, 
+                        left: 0, 
+                        width: '100%', 
+                        height: '100%',
+                        zIndex: 10, 
+                        cursor: 'pointer'
+                      }} 
+                    />
                   )}
                   <iframe 
                     src={safeEmbedUrl} 
