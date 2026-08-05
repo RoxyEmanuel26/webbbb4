@@ -12,6 +12,11 @@
  *   Bulan depan: 120,000 video → 2,400 sub-sitemap (otomatis!)
  *   Tahun depan: 200,000 video → 4,000 sub-sitemap (otomatis!)
  *
+ * Sub-sitemap URL format: /sitemap-videos-N (tanpa ekstensi .xml)
+ *   Alasan: Next.js App Router tidak support partial dynamic segments
+ *   (prefix-[param].ext) di folder name. Google tidak memerlukan
+ *   ekstensi .xml — yang penting Content-Type: application/xml.
+ *
  * Format: <sitemapindex> yang benar (Google-compliant)
  * Cache: 24 jam di Cloudflare CDN (1 API call per hari)
  * ═══════════════════════════════════════════════════════════════
@@ -27,8 +32,6 @@ const PER_PAGE = 50;
 const FALLBACK_PAGES = 2000;
 
 // Hard cap: Google merekomendasikan max 50,000 sitemap per index
-// Eporner API punya batas internal (biasanya 100,000 video top-rated)
-// Jika suatu saat total_count melebihi ini, kita tetap aman
 const MAX_PAGES = 50000;
 
 export async function GET() {
@@ -36,7 +39,6 @@ export async function GET() {
 
   // ── Fetch total video count dari Eporner API ───────────────────
   // Hanya 1 request ringan (per_page=1) untuk mendapat total_count.
-  // Hasilnya menentukan berapa sub-sitemap yang dibuat.
   let numVideoPages = FALLBACK_PAGES;
   try {
     const res = await fetch(
@@ -57,11 +59,13 @@ export async function GET() {
   }
 
   // ── Bangun <sitemapindex> XML ──────────────────────────────────
+  // 1 entry untuk sub-sitemap statis
   const staticEntry = `  <sitemap>\n    <loc>${SITE_URL}/sitemap-static.xml</loc>\n    <lastmod>${now}</lastmod>\n  </sitemap>`;
 
+  // N entries untuk sub-sitemap video (tanpa .xml di URL)
   const videoEntries = Array.from(
     { length: numVideoPages },
-    (_, i) => `  <sitemap>\n    <loc>${SITE_URL}/sitemap-videos-${i + 1}.xml</loc>\n  </sitemap>`
+    (_, i) => `  <sitemap>\n    <loc>${SITE_URL}/sitemap-videos-${i + 1}</loc>\n    <lastmod>${now}</lastmod>\n  </sitemap>`
   ).join('\n');
 
   const xml = [
@@ -75,8 +79,6 @@ export async function GET() {
   return new Response(xml, {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
-      // Cache 24 jam: Cloudflare menyimpan response ini.
-      // Googlebot hanya men-trigger 1 API call ke Eporner per hari.
       'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=43200',
     },
   });
