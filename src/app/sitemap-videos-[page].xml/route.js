@@ -2,12 +2,15 @@
  * Sub-sitemap video dinamis: /sitemap-videos-[page].xml
  *
  * Contoh:
- *   GET /sitemap-videos-1.xml  → 50 video dari Eporner halaman 1
- *   GET /sitemap-videos-2.xml  → 50 video dari Eporner halaman 2
+ *   GET /sitemap-videos-1.xml    → 50 video dari Eporner halaman 1
+ *   GET /sitemap-videos-2.xml    → 50 video dari Eporner halaman 2
  *   ...
- *   GET /sitemap-videos-2000.xml → 50 video dari Eporner halaman 2000
+ *   GET /sitemap-videos-N.xml    → 50 video dari Eporner halaman N
+ *                                  (N ditentukan dinamis oleh sitemap.xml)
  *
- * Total: 2000 × 50 = 100,000 video — semua katalog Eporner top-rated.
+ * Tidak ada batas halaman atas — jumlahnya mengikuti total_count
+ * yang dikembalikan Eporner API di sitemap.xml (sitemap index).
+ * Halaman di luar jangkauan otomatis return empty <urlset> (valid).
  *
  * Tiap request hanya membuat 1 API call ke Eporner.
  * Di-cache 24 jam oleh Cloudflare CDN via Cache-Control header.
@@ -51,8 +54,10 @@ export async function GET(request, { params }) {
   // Actual param received: "1" from /sitemap-videos-1.xml
   const page = parseInt(raw, 10);
 
-  // Validasi: harus angka valid antara 1 dan 2000
-  if (!page || page < 1 || page > 2000 || isNaN(page)) {
+  // Validasi minimal: harus angka positif valid
+  // Tidak ada batas atas — halaman > total tersedia akan return empty XML
+  // (Eporner mengembalikan 0 video untuk halaman di luar jangkauan)
+  if (!page || page < 1 || isNaN(page)) {
     return new Response('Not Found', { status: 404 });
   }
 
@@ -61,8 +66,12 @@ export async function GET(request, { params }) {
     const res = await fetch(apiUrl, { cache: 'no-store' });
 
     if (!res.ok) {
+      // Eporner error → return empty sitemap (valid XML, cached)
       return new Response(buildXml([]), {
-        headers: { 'Content-Type': 'application/xml; charset=utf-8' },
+        headers: {
+          'Content-Type': 'application/xml; charset=utf-8',
+          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=3600',
+        },
       });
     }
 
@@ -86,8 +95,12 @@ export async function GET(request, { params }) {
       },
     });
   } catch {
+    // Uncaught error → return empty sitemap (valid XML)
     return new Response(buildXml([]), {
-      headers: { 'Content-Type': 'application/xml; charset=utf-8' },
+      headers: {
+        'Content-Type': 'application/xml; charset=utf-8',
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=3600',
+      },
     });
   }
 }
