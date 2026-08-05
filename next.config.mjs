@@ -52,10 +52,18 @@ const nextConfig = {
         ],
       },
       // ── Cache Sitemap Dinamis ─────────────────────────────────────────────
-      // Sitemap.js memanggil Eporner API untuk top 500 video.
-      // Cache 24 jam di Cloudflare agar tidak membebani API Eporner.
+      // Sitemap INDEX (/sitemap.xml) dan semua sub-sitemap video (/sitemap/*.xml)
+      // di-cache 24 jam di Cloudflare CDN agar Eporner API tidak dipanggil
+      // berulang-ulang saat Googlebot crawl seluruh 2001 sub-sitemap.
       {
         source: '/sitemap.xml',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=43200' },
+        ],
+      },
+      {
+        // Sub-sitemaps: /sitemap/0.xml, /sitemap/1.xml, ..., /sitemap/2000.xml
+        source: '/sitemap/:path*',
         headers: [
           { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=43200' },
         ],
