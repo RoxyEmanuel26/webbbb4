@@ -52,7 +52,7 @@ const nextConfig = {
         ],
       },
       // ── Cache Sitemap Dinamis ─────────────────────────────────────────────
-      // Sitemap.js memanggil Eporner API untuk 1000 video.
+      // Sitemap.js memanggil Eporner API untuk top 500 video.
       // Cache 24 jam di Cloudflare agar tidak membebani API Eporner.
       {
         source: '/sitemap.xml',
