@@ -16,15 +16,28 @@ Disallow: /search?*
 
 # Block AI crawlers to save bandwidth
 User-agent: GPTBot
-Disallow: /
+Allow: /
+Disallow: /api/
+Disallow: /?order=*
+Disallow: /search?*
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
 
 User-agent: ClaudeBot
-Disallow: /
-
-User-agent: CCBot
-Disallow: /
+Allow: /
 
 User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# Training-only crawlers — block
+User-agent: CCBot
 Disallow: /
 
 Sitemap: https://nicevx.com/sitemap.xml
