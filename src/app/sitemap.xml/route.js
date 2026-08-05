@@ -1,67 +1,82 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- * SITEMAP INDEX — /sitemap.xml
+ * SITEMAP INDEX DINAMIS — /sitemap.xml
  * ═══════════════════════════════════════════════════════════════
  *
- * PENTING: File ini menggunakan route.js (bukan sitemap.js) karena
- * sitemap.js Next.js hanya bisa menghasilkan format <urlset>,
- * bukan <sitemapindex>. Google membutuhkan <sitemapindex> untuk
- * mengenali dan mengikuti link ke sub-sitemap.
+ * TANPA BATAS HARDCODE:
+ *   Fetch total_count dari Eporner API → hitung otomatis berapa
+ *   sub-sitemap yang dibutuhkan. Kalau Eporner tambah video,
+ *   sitemap index ini ikut berkembang sendiri tanpa perlu edit kode.
  *
- * Format yang BENAR (file ini):
- *   <sitemapindex>
- *     <sitemap><loc>https://nicevx.com/sitemap-static.xml</loc></sitemap>
- *     <sitemap><loc>https://nicevx.com/sitemap-videos-1.xml</loc></sitemap>
- *     ...
- *   </sitemapindex>
+ *   Hari ini: 100,000 video → 2,000 sub-sitemap
+ *   Bulan depan: 120,000 video → 2,400 sub-sitemap (otomatis!)
+ *   Tahun depan: 200,000 video → 4,000 sub-sitemap (otomatis!)
  *
- * Format yang SALAH (dari sitemap.js default Next.js):
- *   <urlset>
- *     <url><loc>https://nicevx.com/sitemap-videos-1.xml</loc></url>
- *   </urlset>
- *   ← Google akan anggap ini halaman web biasa, BUKAN sub-sitemap!
- *
- * Arsitektur lengkap:
- *   /sitemap.xml              ← Index (file ini) — daftar semua sub-sitemap
- *   /sitemap-static.xml       ← Halaman statis + kategori
- *   /sitemap-videos-1.xml     ← 50 video halaman 1
- *   /sitemap-videos-2.xml     ← 50 video halaman 2
- *   ...
- *   /sitemap-videos-2000.xml  ← 50 video halaman 2000
- *   TOTAL: 100,000 video URLs
+ * Format: <sitemapindex> yang benar (Google-compliant)
+ * Cache: 24 jam di Cloudflare CDN (1 API call per hari)
  * ═══════════════════════════════════════════════════════════════
  */
 
 export const runtime = 'edge';
 
-const SITE_URL        = 'https://nicevx.com';
-const NUM_VIDEO_PAGES = 2000; // 2000 × 50 = 100,000 video
+const SITE_URL = 'https://nicevx.com';
+const API_BASE = 'https://www.eporner.com/api/v2';
+const PER_PAGE = 50;
+
+// Fallback jika API Eporner tidak bisa dihubungi saat generate sitemap
+const FALLBACK_PAGES = 2000;
+
+// Hard cap: Google merekomendasikan max 50,000 sitemap per index
+// Eporner API punya batas internal (biasanya 100,000 video top-rated)
+// Jika suatu saat total_count melebihi ini, kita tetap aman
+const MAX_PAGES = 50000;
 
 export async function GET() {
   const now = new Date().toISOString();
 
-  // Bangun daftar semua sub-sitemap
-  const sitemaps = [
-    { loc: `${SITE_URL}/sitemap-static.xml`, lastmod: now },
-    ...Array.from({ length: NUM_VIDEO_PAGES }, (_, i) => ({
-      loc: `${SITE_URL}/sitemap-videos-${i + 1}.xml`,
-      // Video sitemap tidak perlu lastmod di index level
-    })),
-  ];
+  // ── Fetch total video count dari Eporner API ───────────────────
+  // Hanya 1 request ringan (per_page=1) untuk mendapat total_count.
+  // Hasilnya menentukan berapa sub-sitemap yang dibuat.
+  let numVideoPages = FALLBACK_PAGES;
+  try {
+    const res = await fetch(
+      `${API_BASE}/video/search/?query=&per_page=1&page=1&order=top-rated&gay=0&lq=1&format=json`,
+      { cache: 'no-store' }
+    );
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.total_count && data.total_count > 0) {
+        numVideoPages = Math.min(
+          Math.ceil(data.total_count / PER_PAGE),
+          MAX_PAGES
+        );
+      }
+    }
+  } catch {
+    // API tidak tersedia → gunakan fallback 2000 halaman
+  }
 
-  // Bangun XML sitemapindex yang benar
-  const entries = sitemaps
-    .map(({ loc, lastmod }) =>
-      `  <sitemap>\n    <loc>${loc}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}\n  </sitemap>`
-    )
-    .join('\n');
+  // ── Bangun <sitemapindex> XML ──────────────────────────────────
+  const staticEntry = `  <sitemap>\n    <loc>${SITE_URL}/sitemap-static.xml</loc>\n    <lastmod>${now}</lastmod>\n  </sitemap>`;
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</sitemapindex>`;
+  const videoEntries = Array.from(
+    { length: numVideoPages },
+    (_, i) => `  <sitemap>\n    <loc>${SITE_URL}/sitemap-videos-${i + 1}.xml</loc>\n  </sitemap>`
+  ).join('\n');
+
+  const xml = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    staticEntry,
+    videoEntries,
+    '</sitemapindex>',
+  ].join('\n');
 
   return new Response(xml, {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
-      // Cache 24 jam — Google tidak perlu re-fetch index setiap hari
+      // Cache 24 jam: Cloudflare menyimpan response ini.
+      // Googlebot hanya men-trigger 1 API call ke Eporner per hari.
       'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=43200',
     },
   });
