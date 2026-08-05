@@ -29,6 +29,22 @@ function slugify(text) {
     .replace(/(^-|-$)+/g, '');
 }
 
+/**
+ * Parse tanggal API Eporner dengan aman.
+ * Format dari API: "2024-01-15 10:30:00" atau "2024-01-15"
+ * Mengembalikan fallback jika format tidak valid (cegah RangeError).
+ */
+function safeIso(dateStr, fallback) {
+  if (!dateStr) return fallback;
+  try {
+    const d = new Date(String(dateStr).split(' ')[0]);
+    // Cek jika Date valid (getTime() return NaN jika invalid)
+    return isNaN(d.getTime()) ? fallback : d.toISOString();
+  } catch {
+    return fallback;
+  }
+}
+
 function buildXml(urls) {
   const now = new Date().toISOString();
   const urlset = urls.map(({ url, lastModified }) => `
@@ -83,9 +99,8 @@ export async function GET(request, { params }) {
       .filter(v => v.id && v.title)
       .map(v => ({
         url: `${SITE_URL}/video/${slugify(v.title)}-${v.id}`,
-        lastModified: v.added
-          ? new Date(v.added.split(' ')[0]).toISOString()
-          : now,
+        // safeIso() mencegah crash jika format tanggal Eporner tidak valid
+        lastModified: safeIso(v.added, now),
       }));
 
     return new Response(buildXml(urls), {
