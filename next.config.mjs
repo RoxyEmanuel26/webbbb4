@@ -51,10 +51,11 @@ const nextConfig = {
           { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=86400' },
         ],
       },
-      // ── Cache Sitemap Dinamis ─────────────────────────────────────────────
-      // Sitemap INDEX (/sitemap.xml) dan semua sub-sitemap video (/sitemap/*.xml)
-      // di-cache 24 jam di Cloudflare CDN agar Eporner API tidak dipanggil
-      // berulang-ulang saat Googlebot crawl seluruh 2001 sub-sitemap.
+      // ── Cache Sitemap INDEX + semua sub-sitemap ────────────────────────────
+      // /sitemap.xml         → sitemap index (route.js)
+      // /sitemap-static.xml  → sub-sitemap halaman statis & kategori
+      // /sitemap-videos-*.xml → sub-sitemap video (2000 file, masing-masing 50 video)
+      // Semua di-cache 24 jam di Cloudflare CDN.
       {
         source: '/sitemap.xml',
         headers: [
@@ -62,8 +63,15 @@ const nextConfig = {
         ],
       },
       {
-        // Sub-sitemaps: /sitemap/0.xml, /sitemap/1.xml, ..., /sitemap/2000.xml
-        source: '/sitemap/:path*',
+        // /sitemap-static.xml  → sub-sitemap halaman statis & kategori
+        source: '/sitemap-static.xml',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=43200' },
+        ],
+      },
+      {
+        // /sitemap-videos-1.xml s/d /sitemap-videos-2000.xml
+        source: '/sitemap-videos-:page.xml',
         headers: [
           { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=43200' },
         ],
