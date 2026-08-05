@@ -2,6 +2,26 @@
 // Build: 2026-07-29
 const nextConfig = {
   reactStrictMode: true,
+  /**
+   * Redirect URL lama /video/ID/slug ke format baru /video/slug-ID
+   * 
+   * Regex :id([A-Za-z0-9]{8,12}) memastikan hanya ID Eporner asli yang di-redirect,
+   * bukan slug baru yang kebetulan punya 1 segmen.
+   * 
+   * Contoh:
+   *   /video/DJ999oYH9ei/blonde-girl → /video/blonde-girl-DJ999oYH9ei ✅
+   *   /video/blonde-girl-DJ999oYH9ei  → TIDAK kena redirect, lanjut ke [...]slug ✅
+   */
+  async redirects() {
+    return [
+      {
+        source: '/video/:id([A-Za-z0-9]{8,12})/:slug+',
+        destination: '/video/:slug-:id',
+        permanent: true,
+      },
+    ];
+  },
+
   images: {
     unoptimized: true,
   },

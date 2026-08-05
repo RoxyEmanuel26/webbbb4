@@ -4,11 +4,13 @@
  * Menghasilkan sitemap yang mencakup:
  * 1. Halaman statis (home, cats, privacy, terms, dmca, usc2257)
  * 2. Semua halaman kategori (dari API Eporner)
- * 3. Top 1000 video terpopuler (dari API Eporner) — INI YANG PALING PENTING UNTUK SEO
+ * 3. Top 500 video terpopuler (dari API Eporner) — INI YANG PALING PENTING UNTUK SEO
  * 
- * Sitemap ini di-generate secara dinamis oleh Next.js dan di-serve di /sitemap.xml
- * Cloudflare otomatis meng-cache response ini.
+ * Sitemap ini di-generate secara dinamis oleh Cloudflare Edge Worker.
+ * Cloudflare CDN meng-cache response ini 24 jam via Cache-Control di next.config.mjs.
  */
+
+export const runtime = 'edge'; // Wajib untuk Cloudflare Pages
 
 const SITE_URL = 'https://nicevx.com';
 const API_BASE = 'https://www.eporner.com/api/v2';
@@ -55,10 +57,10 @@ const STATIC_CATEGORIES = [
  */
 async function fetchTopVideos() {
   const videos = [];
-  const perPage = 20;
-  const totalPages = 50; // 1000 video total
+  const perPage = 50;     // Eporner API max per page
+  const totalPages = 10;  // 500 video total — cukup untuk SEO, aman untuk wall clock Cloudflare
 
-  // Fetch paralel dalam batch 5 untuk tidak membebani API
+  // Fetch paralel dalam batch 5 → 2 batch total (aman dari rate limit)
   const batchSize = 5;
   for (let batchStart = 1; batchStart <= totalPages; batchStart += batchSize) {
     const batchEnd = Math.min(batchStart + batchSize - 1, totalPages);
@@ -67,7 +69,7 @@ async function fetchTopVideos() {
     for (let page = batchStart; page <= batchEnd; page++) {
       const url = `${API_BASE}/video/search/?query=&per_page=${perPage}&page=${page}&order=top-rated&gay=0&lq=1&format=json`;
       batchPromises.push(
-        fetch(url, { next: { revalidate: 86400 } }) // cache 24 jam
+        fetch(url, { cache: 'no-store' }) // edge runtime: gunakan cache CF via header, bukan next cache
           .then(r => r.ok ? r.json() : null)
           .catch(() => null)
       );
@@ -109,7 +111,7 @@ export default async function sitemap() {
     priority: 0.8,
   }));
 
-  // 3. Top 1000 video (paling penting untuk SEO!)
+  // 3. Top 500 video (paling penting untuk SEO!)
   let videoPages = [];
   try {
     const videos = await fetchTopVideos();
