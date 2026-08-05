@@ -98,7 +98,7 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
     >
       {/* Thumbnail */}
       <Link 
-        href={`/video/${video.id}/${slug}`} 
+        href={`/video/${slug}-${video.id}`} 
         prefetch={false}
         className="vcard__thumb-wrap" 
         aria-label={video.title}
@@ -126,7 +126,7 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
       {/* Info */}
       <div className="vcard__info">
         <h3 className="vcard__title">
-          <Link href={`/video/${video.id}/${slug}`} prefetch={false}>{video.title}</Link>
+          <Link href={`/video/${slug}-${video.id}`} prefetch={false}>{video.title}</Link>
         </h3>
         <div className="vcard__meta">
           <span className="vcard__meta-item vcard__views">

@@ -31,7 +31,17 @@ const nextConfig = {
           { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=86400' },
         ],
       },
+      // ── Cache Sitemap Dinamis ─────────────────────────────────────────────
+      // Sitemap.js memanggil Eporner API untuk 1000 video.
+      // Cache 24 jam di Cloudflare agar tidak membebani API Eporner.
+      {
+        source: '/sitemap.xml',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=43200' },
+        ],
+      },
       // ── Cache halaman DINAMIS (home, video, cat, search, tag) ───────────
+
       // s-maxage=600: Cloudflare CDN cache 10 menit → bot yg crawl URL sama
       // dalam 10 menit hanya memanggil Worker 1x, sisanya dari cache CDN.
       {
