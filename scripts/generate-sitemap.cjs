@@ -8,6 +8,8 @@ const MAX_PAGES = 1000; // 50,000 video
 const URLS_PER_SITEMAP = 10000; // Batas chunk
 const BATCH_SIZE = 5;
 
+const isResumeMode = process.argv.includes('--resume');
+
 const sitemapsDir = path.join(__dirname, '../public/sitemaps');
 const publicDir = path.join(__dirname, '../public');
 
@@ -28,7 +30,16 @@ function slugify(text) {
     .replace(/-+/g, '-');
 }
 
-function initResumeState() {
+function initState() {
+  if (!isResumeMode) {
+    console.log('🧹 [Fresh Mode] Menghapus sitemap lama untuk menghindari Pagination Shift Bug...');
+    if (fs.existsSync(sitemapsDir)) {
+      fs.rmSync(sitemapsDir, { recursive: true, force: true });
+    }
+    fs.mkdirSync(sitemapsDir, { recursive: true });
+    return;
+  }
+
   if (!fs.existsSync(sitemapsDir)) fs.mkdirSync(sitemapsDir, { recursive: true });
 
   const files = fs.readdirSync(sitemapsDir).filter(f => f.startsWith('sitemap-video-') && f.endsWith('.xml'));
@@ -71,7 +82,7 @@ function initResumeState() {
   // Hitung harus mulai dari halaman API ke berapa
   startPage = Math.floor(totalVideoUrls / PER_PAGE) + 1;
   if (startPage > 1) {
-    console.log(`[Auto-Resume] Ditemukan ${totalVideoUrls} video di disk. Melanjutkan dari Halaman API ${startPage}...`);
+    console.log(`[Emergency Resume] Ditemukan ${totalVideoUrls} video di disk. Melanjutkan dari Halaman API ${startPage}...`);
   }
 }
 
@@ -159,7 +170,7 @@ function writeIndexSitemap() {
 async function run() {
   console.log('🚀 Memulai pengumpulan data dari Eporner API...');
   
-  initResumeState();
+  initState();
 
   for (let i = startPage; i <= MAX_PAGES; i += BATCH_SIZE) {
     const batchPromises = [];
