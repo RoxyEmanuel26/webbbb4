@@ -3,8 +3,8 @@ const path = require('path');
 
 const SITE_URL = 'https://nicevx.com';
 const API_BASE = 'https://www.eporner.com/api/v2';
-const PER_PAGE = 50;
-const MAX_PAGES = 1000; // 50,000 video (Batas maksimal 1 sitemap file dari Google)
+const PER_PAGE = 70;
+const MAX_PAGES = 1500; // 50,000 video (Batas maksimal 1 sitemap file dari Google)
 
 function slugify(text) {
   return String(text || '')
@@ -80,7 +80,33 @@ async function main() {
   }
 
   // 1. Buat Sitemap Statis (Homepage, Cats, Terms, dll)
-  const staticUrls = [
+  const STATIC_CATEGORIES = [
+    '3d','3d-animation','3d-hentai','4k','pov','abella-danger','adult','african',
+    'african-casting','ai','amateur','american','anal','anal-compilation','anal-creampie',
+    'anal-sex','animation','anime','arab','asian','asian-amateur','babe','bbw','bdsm',
+    'big-ass','big-cock','big-dick','big-natural-tits','big-nipples','big-tits',
+    'bisexual','black','black-cock','blowjob','bondage','british','brunette','bukakke',
+    'casting','caught','celebrity','compilation','cosplay','couple','creampie',
+    'cuckold','cumshot','deepthroat','dildo','dirty-talk','doctor','domination',
+    'double','double-penetration','ebony','erotic','exotic','facial','family',
+    'fantasy','fat','feet','female','femdom','fetish','fingering','fisting',
+    'flexible','french','full-movie','gangbang','german','glasses','gloryhole',
+    'granny','group-sex','gym','hairy','handjob','hardcore','hd','hentai',
+    'hidden-camera','homemade','housewife','indian','indonesia','interracial',
+    'italian','japanese','jav','latina','lesbian','lingerie','massage','masturbation',
+    'mature','milf','missionary','model','mom','monster-cock','multiple-orgasms',
+    'natural','nipples','nuru-massage','office','old','old-man','oral','orgasm',
+    'orgy','outdoor','peta-jensen','petite','pornstar','pregnant','public','pussy',
+    'reality','redhead','riding','rimjob','rough','russian','school','secretary',
+    'skinny','slave','sleeping','slim','small-tits','solowork','squirt','stepmom',
+    'stockings','strapon','strip','student','submissive','swallow','swinger',
+    'teacher','teen','threesome','tied','toys','uniforms','verified-amateurs',
+    'verified-couples','vibrator','video','virgin','vixen','vr','vr-porn',
+    'web-series','webcam','wife','wife-bbc','wife-swap','woodman-casting',
+    'xlxx','xxx-download','yiny-leon','yoga','youjizz',
+  ];
+
+  const staticBaseUrls = [
     '/', '/cats', '/terms', '/privacy', '/dmca', '/usc2257'
   ].map(route => `
   <url>
@@ -90,9 +116,18 @@ async function main() {
     <priority>1.0</priority>
   </url>`).join('');
 
+  const categoryUrls = STATIC_CATEGORIES.map(cat => `
+  <url>
+    <loc>${SITE_URL}/cat/${cat}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>`).join('');
+
   const staticXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${staticUrls}
+${staticBaseUrls}
+${categoryUrls}
 </urlset>`;
   fs.writeFileSync(path.join(sitemapsDir, 'sitemap-static.xml'), staticXml, 'utf-8');
 
