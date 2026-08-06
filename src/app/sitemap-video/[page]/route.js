@@ -82,7 +82,13 @@ export async function GET(request, { params }) {
 
   try {
     const apiUrl = `${API_BASE}/video/search/?query=&per_page=${PER_PAGE}&page=${page}&order=top-rated&gay=0&lq=1&format=json`;
-    const res = await fetch(apiUrl, { cache: 'no-store' });
+    const res = await fetch(apiUrl, { 
+      cache: 'no-store',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
+    });
+    console.log(`[Sitemap] Fetching ${apiUrl} - Status: ${res.status}`);
 
     if (!res.ok) {
       return new Response(buildXml([]), {
@@ -94,6 +100,7 @@ export async function GET(request, { params }) {
     }
 
     const data = await res.json();
+    console.log(`[Sitemap] Data received, videos count: ${data?.videos?.length}`);
     const videos = data?.videos || [];
     const now = new Date().toISOString();
 
@@ -110,7 +117,8 @@ export async function GET(request, { params }) {
         'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=43200',
       },
     });
-  } catch {
+  } catch (error) {
+    console.error('[Sitemap] Error fetching videos:', error);
     return new Response(buildXml([]), {
       headers: {
         'Content-Type': 'application/xml; charset=utf-8',

@@ -43,7 +43,12 @@ export async function GET() {
   try {
     const res = await fetch(
       `${API_BASE}/video/search/?query=&per_page=1&page=1&order=top-rated&gay=0&lq=1&format=json`,
-      { cache: 'no-store' }
+      { 
+        cache: 'no-store',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+      }
     );
     if (res.ok) {
       const data = await res.json();
