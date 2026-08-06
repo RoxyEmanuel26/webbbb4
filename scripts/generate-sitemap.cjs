@@ -71,6 +71,14 @@ async function main() {
 
   console.log(`✅ Total URL video yang berhasil diambil: ${allUrls.length}`);
   
+  const publicDir = path.join(__dirname, '..', 'public');
+  const sitemapsDir = path.join(publicDir, 'sitemaps');
+  
+  // Buat folder sitemaps jika belum ada
+  if (!fs.existsSync(sitemapsDir)) {
+    fs.mkdirSync(sitemapsDir, { recursive: true });
+  }
+
   // 1. Buat Sitemap Statis (Homepage, Cats, Terms, dll)
   const staticUrls = [
     '/', '/cats', '/terms', '/privacy', '/dmca', '/usc2257'
@@ -86,7 +94,7 @@ async function main() {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${staticUrls}
 </urlset>`;
-  fs.writeFileSync(path.join(__dirname, '..', 'public', 'sitemap-static.xml'), staticXml, 'utf-8');
+  fs.writeFileSync(path.join(sitemapsDir, 'sitemap-static.xml'), staticXml, 'utf-8');
 
   // 2. Pecah Video menjadi beberapa file (Maks 10.000 URL per file)
   const URLS_PER_FILE = 10000;
@@ -109,14 +117,14 @@ ${chunkXml}
 </urlset>`;
     
     const fileName = `sitemap-video-${i + 1}.xml`;
-    fs.writeFileSync(path.join(__dirname, '..', 'public', fileName), fileContent, 'utf-8');
+    fs.writeFileSync(path.join(sitemapsDir, fileName), fileContent, 'utf-8');
     sitemapFiles.push(fileName);
   }
 
-  // 3. Buat Sitemap Index (sitemap.xml)
+  // 3. Buat Sitemap Index (sitemap.xml tetap di root public/)
   const indexContent = sitemapFiles.map(file => `
   <sitemap>
-    <loc>${SITE_URL}/${file}</loc>
+    <loc>${SITE_URL}/sitemaps/${file}</loc>
     <lastmod>${now}</lastmod>
   </sitemap>`).join('');
 
@@ -125,8 +133,8 @@ ${chunkXml}
 ${indexContent}
 </sitemapindex>`;
 
-  fs.writeFileSync(path.join(__dirname, '..', 'public', 'sitemap.xml'), indexXml, 'utf-8');
-  console.log(`🎉 Berhasil! Sitemap Index dan ${numFiles} sub-sitemap video disimpan di folder public/`);
+  fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), indexXml, 'utf-8');
+  console.log(`🎉 Berhasil! Sitemap Index disimpan di public/sitemap.xml dan ${numFiles} sub-sitemap disimpan di public/sitemaps/`);
 }
 
 main();
