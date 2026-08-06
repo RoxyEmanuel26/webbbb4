@@ -47,7 +47,6 @@ async function main() {
   console.log('🚀 Memulai pengumpulan data dari Eporner API...');
   const now = new Date().toISOString();
   
-  // Karena rate limit, kita fetch secara paralel batch per batch
   const BATCH_SIZE = 5; 
   let allUrls = [];
   
@@ -70,24 +69,64 @@ async function main() {
     });
   }
 
-  console.log(`✅ Total URL yang berhasil diambil: ${allUrls.length}`);
+  console.log(`✅ Total URL video yang berhasil diambil: ${allUrls.length}`);
   
-  const urlset = allUrls.map(({ url, lastModified }) => `
+  // 1. Buat Sitemap Statis (Homepage, Cats, Terms, dll)
+  const staticUrls = [
+    '/', '/cats', '/terms', '/privacy', '/dmca', '/usc2257'
+  ].map(route => `
+  <url>
+    <loc>${SITE_URL}${route}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>`).join('');
+
+  const staticXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${staticUrls}
+</urlset>`;
+  fs.writeFileSync(path.join(__dirname, '..', 'public', 'sitemap-static.xml'), staticXml, 'utf-8');
+
+  // 2. Pecah Video menjadi beberapa file (Maks 10.000 URL per file)
+  const URLS_PER_FILE = 10000;
+  const numFiles = Math.ceil(allUrls.length / URLS_PER_FILE);
+  const sitemapFiles = ['sitemap-static.xml'];
+
+  for (let i = 0; i < numFiles; i++) {
+    const chunk = allUrls.slice(i * URLS_PER_FILE, (i + 1) * URLS_PER_FILE);
+    const chunkXml = chunk.map(({ url, lastModified }) => `
   <url>
     <loc>${url}</loc>
     <lastmod>${lastModified}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>`).join('');
 
-  const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+    const fileContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urlset}
+${chunkXml}
 </urlset>`;
+    
+    const fileName = `sitemap-video-${i + 1}.xml`;
+    fs.writeFileSync(path.join(__dirname, '..', 'public', fileName), fileContent, 'utf-8');
+    sitemapFiles.push(fileName);
+  }
 
-  const outputPath = path.join(__dirname, '..', 'public', 'sitemap.xml');
-  fs.writeFileSync(outputPath, xmlContent, 'utf-8');
-  console.log(`🎉 Berhasil! Sitemap disimpan di: ${outputPath}`);
+  // 3. Buat Sitemap Index (sitemap.xml)
+  const indexContent = sitemapFiles.map(file => `
+  <sitemap>
+    <loc>${SITE_URL}/${file}</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>`).join('');
+
+  const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${indexContent}
+</sitemapindex>`;
+
+  fs.writeFileSync(path.join(__dirname, '..', 'public', 'sitemap.xml'), indexXml, 'utf-8');
+  console.log(`🎉 Berhasil! Sitemap Index dan ${numFiles} sub-sitemap video disimpan di folder public/`);
 }
 
 main();
