@@ -51,35 +51,6 @@ const nextConfig = {
           { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=86400' },
         ],
       },
-      // ── Cache Sitemap INDEX + semua sub-sitemap ────────────────────────────
-      // /sitemap.xml         → sitemap index (route.js)
-      // /sitemap-static.xml  → sub-sitemap halaman statis & kategori
-      // /sitemap-videos-*.xml → sub-sitemap video (2000 file, masing-masing 50 video)
-      // Semua di-cache 24 jam di Cloudflare CDN.
-      {
-        source: '/sitemap.xml',
-        headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=43200' },
-        ],
-      },
-      {
-        // /sitemap-static.xml  → sub-sitemap halaman statis & kategori
-        source: '/sitemap-static.xml',
-        headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=43200' },
-        ],
-      },
-      {
-        // /sitemap-content/1 s/d /sitemap-content/N (tanpa .xml)
-        source: '/sitemap-content/:page',
-        headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=43200' },
-        ],
-      },
-      // ── Cache halaman DINAMIS (home, video, cat, search, tag) ───────────
-
-      // s-maxage=600: Cloudflare CDN cache 10 menit → bot yg crawl URL sama
-      // dalam 10 menit hanya memanggil Worker 1x, sisanya dari cache CDN.
       {
         source: '/',
         headers: [
