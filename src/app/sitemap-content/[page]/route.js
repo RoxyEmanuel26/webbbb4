@@ -88,13 +88,11 @@ export async function GET(request, { params }) {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
       }
     });
-    console.log(`[Sitemap] Fetching ${apiUrl} - Status: ${res.status}`);
-
     if (!res.ok) {
-      return new Response(buildXml([]), {
+      return new Response(`<!-- API ERROR: ${res.status} ${res.statusText} -->\n` + buildXml([]), {
         headers: {
           'Content-Type': 'application/xml; charset=utf-8',
-          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=3600',
+          'Cache-Control': 'no-store',
         },
       });
     }
@@ -119,10 +117,10 @@ export async function GET(request, { params }) {
     });
   } catch (error) {
     console.error('[Sitemap] Error fetching videos:', error);
-    return new Response(buildXml([]), {
+    return new Response(`<!-- FETCH CATCH ERROR: ${error.message} -->\n` + buildXml([]), {
       headers: {
         'Content-Type': 'application/xml; charset=utf-8',
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=3600',
+        'Cache-Control': 'no-store',
       },
     });
   }

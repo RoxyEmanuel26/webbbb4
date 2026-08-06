@@ -70,8 +70,8 @@ const nextConfig = {
         ],
       },
       {
-        // /sitemap-video/1 s/d /sitemap-video/N (tanpa .xml)
-        source: '/sitemap-video/:page',
+        // /sitemap-content/1 s/d /sitemap-content/N (tanpa .xml)
+        source: '/sitemap-content/:page',
         headers: [
           { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=43200' },
         ],

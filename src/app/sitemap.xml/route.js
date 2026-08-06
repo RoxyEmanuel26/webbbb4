@@ -70,7 +70,7 @@ export async function GET() {
   // N entries untuk sub-sitemap video (tanpa .xml di URL)
   const videoEntries = Array.from(
     { length: numVideoPages },
-    (_, i) => `  <sitemap>\n    <loc>${SITE_URL}/sitemap-video/${i + 1}</loc>\n    <lastmod>${now}</lastmod>\n  </sitemap>`
+    (_, i) => `  <sitemap>\n    <loc>${SITE_URL}/sitemap-content/${i + 1}</loc>\n    <lastmod>${now}</lastmod>\n  </sitemap>`
   ).join('\n');
 
   const xml = [
