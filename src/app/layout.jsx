@@ -44,7 +44,7 @@ export const metadata = {
     locale: 'en_US',
     images: [
       {
-        url: '/favicon.webp',
+        url: '/favicon.png',
         width: 512,
         height: 512,
         alt: 'NICEVX — Free HD Porn Videos',
@@ -55,12 +55,12 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'NICEVX — Free HD Porn Videos | 4M+ Videos',
     description: 'Watch free HD porn videos on NICEVX. Over 4 million videos updated daily.',
-    images: ['/favicon.webp'],
+    images: ['/favicon.png'],
   },
   icons: {
-    icon: '/favicon.webp',
-    shortcut: '/favicon.webp',
-    apple: '/favicon.webp',
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
   },
   alternates: {
     canonical: '/',

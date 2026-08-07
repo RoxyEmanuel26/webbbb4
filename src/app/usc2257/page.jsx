@@ -15,7 +15,7 @@ export const metadata = {
     siteName: 'NICEVX',
     type: 'website',
     locale: 'en_US',
-    images: [{ url: '/favicon.webp', width: 512, height: 512, alt: 'NICEVX' }],
+    images: [{ url: '/favicon.png', width: 512, height: 512, alt: 'NICEVX' }],
   }
 };
 

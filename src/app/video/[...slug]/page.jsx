@@ -40,7 +40,7 @@ export async function generateMetadata({ params }) {
   let title = 'Watch Free HD Porn Video — NICEVX';
   let description = 'Watch free HD porn videos on NICEVX. Stream top-quality adult content in stunning 1080p HD quality.';
   let canonical = `https://nicevx.com/video/${slugArr.join('/')}`;
-  let thumbnailUrl = 'https://nicevx.com/favicon.webp';
+  let thumbnailUrl = 'https://nicevx.com/favicon.png';
 
   if (id) {
     try {

@@ -40,7 +40,7 @@ export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName 
 
   const ogImage = [
     {
-      url: '/favicon.webp',
+      url: '/favicon.png',
       width: 512,
       height: 512,
       alt: `${seoQuery} — NICEVX Free HD Porn Videos`,
@@ -65,7 +65,7 @@ export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName 
       card: 'summary_large_image',
       title: seoTitle,
       description: seoDesc,
-      images: ['/favicon.webp'],
+      images: ['/favicon.png'],
     },
   };
 };
