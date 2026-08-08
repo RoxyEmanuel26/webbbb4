@@ -44,9 +44,13 @@ export async function generateMetadata({ params }) {
 
   if (id) {
     try {
-      const res = await fetch(`https://www.eporner.com/api/v2/video/id/?id=${id}&thumbs=all`, {
-        next: { revalidate: 3600 },
-      });
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 4000);
+      const res = await fetch(
+        `https://www.eporner.com/api/v2/video/id/?id=${id}&thumbs=all`,
+        { signal: controller.signal }
+      );
+      clearTimeout(timeout);
       if (res.ok) {
         const video = await res.json();
         if (video && video.title) {
@@ -61,7 +65,7 @@ export async function generateMetadata({ params }) {
         }
       }
     } catch (e) {
-      console.error('Error generating dynamic metadata:', e);
+      // timeout or network error — use fallback metadata
     }
   }
 
