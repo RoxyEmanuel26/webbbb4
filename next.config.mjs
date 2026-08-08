@@ -54,13 +54,15 @@ const nextConfig = {
       {
         source: '/sitemap.xml',
         headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=43200' },
+          { key: 'Content-Type', value: 'application/xml; charset=utf-8' },
+          { key: 'Cache-Control', value: 'public, max-age=3600, must-revalidate' },
         ],
       },
       {
         source: '/sitemaps/:path*',
         headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=43200' },
+          { key: 'Content-Type', value: 'application/xml; charset=utf-8' },
+          { key: 'Cache-Control', value: 'public, max-age=3600, must-revalidate' },
         ],
       },
       {

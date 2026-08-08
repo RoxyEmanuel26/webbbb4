@@ -1,43 +1,11 @@
+# nicevx.com robots.txt
+# Googlebot and all legitimate search crawlers: full access
+
 User-agent: *
 Allow: /
-Allow: /cats/
-Allow: /cat/
-Allow: /tag/
-Allow: /video/
-Allow: /terms
-Allow: /privacy
-Allow: /dmca
-Allow: /usc2257
 
-# Block low-value and parameterized pages
 Disallow: /api/
 Disallow: /?order=*
 Disallow: /search?*
-
-# Block AI crawlers to save bandwidth
-User-agent: GPTBot
-Allow: /
-Disallow: /api/
-Disallow: /?order=*
-Disallow: /search?*
-
-User-agent: ChatGPT-User
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: anthropic-ai
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-# Training-only crawlers — block
-User-agent: CCBot
-Disallow: /
 
 Sitemap: https://nicevx.com/sitemap.xml
