@@ -4,6 +4,21 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: no-referrer-when-downgrade
 
+/video/*
+  Cache-Control: no-store
+
+/cat/*
+  Cache-Control: no-store
+
+/tag/*
+  Cache-Control: no-store
+
+/cats
+  Cache-Control: no-store
+
+/search
+  Cache-Control: no-store
+
 /sitemap.xml
   Content-Type: application/xml; charset=utf-8
   Cache-Control: public, max-age=3600, must-revalidate
