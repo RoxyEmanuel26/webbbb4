@@ -42,13 +42,11 @@ const nextConfig = {
           },
         ],
       },
-      // ── Cache halaman STATIS (terms, privacy, dmca, usc2257, cats) ───────
-      // s-maxage: Cloudflare CDN cache 24 jam → Worker TIDAK dijalankan ulang
-      // stale-while-revalidate: perpanjang cache sambil refresh di background
+      // ── Halaman CATS (semi-static, bisa di-cache lebih lama) ─────────────
       {
-        source: '/(terms|privacy|dmca|usc2257|cats)',
+        source: '/cats',
         headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=86400' },
+          { key: 'Cache-Control', value: 'public, s-maxage=3600, stale-while-revalidate=3600' },
         ],
       },
       {
@@ -65,34 +63,39 @@ const nextConfig = {
           { key: 'Cache-Control', value: 'public, max-age=3600, must-revalidate' },
         ],
       },
+      // ── Homepage: cache singkat karena konten berubah sering ──────────────
       {
         source: '/',
         headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=600, stale-while-revalidate=300' },
+          { key: 'Cache-Control', value: 'public, s-maxage=300, stale-while-revalidate=60' },
         ],
       },
+      // ── SSR pages: NO CACHE — harus render fresh setiap request ───────────
+      // Video, Cat, Tag pages mengandung metadata SEO (title, canonical, schema)
+      // yang harus selalu akurat. s-maxage menyebabkan Cloudflare menyajikan
+      // HTML lama bahkan setelah deploy baru.
       {
         source: '/video/:path*',
         headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=600, stale-while-revalidate=300' },
+          { key: 'Cache-Control', value: 'no-store' },
         ],
       },
       {
         source: '/cat/:path*',
         headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=600, stale-while-revalidate=300' },
-        ],
-      },
-      {
-        source: '/search',
-        headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=300, stale-while-revalidate=60' },
+          { key: 'Cache-Control', value: 'no-store' },
         ],
       },
       {
         source: '/tag/:path*',
         headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=600, stale-while-revalidate=300' },
+          { key: 'Cache-Control', value: 'no-store' },
+        ],
+      },
+      {
+        source: '/search',
+        headers: [
+          { key: 'Cache-Control', value: 'no-store' },
         ],
       },
     ];
