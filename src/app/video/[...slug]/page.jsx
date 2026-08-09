@@ -16,20 +16,36 @@ function slugify(text) {
 /**
  * Helper: Ekstrak Eporner video ID dari slug array.
  * Format URL: /video/judul-video-VIDEOID
- * ID Eporner selalu 11 karakter alphanumeric (contoh: DJ999oYH9ei)
+ * ID Eporner: 8-12 karakter alphanumeric
  */
 function extractIdFromSlug(slugArr) {
   if (!slugArr || slugArr.length === 0) return null;
   const fullSlug = slugArr.join('/');
-  // Coba ambil segmen terakhir setelah '-' yang cocok dengan pola ID Eporner
-  // ID Eporner: 8-12 karakter alphanumeric
   const match = fullSlug.match(/-([A-Za-z0-9]{8,12})$/);
   if (match) return match[1];
-  // Fallback: ambil segment terakhir dari slug jika tidak ada '-'
   const parts = fullSlug.split('-');
   const last = parts[parts.length - 1];
   if (/^[A-Za-z0-9]{8,12}$/.test(last)) return last;
   return null;
+}
+
+/**
+ * Helper: Ekstrak judul video dari slug URL.
+ * Eporner memblokir request dari Cloudflare Edge IPs, jadi kita
+ * langsung ambil title dari slug yang sudah berisi judul video.
+ * Contoh: "german-girl-creamy-bgdAoGFOKTx" -> "German Girl Creamy"
+ */
+function titleFromSlug(slugArr) {
+  const fullSlug = slugArr.join('/');
+  // Hapus ID (8-12 char alphanumeric di akhir setelah tanda '-')
+  const withoutId = fullSlug.replace(/-[A-Za-z0-9]{8,12}$/, '');
+  if (!withoutId) return null;
+  // Capitalize setiap kata
+  return withoutId
+    .split('-')
+    .filter(Boolean)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
 }
 
 export async function generateMetadata({ params }) {
@@ -37,37 +53,18 @@ export async function generateMetadata({ params }) {
   const slugArr = resolvedParams?.slug || [];
   const id = extractIdFromSlug(slugArr);
 
-  let title = 'Watch Free HD Porn Video — NICEVX';
-  let description = 'Watch free HD porn videos on NICEVX. Stream top-quality adult content in stunning 1080p HD quality.';
-  let canonical = `https://nicevx.com/video/${slugArr.join('/')}`;
-  let thumbnailUrl = 'https://nicevx.com/favicon.png';
+  // Ambil judul langsung dari slug -- tidak butuh API call ke Eporner
+  // (Eporner memblokir request dari Cloudflare Edge server IPs)
+  const videoTitle = titleFromSlug(slugArr);
+  const canonical = `https://nicevx.com/video/${slugArr.join('/')}`;
 
-  if (id) {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 4000);
-      const res = await fetch(
-        `https://www.eporner.com/api/v2/video/id/?id=${id}&thumbs=all`,
-        { signal: controller.signal }
-      );
-      clearTimeout(timeout);
-      if (res.ok) {
-        const video = await res.json();
-        if (video && video.title) {
-          title = `${video.title} — Watch Free HD Porn Video — NICEVX`;
-          description = `Watch "${video.title}" in full HD quality on NICEVX. Rating: ${video.rate || '100%'} with ${(video.views || 0).toLocaleString()} views. Stream top-quality adult content free.`;
-          const slug = slugify(video.title);
-          canonical = `https://nicevx.com/video/${slug}-${id}`;
-          const thumbs = video.thumbs || [];
-          if (thumbs.length > 0) {
-            thumbnailUrl = thumbs[Math.floor(thumbs.length / 2)]?.src || thumbnailUrl;
-          }
-        }
-      }
-    } catch (e) {
-      // timeout or network error — use fallback metadata
-    }
-  }
+  const title = videoTitle
+    ? `${videoTitle} — Watch Free HD Porn Video — NICEVX`
+    : 'Watch Free HD Porn Video — NICEVX';
+
+  const description = videoTitle
+    ? `Watch "${videoTitle}" free in full HD quality on NICEVX. Stream top-quality adult content with thousands of HD porn videos updated daily.`
+    : 'Watch free HD porn videos on NICEVX. Stream top-quality adult content in stunning 1080p HD quality.';
 
   return {
     title,
@@ -82,9 +79,9 @@ export async function generateMetadata({ params }) {
       locale: 'en_US',
       images: [
         {
-          url: thumbnailUrl,
-          width: 853,
-          height: 480,
+          url: 'https://nicevx.com/favicon.png',
+          width: 512,
+          height: 512,
           alt: title,
         },
       ],
@@ -93,7 +90,7 @@ export async function generateMetadata({ params }) {
       card: 'summary_large_image',
       title,
       description,
-      images: [thumbnailUrl],
+      images: ['https://nicevx.com/favicon.png'],
     },
   };
 }
