@@ -4,8 +4,8 @@ const path = require('path');
 const SITE_URL = 'https://nicevx.com';
 const API_BASE = 'https://www.eporner.com/api/v2';
 const PER_PAGE = 50;
-const MAX_PAGES = 5000; // 50,000 video
-const URLS_PER_SITEMAP = 10000; // Batas chunk
+const MAX_PAGES = 2000; // 50,000 video
+const URLS_PER_SITEMAP = 49000; // Batas chunk
 const BATCH_SIZE = 5;
 
 const isResumeMode = process.argv.includes('--resume');
@@ -127,7 +127,12 @@ function writeStaticSitemap() {
     'teacher','teen','threesome','tied','toys','uniforms','verified-amateurs',
     'verified-couples','vibrator','video','virgin','vixen','vr','vr-porn',
     'web-series','webcam','wife','wife-bbc','wife-swap','woodman-casting',
-    'xlxx','xxx-download','yiny-leon','yoga','youjizz',
+    'xlxx','xxx-download','yiny-leon','yoga','youjizz','60 fps','asmr','beach',
+    'big ass', 'big tits', 'blonde','bukkake', 'car','chinese','dance',
+    'double penetration','filipina','footjob', 'for women','group sex',
+    'hd porn 1080p', 'hijab','hotel', 'hotwife', 'housewives','korean','malay',
+    'nurses', 'older men','pawg', 'pinay','shemale', 'shower', 'sleep', 'small tits', 
+    'stepsister', 'striptease','thai','turkish','vietnam', 'vintage', 'viral', 'vr porn',
   ];
 
   const staticBaseUrls = [
