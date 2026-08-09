@@ -36,7 +36,13 @@ export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName 
     seoCanonical += (seoCanonical.includes('?') ? '&' : '?') + `page=${page}`;
   }
 
-  const robots = (!isCat && !isTag) ? 'noindex, nofollow' : (page > 1 ? 'noindex, follow' : 'index, follow');
+  const robots = (!isCat && !isTag)
+    ? 'noindex, nofollow'   // search pages
+    : isTag
+    ? 'noindex, follow'     // tag pages: canonical points to /cat/ so noindex to save crawl budget
+    : page > 1
+    ? 'noindex, follow'     // paginated cat pages
+    : 'index, follow';      // cat page 1
 
   const ogImage = [
     {

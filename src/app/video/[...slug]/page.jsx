@@ -63,7 +63,7 @@ export async function generateMetadata({ params }) {
     : 'Watch Free HD Porn Video — NICEVX';
 
   const description = videoTitle
-    ? `Watch "${videoTitle}" free in full HD quality on NICEVX. Stream top-quality adult content with thousands of HD porn videos updated daily.`
+    ? `Watch ${videoTitle} free in full HD quality on NICEVX. Stream top-quality adult content with thousands of HD porn videos updated daily.`
     : 'Watch free HD porn videos on NICEVX. Stream top-quality adult content in stunning 1080p HD quality.';
 
   return {

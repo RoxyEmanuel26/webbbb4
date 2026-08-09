@@ -17,7 +17,7 @@ export const metadata = {
   metadataBase: new URL('https://nicevx.com'),
   title: {
     default: 'NICEVX — Free HD Porn Videos | 4M+ Videos',
-    template: '%s | NICEVX',
+    template: '%s',
   },
   description: 'Watch free HD porn videos on NICEVX. Over 4 million videos updated daily — amateur, teen, MILF, Asian, hardcore and more in stunning 1080p HD quality.',
   keywords: ['free porn videos', 'HD porn', 'adult videos', 'free sex videos', 'porn tube', 'NICEVX', 'watch porn online'],
@@ -38,7 +38,7 @@ export const metadata = {
   openGraph: {
     title: 'NICEVX — Free HD Porn Videos | 4M+ Videos',
     description: 'Watch free HD porn videos on NICEVX. Over 4 million videos updated daily — amateur, teen, MILF, Asian, hardcore and more in stunning 1080p HD quality.',
-    url: 'https://nicevx.com',
+    url: 'https://nicevx.com/',
     siteName: 'NICEVX',
     type: 'website',
     locale: 'en_US',
@@ -63,7 +63,7 @@ export const metadata = {
     apple: '/favicon.png',
   },
   alternates: {
-    canonical: '/',
+    canonical: 'https://nicevx.com/',
   },
 };
 
