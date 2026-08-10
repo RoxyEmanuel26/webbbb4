@@ -37,6 +37,7 @@ function titleFromSlug(slugArr) {
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const slugArr = resolvedParams?.slug || [];
+  const id = extractIdFromSlug(slugArr);
 
   const videoTitle = titleFromSlug(slugArr);
   const canonical = `https://nicevx.com/video/${slugArr.join('/')}`;
@@ -60,13 +61,18 @@ export async function generateMetadata({ params }) {
       siteName: 'NICEVX',
       type: 'video.other',
       locale: 'en_US',
-      images: [{ url: 'https://nicevx.com/favicon.png', width: 512, height: 512, alt: title }],
+      images: [{
+        url: `https://static-eu-cdn.eporner.com/thumbs/static4/big/${id}/5_big.jpg`,
+        width: 640,
+        height: 360,
+        alt: title,
+      }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: ['https://nicevx.com/favicon.png'],
+      images: [`https://static-eu-cdn.eporner.com/thumbs/static4/big/${id}/5_big.jpg`],
     },
   };
 }

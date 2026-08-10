@@ -14,7 +14,7 @@ import Script from 'next/script';
 export const runtime = 'edge';
 
 export const metadata = {
-  metadataBase: new URL('https://nicevx.com'),
+  metadataBase: new URL('https://nicevx.com/'),
   title: {
     default: 'NICEVX — Free HD Porn Videos | 4M+ Videos',
     template: '%s',

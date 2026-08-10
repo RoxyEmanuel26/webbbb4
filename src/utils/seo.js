@@ -11,13 +11,13 @@ export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName 
     ? `Free #${seoQuery} Porn Videos ${currentYear} — NICEVX`
     : query === 'all'
     ? `All Free HD Porn Videos ${currentYear} — NICEVX`
-    : `"${seoQuery}" Free Porn Search Results ${currentYear} — NICEVX`;
+    : `${seoQuery} Free Porn Search Results ${currentYear} — NICEVX`;
 
   const seoDesc = isCat
     ? `Watch free ${seoQuery} HD porn videos. Explore top-quality ${seoQuery} adult content updated daily in ${currentYear} on NICEVX.`
     : isTag
     ? `Watch free #${seoQuery} HD porn videos on NICEVX. Explore the best ${seoQuery} adult content updated daily in ${currentYear}.`
-    : `Search results for "${seoQuery}" on NICEVX. Find thousands of free HD porn videos matching your search in ${currentYear}.`;
+    : `Search results for ${seoQuery} on NICEVX. Find thousands of free HD porn videos matching your search in ${currentYear}.`;
 
   let seoCanonical = isCat
     ? `https://nicevx.com/cat/${catName.toLowerCase()}`
