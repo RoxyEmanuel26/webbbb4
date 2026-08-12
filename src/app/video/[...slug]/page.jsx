@@ -40,11 +40,16 @@ export async function generateMetadata({ params }) {
   const id = extractIdFromSlug(slugArr);
 
   const videoTitle = titleFromSlug(slugArr);
+  // Potong judul jika terlalu panjang supaya total title tidak melebihi ~65 char
+  // Suffix "\u2014 Watch HD Porn \u2014 NICEVX" = 22 char, sisa untuk judul = 40 char
+  const truncatedTitle = videoTitle && videoTitle.length > 40
+    ? videoTitle.substring(0, 37).trim() + '...'
+    : videoTitle;
   const canonical = `https://nicevx.com/video/${slugArr.join('/')}`;
 
-  const title = videoTitle
-    ? `${videoTitle} — Watch Free HD Porn Video — NICEVX`
-    : 'Watch Free HD Porn Video — NICEVX';
+  const title = truncatedTitle
+    ? `${truncatedTitle} \u2014 Watch HD Porn \u2014 NICEVX`
+    : 'Watch Free HD Porn Videos \u2014 NICEVX';
 
   const description = videoTitle
     ? `Watch ${videoTitle} free in full HD quality on NICEVX. Stream top-quality adult content with thousands of HD porn videos updated daily.`
@@ -88,9 +93,12 @@ export default async function VideoPage({ params }) {
 
   const videoTitle = titleFromSlug(slugArr);
   const canonical = `https://nicevx.com/video/${slugArr.join('/')}`;
-  const title = videoTitle
-    ? `${videoTitle} — Watch Free HD Porn Video — NICEVX`
-    : 'Watch Free HD Porn Video — NICEVX';
+  const truncatedTitle = videoTitle && videoTitle.length > 40
+    ? videoTitle.substring(0, 37).trim() + '...'
+    : videoTitle;
+  const title = truncatedTitle
+    ? `${truncatedTitle} \u2014 Watch HD Porn \u2014 NICEVX`
+    : 'Watch Free HD Porn Videos \u2014 NICEVX';
   const description = videoTitle
     ? `Watch ${videoTitle} free in full HD quality on NICEVX. Stream top-quality adult content with thousands of HD porn videos updated daily.`
     : 'Watch free HD porn videos on NICEVX. Stream top-quality adult content in stunning 1080p HD quality.';

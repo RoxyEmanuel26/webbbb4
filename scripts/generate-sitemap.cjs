@@ -136,13 +136,18 @@ function writeStaticSitemap() {
   ];
 
   const staticBaseUrls = [
-    '/', '/cats', '/terms', '/privacy', '/dmca', '/usc2257'
-  ].map(route => `
+    { route: '/',       changefreq: 'daily',   priority: '1.0', lastmod: now },
+    { route: '/cats',   changefreq: 'weekly',  priority: '0.8', lastmod: now },
+    { route: '/terms',  changefreq: 'monthly', priority: '0.3', lastmod: '2025-01-01' },
+    { route: '/privacy',changefreq: 'monthly', priority: '0.3', lastmod: '2025-01-01' },
+    { route: '/dmca',   changefreq: 'monthly', priority: '0.3', lastmod: '2025-01-01' },
+    { route: '/usc2257',changefreq: 'monthly', priority: '0.3', lastmod: '2025-01-01' },
+  ].map(p => `
   <url>
-    <loc>${SITE_URL}${route}</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
+    <loc>${SITE_URL}${p.route}</loc>
+    <lastmod>${p.lastmod}</lastmod>
+    <changefreq>${p.changefreq}</changefreq>
+    <priority>${p.priority}</priority>
   </url>`).join('');
 
   const categoryUrls = STATIC_CATEGORIES.map(cat => `
