@@ -104,36 +104,19 @@ ${xmlUrls}
 
 function writeStaticSitemap() {
   const now = new Date().toISOString();
-  const STATIC_CATEGORIES = [
-    '3d','3d-animation','3d-hentai','4k','pov','abella-danger','adult','african',
-    'african-casting','ai','amateur','american','anal','anal-compilation','anal-creampie',
-    'anal-sex','animation','anime','arab','asian','asian-amateur','babe','bbw','bdsm',
-    'big-ass','big-cock','big-dick','big-natural-tits','big-nipples','big-tits',
-    'bisexual','black','black-cock','blowjob','bondage','british','brunette','bukakke',
-    'casting','caught','celebrity','compilation','cosplay','couple','creampie',
-    'cuckold','cumshot','deepthroat','dildo','dirty-talk','doctor','domination',
-    'double','double-penetration','ebony','erotic','exotic','facial','family',
-    'fantasy','fat','feet','female','femdom','fetish','fingering','fisting',
-    'flexible','french','full-movie','gangbang','german','glasses','gloryhole',
-    'granny','group-sex','gym','hairy','handjob','hardcore','hd','hentai',
-    'hidden-camera','homemade','housewife','indian','indonesia','interracial',
-    'italian','japanese','jav','latina','lesbian','lingerie','massage','masturbation',
-    'mature','milf','missionary','model','mom','monster-cock','multiple-orgasms',
-    'natural','nipples','nuru-massage','office','old','old-man','oral','orgasm',
-    'orgy','outdoor','peta-jensen','petite','pornstar','pregnant','public','pussy',
-    'reality','redhead','riding','rimjob','rough','russian','school','secretary',
-    'skinny','slave','sleeping','slim','small-tits','solowork','squirt','stepmom',
-    'stockings','strapon','strip','student','submissive','swallow','swinger',
-    'teacher','teen','threesome','tied','toys','uniforms','verified-amateurs',
-    'verified-couples','vibrator','video','virgin','vixen','vr','vr-porn',
-    'web-series','webcam','wife','wife-bbc','wife-swap','woodman-casting',
-    'xlxx','xxx-download','yiny-leon','yoga','youjizz','60 fps','asmr','beach',
-    'big ass', 'big tits', 'blonde','bukkake', 'car','chinese','dance',
-    'double penetration','filipina','footjob', 'for women','group sex',
-    'hd porn 1080p', 'hijab','hotel', 'hotwife', 'housewives','korean','malay',
-    'nurses', 'older men','pawg', 'pinay','shemale', 'shower', 'sleep', 'small tits', 
-    'stepsister', 'striptease','thai','turkish','vietnam', 'vintage', 'viral', 'vr porn',
-  ];
+
+  // Baca ALL_CATEGORIES dari allCategories.js secara dinamis
+  // Sehingga setiap penambahan keyword baru otomatis masuk sitemap
+  const catFile = path.join(__dirname, '../src/data/allCategories.js');
+  const rawCat = fs.readFileSync(catFile, 'utf8');
+  const cjsRaw = rawCat.replace('export const ALL_CATEGORIES', 'const ALL_CATEGORIES');
+  eval(cjsRaw);
+  // ALL_CATEGORIES sekarang tersedia sebagai variabel
+
+  // Generate slug sama dengan toSlug() di frontend
+  const toSlug = (name) => name.toLowerCase().replace(/\s+/g, '-');
+  const STATIC_CATEGORIES = ALL_CATEGORIES.map(c => toSlug(c.name));
+
 
   const staticBaseUrls = [
     { route: '/',       changefreq: 'daily',   priority: '1.0', lastmod: now },
