@@ -36,6 +36,8 @@ export async function generateMetadata({ searchParams }) {
   return {
     title: seoTitle,
     description: seoDesc,
+    // /?order=* diblokir robots.txt DAN noindex untuk konsistensi penuh
+    robots: orderParam ? 'noindex, nofollow' : 'index, follow',
     alternates: { canonical: seoCanonical },
     openGraph: { title: seoTitle, description: seoDesc, url: seoCanonical, type: 'website', images: [{ url: '/favicon.png', width: 512, height: 512, alt: 'NICEVX' }] },
     twitter: { title: seoTitle, description: seoDesc, images: ['/favicon.png'] },

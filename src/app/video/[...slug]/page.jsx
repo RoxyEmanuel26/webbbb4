@@ -6,16 +6,18 @@ import VideoPlayerClient from './VideoPlayerClient';
 /**
  * Helper: Ekstrak Eporner video ID dari slug array.
  * Format URL: /video/judul-video-VIDEOID
- * ID Eporner: 8-12 karakter alphanumeric
+ * ID Eporner: SELALU tepat 11 karakter alphanumeric (a-z, A-Z, 0-9)
+ * Contoh valid: bgdAoGFOKTx, taZW6FxEnOZ, 5F39m7snURo
  */
 function extractIdFromSlug(slugArr) {
   if (!slugArr || slugArr.length === 0) return null;
   const fullSlug = slugArr.join('/');
-  const match = fullSlug.match(/-([A-Za-z0-9]{8,12})$/);
+  // Eporner IDs selalu tepat 11 karakter alphanumeric
+  const match = fullSlug.match(/-([A-Za-z0-9]{11})$/);
   if (match) return match[1];
   const parts = fullSlug.split('-');
   const last = parts[parts.length - 1];
-  if (/^[A-Za-z0-9]{8,12}$/.test(last)) return last;
+  if (/^[A-Za-z0-9]{11}$/.test(last)) return last;
   return null;
 }
 
