@@ -264,7 +264,8 @@ const VideoPlayerClient = ({ id }) => {
           </div>
 
           <div className="video-info-block">
-            <h1 className="video-info-title">{video.title}</h1>
+            {/* Title ditampilkan dari API data - SSR title ada di page.jsx sebagai h1 */}
+          <div className="video-info-title" aria-label={video.title}>{video.title}</div>
 
             <div className="video-info-meta" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-4)', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', alignItems: 'center' }}>
