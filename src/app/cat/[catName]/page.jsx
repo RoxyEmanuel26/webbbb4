@@ -1,10 +1,16 @@
 import { Suspense } from 'react';
 import SkeletonGrid from '@/components/SkeletonGrid';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import SearchResultsShared from '@/components/SearchResultsShared';
 import { getSearchMetadata } from '@/utils/seo';
 export const runtime = 'edge';
 import { ALL_CATEGORIES } from '@/data/allCategories';
+
+// Set valid slugs untuk O(1) lookup validasi kategori
+const VALID_CAT_SLUGS = new Set(
+  ALL_CATEGORIES.map((c) => c.name.toLowerCase().replace(/\s+/g, '-'))
+);
 
 const toSlug = (name) => name.toLowerCase().replace(/\s+/g, '-');
 
@@ -39,6 +45,12 @@ export default async function CategoryPage({ params, searchParams }) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
   const catName = resolvedParams?.catName || '';
+
+  // Validasi: jika slug bukan kategori valid, kembalikan 404 (bukan soft 404)
+  if (!catName || !VALID_CAT_SLUGS.has(catName.toLowerCase())) {
+    notFound();
+  }
+
   const query = catName.replace(/-/g, ' ');
   const page = parseInt(resolvedSearchParams?.page) || 1;
   const currentOrder = resolvedSearchParams?.order || 'top-weekly';
