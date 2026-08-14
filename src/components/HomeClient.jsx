@@ -61,11 +61,14 @@ export default function HomeClient() {
 
     try {
       // Fetch main videos (sekarang default ke 'latest')
+      const activeOrder = orderParam || 'latest';
+      const perPageCount = activeOrder === 'latest' ? 24 : 36;
+      
       const url = new URL(`${API_BASE}/search/`);
       url.searchParams.append('query', 'all');
-      url.searchParams.append('order', orderParam || 'latest');
+      url.searchParams.append('order', activeOrder);
       url.searchParams.append('page', page);
-      url.searchParams.append('per_page', 36);
+      url.searchParams.append('per_page', perPageCount);
       url.searchParams.append('thumbsize', 'big');
       url.searchParams.append('gay', 0);
       url.searchParams.append('lq', 1);
@@ -86,31 +89,7 @@ export default function HomeClient() {
         setVideos([]);
       }
 
-      // Fetch Top Weekly videos (khusus Dashboard / Halaman 1 murni)
-      if (isDashboard) {
-        try {
-          const topUrl = new URL(`${API_BASE}/search/`);
-          topUrl.searchParams.append('query', 'all');
-          topUrl.searchParams.append('order', 'top-weekly');
-          topUrl.searchParams.append('page', 1);
-          topUrl.searchParams.append('per_page', 12);
-          topUrl.searchParams.append('thumbsize', 'big');
-          topUrl.searchParams.append('gay', 0);
-          topUrl.searchParams.append('lq', 1);
-          topUrl.searchParams.append('format', 'json');
-          
-          const topRes = await fetch(topUrl.toString());
-          const topData = await topRes.json();
-          if (topData?.videos) {
-            const topFiltered = topData.videos
-              .map(v => ({ ...v, title: fixEncoding(v.title), keywords: fixEncoding(v.keywords) }))
-              .filter(v => !FORBIDDEN_REGEX.test(v.keywords || '') && !FORBIDDEN_REGEX.test(v.title || ''));
-            setTopWeeklyVideos(topFiltered);
-          }
-        } catch (_) {}
-      }
-
-      // Fetch trend tags (separate request)
+      // Fetch trend tags & Top Weekly videos (combined request)
       if (page === 1) {
         try {
           const tagUrl = new URL(`${API_BASE}/search/`);
@@ -138,6 +117,14 @@ export default function HomeClient() {
                 .slice(0, 20)
                 .map(([k]) => k)
             );
+
+            // Re-use for Top Weekly videos section if it's the dashboard
+            if (isDashboard) {
+              const topFiltered = tagData.videos
+                .map(v => ({ ...v, title: fixEncoding(v.title), keywords: fixEncoding(v.keywords) }))
+                .filter(v => !FORBIDDEN_REGEX.test(v.keywords || '') && !FORBIDDEN_REGEX.test(v.title || ''));
+              setTopWeeklyVideos(topFiltered.slice(0, 12));
+            }
           }
         } catch (_) {}
       }
