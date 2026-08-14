@@ -25,7 +25,7 @@ const formatViews = (n) => {
   return n + ' views';
 };
 
-const VideoPlayerClient = ({ id }) => {
+const VideoPlayerClient = ({ id, initialTitle, seoDescription }) => {
   const [video, setVideo] = useState(null);
   const [related, setRelated] = useState([]);
   const [keywords, setKeywords] = useState([]);
@@ -169,9 +169,42 @@ const VideoPlayerClient = ({ id }) => {
 
   if (pageLoading) {
     return (
-      <div className="loading-block">
-        <div className="loading-spinner" />
-        <p>Loading video...</p>
+      <div className="page-wrapper player-page">
+        <button className="back-btn" onClick={() => router.back()} aria-label="Go back">
+          <ArrowLeft size={16} /> Back
+        </button>
+
+        <div className="player-layout">
+          <div className="player-main">
+            <div className="player-box" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div className="loading-spinner" />
+            </div>
+            
+            <div className="video-info-block" itemProp="description">
+              <h1 className="video-info-title" itemProp="name">{initialTitle || 'Loading Video...'}</h1>
+              
+              <div className="video-info-meta" style={{ display: 'flex', gap: '10px', opacity: 0.5, borderBottom: 'none' }}>
+                 <div style={{ width: '80px', height: '20px', background: 'var(--color-border)', borderRadius: '4px' }}></div>
+                 <div style={{ width: '80px', height: '20px', background: 'var(--color-border)', borderRadius: '4px' }}></div>
+              </div>
+
+              {seoDescription && (
+                <p className="video-info-desc" style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', marginBottom: 'var(--space-4)', marginTop: 'var(--space-4)' }}>
+                  {seoDescription}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <aside className="player-sidebar">
+            <h2 className="sidebar-heading">Related Videos</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+              <div style={{ height: '100px', background: 'var(--color-border)', borderRadius: '8px', opacity: 0.5 }}></div>
+              <div style={{ height: '100px', background: 'var(--color-border)', borderRadius: '8px', opacity: 0.5 }}></div>
+              <div style={{ height: '100px', background: 'var(--color-border)', borderRadius: '8px', opacity: 0.5 }}></div>
+            </div>
+          </aside>
+        </div>
       </div>
     );
   }
@@ -263,9 +296,9 @@ const VideoPlayerClient = ({ id }) => {
             })()}
           </div>
 
-          <div className="video-info-block">
-            {/* Title ditampilkan dari API data - SSR title ada di page.jsx sebagai h1 */}
-          <div className="video-info-title" aria-label={video.title}>{video.title}</div>
+          <div className="video-info-block" itemProp="description">
+            {/* Title ditampilkan dari API data - SSR title dipassing sebagai H1 fallback di skeleton */}
+          <h1 className="video-info-title" itemProp="name" aria-label={video.title}>{video.title}</h1>
 
             <div className="video-info-meta" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-4)', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -315,6 +348,12 @@ const VideoPlayerClient = ({ id }) => {
                 Download
               </a>
             </div>
+
+            {seoDescription && (
+              <p className="video-info-desc" style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', marginBottom: 'var(--space-4)', marginTop: 'var(--space-4)' }}>
+                {seoDescription}
+              </p>
+            )}
 
             {keywords.length > 0 && (
               <div className="keyword-tags">

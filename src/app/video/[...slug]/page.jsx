@@ -141,37 +141,19 @@ export default async function VideoPage({ params }) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(videoSchema) }}
       />
 
-      {/* Semantic HTML article wrapper - selalu di-render server-side untuk crawler */}
-      <article
-        className="video-page-article"
-        itemScope
-        itemType="https://schema.org/VideoObject"
-      >
-        {/* SSR Header - dibaca semua crawler (SEMrush, Googlebot, dll) */}
-        <header className="video-page-seo-header">
-          <h1 className="video-page-seo-title" itemProp="name">
-            {videoTitle || 'Free HD Porn Video'}
-          </h1>
-          <p className="video-page-seo-desc" itemProp="description">
-            {seoDescription}
-          </p>
-          <div className="video-page-seo-meta" aria-label="Video information">
-            <span itemProp="contentUrl" content={canonical} />
-            <span itemProp="thumbnailUrl" content={`https://static-eu-cdn.eporner.com/thumbs/static4/big/${id}/5_big.jpg`} />
-            <span className="seo-meta-chip">Free HD Video</span>
-            <span className="seo-meta-chip">1080p Quality</span>
-            <span className="seo-meta-chip">No Registration</span>
-            <span className="seo-meta-chip">Stream Online</span>
-          </div>
-        </header>
-
-        {/* Client component - video player + related videos */}
-        <section className="video-page-player-section">
-          <Suspense fallback={<div className="loading-block"><div className="loading-spinner" /></div>}>
-            <VideoPlayerClient id={id} />
-          </Suspense>
-        </section>
-      </article>
+        {/* Semantic HTML article wrapper - selalu di-render server-side untuk crawler */}
+        <article
+          className="video-page-article"
+          itemScope
+          itemType="https://schema.org/VideoObject"
+        >
+          {/* Client component - video player + related videos (SEO text is passed inside for SSR + visible UI) */}
+          <section className="video-page-player-section">
+            <Suspense fallback={<div className="loading-block"><div className="loading-spinner" /></div>}>
+              <VideoPlayerClient id={id} initialTitle={videoTitle || 'Free HD Porn Video'} seoDescription={seoDescription} />
+            </Suspense>
+          </section>
+        </article>
     </>
   );
 }
