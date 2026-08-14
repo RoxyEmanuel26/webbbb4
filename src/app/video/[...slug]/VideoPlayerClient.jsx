@@ -82,6 +82,7 @@ const VideoPlayerClient = ({ id, initialTitle, seoDescription }) => {
   const router = useRouter();
   const [iframeStatus, setIframeStatus] = useState('loading');
   const [selectedThumbIndex, setSelectedThumbIndex] = useState(null);
+  const [isDescExpanded, setIsDescExpanded] = useState(false);
   
   // Overlay untuk memicu Adsterra Popunder pada klik pertama
   const [overlayActive, setOverlayActive] = useState(true);
@@ -189,7 +190,18 @@ const VideoPlayerClient = ({ id, initialTitle, seoDescription }) => {
               </div>
 
               {seoDescription && (
-                <p className="video-info-desc" style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', marginBottom: 'var(--space-4)', marginTop: 'var(--space-4)' }}>
+                <p className="video-info-desc" style={{ 
+                  fontSize: '0.9rem', 
+                  color: 'var(--color-text-secondary)', 
+                  lineHeight: '1.6', 
+                  marginBottom: 'var(--space-4)', 
+                  marginTop: 'var(--space-4)',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}>
                   {seoDescription}
                 </p>
               )}
@@ -350,9 +362,36 @@ const VideoPlayerClient = ({ id, initialTitle, seoDescription }) => {
             </div>
 
             {seoDescription && (
-              <p className="video-info-desc" style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', marginBottom: 'var(--space-4)', marginTop: 'var(--space-4)' }}>
-                {seoDescription}
-              </p>
+              <div style={{ marginBottom: 'var(--space-4)', marginTop: 'var(--space-4)' }}>
+                <p className="video-info-desc" style={{ 
+                  fontSize: '0.9rem', 
+                  color: 'var(--color-text-secondary)', 
+                  lineHeight: '1.6', 
+                  marginBottom: '8px',
+                  display: '-webkit-box',
+                  WebkitLineClamp: isDescExpanded ? 'unset' : 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}>
+                  {seoDescription}
+                </p>
+                <button 
+                  onClick={() => setIsDescExpanded(!isDescExpanded)}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    color: 'var(--color-text-primary)', 
+                    fontWeight: '700', 
+                    cursor: 'pointer', 
+                    padding: '0', 
+                    fontSize: '0.85rem'
+                  }}
+                  aria-expanded={isDescExpanded}
+                >
+                  {isDescExpanded ? 'Show less' : 'Show more...'}
+                </button>
+              </div>
             )}
 
             {keywords.length > 0 && (
