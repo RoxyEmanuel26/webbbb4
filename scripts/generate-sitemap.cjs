@@ -4,7 +4,7 @@ const path = require('path');
 const SITE_URL = 'https://nicevx.com';
 const API_BASE = 'https://www.eporner.com/api/v2';
 const PER_PAGE = 50;
-const MAX_PAGES = 2000; // 50,000 video
+const MAX_PAGES = 10000; // 50,000 video
 const URLS_PER_SITEMAP = 49000; // Batas chunk
 const BATCH_SIZE = 5;
 

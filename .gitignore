@@ -54,3 +54,4 @@ scratch.*
 parse_cats.py
 curl_*.html
 *.csv
+scripts/*
