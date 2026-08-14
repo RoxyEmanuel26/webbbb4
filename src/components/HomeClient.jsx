@@ -43,11 +43,11 @@ export default function HomeClient() {
   const orderParam = isValidOrder ? rawOrder : null;
   const rawPage = parseInt(searchParams.get('page') || '1');
   const page = !isNaN(rawPage) && rawPage > 0 ? rawPage : 1;
-  const sortLabel = SORT_OPTIONS.find(o => o.value === orderParam)?.label || '📈 Top This Week';
+  const sortLabel = SORT_OPTIONS.find(o => o.value === orderParam)?.label || '🕐 Latest';
   const isDashboard = !orderParam && page === 1;
 
   const [videos, setVideos] = useState([]);
-  const [latestVideos, setLatestVideos] = useState([]);
+  const [topWeeklyVideos, setTopWeeklyVideos] = useState([]);
 
   const [trendTags, setTrendTags] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -60,10 +60,10 @@ export default function HomeClient() {
     setError(null);
 
     try {
-      // Fetch main videos
+      // Fetch main videos (sekarang default ke 'latest')
       const url = new URL(`${API_BASE}/search/`);
       url.searchParams.append('query', 'all');
-      url.searchParams.append('order', orderParam || 'top-weekly');
+      url.searchParams.append('order', orderParam || 'latest');
       url.searchParams.append('page', page);
       url.searchParams.append('per_page', 36);
       url.searchParams.append('thumbsize', 'big');
@@ -86,26 +86,26 @@ export default function HomeClient() {
         setVideos([]);
       }
 
-      // Fetch Latest videos (khusus Dashboard / Halaman 1 murni)
+      // Fetch Top Weekly videos (khusus Dashboard / Halaman 1 murni)
       if (isDashboard) {
         try {
-          const latestUrl = new URL(`${API_BASE}/search/`);
-          latestUrl.searchParams.append('query', 'all');
-          latestUrl.searchParams.append('order', 'latest');
-          latestUrl.searchParams.append('page', 1);
-          latestUrl.searchParams.append('per_page', 24);
-          latestUrl.searchParams.append('thumbsize', 'big');
-          latestUrl.searchParams.append('gay', 0);
-          latestUrl.searchParams.append('lq', 1);
-          latestUrl.searchParams.append('format', 'json');
+          const topUrl = new URL(`${API_BASE}/search/`);
+          topUrl.searchParams.append('query', 'all');
+          topUrl.searchParams.append('order', 'top-weekly');
+          topUrl.searchParams.append('page', 1);
+          topUrl.searchParams.append('per_page', 12);
+          topUrl.searchParams.append('thumbsize', 'big');
+          topUrl.searchParams.append('gay', 0);
+          topUrl.searchParams.append('lq', 1);
+          topUrl.searchParams.append('format', 'json');
           
-          const latestRes = await fetch(latestUrl.toString());
-          const latestData = await latestRes.json();
-          if (latestData?.videos) {
-            const latestFiltered = latestData.videos
+          const topRes = await fetch(topUrl.toString());
+          const topData = await topRes.json();
+          if (topData?.videos) {
+            const topFiltered = topData.videos
               .map(v => ({ ...v, title: fixEncoding(v.title), keywords: fixEncoding(v.keywords) }))
               .filter(v => !FORBIDDEN_REGEX.test(v.keywords || '') && !FORBIDDEN_REGEX.test(v.title || ''));
-            setLatestVideos(latestFiltered);
+            setTopWeeklyVideos(topFiltered);
           }
         } catch (_) {}
       }
@@ -164,7 +164,7 @@ export default function HomeClient() {
             <h1 className="section-title">
               {orderParam 
                 ? `Free HD Porn Videos & Sex Tube — ${sortLabel}` 
-                : isDashboard ? '🔥 Top This Week' : 'Free HD Porn Videos & Sex Tube — Top Videos'}
+                : isDashboard ? '🕐 Latest Videos' : 'Free HD Porn Videos & Sex Tube — Latest Videos'}
             </h1>
             {totalCount > 0 && (
               <span className="section-count">{totalCount.toLocaleString()} videos</span>
@@ -188,23 +188,25 @@ export default function HomeClient() {
             {isDashboard ? (
               <>
                 <div className="video-grid">
-                  {videos.slice(0, 12).map((v, idx) => (
+                  {/* Tampilkan 24 video Terbaru di atas */}
+                  {videos.slice(0, 24).map((v, idx) => (
                     <React.Fragment key={`${v.id}-${idx}`}>
                       <VideoCard video={v} priority={idx < 4} />
                     </React.Fragment>
                   ))}
                 </div>
 
-                {latestVideos.length > 0 && (
+                {topWeeklyVideos.length > 0 && (
                   <>
                     <div className="section-header" style={{ marginTop: '40px' }}>
                       <div className="section-title-group">
-                        <h2 className="section-title">🕐 Latest Videos</h2>
+                        <h2 className="section-title">🔥 Top This Week</h2>
                       </div>
-                      <a href="/?order=latest" className="view-all-link" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 'bold' }}>View All →</a>
+                      <a href="/?order=top-weekly" className="view-all-link" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 'bold' }}>View All →</a>
                     </div>
                     <div className="video-grid">
-                      {latestVideos.map((v, idx) => (
+                      {/* Tampilkan 12 video Populer di bawah */}
+                      {topWeeklyVideos.map((v, idx) => (
                         <React.Fragment key={`${v.id}-${idx}`}>
                           <VideoCard video={v} priority={false} />
                         </React.Fragment>

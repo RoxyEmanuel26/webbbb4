@@ -18,7 +18,7 @@ export async function generateMetadata({ searchParams }) {
   const rawOrderParam = params?.order;
   const isValidOrder = SORT_OPTIONS.some(o => o.value === rawOrderParam);
   const orderParam = isValidOrder ? rawOrderParam : null;
-  const sortLabel = SORT_OPTIONS.find(o => o.value === orderParam)?.label || 'Top This Week';
+  const sortLabel = SORT_OPTIONS.find(o => o.value === orderParam)?.label || 'Latest';
   const currentYear = new Date().getFullYear();
 
   const seoTitle = orderParam
