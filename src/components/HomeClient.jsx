@@ -45,6 +45,8 @@ export default function HomeClient() {
   const page = !isNaN(rawPage) && rawPage > 0 ? rawPage : 1;
   const sortLabel = SORT_OPTIONS.find(o => o.value === orderParam)?.label || '🕐 Latest';
   const isDashboard = !orderParam && page === 1;
+  const activeOrder = orderParam || 'latest';
+  const perPageCount = activeOrder === 'latest' ? 24 : 36;
 
   const [videos, setVideos] = useState([]);
   const [topWeeklyVideos, setTopWeeklyVideos] = useState([]);
@@ -60,10 +62,7 @@ export default function HomeClient() {
     setError(null);
 
     try {
-      // Fetch main videos (sekarang default ke 'latest')
-      const activeOrder = orderParam || 'latest';
-      const perPageCount = activeOrder === 'latest' ? 24 : 36;
-      
+      // Fetch main videos
       const url = new URL(`${API_BASE}/search/`);
       url.searchParams.append('query', 'all');
       url.searchParams.append('order', activeOrder);
@@ -134,7 +133,7 @@ export default function HomeClient() {
     } finally {
       setLoading(false);
     }
-  }, [orderParam, page]);
+  }, [activeOrder, perPageCount, isDashboard, page]);
 
   useEffect(() => {
     fetchData();
@@ -162,7 +161,7 @@ export default function HomeClient() {
 
         {loading ? (
           <div className="video-grid">
-            {Array.from({ length: 36 }).map((_, idx) => (
+            {Array.from({ length: isDashboard ? 36 : perPageCount }).map((_, idx) => (
               <SkeletonCard key={`skel-${idx}`} />
             ))}
           </div>
