@@ -8,4 +8,4 @@ Disallow: /api/
 Disallow: /?order=*
 Disallow: /search?*
 
-Sitemap: https://nicevx.com/sitemap.xml
+Sitemap: https://www.nicevx.com/sitemap.xml

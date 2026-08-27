@@ -7,12 +7,12 @@ export const metadata = {
   description: 'Read the Terms of Service for NICEVX. By using our platform you agree to these terms.',
   robots: 'index, follow',
   alternates: {
-    canonical: 'https://nicevx.com/terms'
+    canonical: 'https://www.nicevx.com/terms'
   },
   openGraph: {
     title: 'Terms of Service — NICEVX',
     description: 'Read the Terms of Service for NICEVX. By using our platform you agree to these terms.',
-    url: 'https://nicevx.com/terms',
+    url: 'https://www.nicevx.com/terms',
     siteName: 'NICEVX',
     type: 'website',
     locale: 'en_US',

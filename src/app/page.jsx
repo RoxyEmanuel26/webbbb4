@@ -30,8 +30,8 @@ export async function generateMetadata({ searchParams }) {
     : `Watch free HD porn videos on NICEVX. Over 4 million videos updated daily in ${currentYear} — amateur, teen, MILF, Asian, hardcore and more in stunning 1080p quality.`;
 
   const seoCanonical = orderParam
-    ? `https://nicevx.com/?order=${orderParam}`
-    : 'https://nicevx.com/';
+    ? `https://www.nicevx.com/?order=${orderParam}`
+    : 'https://www.nicevx.com/';
 
   return {
     title: seoTitle,

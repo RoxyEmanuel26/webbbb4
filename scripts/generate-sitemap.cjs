@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const SITE_URL = 'https://nicevx.com';
+const SITE_URL = 'https://www.nicevx.com';
 const API_BASE = 'https://www.eporner.com/api/v2';
 const PER_PAGE = 50;
 const MAX_PAGES = 400; // 50,000 video

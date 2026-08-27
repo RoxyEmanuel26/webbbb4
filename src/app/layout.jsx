@@ -14,7 +14,7 @@ import Script from 'next/script';
 export const runtime = 'edge';
 
 export const metadata = {
-  metadataBase: new URL('https://nicevx.com/'),
+  metadataBase: new URL('https://www.nicevx.com/'),
   title: {
     default: 'NICEVX — Free HD Porn Videos | 4M+ Videos',
     template: '%s',
@@ -38,7 +38,7 @@ export const metadata = {
   openGraph: {
     title: 'NICEVX — Free HD Porn Videos | 4M+ Videos',
     description: 'Watch free HD porn videos on NICEVX. Over 4 million videos updated daily — amateur, teen, MILF, Asian, hardcore and more in stunning 1080p HD quality.',
-    url: 'https://nicevx.com/',
+    url: 'https://www.nicevx.com/',
     siteName: 'NICEVX',
     type: 'website',
     locale: 'en_US',
@@ -63,7 +63,7 @@ export const metadata = {
     apple: '/favicon.png',
   },
   alternates: {
-    canonical: 'https://nicevx.com/',
+    canonical: 'https://www.nicevx.com/',
   },
 };
 
@@ -79,13 +79,13 @@ export default function RootLayout({ children }) {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'NICEVX',
-    url: 'https://nicevx.com',
+    url: 'https://www.nicevx.com',
     description: 'Free HD porn videos — over 4 million videos updated daily.',
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: 'https://nicevx.com/search?query={search_term_string}',
+        urlTemplate: 'https://www.nicevx.com/search?query={search_term_string}',
       },
       'query-input': 'required name=search_term_string',
     },

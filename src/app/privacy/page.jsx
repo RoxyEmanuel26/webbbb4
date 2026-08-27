@@ -6,12 +6,12 @@ export const metadata = {
   description: 'Read the Privacy Policy for NICEVX.',
   robots: 'index, follow',
   alternates: {
-    canonical: 'https://nicevx.com/privacy'
+    canonical: 'https://www.nicevx.com/privacy'
   },
   openGraph: {
     title: 'Privacy Policy — NICEVX',
     description: 'Read the Privacy Policy for NICEVX.',
-    url: 'https://nicevx.com/privacy',
+    url: 'https://www.nicevx.com/privacy',
     siteName: 'NICEVX',
     type: 'website',
     locale: 'en_US',

@@ -51,7 +51,7 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
   
   const seoTitle = propSeoTitle ?? `Watch Free HD Porn Videos — NICEVX`;
   const seoDesc = propSeoDesc ?? `Watch free HD porn videos on NICEVX. Stream top-quality adult content.`;
-  const seoCanonical = propSeoCanonical ?? `https://nicevx.com/search?query=${encodeURIComponent(query)}`;
+  const seoCanonical = propSeoCanonical ?? `https://www.nicevx.com/search?query=${encodeURIComponent(query)}`;
   const seoQuery = propSeoQuery ?? query;
 
   const [videos, setVideos] = useState([]);
@@ -102,9 +102,9 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://nicevx.com/" },
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.nicevx.com/" },
       ...(isCat ? [
-        { "@type": "ListItem", "position": 2, "name": "Categories", "item": "https://nicevx.com/cats/" },
+        { "@type": "ListItem", "position": 2, "name": "Categories", "item": "https://www.nicevx.com/cats/" },
         { "@type": "ListItem", "position": 3, "name": seoQuery, "item": seoCanonical }
       ] : [
         { "@type": "ListItem", "position": 2, "name": seoQuery, "item": seoCanonical }

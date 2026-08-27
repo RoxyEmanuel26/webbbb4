@@ -31,7 +31,7 @@ export async function generateMetadata({ params }) {
   const truncatedTitle = videoTitle && videoTitle.length > 40
     ? videoTitle.substring(0, 37).trim() + '...'
     : videoTitle;
-  const canonical = `https://nicevx.com/video/${slugArr.join('/')}`;
+  const canonical = `https://www.nicevx.com/video/${slugArr.join('/')}`;
   const title = truncatedTitle
     ? `${truncatedTitle} \u2014 Watch HD Porn \u2014 NICEVX`
     : 'Watch Free HD Porn Videos \u2014 NICEVX';
@@ -78,7 +78,7 @@ export default async function VideoPage({ params }) {
   if (!id) notFound();
 
   const videoTitle = titleFromSlug(slugArr);
-  const canonical = `https://nicevx.com/video/${slugArr.join('/')}`;
+  const canonical = `https://www.nicevx.com/video/${slugArr.join('/')}`;
   const truncatedTitle = videoTitle && videoTitle.length > 40
     ? videoTitle.substring(0, 37).trim() + '...'
     : videoTitle;
@@ -119,10 +119,10 @@ export default async function VideoPage({ params }) {
     publisher: {
       '@type': 'Organization',
       name: 'NICEVX',
-      url: 'https://nicevx.com',
+      url: 'https://www.nicevx.com',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://nicevx.com/favicon.png',
+        url: 'https://www.nicevx.com/favicon.png',
         width: 512,
         height: 512,
       },

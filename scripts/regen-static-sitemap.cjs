@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const SITE_URL = 'https://nicevx.com';
+const SITE_URL = 'https://www.nicevx.com';
 const now = new Date().toISOString();
 const sitemapsDir = path.join(__dirname, '../public/sitemaps');
 
