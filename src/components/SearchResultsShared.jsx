@@ -47,7 +47,7 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
 
   const rawOrder = propOrder ?? searchParams.get('order');
   const isValidOrder = SORT_OPTIONS.some(o => o.value === rawOrder);
-  const currentOrder = isValidOrder ? rawOrder : 'top-weekly';
+  const currentOrder = isValidOrder ? rawOrder : 'latest';
   
   const seoTitle = propSeoTitle ?? `Watch Free HD Porn Videos — NICEVX`;
   const seoDesc = propSeoDesc ?? `Watch free HD porn videos on NICEVX. Stream top-quality adult content.`;

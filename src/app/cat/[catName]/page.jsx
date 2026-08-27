@@ -53,7 +53,7 @@ export default async function CategoryPage({ params, searchParams }) {
 
   const query = catName.replace(/-/g, ' ');
   const page = parseInt(resolvedSearchParams?.page) || 1;
-  const currentOrder = resolvedSearchParams?.order || 'top-weekly';
+  const currentOrder = resolvedSearchParams?.order || 'new';
   
   const seo = getSearchMetadata({ query, isCat: true, isTag: false, page, catName });
   const related = getRelatedCategories(catName.toLowerCase());

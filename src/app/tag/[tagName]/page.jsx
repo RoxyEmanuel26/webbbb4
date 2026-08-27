@@ -17,7 +17,7 @@ export default async function TagPage({ params, searchParams }) {
   const tagName = resolvedParams?.tagName || '';
   const query = tagName.replace(/-/g, ' ');
   const page = parseInt(resolvedSearchParams?.page) || 1;
-  const currentOrder = resolvedSearchParams?.order || 'top-weekly';
+  const currentOrder = resolvedSearchParams?.order || 'new';
   
   const seo = getSearchMetadata({ query, isCat: false, isTag: true, page, tagName });
 

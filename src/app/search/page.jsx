@@ -15,7 +15,7 @@ export default async function SearchPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
   const query = resolvedSearchParams?.query || 'all';
   const page = parseInt(resolvedSearchParams?.page) || 1;
-  const currentOrder = resolvedSearchParams?.order || 'top-weekly';
+  const currentOrder = resolvedSearchParams?.order || 'latest';
   
   const seo = getSearchMetadata({ query, isCat: false, isTag: false, page });
 
