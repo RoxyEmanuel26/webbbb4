@@ -214,7 +214,7 @@ function writeChunk(index, urlsArray) {
       <video:title>${escapeXml(item.title)}</video:title>
       <video:description>${escapeXml(item.description)}</video:description>
       <video:player_loc>${escapeXml(item.player_loc)}</video:player_loc>
-      <video:duration>${item.duration}</video:duration>
+      ${(item.duration > 0 && item.duration <= 28800) ? `<video:duration>${item.duration}</video:duration>` : ''}
       <video:publication_date>${item.publication_date}</video:publication_date>
       <video:family_friendly>no</video:family_friendly>
       ${(item.tags && item.tags.length > 0) ? item.tags.map(t => `<video:tag>${escapeXml(t)}</video:tag>`).join('\n      ') : ''}
