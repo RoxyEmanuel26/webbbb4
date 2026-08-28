@@ -25,9 +25,125 @@ const formatViews = (n) => {
   return n + ' views';
 };
 
+// ─── Smart Related Videos Engine ─────────────────────────────────────────────
+
+// Signal 1 helper: parse & normalize keywords into a Set for O(1) lookup
+function computeKeywordSet(video) {
+  const raw = String(video.keywords || video.title || '');
+  return new Set(
+    raw.split(/[,\s]+/)
+      .map(k => k.trim().toLowerCase())
+      .filter(k => k.length > 2 && k.length < 30 && !FORBIDDEN_REGEX.test(k))
+  );
+}
+
+// Multi-signal scorer: returns integer relevance score for one candidate video
+function scoreCandidate(candidate, sourceKws, sourceDuration, sourceRate) {
+  let score = 0;
+
+  // Signal 1 — Keyword Overlap (max 50 pts, +10 per shared keyword)
+  const candKws = computeKeywordSet(candidate);
+  let overlap = 0;
+  for (const kw of candKws) { if (sourceKws.has(kw)) overlap++; }
+  score += Math.min(overlap * 10, 50);
+
+  // Signal 2 — Duration Proximity: closer = more relevant (max 15 pts)
+  const durDiff = Math.abs((parseInt(candidate.length_sec) || 0) - sourceDuration);
+  if      (durDiff < 60)  score += 15;
+  else if (durDiff < 180) score += 10;
+  else if (durDiff < 300) score += 5;
+
+  // Signal 3 — Quality: high-rated videos are preferred (max 10 pts)
+  const candRate = parseFloat(candidate.rate) || 0;
+  if      (candRate >= 4.5) score += 10;
+  else if (candRate >= 4.0) score += 7;
+  else if (candRate >= 3.5) score += 4;
+  else if (candRate >= 3.0) score += 2;
+
+  // Signal 4 — Popularity tier (max 5 pts)
+  const candViews = parseInt(candidate.views) || 0;
+  if      (candViews >= 1_000_000) score += 5;
+  else if (candViews >= 100_000)   score += 3;
+  else if (candViews >= 10_000)    score += 1;
+
+  // Signal 5 — Better-than-source quality bonus (max 5 pts)
+  if (candRate > (parseFloat(sourceRate) || 0)) score += 5;
+
+  return score;
+}
+
+// Multi-pass fetch: 3 parallel/sequential queries → pool → score → rank → return top 16
+async function fetchRelatedVideos(video, sourceKws) {
+  const kwArr = Array.from(sourceKws);
+  if (kwArr.length === 0) kwArr.push('all');
+
+  const sourceDuration = parseInt(video.length_sec) || 0;
+  const sourceRate     = parseFloat(video.rate) || 0;
+
+  const buildUrl = (query, order, n = 20) => {
+    const u = new URL(`${API_BASE}/search/`);
+    u.searchParams.set('query', query);
+    u.searchParams.set('per_page', n);
+    u.searchParams.set('order', order);
+    u.searchParams.set('gay', 0);
+    u.searchParams.set('lq', 1);
+    u.searchParams.set('thumbsize', 'medium');
+    u.searchParams.set('format', 'json');
+    return u.toString();
+  };
+
+  // Pass 1 & 2 run in parallel
+  const p1q = kwArr.slice(0, 2).join(' ');
+  const p2q = kwArr.slice(2, 5).join(' ') || kwArr[0];
+  const [r1, r2] = await Promise.all([
+    fetch(buildUrl(p1q, 'top-rated', 20)).then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch(buildUrl(p2q, 'most-popular', 20)).then(r => r.ok ? r.json() : null).catch(() => null),
+  ]);
+
+  const seen = new Set([video.id]);
+  const pool = [];
+
+  const absorb = (videos, src) => {
+    for (const v of (videos || [])) {
+      if (seen.has(v.id)) continue;
+      if (FORBIDDEN_REGEX.test(v.title || '') || FORBIDDEN_REGEX.test(v.keywords || '')) continue;
+      seen.add(v.id);
+      pool.push({ ...v, title: fixEncoding(v.title), keywords: fixEncoding(v.keywords), _source: src });
+    }
+  };
+
+  absorb(r1?.videos, 'primary');
+  absorb(r2?.videos, 'secondary');
+
+  // Pass 3 — category/keyword fallback if pool is thin
+  if (pool.length < 15) {
+    const r3 = await fetch(buildUrl(kwArr[0], 'latest', 20)).then(r => r.ok ? r.json() : null).catch(() => null);
+    absorb(r3?.videos, 'fallback');
+  }
+
+  // Score every candidate
+  const scored = pool.map(v => ({
+    ...v,
+    _score: scoreCandidate(v, sourceKws, sourceDuration, sourceRate),
+  }));
+
+  // Sort by score DESC, enforce diversity: max 8 videos per source
+  scored.sort((a, b) => b._score - a._score);
+  const srcCount = {};
+  const result = [];
+  for (const v of scored) {
+    srcCount[v._source] = (srcCount[v._source] || 0) + 1;
+    if (srcCount[v._source] > 8) continue;
+    result.push(v);
+    if (result.length >= 16) break;
+  }
+  return result;
+}
+
 const VideoPlayerClient = ({ id, initialTitle, seoDescription }) => {
   const [video, setVideo] = useState(null);
   const [related, setRelated] = useState([]);
+  const [relatedLoading, setRelatedLoading] = useState(false);
   const [keywords, setKeywords] = useState([]);
   const [pageLoading, setPageLoading] = useState(true);
   const [pageError, setPageError] = useState(null);
@@ -52,25 +168,13 @@ const VideoPlayerClient = ({ id, initialTitle, seoDescription }) => {
         .filter(k => k.length > 2 && k.length < 25 && k.split(/\s+/).length <= 2 && !FORBIDDEN_REGEX.test(k));
       setKeywords(kws);
 
-      // Fetch related
-      const relUrl = new URL(`${API_BASE}/search/`);
-      relUrl.searchParams.append('query', kws.slice(0, 3).join(' ') || 'all');
-      relUrl.searchParams.append('per_page', 12);
-      relUrl.searchParams.append('order', 'top-weekly');
-      relUrl.searchParams.append('gay', 0);
-      relUrl.searchParams.append('lq', 1);
-      relUrl.searchParams.append('thumbsize', 'medium');
-      relUrl.searchParams.append('format', 'json');
-      const relRes = await fetch(relUrl.toString());
-      const relData = await relRes.json();
-      if (relData?.videos) {
-        setRelated(
-          relData.videos
-            .map(rv => ({ ...rv, title: fixEncoding(rv.title), keywords: fixEncoding(rv.keywords) }))
-            .filter(rv => rv.id !== id && !FORBIDDEN_REGEX.test(rv.keywords || '') && !FORBIDDEN_REGEX.test(rv.title || ''))
-            .slice(0, 12)
-        );
-      }
+      // ── Smart Related Videos: fire-and-forget so main video loads instantly ──
+      setRelatedLoading(true);
+      const sourceKws = computeKeywordSet(data);
+      fetchRelatedVideos(data, sourceKws)
+        .then(results => { setRelated(results); })
+        .catch(() => {})
+        .finally(() => setRelatedLoading(false));
     } catch (err) {
       setPageError(err.message);
     } finally {
@@ -441,13 +545,62 @@ const VideoPlayerClient = ({ id, initialTitle, seoDescription }) => {
 
         <aside className="player-sidebar">
 
-          <h2 className="sidebar-heading">Related Videos</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
-            {related.map(v => (
-              <VideoCard key={v.id} video={v} compact={true} />
-            ))}
-          </div>
-          {related.length === 0 && (
+          <h2 className="sidebar-heading">
+            Related Videos
+            {relatedLoading && (
+              <span style={{ fontSize: '0.7rem', fontWeight: 400, color: 'var(--color-text-dim)', marginLeft: '8px' }}>
+                Finding best matches…
+              </span>
+            )}
+          </h2>
+
+          {/* Loading skeleton */}
+          {relatedLoading && related.length === 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+              {[1,2,3,4,5].map(i => (
+                <div key={i} style={{ height: '90px', background: 'var(--color-border)', borderRadius: '8px', opacity: 0.4, animation: 'pulse 1.5s ease-in-out infinite' }} />
+              ))}
+            </div>
+          )}
+
+          {/* Related videos list with relevance badge */}
+          {!relatedLoading || related.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+              {related.map(v => {
+                const badge = v._score >= 40
+                  ? { label: '🔥 Top Match', color: '#ef4444' }
+                  : v._score >= 20
+                  ? { label: '✨ Related', color: 'var(--color-accent)' }
+                  : null;
+                return (
+                  <div key={v.id} style={{ position: 'relative' }}>
+                    {badge && (
+                      <span style={{
+                        position: 'absolute',
+                        top: '6px',
+                        left: '6px',
+                        zIndex: 2,
+                        background: badge.color,
+                        color: '#fff',
+                        fontSize: '0.6rem',
+                        fontWeight: 700,
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        pointerEvents: 'none',
+                        letterSpacing: '0.02em',
+                        textShadow: '0 1px 2px rgba(0,0,0,0.4)',
+                      }}>
+                        {badge.label}
+                      </span>
+                    )}
+                    <VideoCard video={v} compact={true} />
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
+
+          {!relatedLoading && related.length === 0 && (
             <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>
               No related videos found.
             </p>
