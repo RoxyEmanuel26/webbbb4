@@ -44,12 +44,10 @@ export default function HomeClient() {
   const rawPage = parseInt(searchParams.get('page') || '1');
   const page = !isNaN(rawPage) && rawPage > 0 ? rawPage : 1;
   const sortLabel = SORT_OPTIONS.find(o => o.value === orderParam)?.label || '🕐 Latest';
-  const isDashboard = !orderParam && page === 1;
   const activeOrder = orderParam || 'latest';
-  const perPageCount = activeOrder === 'latest' ? 24 : 36;
+  const perPageCount = 36;
 
   const [videos, setVideos] = useState([]);
-  const [topWeeklyVideos, setTopWeeklyVideos] = useState([]);
 
   const [trendTags, setTrendTags] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -116,14 +114,6 @@ export default function HomeClient() {
                 .slice(0, 20)
                 .map(([k]) => k)
             );
-
-            // Re-use for Top Weekly videos section if it's the dashboard
-            if (isDashboard) {
-              const topFiltered = tagData.videos
-                .map(v => ({ ...v, title: fixEncoding(v.title), keywords: fixEncoding(v.keywords) }))
-                .filter(v => !FORBIDDEN_REGEX.test(v.keywords || '') && !FORBIDDEN_REGEX.test(v.title || ''));
-              setTopWeeklyVideos(topFiltered.slice(0, 12));
-            }
           }
         } catch (_) {}
       }
@@ -133,7 +123,7 @@ export default function HomeClient() {
     } finally {
       setLoading(false);
     }
-  }, [activeOrder, perPageCount, isDashboard, page]);
+  }, [activeOrder, perPageCount, page]);
 
   useEffect(() => {
     fetchData();
@@ -150,7 +140,7 @@ export default function HomeClient() {
             <h1 className="section-title">
               {orderParam 
                 ? `Free HD Porn Videos & Sex Tube — ${sortLabel}` 
-                : isDashboard ? '🕐 Latest Videos' : 'Free HD Porn Videos & Sex Tube — Latest Videos'}
+                : 'Free HD Porn Videos & Sex Tube — Latest Videos'}
             </h1>
             {totalCount > 0 && (
               <span className="section-count">{totalCount.toLocaleString()} videos</span>
@@ -161,7 +151,7 @@ export default function HomeClient() {
 
         {loading ? (
           <div className="video-grid">
-            {Array.from({ length: isDashboard ? 36 : perPageCount }).map((_, idx) => (
+            {Array.from({ length: perPageCount }).map((_, idx) => (
               <SkeletonCard key={`skel-${idx}`} />
             ))}
           </div>
@@ -171,45 +161,13 @@ export default function HomeClient() {
           </div>
         ) : videos.length > 0 ? (
           <>
-            {isDashboard ? (
-              <>
-                <div className="video-grid">
-                  {/* Tampilkan 24 video Terbaru di atas */}
-                  {videos.slice(0, 24).map((v, idx) => (
-                    <React.Fragment key={`${v.id}-${idx}`}>
-                      <VideoCard video={v} priority={idx < 4} />
-                    </React.Fragment>
-                  ))}
-                </div>
-
-                {topWeeklyVideos.length > 0 && (
-                  <>
-                    <div className="section-header" style={{ marginTop: '40px' }}>
-                      <div className="section-title-group">
-                        <h2 className="section-title">🔥 Top This Week</h2>
-                      </div>
-                      <a href="/?order=top-weekly" className="view-all-link" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 'bold' }}>View All →</a>
-                    </div>
-                    <div className="video-grid">
-                      {/* Tampilkan 12 video Populer di bawah */}
-                      {topWeeklyVideos.map((v, idx) => (
-                        <React.Fragment key={`${v.id}-${idx}`}>
-                          <VideoCard video={v} priority={false} />
-                        </React.Fragment>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </>
-            ) : (
-              <div className="video-grid">
-                {videos.map((v, idx) => (
-                  <React.Fragment key={`${v.id}-${idx}`}>
-                    <VideoCard video={v} priority={idx < 4} />
-                  </React.Fragment>
-                ))}
-              </div>
-            )}
+            <div className="video-grid">
+              {videos.map((v, idx) => (
+                <React.Fragment key={`${v.id}-${idx}`}>
+                  <VideoCard video={v} priority={idx < 4} />
+                </React.Fragment>
+              ))}
+            </div>
 
             <Pagination currentPage={page} totalPages={totalPages} />
           </>
