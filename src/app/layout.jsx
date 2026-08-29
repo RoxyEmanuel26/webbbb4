@@ -6,8 +6,7 @@ import AgeGateModal from '../components/AgeGateModal';
 
 import AdSocialBar from '../components/AdSocialBar';
 import AdPopunder from '../components/AdPopunder';
-import CustomTopBanner from '../components/CustomTopBanner';
-import CustomBottomBanner from '../components/CustomBottomBanner';
+
 
 import Script from 'next/script';
 
@@ -132,12 +131,9 @@ export default function RootLayout({ children }) {
         <AdPopunder />
         <AgeGateModal />
         <Navbar />
-        <CustomTopBanner />
-        
         <main>
           {children}
         </main>
-        <CustomBottomBanner />
         <Footer />
       </body>
     </html>
