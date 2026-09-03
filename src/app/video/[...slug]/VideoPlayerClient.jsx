@@ -328,13 +328,57 @@ const VideoPlayerClient = ({ id, initialTitle, seoDescription }) => {
   if (pageError || !video) {
     return (
       <div className="empty-block">
-        <p style={{ fontSize: '2rem' }}>⚠️</p>
+        <p style={{ fontSize: '2rem' }}>😥</p>
         <p>Could not load this video. Please go back and try another.</p>
       </div>
     );
   }
 
+  let clientVideoSchema = null;
+  if (typeof window !== 'undefined' && video) {
+    let isoDuration = undefined;
+    if (video.length_sec) {
+      isoDuration = `PT${Math.floor(video.length_sec / 60)}M${video.length_sec % 60}S`;
+    }
+    let isoDate = '2024-01-01T00:00:00Z';
+    if (video.added) {
+      isoDate = video.added.replace(' ', 'T') + 'Z';
+    }
+    clientVideoSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'VideoObject',
+      name: fixEncoding(video.title) || initialTitle,
+      description: seoDescription || fixEncoding(video.title),
+      thumbnailUrl: video.default_thumb?.src || `https://static-eu-cdn.eporner.com/thumbs/static4/big/${id}/5_big.jpg`,
+      embedUrl: `https://www.eporner.com/embed/${id}/`,
+      contentUrl: window.location.href,
+      url: window.location.href,
+      uploadDate: isoDate,
+      ...(isoDuration && { duration: isoDuration }),
+      isFamilyFriendly: false,
+      ...(keywords && keywords.length > 0 && { keywords: keywords.join(', ') }),
+      publisher: {
+        '@type': 'Organization',
+        name: 'NICEVX',
+        url: 'https://www.nicevx.com',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://www.nicevx.com/favicon.png',
+          width: 512,
+          height: 512,
+        },
+      },
+    };
+  }
+
   return (
+    <>
+      {clientVideoSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(clientVideoSchema) }}
+        />
+      )}
     <div className="page-wrapper player-page">
 
       <button
@@ -690,6 +734,7 @@ const VideoPlayerClient = ({ id, initialTitle, seoDescription }) => {
       )}
 
     </div>
+    </>
   );
 };
 
