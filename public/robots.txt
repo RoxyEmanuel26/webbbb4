@@ -5,7 +5,8 @@ User-agent: *
 Allow: /
 
 Disallow: /api/
-Disallow: /?order=*
+Disallow: /*?order=*
+Disallow: /*&order=*
 Disallow: /search?*
 
 Sitemap: https://www.nicevx.com/sitemap.xml

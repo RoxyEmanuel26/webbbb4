@@ -291,7 +291,20 @@ function writeIndexSitemap() {
 }
 
 async function run() {
-  console.log('🚀 Memulai pengumpulan data dari Eporner API...');
+  console.log('dYs? Memulai pengumpulan data dari Eporner API...');
+
+  console.log('dYs? Mengambil daftar video yang dihapus dari Eporner...');
+  let removedIds = new Set();
+  try {
+    const removedRes = await fetch(`${API_BASE}/video/removed/?format=json`);
+    const removedData = await removedRes.json();
+    if (Array.isArray(removedData)) {
+      removedData.forEach(item => removedIds.add(item.id));
+      console.log(`dY~" Berhasil mengambil ${removedIds.size} ID video yang dihapus.`);
+    }
+  } catch (err) {
+    console.error('dY~! Gagal mengambil daftar video yang dihapus:', err.message);
+  }
 
   initState();
 
@@ -302,7 +315,7 @@ async function run() {
     console.log(`Mengambil halaman ${i} s/d ${end}...`);
     for (let p = i; p <= end; p++) {
       batchPromises.push(
-        fetch(`${API_BASE}/video/search/?query=&per_page=${PER_PAGE}&page=${p}&order=new`)
+        fetch(`${API_BASE}/video/search/?query=&per_page=${PER_PAGE}&page=${p}&order=latest`)
           .then(res => res.json())
           .catch(e => {
             console.error(`Gagal mengambil halaman ${p}`);
@@ -316,6 +329,12 @@ async function run() {
     for (const data of results) {
       if (data && data.videos) {
         for (const video of data.videos) {
+          // GATEKEEPER 1: Skip if video has been removed by Eporner
+          if (removedIds.has(video.id)) {
+            console.log(`[Gatekeeper] dY~ Video dilewati karena sudah dihapus Eporner: ${video.id}`);
+            continue;
+          }
+
           const url = `${SITE_URL}/video/${slugify(video.title)}-${video.id}`;
 
           if (!seenUrls.has(url)) {
