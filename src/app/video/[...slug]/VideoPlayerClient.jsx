@@ -325,6 +325,19 @@ const VideoPlayerClient = ({ id, initialTitle, seoDescription }) => {
     );
   }
 
+  useEffect(() => {
+    if (pageError || (video === null && !pageLoading)) {
+      const meta = document.createElement('meta');
+      meta.name = 'robots';
+      meta.content = 'noindex, nofollow';
+      document.head.appendChild(meta);
+      
+      // Remove any existing canonical to completely decouple it from indexing
+      const canonical = document.querySelector('link[rel="canonical"]');
+      if (canonical) canonical.remove();
+    }
+  }, [pageError, video, pageLoading]);
+
   if (pageError || !video) {
     return (
       <div className="empty-block">
