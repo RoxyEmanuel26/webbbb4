@@ -7,10 +7,11 @@ const PER_PAGE = 50;
 // Start with a crawlable batch instead of submitting the full upstream catalog
 // at once. Increase this only after Search Console shows the current batch is
 // being crawled and indexed consistently.
-const DEFAULT_MAX_SITEMAP_VIDEOS = 1000;
+const HARD_MAX_SITEMAP_VIDEOS = 250;
+const DEFAULT_MAX_SITEMAP_VIDEOS = HARD_MAX_SITEMAP_VIDEOS;
 const requestedMaxVideos = Number.parseInt(process.env.SITEMAP_MAX_VIDEOS || '', 10);
 const MAX_SITEMAP_VIDEOS = Number.isSafeInteger(requestedMaxVideos) && requestedMaxVideos > 0
-  ? requestedMaxVideos
+  ? Math.min(requestedMaxVideos, HARD_MAX_SITEMAP_VIDEOS)
   : DEFAULT_MAX_SITEMAP_VIDEOS;
 const MAX_PAGES = Math.ceil(MAX_SITEMAP_VIDEOS / PER_PAGE);
 const URLS_PER_SITEMAP = 5000; // Batas chunk
@@ -42,12 +43,14 @@ if (fs.existsSync(AI_SEO_FILE)) {
   if (!fs.existsSync(path.dirname(AI_SEO_FILE))) fs.mkdirSync(path.dirname(AI_SEO_FILE), { recursive: true });
 }
 
-let DEEPSEEK_API_KEY = null;
-try {
-  const envFile = fs.readFileSync(path.join(__dirname, '../.env'), 'utf-8');
-  const match = envFile.match(/DEEPSEEK_API_KEY=["']?(.*?)["']?$/m);
-  if (match) DEEPSEEK_API_KEY = match[1].trim();
-} catch (e) { }
+let DEEPSEEK_API_KEY = String(process.env.DEEPSEEK_API_KEY || '').trim() || null;
+if (!DEEPSEEK_API_KEY) {
+  try {
+    const envFile = fs.readFileSync(path.join(__dirname, '../.env'), 'utf-8');
+    const match = envFile.match(/DEEPSEEK_API_KEY=["']?(.*?)["']?$/m);
+    if (match) DEEPSEEK_API_KEY = match[1].trim();
+  } catch (e) { }
+}
 
 const isResumeMode = process.argv.includes('--resume');
 

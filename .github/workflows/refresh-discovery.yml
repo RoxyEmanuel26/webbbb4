@@ -2,31 +2,116 @@ name: Refresh discovery catalog
 
 on:
   schedule:
-    - cron: '17 3 * * *'
+    # Daily maintenance at 10:17 WIB. No AI expansion or new URLs.
+    - cron: "17 3 * * *"
+    # Controlled expansion every Monday at 10:47 WIB.
+    - cron: "47 3 * * 1"
   workflow_dispatch:
+    inputs:
+      mode:
+        description: Run maintenance only or curate the weekly batch
+        required: true
+        default: maintenance
+        type: choice
+        options:
+          - maintenance
+          - weekly
 
 permissions:
   contents: write
 
+concurrency:
+  group: nicevx-discovery-publication
+  cancel-in-progress: false
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+
       - run: npm ci
-      - name: Validate curated records and capture daily snapshot
+
+      - name: Select safe publication mode
+        id: publication
+        shell: bash
         env:
-          SITEMAP_AI_BATCH_SIZE: '0'
-          SITEMAP_REQUIRE_AI_CURATION: 'true'
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
+          REQUESTED_MODE: ${{ inputs.mode }}
+        run: |
+          mode="maintenance"
+          if [[ "$EVENT_SCHEDULE" == "47 3 * * 1" ]] || [[ "$EVENT_NAME" == "workflow_dispatch" && "$REQUESTED_MODE" == "weekly" ]]; then
+            mode="weekly"
+          fi
+          if [[ "$mode" == "weekly" ]]; then
+            echo "ai_batch=10" >> "$GITHUB_OUTPUT"
+          else
+            echo "ai_batch=0" >> "$GITHUB_OUTPUT"
+          fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+
+      - name: Require DeepSeek secret for weekly expansion
+        if: steps.publication.outputs.ai_batch != '0'
+        shell: bash
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          if [[ -z "$DEEPSEEK_API_KEY" ]]; then
+            echo "DEEPSEEK_API_KEY is required for weekly expansion."
+            exit 1
+          fi
+
+      - name: Refresh catalog and curate controlled candidates
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          SITEMAP_AI_BATCH_SIZE: ${{ steps.publication.outputs.ai_batch }}
+          SITEMAP_MAX_VIDEOS: "250"
+          SITEMAP_REQUIRE_AI_CURATION: "true"
         run: npm run sitemap
-      - name: Commit factual catalog changes
+
+      - name: Enforce catalog publication gates
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const catalog = require('./src/data/curated-video-catalog.json');
+          const videos = Array.isArray(catalog.videos) ? catalog.videos : [];
+          const ids = new Set(videos.map((video) => video.id));
+          const urls = new Set(videos.map((video) => video.canonicalUrl));
+          const invalid = videos.filter((video) =>
+            !video.id || !video.canonicalUrl || !video.title || !video.description ||
+            !video.sourceUrl || !video.embedUrl || !video.thumbnail ||
+            Number.isNaN(Date.parse(video.uploadDate)) || video.availability !== 'available'
+          );
+          if (videos.length > 250) throw new Error(`Catalog hard limit exceeded: ${videos.length}/250`);
+          if (ids.size !== videos.length) throw new Error('Duplicate video IDs detected');
+          if (urls.size !== videos.length) throw new Error('Duplicate canonical URLs detected');
+          if (invalid.length) throw new Error(`${invalid.length} catalog records failed required metadata gates`);
+          console.log(`Catalog gate passed: ${videos.length}/250 verified videos`);
+          NODE
+
+      - name: Build before publication
+        run: npm run build
+
+      - name: Commit verified publication
+        shell: bash
+        env:
+          PUBLICATION_MODE: ${{ steps.publication.outputs.mode }}
         run: |
           git config user.name "nicevx-discovery-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add public/sitemap.xml public/sitemaps src/data/curated-video-catalog.json src/data/discovery-snapshots.json
-          git diff --cached --quiet || git commit -m "seo: refresh curated discovery snapshot"
-          git push
+          git add public/sitemap.xml public/sitemaps src/data/ai-seo.json src/data/curated-video-catalog.json src/data/discovery-snapshots.json
+          if git diff --cached --quiet; then
+            echo "No factual catalog changes to publish."
+            exit 0
+          fi
+          git commit -m "seo: ${PUBLICATION_MODE} discovery catalog refresh"
+          git push origin HEAD:main
