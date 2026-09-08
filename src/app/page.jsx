@@ -66,7 +66,7 @@ export default async function Home({ searchParams }) {
   const catalog = getCatalogVideos();
   return (
     <Suspense fallback={<SkeletonGrid />}>
-      <HomeClient initialVideos={catalog} initialTrendTags={getTrendTags()} />
+      <HomeClient initialVideos={catalog} initialTrendTags={getTrendTags(10)} />
     </Suspense>
   );
 }

@@ -42,12 +42,12 @@ export default function HomeClient({ initialVideos = [], initialTrendTags = [] }
         <PersonalShelf catalog={initialVideos} />
         <div className="section-header">
           <div className="section-title-group">
-            <h1 className="section-title">Curated Adult Video Discovery — {sortLabel}</h1>
-            <span className="section-count">{initialVideos.length.toLocaleString()} verified videos</span>
+            <h1 className="section-title">Curated Adult Videos</h1>
+            <span className="section-count">{initialVideos.length.toLocaleString()} verified · {sortLabel}</span>
           </div>
-          <SortBar value={rawOrder} options={SORT_OPTIONS} />
+          <SortBar value={order} options={SORT_OPTIONS} />
         </div>
-        <p className="collection-lead">Every published item has a verified source, stable thumbnail, factual metadata, and a transparent discovery score. Trend claims appear only after measured snapshots exist.</p>
+        <p className="home-trust-note"><strong>Verified discovery:</strong> active source, factual metadata, stable thumbnail, and transparent ranking. Trends require measured snapshots.</p>
         {videos.length > 0 ? (
           <>
             <div className="video-grid">
