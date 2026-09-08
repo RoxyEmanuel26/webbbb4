@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-08T21:26:30.895Z",
+  "generatedAt": "2026-09-08T21:34:09.662Z",
   "videos": [
     {
       "id": "cEgfMy7ugCX",
@@ -126,11 +126,11 @@
       "length_sec": 781,
       "length_min": "13:01",
       "uploadDate": "2026-08-24T11:15:49.000Z",
-      "views": 4613,
+      "views": 4614,
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:25.885Z",
+      "syncedAt": "2026-09-08T21:34:05.444Z",
       "discoveryScore": 55.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -140,8 +140,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "vzlB36trcZK",
@@ -270,7 +271,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:26.888Z",
+      "syncedAt": "2026-09-08T21:34:06.443Z",
       "discoveryScore": 55.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -280,8 +281,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "XCMITjy845S",
@@ -408,11 +410,11 @@
       "length_sec": 1394,
       "length_min": "23:14",
       "uploadDate": "2026-08-26T03:17:44.000Z",
-      "views": 2991,
+      "views": 2992,
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:24.885Z",
+      "syncedAt": "2026-09-08T21:34:04.439Z",
       "discoveryScore": 53.8,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -422,8 +424,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "33nUbudu1ou",
@@ -554,7 +557,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.464Z",
+      "syncedAt": "2026-09-08T21:34:02.977Z",
       "discoveryScore": 52.9,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -564,8 +567,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "BL8rQmMHlY9",
@@ -696,7 +700,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:25.885Z",
+      "syncedAt": "2026-09-08T21:34:05.444Z",
       "discoveryScore": 52.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -706,8 +710,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "si2n07R3j9M",
@@ -834,11 +839,11 @@
       "length_sec": 492,
       "length_min": "8:12",
       "uploadDate": "2026-08-26T04:47:35.000Z",
-      "views": 1321,
+      "views": 1322,
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.464Z",
+      "syncedAt": "2026-09-08T21:34:02.977Z",
       "discoveryScore": 50.8,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -848,8 +853,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "sZZQTeGSfUt",
@@ -976,11 +982,11 @@
       "length_sec": 2452,
       "length_min": "40:52",
       "uploadDate": "2026-08-25T03:04:58.000Z",
-      "views": 21795,
+      "views": 21802,
       "rating": 4.78,
       "rate": 4.78,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.464Z",
+      "syncedAt": "2026-09-08T21:34:02.977Z",
       "discoveryScore": 50.7,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -990,8 +996,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "0NMc8qDNcda",
@@ -1123,7 +1130,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.885Z",
+      "syncedAt": "2026-09-08T21:34:03.440Z",
       "discoveryScore": 50.5,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -1133,8 +1140,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "KgikeMPIC9j",
@@ -1261,11 +1269,11 @@
       "length_sec": 5026,
       "length_min": "83:46",
       "uploadDate": "2026-08-25T14:22:43.000Z",
-      "views": 2037,
+      "views": 2038,
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.886Z",
+      "syncedAt": "2026-09-08T21:34:03.440Z",
       "discoveryScore": 50.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -1275,8 +1283,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "2MBlEluwNP8",
@@ -1404,7 +1413,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:29.885Z",
+      "syncedAt": "2026-09-08T21:34:09.445Z",
       "discoveryScore": 50.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -1414,8 +1423,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "8WlBsoH3LM4",
@@ -1541,11 +1551,11 @@
       "length_sec": 2976,
       "length_min": "49:36",
       "uploadDate": "2026-08-26T08:08:32.000Z",
-      "views": 12837,
+      "views": 12846,
       "rating": 4.63,
       "rate": 4.63,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:28.888Z",
+      "syncedAt": "2026-09-08T21:34:08.444Z",
       "discoveryScore": 49.4,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -1555,8 +1565,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "HOuAX4PFktx",
@@ -1682,11 +1693,11 @@
       "length_sec": 3642,
       "length_min": "60:42",
       "uploadDate": "2026-08-26T02:51:56.000Z",
-      "views": 19919,
+      "views": 19933,
       "rating": 4.62,
       "rate": 4.62,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:29.885Z",
+      "syncedAt": "2026-09-08T21:34:09.445Z",
       "discoveryScore": 49.1,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -1696,8 +1707,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "st9Sp8yT8Hu",
@@ -1828,7 +1840,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:27.885Z",
+      "syncedAt": "2026-09-08T21:34:07.445Z",
       "discoveryScore": 49,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -1838,8 +1850,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "ZsE7dZ7AI29",
@@ -1966,11 +1979,11 @@
       "length_sec": 2292,
       "length_min": "38:12",
       "uploadDate": "2026-08-25T01:44:55.000Z",
-      "views": 9858,
+      "views": 9862,
       "rating": 4.5,
       "rate": 4.5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:24.885Z",
+      "syncedAt": "2026-09-08T21:34:04.439Z",
       "discoveryScore": 48.2,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -1980,8 +1993,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "KE5bGdGTmcf",
@@ -2108,11 +2122,11 @@
       "length_sec": 1881,
       "length_min": "31:21",
       "uploadDate": "2026-08-26T05:51:04.000Z",
-      "views": 5512,
+      "views": 5517,
       "rating": 4.64,
       "rate": 4.64,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:24.885Z",
+      "syncedAt": "2026-09-08T21:34:04.439Z",
       "discoveryScore": 48,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -2122,8 +2136,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "Ltgq7NedGDz",
@@ -2250,11 +2265,11 @@
       "length_sec": 2163,
       "length_min": "36:03",
       "uploadDate": "2026-08-25T06:34:49.000Z",
-      "views": 3669,
+      "views": 3672,
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:26.888Z",
+      "syncedAt": "2026-09-08T21:34:06.443Z",
       "discoveryScore": 47.8,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -2264,8 +2279,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "vgqHxUXCRI0",
@@ -2391,11 +2407,11 @@
       "length_sec": 1191,
       "length_min": "19:51",
       "uploadDate": "2026-08-24T14:39:51.000Z",
-      "views": 1005,
+      "views": 1006,
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.464Z",
+      "syncedAt": "2026-09-08T21:34:02.977Z",
       "discoveryScore": 47.8,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -2405,8 +2421,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "fvRZHJTPIPf",
@@ -2537,7 +2554,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:26.888Z",
+      "syncedAt": "2026-09-08T21:34:06.443Z",
       "discoveryScore": 47.8,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -2547,8 +2564,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "Vw6ixkpAD3i",
@@ -2679,7 +2697,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:27.885Z",
+      "syncedAt": "2026-09-08T21:34:07.445Z",
       "discoveryScore": 47.8,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -2689,8 +2707,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "2QUrbN8nxiV",
@@ -2817,7 +2836,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:27.885Z",
+      "syncedAt": "2026-09-08T21:34:07.445Z",
       "discoveryScore": 47.8,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -2827,8 +2846,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "yZ0BPflfj22",
@@ -2953,11 +2973,11 @@
       "length_sec": 13005,
       "length_min": "216:45",
       "uploadDate": "2026-08-26T02:13:19.000Z",
-      "views": 2262,
+      "views": 2263,
       "rating": 4.44,
       "rate": 4.44,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.886Z",
+      "syncedAt": "2026-09-08T21:34:03.440Z",
       "discoveryScore": 47.4,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -2967,8 +2987,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "xdrsgfkKVMA",
@@ -3092,11 +3113,11 @@
       "length_sec": 7535,
       "length_min": "125:35",
       "uploadDate": "2026-08-25T01:27:19.000Z",
-      "views": 7997,
+      "views": 8001,
       "rating": 4.4,
       "rate": 4.4,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:25.885Z",
+      "syncedAt": "2026-09-08T21:34:05.444Z",
       "discoveryScore": 46.5,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -3106,8 +3127,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "765vAaYmSgi",
@@ -3238,7 +3260,7 @@
       "rating": 4.29,
       "rate": 4.29,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:25.885Z",
+      "syncedAt": "2026-09-08T21:34:05.445Z",
       "discoveryScore": 45.7,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -3248,8 +3270,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "3VmKCPcu8qx",
@@ -3374,11 +3397,11 @@
       "length_sec": 2139,
       "length_min": "35:39",
       "uploadDate": "2026-08-25T03:20:06.000Z",
-      "views": 9966,
+      "views": 9974,
       "rating": 4.26,
       "rate": 4.26,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:25.885Z",
+      "syncedAt": "2026-09-08T21:34:05.444Z",
       "discoveryScore": 45.4,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -3388,8 +3411,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "44Ed1s3SnZw",
@@ -3517,7 +3541,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:29.885Z",
+      "syncedAt": "2026-09-08T21:34:09.445Z",
       "discoveryScore": 45.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -3527,8 +3551,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "8Cy1OG7g0wy",
@@ -3659,7 +3684,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:25.885Z",
+      "syncedAt": "2026-09-08T21:34:05.444Z",
       "discoveryScore": 45.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -3669,8 +3694,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "afl3fHa5YFp",
@@ -3797,11 +3823,11 @@
       "length_sec": 2113,
       "length_min": "35:13",
       "uploadDate": "2026-08-25T10:44:55.000Z",
-      "views": 6055,
+      "views": 6056,
       "rating": 4.56,
       "rate": 4.56,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:24.885Z",
+      "syncedAt": "2026-09-08T21:34:04.439Z",
       "discoveryScore": 45,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -3811,8 +3837,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "QtEW3nZcTex",
@@ -3939,11 +3966,11 @@
       "length_sec": 7203,
       "length_min": "120:03",
       "uploadDate": "2026-08-24T15:24:41.000Z",
-      "views": 13683,
+      "views": 13693,
       "rating": 4.17,
       "rate": 4.17,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:24.885Z",
+      "syncedAt": "2026-09-08T21:34:04.439Z",
       "discoveryScore": 44.9,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -3953,8 +3980,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "PwpO61NdTIe",
@@ -4082,7 +4110,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.886Z",
+      "syncedAt": "2026-09-08T21:34:03.440Z",
       "discoveryScore": 44.6,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -4092,8 +4120,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "zIrlrzsSEIV",
@@ -4220,11 +4249,11 @@
       "length_sec": 11584,
       "length_min": "193:04",
       "uploadDate": "2026-08-25T12:26:42.000Z",
-      "views": 21532,
+      "views": 21537,
       "rating": 4.11,
       "rate": 4.11,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.886Z",
+      "syncedAt": "2026-09-08T21:34:03.440Z",
       "discoveryScore": 44.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -4234,8 +4263,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "kwyI71ntRmm",
@@ -4366,7 +4396,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:29.885Z",
+      "syncedAt": "2026-09-08T21:34:09.445Z",
       "discoveryScore": 44.2,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -4376,8 +4406,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "pWRvfizlc9r",
@@ -4508,7 +4539,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:26.888Z",
+      "syncedAt": "2026-09-08T21:34:06.443Z",
       "discoveryScore": 44,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -4518,8 +4549,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "iFKbIV3rl6r",
@@ -4650,7 +4682,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:25.885Z",
+      "syncedAt": "2026-09-08T21:34:05.445Z",
       "discoveryScore": 44,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -4660,8 +4692,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "HPNEOiMbEBl",
@@ -4788,11 +4821,11 @@
       "length_sec": 236,
       "length_min": "3:56",
       "uploadDate": "2026-08-24T11:12:35.000Z",
-      "views": 29026,
+      "views": 29055,
       "rating": 4.09,
       "rate": 4.09,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:25.885Z",
+      "syncedAt": "2026-09-08T21:34:05.444Z",
       "discoveryScore": 43.9,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -4802,8 +4835,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "vIg9mObUNcl",
@@ -4930,11 +4964,11 @@
       "length_sec": 3148,
       "length_min": "52:28",
       "uploadDate": "2026-08-25T06:30:34.000Z",
-      "views": 5060,
+      "views": 5065,
       "rating": 4.74,
       "rate": 4.74,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:28.888Z",
+      "syncedAt": "2026-09-08T21:34:08.444Z",
       "discoveryScore": 43.9,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -4944,8 +4978,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "obH63uA2ghu",
@@ -5072,11 +5107,11 @@
       "length_sec": 609,
       "length_min": "10:09",
       "uploadDate": "2026-08-25T04:48:44.000Z",
-      "views": 9715,
+      "views": 9732,
       "rating": 4.33,
       "rate": 4.33,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:27.885Z",
+      "syncedAt": "2026-09-08T21:34:07.445Z",
       "discoveryScore": 43.8,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -5086,8 +5121,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "b37MStaBN06",
@@ -5218,7 +5254,7 @@
       "rating": 4.44,
       "rate": 4.44,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:28.888Z",
+      "syncedAt": "2026-09-08T21:34:08.444Z",
       "discoveryScore": 43.7,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -5228,8 +5264,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "MBM2vBlzCsd",
@@ -5354,11 +5391,11 @@
       "length_sec": 1246,
       "length_min": "20:46",
       "uploadDate": "2026-08-26T06:06:49.000Z",
-      "views": 11193,
+      "views": 11201,
       "rating": 4.03,
       "rate": 4.03,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.886Z",
+      "syncedAt": "2026-09-08T21:34:03.440Z",
       "discoveryScore": 43.5,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -5368,8 +5405,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "6jryMrPjtij",
@@ -5495,11 +5533,11 @@
       "length_sec": 5352,
       "length_min": "89:12",
       "uploadDate": "2026-08-25T15:56:57.000Z",
-      "views": 2465,
+      "views": 2467,
       "rating": 4.44,
       "rate": 4.44,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.464Z",
+      "syncedAt": "2026-09-08T21:34:02.977Z",
       "discoveryScore": 43.4,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -5509,8 +5547,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "FcINd360tFf",
@@ -5638,7 +5677,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.885Z",
+      "syncedAt": "2026-09-08T21:34:03.440Z",
       "discoveryScore": 43.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -5648,8 +5687,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "J9SKlPe4Wru",
@@ -5776,11 +5816,11 @@
       "length_sec": 2387,
       "length_min": "39:47",
       "uploadDate": "2026-08-26T02:43:21.000Z",
-      "views": 7733,
+      "views": 7735,
       "rating": 4.74,
       "rate": 4.74,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:26.888Z",
+      "syncedAt": "2026-09-08T21:34:06.443Z",
       "discoveryScore": 42.8,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -5790,8 +5830,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "YFQ6iUe0vmN",
@@ -5918,7 +5959,7 @@
       "rating": 4.55,
       "rate": 4.55,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:29.885Z",
+      "syncedAt": "2026-09-08T21:34:09.445Z",
       "discoveryScore": 42.5,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -5928,8 +5969,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "inII9ZUZzxi",
@@ -6060,7 +6102,7 @@
       "rating": 4.44,
       "rate": 4.44,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:28.888Z",
+      "syncedAt": "2026-09-08T21:34:08.444Z",
       "discoveryScore": 42.4,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -6070,8 +6112,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "cIG0retUIzC",
@@ -6198,11 +6241,11 @@
       "length_sec": 333,
       "length_min": "5:33",
       "uploadDate": "2026-09-07T05:52:35.000Z",
-      "views": 428,
+      "views": 437,
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.243Z",
+      "syncedAt": "2026-09-08T21:34:02.765Z",
       "discoveryScore": 42.2,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -6212,8 +6255,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "L98UAG8F0sJ",
@@ -6344,7 +6388,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.885Z",
+      "syncedAt": "2026-09-08T21:34:03.440Z",
       "discoveryScore": 41.8,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -6354,8 +6398,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "4fXoI6C6Nwb",
@@ -6482,11 +6527,11 @@
       "length_sec": 7747,
       "length_min": "129:07",
       "uploadDate": "2026-08-25T03:20:59.000Z",
-      "views": 2658,
+      "views": 2660,
       "rating": 4.17,
       "rate": 4.17,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:26.888Z",
+      "syncedAt": "2026-09-08T21:34:06.443Z",
       "discoveryScore": 41.7,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -6496,8 +6541,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "Z8tUDuC149l",
@@ -6624,11 +6670,11 @@
       "length_sec": 974,
       "length_min": "16:14",
       "uploadDate": "2026-09-07T12:29:19.000Z",
-      "views": 537,
+      "views": 551,
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.243Z",
+      "syncedAt": "2026-09-08T21:34:02.765Z",
       "discoveryScore": 40.7,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -6638,8 +6684,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "fEpHvJRZhju",
@@ -6765,11 +6812,11 @@
       "length_sec": 2942,
       "length_min": "49:02",
       "uploadDate": "2026-08-24T13:16:28.000Z",
-      "views": 3227,
+      "views": 3229,
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:26.888Z",
+      "syncedAt": "2026-09-08T21:34:06.444Z",
       "discoveryScore": 40.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -6779,8 +6826,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "PAB2pum4FK3",
@@ -6911,7 +6959,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:26.888Z",
+      "syncedAt": "2026-09-08T21:34:06.443Z",
       "discoveryScore": 40.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -6921,8 +6969,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "xbEmzpXm0xy",
@@ -7053,7 +7102,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:24.885Z",
+      "syncedAt": "2026-09-08T21:34:04.439Z",
       "discoveryScore": 40.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -7063,8 +7112,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "t3xybhQqrGF",
@@ -7195,7 +7245,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.464Z",
+      "syncedAt": "2026-09-08T21:34:02.977Z",
       "discoveryScore": 40.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -7205,8 +7255,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "iR9OKeKQNL8",
@@ -7334,7 +7385,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:26.888Z",
+      "syncedAt": "2026-09-08T21:34:06.443Z",
       "discoveryScore": 40.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -7344,8 +7395,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "DA2e2CnUYHM",
@@ -7476,7 +7528,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:24.885Z",
+      "syncedAt": "2026-09-08T21:34:04.439Z",
       "discoveryScore": 40.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -7486,8 +7538,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "HCeY8JT71eR",
@@ -7616,7 +7669,7 @@
       "rating": 5,
       "rate": 5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:27.885Z",
+      "syncedAt": "2026-09-08T21:34:07.445Z",
       "discoveryScore": 40.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -7626,8 +7679,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "2h9luQuA2Gc",
@@ -7755,11 +7809,11 @@
       "length_sec": 380,
       "length_min": "6:20",
       "uploadDate": "2026-08-25T05:14:41.000Z",
-      "views": 11031,
+      "views": 11037,
       "rating": 3.5,
       "rate": 3.5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:25.885Z",
+      "syncedAt": "2026-09-08T21:34:05.445Z",
       "discoveryScore": 39.9,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -7769,8 +7823,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "h2Znq34zXbS",
@@ -7897,11 +7952,11 @@
       "length_sec": 1164,
       "length_min": "19:24",
       "uploadDate": "2026-08-26T05:08:00.000Z",
-      "views": 5073,
+      "views": 5074,
       "rating": 2.73,
       "rate": 2.73,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.885Z",
+      "syncedAt": "2026-09-08T21:34:03.440Z",
       "discoveryScore": 39.9,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -7911,8 +7966,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "MjKoEn3l2mj",
@@ -8037,11 +8093,11 @@
       "length_sec": 1174,
       "length_min": "19:34",
       "uploadDate": "2026-08-25T02:26:27.000Z",
-      "views": 2693,
+      "views": 2695,
       "rating": 4.44,
       "rate": 4.44,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:29.885Z",
+      "syncedAt": "2026-09-08T21:34:09.445Z",
       "discoveryScore": 39.9,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -8051,8 +8107,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "bHGaQqm85WE",
@@ -8179,11 +8236,11 @@
       "length_sec": 1105,
       "length_min": "18:25",
       "uploadDate": "2026-08-25T03:42:56.000Z",
-      "views": 16644,
+      "views": 16652,
       "rating": 4.38,
       "rate": 4.38,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:24.885Z",
+      "syncedAt": "2026-09-08T21:34:04.439Z",
       "discoveryScore": 38.8,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -8193,8 +8250,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "HbXlyNQxKw2",
@@ -8321,11 +8379,11 @@
       "length_sec": 1523,
       "length_min": "25:23",
       "uploadDate": "2026-08-25T06:13:31.000Z",
-      "views": 6298,
+      "views": 6301,
       "rating": 3.68,
       "rate": 3.68,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:28.888Z",
+      "syncedAt": "2026-09-08T21:34:08.444Z",
       "discoveryScore": 36.7,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -8335,8 +8393,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "aoiKxlCwSEq",
@@ -8463,22 +8522,23 @@
       "length_sec": 2870,
       "length_min": "47:50",
       "uploadDate": "2026-09-07T03:33:54.000Z",
-      "views": 799,
+      "views": 814,
       "rating": 4.09,
       "rate": 4.09,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.243Z",
-      "discoveryScore": 35.6,
+      "syncedAt": "2026-09-08T21:34:02.766Z",
+      "discoveryScore": 36.4,
       "scoreBreakdown": {
         "viewGrowth7d": null,
         "ratingPercentile": 9.3,
-        "categoryViewsPercentile": 6.3,
+        "categoryViewsPercentile": 7.1,
         "freshness": 10,
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "1caVWwSZjlZ",
@@ -8605,11 +8665,11 @@
       "length_sec": 441,
       "length_min": "7:21",
       "uploadDate": "2026-08-26T09:36:19.000Z",
-      "views": 2853,
+      "views": 2854,
       "rating": 4,
       "rate": 4,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:26.888Z",
+      "syncedAt": "2026-09-08T21:34:06.443Z",
       "discoveryScore": 35.5,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -8619,8 +8679,295 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
+    },
+    {
+      "id": "WzgGdUkTpgq",
+      "canonicalSlug": "claudia-valentine-and-rilee-marks-WzgGdUkTpgq",
+      "canonicalUrl": "https://www.nicevx.com/video/claudia-valentine-and-rilee-marks-WzgGdUkTpgq",
+      "title": "Claudia Valentine And Rilee Marks",
+      "description": "Claudia Valentine and Rilee Marks heat up a massage session with toys and lesbian masturbation. Watch the blonde stepmom duo in this steamy teen threesome.",
+      "tags": [
+        "claudia valentine",
+        "rilee marks",
+        "lesbians",
+        "massage",
+        "toys",
+        "masturbation",
+        "blonde",
+        "stepmom"
+      ],
+      "keywords": "claudia valentine, rilee marks, lesbians, massage, toys, masturbation, blonde, stepmom",
+      "category": "lesbians",
+      "thumbnail": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/9_360.jpg",
+      "default_thumb": {
+        "size": "big",
+        "width": 640,
+        "height": 360,
+        "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/9_360.jpg"
+      },
+      "thumbs": [
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/1_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/2_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/3_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/4_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/5_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/6_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/7_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/8_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/9_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/10_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/11_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/12_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/13_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/14_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/15_360.jpg"
+        }
+      ],
+      "embedUrl": "https://www.eporner.com/embed/WzgGdUkTpgq/",
+      "embed": "https://www.eporner.com/embed/WzgGdUkTpgq/",
+      "sourceUrl": "https://www.eporner.com/hd-porn/WzgGdUkTpgq/Claudia-Valentine-And-Rilee-Marks/",
+      "durationSeconds": 1448,
+      "duration": "PT24M8S",
+      "length_sec": 1448,
+      "length_min": "24:08",
+      "uploadDate": "2026-09-07T08:49:23.000Z",
+      "views": 213,
+      "rating": 4.69,
+      "rate": 4.69,
+      "availability": "available",
+      "syncedAt": "2026-09-08T21:34:02.766Z",
+      "discoveryScore": 35.2,
+      "scoreBreakdown": {
+        "viewGrowth7d": null,
+        "ratingPercentile": 15.3,
+        "categoryViewsPercentile": 0,
+        "freshness": 10,
+        "metadataCompleteness": 10
+      },
+      "viewGrowth": null,
+      "viewGrowth7d": null,
+      "trendStatus": "insufficient-data",
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
+    },
+    {
+      "id": "gAuUqjUhVMU",
+      "canonicalSlug": "dp-airtight-milf-gAuUqjUhVMU",
+      "canonicalUrl": "https://www.nicevx.com/video/dp-airtight-milf-gAuUqjUhVMU",
+      "title": "Dp Airtight Milf",
+      "description": "A tight MILF endures a hardcore DP airtight session with big dicks, showcasing mature anal and interracial action. Blonde and busty, she takes a massive cumshot.",
+      "tags": [
+        "big tits",
+        "milf",
+        "blowjob",
+        "blonde",
+        "mature",
+        "anal",
+        "interracial",
+        "cumshot"
+      ],
+      "keywords": "big tits, milf, blowjob, blonde, mature, anal, interracial, cumshot",
+      "category": "double penetration",
+      "thumbnail": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/8_360.jpg",
+      "default_thumb": {
+        "size": "big",
+        "width": 640,
+        "height": 360,
+        "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/8_360.jpg"
+      },
+      "thumbs": [
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/1_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/2_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/3_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/4_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/5_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/6_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/7_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/8_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/9_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/10_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/11_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/12_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/13_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/14_360.jpg"
+        },
+        {
+          "size": "big",
+          "width": 640,
+          "height": 360,
+          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/15_360.jpg"
+        }
+      ],
+      "embedUrl": "https://www.eporner.com/embed/gAuUqjUhVMU/",
+      "embed": "https://www.eporner.com/embed/gAuUqjUhVMU/",
+      "sourceUrl": "https://www.eporner.com/hd-porn/gAuUqjUhVMU/Dp-Airtight-Milf/",
+      "durationSeconds": 1533,
+      "duration": "PT25M33S",
+      "length_sec": 1533,
+      "length_min": "25:33",
+      "uploadDate": "2026-09-07T04:37:38.000Z",
+      "views": 6642,
+      "rating": 3.89,
+      "rate": 3.89,
+      "availability": "available",
+      "syncedAt": "2026-09-08T21:34:02.977Z",
+      "discoveryScore": 35.1,
+      "scoreBreakdown": {
+        "viewGrowth7d": null,
+        "ratingPercentile": 7.6,
+        "categoryViewsPercentile": 7.5,
+        "freshness": 10,
+        "metadataCompleteness": 10
+      },
+      "viewGrowth": null,
+      "viewGrowth7d": null,
+      "trendStatus": "insufficient-data",
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "Fw8gd0Bb43j",
@@ -8750,302 +9097,19 @@
       "rating": 3.89,
       "rate": 3.89,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:27.885Z",
-      "discoveryScore": 35.3,
+      "syncedAt": "2026-09-08T21:34:07.445Z",
+      "discoveryScore": 35.1,
       "scoreBreakdown": {
         "viewGrowth7d": null,
-        "ratingPercentile": 7.8,
+        "ratingPercentile": 7.6,
         "categoryViewsPercentile": 7.9,
         "freshness": 9.6,
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
-    },
-    {
-      "id": "WzgGdUkTpgq",
-      "canonicalSlug": "claudia-valentine-and-rilee-marks-WzgGdUkTpgq",
-      "canonicalUrl": "https://www.nicevx.com/video/claudia-valentine-and-rilee-marks-WzgGdUkTpgq",
-      "title": "Claudia Valentine And Rilee Marks",
-      "description": "Claudia Valentine and Rilee Marks heat up a massage session with toys and lesbian masturbation. Watch the blonde stepmom duo in this steamy teen threesome.",
-      "tags": [
-        "claudia valentine",
-        "rilee marks",
-        "lesbians",
-        "massage",
-        "toys",
-        "masturbation",
-        "blonde",
-        "stepmom"
-      ],
-      "keywords": "claudia valentine, rilee marks, lesbians, massage, toys, masturbation, blonde, stepmom",
-      "category": "lesbians",
-      "thumbnail": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/9_360.jpg",
-      "default_thumb": {
-        "size": "big",
-        "width": 640,
-        "height": 360,
-        "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/9_360.jpg"
-      },
-      "thumbs": [
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/1_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/2_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/3_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/4_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/5_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/6_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/7_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/8_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/9_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/10_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/11_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/12_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/13_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/14_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18170545/15_360.jpg"
-        }
-      ],
-      "embedUrl": "https://www.eporner.com/embed/WzgGdUkTpgq/",
-      "embed": "https://www.eporner.com/embed/WzgGdUkTpgq/",
-      "sourceUrl": "https://www.eporner.com/hd-porn/WzgGdUkTpgq/Claudia-Valentine-And-Rilee-Marks/",
-      "durationSeconds": 1448,
-      "duration": "PT24M8S",
-      "length_sec": 1448,
-      "length_min": "24:08",
-      "uploadDate": "2026-09-07T08:49:23.000Z",
-      "views": 209,
-      "rating": 4.69,
-      "rate": 4.69,
-      "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.243Z",
-      "discoveryScore": 35.2,
-      "scoreBreakdown": {
-        "viewGrowth7d": null,
-        "ratingPercentile": 15.3,
-        "categoryViewsPercentile": 0,
-        "freshness": 10,
-        "metadataCompleteness": 10
-      },
-      "viewGrowth": null,
-      "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
-    },
-    {
-      "id": "gAuUqjUhVMU",
-      "canonicalSlug": "dp-airtight-milf-gAuUqjUhVMU",
-      "canonicalUrl": "https://www.nicevx.com/video/dp-airtight-milf-gAuUqjUhVMU",
-      "title": "Dp Airtight Milf",
-      "description": "A tight MILF endures a hardcore DP airtight session with big dicks, showcasing mature anal and interracial action. Blonde and busty, she takes a massive cumshot.",
-      "tags": [
-        "big tits",
-        "milf",
-        "blowjob",
-        "blonde",
-        "mature",
-        "anal",
-        "interracial",
-        "cumshot"
-      ],
-      "keywords": "big tits, milf, blowjob, blonde, mature, anal, interracial, cumshot",
-      "category": "double penetration",
-      "thumbnail": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/8_360.jpg",
-      "default_thumb": {
-        "size": "big",
-        "width": 640,
-        "height": 360,
-        "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/8_360.jpg"
-      },
-      "thumbs": [
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/1_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/2_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/3_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/4_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/5_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/6_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/7_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/8_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/9_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/10_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/11_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/12_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/13_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/14_360.jpg"
-        },
-        {
-          "size": "big",
-          "width": 640,
-          "height": 360,
-          "src": "https://static-ca-cdn.eporner.com/thumbs/static4/1/18/181/18181993/15_360.jpg"
-        }
-      ],
-      "embedUrl": "https://www.eporner.com/embed/gAuUqjUhVMU/",
-      "embed": "https://www.eporner.com/embed/gAuUqjUhVMU/",
-      "sourceUrl": "https://www.eporner.com/hd-porn/gAuUqjUhVMU/Dp-Airtight-Milf/",
-      "durationSeconds": 1533,
-      "duration": "PT25M33S",
-      "length_sec": 1533,
-      "length_min": "25:33",
-      "uploadDate": "2026-09-07T04:37:38.000Z",
-      "views": 6558,
-      "rating": 3.85,
-      "rate": 3.85,
-      "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.464Z",
-      "discoveryScore": 35,
-      "scoreBreakdown": {
-        "viewGrowth7d": null,
-        "ratingPercentile": 7.5,
-        "categoryViewsPercentile": 7.5,
-        "freshness": 10,
-        "metadataCompleteness": 10
-      },
-      "viewGrowth": null,
-      "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "OMCYf4V2yGf",
@@ -9176,7 +9240,7 @@
       "rating": 3.18,
       "rate": 3.18,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:27.885Z",
+      "syncedAt": "2026-09-08T21:34:07.445Z",
       "discoveryScore": 34.6,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -9186,8 +9250,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "1dlWOy1brWW",
@@ -9317,7 +9382,7 @@
       "rating": 3.75,
       "rate": 3.75,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.885Z",
+      "syncedAt": "2026-09-08T21:34:03.440Z",
       "discoveryScore": 33,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -9327,8 +9392,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "LoTIKSs1HZX",
@@ -9456,7 +9522,7 @@
       "rating": 3.33,
       "rate": 3.33,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:24.885Z",
+      "syncedAt": "2026-09-08T21:34:04.439Z",
       "discoveryScore": 32.9,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -9466,8 +9532,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "sfiupbSp4by",
@@ -9598,7 +9665,7 @@
       "rating": 4,
       "rate": 4,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:29.885Z",
+      "syncedAt": "2026-09-08T21:34:09.445Z",
       "discoveryScore": 32.7,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -9608,8 +9675,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "0yarAgPFDYP",
@@ -9740,7 +9808,7 @@
       "rating": 2.5,
       "rate": 2.5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:27.885Z",
+      "syncedAt": "2026-09-08T21:34:07.445Z",
       "discoveryScore": 31.4,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -9750,8 +9818,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "gJOakTCF93n",
@@ -9880,7 +9949,7 @@
       "rating": 2.5,
       "rate": 2.5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:28.888Z",
+      "syncedAt": "2026-09-08T21:34:08.444Z",
       "discoveryScore": 31.4,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -9890,8 +9959,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "CRsu6zwrN6J",
@@ -10017,11 +10087,11 @@
       "length_sec": 168,
       "length_min": "2:48",
       "uploadDate": "2026-09-06T11:03:59.000Z",
-      "views": 679,
+      "views": 687,
       "rating": 4,
       "rate": 4,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.243Z",
+      "syncedAt": "2026-09-08T21:34:02.766Z",
       "discoveryScore": 30.4,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -10031,8 +10101,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "teLfN7tSZlD",
@@ -10159,11 +10230,11 @@
       "length_sec": 10186,
       "length_min": "169:46",
       "uploadDate": "2026-09-06T02:56:02.000Z",
-      "views": 1854,
+      "views": 1881,
       "rating": 4.17,
       "rate": 4.17,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.243Z",
+      "syncedAt": "2026-09-08T21:34:02.766Z",
       "discoveryScore": 30.2,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -10173,8 +10244,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "ZrTjwlg0MtG",
@@ -10305,7 +10377,7 @@
       "rating": 2.5,
       "rate": 2.5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:29.885Z",
+      "syncedAt": "2026-09-08T21:34:09.445Z",
       "discoveryScore": 29.9,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -10315,8 +10387,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "scfsIDqwVNg",
@@ -10443,11 +10516,11 @@
       "length_sec": 568,
       "length_min": "9:28",
       "uploadDate": "2026-08-26T05:43:37.000Z",
-      "views": 740,
+      "views": 741,
       "rating": 2.5,
       "rate": 2.5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:29.885Z",
+      "syncedAt": "2026-09-08T21:34:09.445Z",
       "discoveryScore": 29.5,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -10457,8 +10530,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "duNVtQHrsuq",
@@ -10583,11 +10657,11 @@
       "length_sec": 559,
       "length_min": "9:19",
       "uploadDate": "2026-09-07T05:22:21.000Z",
-      "views": 417,
+      "views": 428,
       "rating": 2.5,
       "rate": 2.5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.243Z",
+      "syncedAt": "2026-09-08T21:34:02.766Z",
       "discoveryScore": 28.8,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -10597,8 +10671,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "iZQnDevp1Ej",
@@ -10725,11 +10800,11 @@
       "length_sec": 727,
       "length_min": "12:07",
       "uploadDate": "2026-09-05T16:19:54.000Z",
-      "views": 381,
+      "views": 389,
       "rating": 0,
       "rate": 0,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.243Z",
+      "syncedAt": "2026-09-08T21:34:02.766Z",
       "discoveryScore": 28.8,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -10739,8 +10814,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "xRCYibRXa6f",
@@ -10864,11 +10940,11 @@
       "length_sec": 464,
       "length_min": "7:44",
       "uploadDate": "2026-09-07T10:20:41.000Z",
-      "views": 114,
+      "views": 117,
       "rating": 0,
       "rate": 0,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.464Z",
+      "syncedAt": "2026-09-08T21:34:02.977Z",
       "discoveryScore": 28.8,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -10878,8 +10954,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "m2OT1o6PWPy",
@@ -11006,11 +11083,11 @@
       "length_sec": 371,
       "length_min": "6:11",
       "uploadDate": "2026-08-27T06:08:18.000Z",
-      "views": 883,
+      "views": 884,
       "rating": 0,
       "rate": 0,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:27.885Z",
+      "syncedAt": "2026-09-08T21:34:07.445Z",
       "discoveryScore": 28.5,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -11020,8 +11097,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "xDpDuEpiiht",
@@ -11152,7 +11230,7 @@
       "rating": 0,
       "rate": 0,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:24.885Z",
+      "syncedAt": "2026-09-08T21:34:04.439Z",
       "discoveryScore": 28.5,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -11162,8 +11240,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "stT1phPsBYm",
@@ -11294,7 +11373,7 @@
       "rating": 0,
       "rate": 0,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:28.888Z",
+      "syncedAt": "2026-09-08T21:34:08.444Z",
       "discoveryScore": 28.5,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -11304,8 +11383,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "KruNRuzdO3E",
@@ -11432,7 +11512,7 @@
       "rating": 0,
       "rate": 0,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:30.886Z",
+      "syncedAt": "2026-09-08T21:34:09.649Z",
       "discoveryScore": 28.5,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -11442,8 +11522,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "SviwVdG0ma8",
@@ -11573,18 +11654,19 @@
       "rating": 0,
       "rate": 0,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:29.885Z",
-      "discoveryScore": 28.1,
+      "syncedAt": "2026-09-08T21:34:09.445Z",
+      "discoveryScore": 27.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
         "ratingPercentile": 1.4,
-        "categoryViewsPercentile": 7.1,
+        "categoryViewsPercentile": 6.3,
         "freshness": 9.6,
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "s7kl1ufrQWY",
@@ -11711,22 +11793,23 @@
       "length_sec": 2676,
       "length_min": "44:36",
       "uploadDate": "2026-09-07T01:42:19.000Z",
-      "views": 352,
+      "views": 360,
       "rating": 3.75,
       "rate": 3.75,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.243Z",
+      "syncedAt": "2026-09-08T21:34:02.766Z",
       "discoveryScore": 26.9,
       "scoreBreakdown": {
         "viewGrowth7d": null,
         "ratingPercentile": 6.9,
         "categoryViewsPercentile": 0,
-        "freshness": 10,
+        "freshness": 9.9,
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "EO6qErdFTuz",
@@ -11857,7 +11940,7 @@
       "rating": 3.75,
       "rate": 3.75,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:27.885Z",
+      "syncedAt": "2026-09-08T21:34:07.445Z",
       "discoveryScore": 26.6,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -11867,8 +11950,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "L0fn4gsS9Ka",
@@ -11994,11 +12078,11 @@
       "length_sec": 7203,
       "length_min": "120:03",
       "uploadDate": "2026-09-07T08:53:19.000Z",
-      "views": 575,
+      "views": 579,
       "rating": 1.67,
       "rate": 1.67,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.243Z",
+      "syncedAt": "2026-09-08T21:34:02.766Z",
       "discoveryScore": 26.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -12008,8 +12092,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "FdeWp3hpGyP",
@@ -12140,7 +12225,7 @@
       "rating": 0,
       "rate": 0,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.464Z",
+      "syncedAt": "2026-09-08T21:34:02.977Z",
       "discoveryScore": 26,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -12150,8 +12235,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "qoGn7nTCVU8",
@@ -12280,7 +12366,7 @@
       "rating": 1.67,
       "rate": 1.67,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:28.888Z",
+      "syncedAt": "2026-09-08T21:34:08.444Z",
       "discoveryScore": 25.2,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -12290,8 +12376,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "caGwILukfNd",
@@ -12416,11 +12503,11 @@
       "length_sec": 344,
       "length_min": "5:44",
       "uploadDate": "2026-09-07T04:32:35.000Z",
-      "views": 125,
+      "views": 127,
       "rating": 2.5,
       "rate": 2.5,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:23.464Z",
+      "syncedAt": "2026-09-08T21:34:02.977Z",
       "discoveryScore": 24.3,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -12430,8 +12517,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "Bd6iZtNWoqs",
@@ -12561,7 +12649,7 @@
       "rating": 0,
       "rate": 0,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:28.888Z",
+      "syncedAt": "2026-09-08T21:34:08.444Z",
       "discoveryScore": 21.8,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -12571,8 +12659,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "IB3mM1GRoWZ",
@@ -12703,7 +12792,7 @@
       "rating": 0,
       "rate": 0,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:28.888Z",
+      "syncedAt": "2026-09-08T21:34:08.444Z",
       "discoveryScore": 21,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -12713,8 +12802,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     },
     {
       "id": "jN7X5FYYEDk",
@@ -12844,7 +12934,7 @@
       "rating": 0,
       "rate": 0,
       "availability": "available",
-      "syncedAt": "2026-09-08T21:26:25.885Z",
+      "syncedAt": "2026-09-08T21:34:05.444Z",
       "discoveryScore": 21,
       "scoreBreakdown": {
         "viewGrowth7d": null,
@@ -12854,8 +12944,9 @@
         "metadataCompleteness": 10
       },
       "viewGrowth": null,
+      "viewGrowth7d": null,
       "trendStatus": "insufficient-data",
-      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available."
+      "discoveryReason": "Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots."
     }
   ]
 }

@@ -458,12 +458,15 @@ function buildDiscoveryCatalog(videos) {
     const entries = history[video.id] || [];
     const previousEntry = entries.length >= 2 ? entries[entries.length - 2] : null;
     const viewGrowth = previousEntry ? Math.max(0, video.views - (Number(previousEntry.views) || 0)) : null;
+    const sevenDayCutoff = new Date(`${snapshotDate}T00:00:00.000Z`).getTime() - (6 * 86400000);
+    const sevenDayBaseline = entries.find((entry) => new Date(`${entry.date}T00:00:00.000Z`).getTime() <= sevenDayCutoff) || null;
+    const viewGrowth7d = sevenDayBaseline ? Math.max(0, video.views - (Number(sevenDayBaseline.views) || 0)) : null;
     const velocityValues = videos.map((candidate) => {
       const candidateEntries = history[candidate.id] || [];
-      const candidatePrevious = candidateEntries.length >= 2 ? candidateEntries[candidateEntries.length - 2] : null;
-      return candidatePrevious ? Math.max(0, candidate.views - (Number(candidatePrevious.views) || 0)) : 0;
+      const candidateBaseline = candidateEntries.find((entry) => new Date(`${entry.date}T00:00:00.000Z`).getTime() <= sevenDayCutoff) || null;
+      return candidateBaseline ? Math.max(0, candidate.views - (Number(candidateBaseline.views) || 0)) : 0;
     });
-    const velocity = previousEntry ? percentile(viewGrowth, velocityValues) : 0;
+    const velocity = sevenDayBaseline ? percentile(viewGrowth7d, velocityValues) : 0;
     const ratingPosition = percentile(video.rating, allRatings);
     const categoryViews = percentile(video.views, byCategory.get(video.category) || [video.views]);
     const ageDays = Math.max(0, (now - new Date(video.uploadDate).getTime()) / 86400000);
@@ -476,17 +479,18 @@ function buildDiscoveryCatalog(videos) {
       ...video,
       discoveryScore: score,
       scoreBreakdown: {
-        viewGrowth7d: previousEntry ? Math.round(velocity * 400) / 10 : null,
+        viewGrowth7d: sevenDayBaseline ? Math.round(velocity * 400) / 10 : null,
         ratingPercentile: Math.round(ratingPosition * 250) / 10,
         categoryViewsPercentile: Math.round(categoryViews * 150) / 10,
         freshness: Math.round(freshness * 100) / 10,
         metadataCompleteness: Math.round(completeness * 100) / 10,
       },
       viewGrowth,
+      viewGrowth7d,
       trendStatus: previousEntry ? (viewGrowth > 0 ? 'rising' : 'steady') : 'insufficient-data',
-      discoveryReason: previousEntry
-        ? `Ranked from measured view growth, source rating, category popularity, freshness, and metadata completeness.`
-        : `Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available.`,
+      discoveryReason: sevenDayBaseline
+        ? `Ranked from measured seven-day view growth, source rating, category popularity, freshness, and metadata completeness.`
+        : `Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots.`,
     };
   }).sort((a, b) => b.discoveryScore - a.discoveryScore || b.views - a.views);
 
@@ -538,7 +542,7 @@ function writeStaticSitemap(catalog) {
     { route: '/editorial-policy', changefreq: 'monthly', priority: '0.5', lastmod: now },
     { route: '/report', changefreq: 'monthly', priority: '0.5', lastmod: now },
     { route: '/about', changefreq: 'monthly', priority: '0.5', lastmod: now },
-    ...(catalog.some((video) => video.trendStatus !== 'insufficient-data')
+    ...(catalog.some((video) => Number.isFinite(video.viewGrowth7d))
       ? [{ route: '/trends/weekly', changefreq: 'weekly', priority: '0.7', lastmod: now }]
       : []),
     { route: '/terms', changefreq: 'monthly', priority: '0.3', lastmod: '2025-01-01' },
