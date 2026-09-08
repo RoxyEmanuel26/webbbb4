@@ -4,10 +4,6 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import AgeGateModal from '../components/AgeGateModal';
 
-import AdSocialBar from '../components/AdSocialBar';
-import AdPopunder from '../components/AdPopunder';
-
-
 import Script from 'next/script';
 
 export const runtime = 'edge';
@@ -15,10 +11,10 @@ export const runtime = 'edge';
 export const metadata = {
   metadataBase: new URL('https://www.nicevx.com/'),
   title: {
-    default: 'NICEVX — Free HD Porn Videos | 4M+ Videos',
+    default: 'NICEVX — Curated Adult Video Discovery',
     template: '%s',
   },
-  description: 'Watch free HD porn videos on NICEVX. Over 4 million videos updated daily — amateur, teen, MILF, Asian, hardcore and more in stunning 1080p HD quality.',
+  description: 'A curated adult video discovery catalog ranked from factual source signals, with transparent methodology and privacy-first local recommendations.',
   keywords: ['free porn videos', 'HD porn', 'adult videos', 'free sex videos', 'porn tube', 'NICEVX', 'watch porn online'],
   authors: [{ name: 'NICEVX' }],
   creator: 'NICEVX',
@@ -35,8 +31,8 @@ export const metadata = {
     },
   },
   openGraph: {
-    title: 'NICEVX — Free HD Porn Videos | 4M+ Videos',
-    description: 'Watch free HD porn videos on NICEVX. Over 4 million videos updated daily — amateur, teen, MILF, Asian, hardcore and more in stunning 1080p HD quality.',
+    title: 'NICEVX — Curated Adult Video Discovery',
+    description: 'A curated adult video discovery catalog ranked from factual source signals.',
     url: 'https://www.nicevx.com/',
     siteName: 'NICEVX',
     type: 'website',
@@ -52,8 +48,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'NICEVX — Free HD Porn Videos | 4M+ Videos',
-    description: 'Watch free HD porn videos on NICEVX. Over 4 million videos updated daily.',
+    title: 'NICEVX — Curated Adult Video Discovery',
+    description: 'A curated adult video discovery catalog ranked from factual source signals.',
     images: ['/favicon.png'],
   },
   icons: {
@@ -64,6 +60,7 @@ export const metadata = {
   alternates: {
     canonical: 'https://www.nicevx.com/',
   },
+  other: { rating: 'adult' },
 };
 
 export const viewport = {
@@ -79,7 +76,7 @@ export default function RootLayout({ children }) {
     '@type': 'WebSite',
     name: 'NICEVX',
     url: 'https://www.nicevx.com',
-    description: 'Free HD porn videos — over 4 million videos updated daily.',
+    description: 'Curated adult video discovery using factual source signals.',
     potentialAction: {
       '@type': 'SearchAction',
       target: {
@@ -127,8 +124,6 @@ export default function RootLayout({ children }) {
           data-key="VdAtEZ/WUhk9qsBEzocURw" 
           strategy="lazyOnload" 
         />
-        <AdSocialBar />
-        <AdPopunder />
         <AgeGateModal />
         <Navbar />
         <main>

@@ -36,7 +36,7 @@ function fixEncoding(str) {
     .replace(/&gt;/g, '>');
 }
 
-export default function SearchResultsShared({ query: propQuery, isCat, isTag, page: propPage, currentOrder: propOrder, seoTitle: propSeoTitle, seoDesc: propSeoDesc, seoCanonical: propSeoCanonical, seoQuery: propSeoQuery }) {
+export default function SearchResultsShared({ query: propQuery, isCat, isTag, page: propPage, currentOrder: propOrder, seoTitle: propSeoTitle, seoDesc: propSeoDesc, seoCanonical: propSeoCanonical, seoQuery: propSeoQuery, initialVideos = null }) {
   const searchParams = useSearchParams();
 
   const rawQuery = propQuery ?? (searchParams.get('query') || 'all');
@@ -54,12 +54,14 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
   const seoCanonical = propSeoCanonical ?? `https://www.nicevx.com/search?query=${encodeURIComponent(query)}`;
   const seoQuery = propSeoQuery ?? query;
 
-  const [videos, setVideos] = useState([]);
+  const hasServerCatalog = Array.isArray(initialVideos);
+  const [videos, setVideos] = useState(initialVideos || []);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [totalCount, setTotalCount] = useState(initialVideos?.length || 0);
+  const [loading, setLoading] = useState(!hasServerCatalog);
 
   const fetchData = useCallback(async () => {
+    if (hasServerCatalog) return;
     setLoading(true);
     try {
       const url = new URL(`${API_BASE}/search/`);
@@ -92,7 +94,7 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
     } finally {
       setLoading(false);
     }
-  }, [query, currentOrder, page]);
+  }, [query, currentOrder, page, hasServerCatalog]);
 
   useEffect(() => {
     fetchData();
@@ -162,7 +164,7 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
         ) : (
           <div className="empty-block">
             <p style={{ fontSize: '2rem' }}>🔍</p>
-            <p>No videos found for <strong style={{textTransform: 'capitalize'}}>"{query}"</strong></p>
+            <p>No videos found for <strong style={{textTransform: 'capitalize'}}>&quot;{query}&quot;</strong></p>
             <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
               Try different keywords or browse by category.
             </p>

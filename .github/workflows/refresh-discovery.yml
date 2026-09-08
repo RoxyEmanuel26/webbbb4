@@ -1,0 +1,32 @@
+name: Refresh discovery catalog
+
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Validate curated records and capture daily snapshot
+        env:
+          SITEMAP_AI_BATCH_SIZE: '0'
+          SITEMAP_REQUIRE_AI_CURATION: 'true'
+        run: npm run sitemap
+      - name: Commit factual catalog changes
+        run: |
+          git config user.name "nicevx-discovery-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/sitemap.xml public/sitemaps src/data/curated-video-catalog.json src/data/discovery-snapshots.json
+          git diff --cached --quiet || git commit -m "seo: refresh curated discovery snapshot"
+          git push

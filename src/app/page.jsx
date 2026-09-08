@@ -3,6 +3,7 @@ import { permanentRedirect } from 'next/navigation';
 import HomeClient from '@/components/HomeClient';
 import SkeletonGrid from '@/components/SkeletonGrid';
 import '../pages/Pages.css';
+import { getCatalogVideos, getTrendTags } from '@/lib/catalog';
 
 export const runtime = 'edge';
 
@@ -28,11 +29,11 @@ export async function generateMetadata({ searchParams }) {
     ? `Free HD ${sortLabel} Porn Videos ${currentYear} — NICEVX`
     : page > 1 
     ? `Free HD Porn Videos — Page ${page} — NICEVX`
-    : `NICEVX — Free HD Porn Videos ${currentYear} | 4M+ Videos`;
+    : `NICEVX — Curated Adult Video Discovery ${currentYear}`;
 
   const seoDesc = orderParam
     ? `Watch the ${sortLabel.toLowerCase()} free HD porn videos on NICEVX. Stream thousands of top-quality adult videos updated daily in ${currentYear}.`
-    : `Watch free HD porn videos on NICEVX. Over 4 million videos updated daily in ${currentYear} — amateur, teen, MILF, Asian, hardcore and more in stunning 1080p quality.`;
+    : `Discover a curated adult video catalog ranked from factual popularity, freshness, rating, and metadata signals. Updated from verified source records.`;
 
   let seoCanonical = orderParam
     ? `https://www.nicevx.com/?order=${orderParam}`
@@ -62,9 +63,10 @@ export default async function Home({ searchParams }) {
   // Parameter tracking (utm_, fbclid, dll) sekarang dihandle secara client-side di layout.jsx
   // untuk mencegah masalah cache dan error 500 di Cloudflare Pages.
 
+  const catalog = getCatalogVideos();
   return (
     <Suspense fallback={<SkeletonGrid />}>
-      <HomeClient />
+      <HomeClient initialVideos={catalog} initialTrendTags={getTrendTags()} />
     </Suspense>
   );
 }

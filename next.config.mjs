@@ -36,9 +36,7 @@ const nextConfig = {
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           {
             key: 'Referrer-Policy',
-            // no-referrer-when-downgrade: kirim full URL ke Adsterra via Referer header.
-            // Penting agar Adsterra deteksi konteks halaman → CPM lebih tinggi.
-            value: 'no-referrer-when-downgrade'
+            value: 'strict-origin-when-cross-origin'
           },
         ],
       },

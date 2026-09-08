@@ -8,8 +8,8 @@ import './Navbar.css';
 
 const NAV_LINKS = [
   { label: 'Home',       path: '/' },
+  { label: 'Collections', path: '/collections' },
   { label: 'Categories', path: '/cats/' },
-  { label: 'Free JAV',   path: 'https://www.missav-j.com', external: true },
 ];
 
 const Navbar = () => {

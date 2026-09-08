@@ -15,9 +15,11 @@ const MAX_SITEMAP_VIDEOS = Number.isSafeInteger(requestedMaxVideos) && requested
 const MAX_PAGES = Math.ceil(MAX_SITEMAP_VIDEOS / PER_PAGE);
 const URLS_PER_SITEMAP = 5000; // Batas chunk
 const BATCH_SIZE = 5;
-const DEFAULT_MAX_AI_PER_RUN = 50;
+// Expansion is opt-in. Existing curated records can refresh without spending
+// DeepSeek credits or publishing a large untested batch.
+const DEFAULT_MAX_AI_PER_RUN = 0;
 const requestedAiBatchSize = Number.parseInt(process.env.SITEMAP_AI_BATCH_SIZE || '', 10);
-const MAX_AI_PER_RUN = Number.isSafeInteger(requestedAiBatchSize) && requestedAiBatchSize > 0
+const MAX_AI_PER_RUN = Number.isSafeInteger(requestedAiBatchSize) && requestedAiBatchSize >= 0
   ? requestedAiBatchSize
   : DEFAULT_MAX_AI_PER_RUN;
 const REQUIRE_AI_CURATION = process.env.SITEMAP_REQUIRE_AI_CURATION !== 'false';
@@ -28,7 +30,11 @@ const API_TIMEOUT_MS = 15000;
 
 // Konfigurasi AI
 let aiProcessedCount = 0;
+const newlyCuratedIds = new Set();
 const AI_SEO_FILE = path.join(__dirname, '../src/data/ai-seo.json');
+const CATALOG_FILE = path.join(__dirname, '../src/data/curated-video-catalog.json');
+const SNAPSHOTS_FILE = path.join(__dirname, '../src/data/discovery-snapshots.json');
+const COLLECTIONS_FILE = path.join(__dirname, '../src/data/collections.json');
 let aiSeoData = {};
 if (fs.existsSync(AI_SEO_FILE)) {
   try { aiSeoData = JSON.parse(fs.readFileSync(AI_SEO_FILE, 'utf-8')); } catch (e) { }
@@ -61,6 +67,16 @@ let indexedVideoCount = 0;
 let skippedUncuratedCount = 0;
 let skippedSpamCount = 0;
 let skippedEncodingCount = 0;
+let skippedInvalidDateCount = 0;
+const catalogCandidates = [];
+const previouslyPublishedIds = new Set();
+
+if (fs.existsSync(sitemapsDir)) {
+  for (const file of fs.readdirSync(sitemapsDir).filter((name) => /^sitemap-video-\d+\.xml$/.test(name))) {
+    const xml = fs.readFileSync(path.join(sitemapsDir, file), 'utf8');
+    for (const match of xml.matchAll(/\/video\/[^<]*-([A-Za-z0-9]{11})<\/loc>/g)) previouslyPublishedIds.add(match[1]);
+  }
+}
 
 // Daftar kategori valid (top 80 berdasarkan allCategories.js)
 const VALID_CATEGORIES = [
@@ -306,6 +322,7 @@ Respond ONLY with raw JSON:
       priorityScore,
       ...(getPublicationDate(video) && { uploadDate: getPublicationDate(video) }),
     };
+    newlyCuratedIds.add(video.id);
     await persistAiSeoData();
     return aiSeoData[video.id];
   } catch (e) {
@@ -381,6 +398,101 @@ function escapeXml(unsafe) {
   });
 }
 
+function readJsonFile(file, fallback) {
+  try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch (_) { return fallback; }
+}
+
+async function writeJsonAtomic(file, value) {
+  const temporaryFile = `${file}.${process.pid}.${Date.now()}.tmp`;
+  fs.writeFileSync(temporaryFile, JSON.stringify(value, null, 2), 'utf8');
+  try {
+    await renameWithRetry(temporaryFile, file, `menyimpan ${path.basename(file)}`);
+  } finally {
+    if (fs.existsSync(temporaryFile)) fs.rmSync(temporaryFile, { force: true });
+  }
+}
+
+function percentile(value, values) {
+  if (values.length < 2) return 0.5;
+  const below = values.filter((candidate) => candidate < value).length;
+  const equal = values.filter((candidate) => candidate === value).length;
+  return (below + (equal - 1) / 2) / (values.length - 1);
+}
+
+function isoDuration(seconds) {
+  const duration = Number.parseInt(seconds, 10) || 0;
+  if (!duration) return null;
+  const hours = Math.floor(duration / 3600);
+  const minutes = Math.floor((duration % 3600) / 60);
+  const remainingSeconds = duration % 60;
+  return `PT${hours ? `${hours}H` : ''}${minutes ? `${minutes}M` : ''}${remainingSeconds ? `${remainingSeconds}S` : ''}`;
+}
+
+function buildDiscoveryCatalog(videos) {
+  const previous = readJsonFile(SNAPSHOTS_FILE, { history: {} });
+  const history = previous.history && typeof previous.history === 'object' ? previous.history : {};
+  const snapshotDate = new Date().toISOString().slice(0, 10);
+  const now = Date.now();
+  const allRatings = videos.map((video) => video.rating);
+  const byCategory = new Map();
+
+  for (const video of videos) {
+    const list = byCategory.get(video.category) || [];
+    list.push(video.views);
+    byCategory.set(video.category, list);
+  }
+
+  for (const video of videos) {
+    const entries = Array.isArray(history[video.id]) ? history[video.id] : [];
+    const withoutToday = entries.filter((entry) => entry.date !== snapshotDate);
+    history[video.id] = [...withoutToday, {
+      date: snapshotDate,
+      views: video.views,
+      rating: video.rating,
+      category: video.category,
+      availability: video.availability,
+    }].slice(-8);
+  }
+
+  const finalized = videos.map((video) => {
+    const entries = history[video.id] || [];
+    const previousEntry = entries.length >= 2 ? entries[entries.length - 2] : null;
+    const viewGrowth = previousEntry ? Math.max(0, video.views - (Number(previousEntry.views) || 0)) : null;
+    const velocityValues = videos.map((candidate) => {
+      const candidateEntries = history[candidate.id] || [];
+      const candidatePrevious = candidateEntries.length >= 2 ? candidateEntries[candidateEntries.length - 2] : null;
+      return candidatePrevious ? Math.max(0, candidate.views - (Number(candidatePrevious.views) || 0)) : 0;
+    });
+    const velocity = previousEntry ? percentile(viewGrowth, velocityValues) : 0;
+    const ratingPosition = percentile(video.rating, allRatings);
+    const categoryViews = percentile(video.views, byCategory.get(video.category) || [video.views]);
+    const ageDays = Math.max(0, (now - new Date(video.uploadDate).getTime()) / 86400000);
+    const freshness = Math.max(0, 1 - Math.min(ageDays, 365) / 365);
+    const completenessFields = [video.title, video.description, video.tags.length, video.thumbnail, video.embedUrl, video.durationSeconds, video.uploadDate, video.sourceUrl];
+    const completeness = completenessFields.filter(Boolean).length / completenessFields.length;
+    const score = Math.round((velocity * 40 + ratingPosition * 25 + categoryViews * 15 + freshness * 10 + completeness * 10) * 10) / 10;
+
+    return {
+      ...video,
+      discoveryScore: score,
+      scoreBreakdown: {
+        viewGrowth7d: previousEntry ? Math.round(velocity * 400) / 10 : null,
+        ratingPercentile: Math.round(ratingPosition * 250) / 10,
+        categoryViewsPercentile: Math.round(categoryViews * 150) / 10,
+        freshness: Math.round(freshness * 100) / 10,
+        metadataCompleteness: Math.round(completeness * 100) / 10,
+      },
+      viewGrowth,
+      trendStatus: previousEntry ? (viewGrowth > 0 ? 'rising' : 'steady') : 'insufficient-data',
+      discoveryReason: previousEntry
+        ? `Ranked from measured view growth, source rating, category popularity, freshness, and metadata completeness.`
+        : `Ranked from source rating, category popularity, freshness, and metadata completeness; trend data is not yet available.`,
+    };
+  }).sort((a, b) => b.discoveryScore - a.discoveryScore || b.views - a.views);
+
+  return { finalized, snapshots: { generatedAt: new Date().toISOString(), history } };
+}
+
 function writeChunk(index, urlsArray) {
   const xmlUrls = urlsArray.map(item => `
   <url>
@@ -402,31 +514,33 @@ function writeChunk(index, urlsArray) {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
 ${xmlUrls}
-</urlset>`;
+</urlset>`.replace(/^[ \t]+$/gm, '');
 
   fs.writeFileSync(path.join(sitemapOutputDir, `sitemap-video-${index}.xml`), xml, 'utf-8');
 }
 
-function writeStaticSitemap() {
+function writeStaticSitemap(catalog) {
   const now = new Date().toISOString();
-
-  // Baca ALL_CATEGORIES dari allCategories.js secara dinamis
-  // Sehingga setiap penambahan keyword baru otomatis masuk sitemap
-  const catFile = path.join(__dirname, '../src/data/allCategories.js');
-  const rawCat = fs.readFileSync(catFile, 'utf8');
-  let ALL_CATEGORIES = [];
-  const cjsRaw = rawCat.replace('export const ALL_CATEGORIES', 'ALL_CATEGORIES');
-  eval(cjsRaw);
-  // ALL_CATEGORIES sekarang tersedia sebagai variabel
-
-  // Generate slug sama dengan toSlug() di frontend
-  const toSlug = (name) => name.toLowerCase().replace(/\s+/g, '-');
-  const STATIC_CATEGORIES = ALL_CATEGORIES.map(c => toSlug(c.name));
-
+  const collections = readJsonFile(COLLECTIONS_FILE, []);
+  const wordCount = (value) => String(value || '').trim().split(/\s+/).filter(Boolean).length;
+  const collectionCount = (collection) => catalog.filter((video) => {
+    const signals = [video.category, ...(video.tags || [])].map((value) => String(value).toLowerCase());
+    return collection.aliases.some((alias) => signals.includes(alias.toLowerCase()));
+  }).length;
+  const qualifiedCollections = collections.filter((collection) => collectionCount(collection) >= 12 && wordCount(collection.editorialIntro) >= 400);
 
   const staticBaseUrls = [
     { route: '/', changefreq: 'daily', priority: '1.0', lastmod: now },
     { route: '/cats', changefreq: 'weekly', priority: '0.8', lastmod: now },
+    { route: '/collections', changefreq: 'weekly', priority: '0.8', lastmod: now },
+    { route: '/methodology', changefreq: 'monthly', priority: '0.5', lastmod: now },
+    { route: '/content-sources', changefreq: 'monthly', priority: '0.5', lastmod: now },
+    { route: '/editorial-policy', changefreq: 'monthly', priority: '0.5', lastmod: now },
+    { route: '/report', changefreq: 'monthly', priority: '0.5', lastmod: now },
+    { route: '/about', changefreq: 'monthly', priority: '0.5', lastmod: now },
+    ...(catalog.some((video) => video.trendStatus !== 'insufficient-data')
+      ? [{ route: '/trends/weekly', changefreq: 'weekly', priority: '0.7', lastmod: now }]
+      : []),
     { route: '/terms', changefreq: 'monthly', priority: '0.3', lastmod: '2025-01-01' },
     { route: '/privacy', changefreq: 'monthly', priority: '0.3', lastmod: '2025-01-01' },
     { route: '/dmca', changefreq: 'monthly', priority: '0.3', lastmod: '2025-01-01' },
@@ -439,9 +553,9 @@ function writeStaticSitemap() {
     <priority>${p.priority}</priority>
   </url>`).join('');
 
-  const categoryUrls = STATIC_CATEGORIES.map(cat => `
+  const categoryUrls = qualifiedCollections.map(collection => `
   <url>
-    <loc>${SITE_URL}/cat/${cat}</loc>
+    <loc>${SITE_URL}/collections/${collection.slug}</loc>
     <lastmod>${now}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -449,6 +563,7 @@ function writeStaticSitemap() {
 
   const staticXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${staticBaseUrls}\n${categoryUrls}\n</urlset>`;
   fs.writeFileSync(path.join(sitemapOutputDir, 'sitemap-static.xml'), staticXml, 'utf-8');
+  console.log(`[Quality Gate] ${qualifiedCollections.length}/${collections.length} collection hub masuk sitemap.`);
 }
 
 function writeIndexSitemap() {
@@ -497,17 +612,10 @@ async function publishSitemaps() {
 async function run() {
   console.log('dYs? Memulai pengumpulan data dari Eporner API...');
 
-  console.log('dYs? Mengambil daftar video yang dihapus dari Eporner...');
-  let removedIds = new Set();
-  try {
-    const removedData = await fetchJson(`${API_BASE}/video/removed/?format=json`, 'daftar video yang dihapus', { retries: 1 });
-    if (Array.isArray(removedData)) {
-      removedData.forEach(item => removedIds.add(item.id));
-      console.log(`dY~" Berhasil mengambil ${removedIds.size} ID video yang dihapus.`);
-    }
-  } catch (err) {
-    console.error('dY~! Gagal mengambil daftar video yang dihapus:', err.message);
-  }
+  // The provider's removed endpoint is a ~150 MB newline-delimited file, not
+  // JSON. Avoid downloading it on every run: records found in active search are
+  // available, while every older curated ID is revalidated through /video/id/.
+  const removedIds = new Set();
 
   initState();
 
@@ -550,6 +658,14 @@ async function run() {
 
             const aiData = aiSeoData[video.id];
 
+            // Existing AI output alone is not a publication authorization.
+            // Preserve the published seed and admit new URLs only when they
+            // were deliberately curated in this run.
+            if (!previouslyPublishedIds.has(video.id) && !newlyCuratedIds.has(video.id)) {
+              skippedUncuratedCount++;
+              continue;
+            }
+
             // GATEKEEPER: Buang video jika terdeteksi SPAM / Bukan Niche
             if (aiData && aiData.isSpam) {
               skippedSpamCount++;
@@ -580,6 +696,12 @@ async function run() {
               continue;
             }
 
+            const publicationDate = getPublicationDate(video);
+            if (!publicationDate || !video.embed || !video.default_thumb?.src || !video.url) {
+              skippedInvalidDateCount++;
+              continue;
+            }
+
             seenUrls.add(url);
             indexedVideoCount++;
 
@@ -591,10 +713,35 @@ async function run() {
               thumbnail_loc: video.default_thumb ? video.default_thumb.src : '',
               player_loc: video.embed,
               duration: video.length_sec || 0,
-              publication_date: (video.added && !isNaN(new Date(video.added).getTime()))
-                ? new Date(video.added).toISOString()
-                : new Date().toISOString(),
+              publication_date: publicationDate,
               tags: finalTags,
+            });
+
+            catalogCandidates.push({
+              id: video.id,
+              canonicalSlug: `${slugify(video.title)}-${video.id}`,
+              canonicalUrl: url,
+              title: video.title,
+              description: finalDesc,
+              tags: finalTags,
+              keywords: finalTags.join(', '),
+              category: aiData?.category || 'adult porn',
+              thumbnail: video.default_thumb.src,
+              default_thumb: video.default_thumb,
+              thumbs: Array.isArray(video.thumbs) ? video.thumbs : [],
+              embedUrl: video.embed,
+              embed: video.embed,
+              sourceUrl: video.url,
+              durationSeconds: Number.parseInt(video.length_sec, 10) || 0,
+              duration: isoDuration(video.length_sec),
+              length_sec: Number.parseInt(video.length_sec, 10) || 0,
+              length_min: video.length_min || '',
+              uploadDate: publicationDate,
+              views: Number.parseInt(video.views, 10) || 0,
+              rating: Number.parseFloat(video.rate) || 0,
+              rate: Number.parseFloat(video.rate) || 0,
+              availability: 'available',
+              syncedAt: new Date().toISOString(),
             });
 
             if (currentChunkUrls.length >= URLS_PER_SITEMAP) {
@@ -609,18 +756,98 @@ async function run() {
     }
   }
 
+  // A curated video does not become unavailable merely because it moved beyond
+  // the upstream "latest" window. Revalidate every previously curated ID via
+  // the detail endpoint so refreshes preserve good URLs and remove only items
+  // that are actually unavailable or fail a factual metadata gate.
+  const catalogIds = new Set(catalogCandidates.map((video) => video.id));
+  const existingIds = [...previouslyPublishedIds]
+    .filter((id) => hasUsableCuration(aiSeoData[id]))
+    .filter((id) => !catalogIds.has(id));
+
+  for (let offset = 0; offset < existingIds.length && indexedVideoCount < MAX_SITEMAP_VIDEOS; offset += 10) {
+    const ids = existingIds.slice(offset, offset + 10);
+    const details = await Promise.all(ids.map((id) =>
+      fetchJson(`${API_BASE}/video/id/?id=${id}&thumbsize=big&format=json`, `validasi video ${id}`, { retries: 2, silent: true })
+        .catch(() => null)
+    ));
+
+    for (const rawVideo of details) {
+      if (indexedVideoCount >= MAX_SITEMAP_VIDEOS) break;
+      if (!rawVideo?.id || removedIds.has(rawVideo.id)) continue;
+      const video = normalizeVideo(rawVideo);
+      const entry = aiSeoData[video.id];
+      const publicationDate = getPublicationDate(video) || entry?.uploadDate || null;
+      const description = entry?.seoDescription?.trim();
+      const tags = Array.isArray(entry?.cleanedTags) ? entry.cleanedTags.slice(0, 32) : [];
+      const url = `${SITE_URL}/video/${slugify(video.title)}-${video.id}`;
+      if (!publicationDate || !video.embed || !video.default_thumb?.src || !video.url || seenUrls.has(url)) continue;
+      if ([video.title, description, ...tags].some(hasSuspiciousEncoding)) continue;
+
+      seenUrls.add(url);
+      indexedVideoCount++;
+      currentChunkUrls.push({
+        url,
+        priority: entry.priorityScore || 0.8,
+        title: video.title,
+        description,
+        thumbnail_loc: video.default_thumb.src,
+        player_loc: video.embed,
+        duration: video.length_sec || 0,
+        publication_date: publicationDate,
+        tags,
+      });
+      catalogCandidates.push({
+        id: video.id,
+        canonicalSlug: `${slugify(video.title)}-${video.id}`,
+        canonicalUrl: url,
+        title: video.title,
+        description,
+        tags,
+        keywords: tags.join(', '),
+        category: entry.category || 'adult porn',
+        thumbnail: video.default_thumb.src,
+        default_thumb: video.default_thumb,
+        thumbs: Array.isArray(video.thumbs) ? video.thumbs : [],
+        embedUrl: video.embed,
+        embed: video.embed,
+        sourceUrl: video.url,
+        durationSeconds: Number.parseInt(video.length_sec, 10) || 0,
+        duration: isoDuration(video.length_sec),
+        length_sec: Number.parseInt(video.length_sec, 10) || 0,
+        length_min: video.length_min || '',
+        uploadDate: publicationDate,
+        views: Number.parseInt(video.views, 10) || 0,
+        rating: Number.parseFloat(video.rate) || 0,
+        rate: Number.parseFloat(video.rate) || 0,
+        availability: 'available',
+        syncedAt: new Date().toISOString(),
+      });
+    }
+  }
+
+  const { finalized, snapshots } = buildDiscoveryCatalog(catalogCandidates);
+  const scoreById = new Map(finalized.map((video) => [video.id, video.discoveryScore]));
+  currentChunkUrls = currentChunkUrls.map((item) => {
+    const id = item.url.match(/-([A-Za-z0-9]{11})$/)?.[1];
+    const score = scoreById.get(id) || 0;
+    return { ...item, priority: Math.max(0.5, Math.min(0.9, 0.5 + score / 250)).toFixed(1) };
+  });
+
   if (currentChunkUrls.length > 0) {
     writeChunk(currentChunkIndex, currentChunkUrls);
     console.log(`💾 Tersimpan: sitemap-video-${currentChunkIndex}.xml (${currentChunkUrls.length} URLs)`);
   }
 
   console.log('📦 Membuat sitemap-static.xml dan Index Sitemap...');
-  writeStaticSitemap();
+  writeStaticSitemap(finalized);
   writeIndexSitemap();
   await publishSitemaps();
+  await writeJsonAtomic(CATALOG_FILE, { generatedAt: new Date().toISOString(), videos: finalized });
+  await writeJsonAtomic(SNAPSHOTS_FILE, snapshots);
 
   console.log(`✅ Total URL video untuk sitemap: ${indexedVideoCount} (batas: ${MAX_SITEMAP_VIDEOS})`);
-  console.log(`🧠 Kurasi AI: ${indexedVideoCount} diterbitkan, ${skippedUncuratedCount} belum layak, ${skippedSpamCount} spam, ${skippedEncodingCount} encoding rusak.`);
+  console.log(`🧠 Kurasi AI: ${indexedVideoCount} diterbitkan, ${skippedUncuratedCount} belum layak, ${skippedSpamCount} spam, ${skippedEncodingCount} encoding rusak, ${skippedInvalidDateCount} metadata wajib tidak valid.`);
   console.log('🎉 Selesai 100%! Semua file tersimpan dengan aman.');
 }
 

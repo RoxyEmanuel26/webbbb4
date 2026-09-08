@@ -56,7 +56,7 @@ export default function NotFound() {
           padding: '0 10px'
         }}>
           We are currently performing scheduled maintenance and server upgrades. 
-          Some pages might be temporarily unavailable. We'll be back online shortly!
+          Some pages might be temporarily unavailable. We&apos;ll be back online shortly!
         </p>
 
         {/* Maintenance Image */}

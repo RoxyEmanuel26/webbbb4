@@ -3,22 +3,8 @@ import Link from 'next/link';
 import { Flame, ExternalLink } from 'lucide-react';
 import './Footer.css';
 
-const HOT_SEARCHES = [
-  { label: 'teen',        href: '/cat/teen' },
-  { label: 'milf',        href: '/cat/milf' },
-  { label: 'anal',        href: '/cat/anal' },
-  { label: 'lesbian',     href: '/cat/lesbian' },
-  { label: 'threesome',   href: '/cat/threesome' },
-  { label: 'pov',         href: '/cat/pov' },
-  { label: 'amateur',     href: '/cat/amateur' },
-  { label: 'hardcore',    href: '/cat/hardcore' },
-  { label: 'blowjob',     href: '/cat/blowjob' },
-  { label: 'creampie',    href: '/cat/creampie' },
-  { label: 'asian',       href: '/cat/asian' },
-  { label: 'latina',      href: '/cat/latina' },
-  { label: 'bbw',         href: '/cat/bbw' },
-  { label: 'japanese',    href: '/cat/japanese' },
-];
+const HOT_SEARCHES = ['japanese', 'amateur', 'lesbian', 'milf', 'asian', 'interracial', 'big-tits', 'masturbation', 'anal', 'pov', 'mature', 'threesome']
+  .map((slug) => ({ label: slug.replace('-', ' '), href: `/collections/${slug}` }));
 
 const Footer = () => (
   <footer className="site-footer" role="contentinfo">
@@ -58,9 +44,9 @@ const Footer = () => (
             </div>
           </Link>
           <p className="footer-brand-desc">
-            NICEVX is your premium destination for free HD adult entertainment.
-            Stream over 4 million free porn videos updated daily — teen, MILF, amateur,
-            Asian, hardcore, lesbian, anal, and more. Fast HD streaming on all devices.
+            NICEVX is a curated adult video discovery catalog. Published records are
+            checked for availability and ranked from factual source signals with a
+            transparent methodology. NICEVX embeds media hosted by Eporner.
           </p>
         </div>
 
@@ -82,6 +68,16 @@ const Footer = () => (
             <Link href="/privacy"  className="footer-nav-link">Privacy Policy</Link>
             <Link href="/dmca"     className="footer-nav-link">DMCA</Link>
             <Link href="/usc2257"  className="footer-nav-link">18 U.S.C. 2257</Link>
+            <Link href="/report" className="footer-nav-link">Report Content</Link>
+          </nav>
+        </div>
+        <div className="footer-links-col">
+          <h3 className="footer-col-heading">NICEVX</h3>
+          <nav>
+            <Link href="/about" className="footer-nav-link">About</Link>
+            <Link href="/methodology" className="footer-nav-link">Methodology</Link>
+            <Link href="/content-sources" className="footer-nav-link">Content Sources</Link>
+            <Link href="/editorial-policy" className="footer-nav-link">Editorial Policy</Link>
           </nav>
         </div>
       </div>

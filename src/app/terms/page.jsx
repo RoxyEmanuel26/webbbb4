@@ -46,7 +46,7 @@ export default function TermsPage() {
         </ul>
 
         <h2>5. Disclaimer of Warranties</h2>
-        <p>This service is provided "as is" without any warranties, express or implied. We do not warrant that the service will be uninterrupted or error-free.</p>
+        <p>This service is provided &quot;as is&quot; without any warranties, express or implied. We do not warrant that the service will be uninterrupted or error-free.</p>
 
         <h2>6. Contact</h2>
         <p>For any questions regarding these terms, please use the DMCA contact page.</p>

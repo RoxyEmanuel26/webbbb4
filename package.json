@@ -16,16 +16,16 @@
     "@cloudflare/next-on-pages": "^1.13.16",
     "@cloudflare/workers-types": "^5.20260710.1",
     "lucide-react": "^1.23.0",
-    "next": "^15.5.2",
+    "next": "^15.5.25",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "wrangler": "^4.110.0"
+    "wrangler": "^4.130.0"
   },
   "devDependencies": {
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "eslint": "^10.8.0",
-    "eslint-config-next": "^16.2.12",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^15.5.2",
     "oxlint": "^1.71.0"
   }
 }

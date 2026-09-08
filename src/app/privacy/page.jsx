@@ -36,9 +36,9 @@ export default function PrivacyPage() {
         <p>Videos are served via the Eporner API and embedded from third-party servers. Their privacy policies apply to content served from their servers. We encourage you to review their privacy policy at eporner.com.</p>
 
         <h2>4. Data Retention</h2>
-        <p>We do not store personal data on our servers. Any age verification status is stored locally in your browser's localStorage and can be cleared at any time by clearing your browser data.</p>
+        <p>We do not store personal data on our servers. Age verification, favorites, recent viewing, recommendations, and privacy-first event counters are stored locally in your browser&apos;s localStorage and can be cleared with your browser data. Search terms and personal watch history are not sent to a NICEVX database.</p>
 
-        <h2>5. Children's Privacy</h2>
+        <h2>5. Children&apos;s Privacy</h2>
         <p>This site is not intended for individuals under 18 years of age. We do not knowingly collect personal information from minors. If you believe we have inadvertently collected such information, please contact us immediately.</p>
 
         <h2>6. Changes to This Policy</h2>

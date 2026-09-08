@@ -1,31 +1,29 @@
-# NICEVX - Free HD Porn Videos
+# NICEVX — Curated Adult Video Discovery
 
-> NICEVX is a free adult video platform featuring over 4 million HD porn videos updated daily.
+> NICEVX is a limited adult discovery catalog that publishes verified source records and transparent ranking signals.
 
 ## Site
 - URL: https://www.nicevx.com
 - Language: English
-- Category: Adult Entertainment / Free HD Porn
+- Audience: Adults 18+
+- Authoritative published URL list: https://www.nicevx.com/sitemap.xml
 
-## What is NICEVX?
-NICEVX is one of the largest free HD porn video platforms on the web. We provide free access to over 4 million adult videos in stunning 1080p HD quality with no registration required. Content is updated daily across all major categories.
+## How it works
+- Media is embedded from Eporner; NICEVX does not host the media files.
+- Every watch page links visibly to its original Eporner source.
+- The NICEVX Discovery Score uses measured snapshots, source rating, category-relative views, freshness, and metadata completeness.
+- Trend claims require at least two snapshots and are never invented by AI.
+- DeepSeek may clean supplied metadata but may not add unsupported facts.
 
-## Content Categories
-- Teen, MILF, Amateur, Asian, Hardcore, Lesbian
-- Anal, Blonde, Brunette, Redhead, Ebony, Latina
-- Threesome, Group, Solo, Webcam, POV
-- And 200+ more categories at https://www.nicevx.com/cats
-
-## Technical
-- Sitemap: https://www.nicevx.com/sitemap.xml
-- robots.txt: https://www.nicevx.com/robots.txt
-- Videos indexed: 100,000+
-- Video quality: HD 1080p
-- Embeds: Eporner CDN
+## Editorial information
+- Methodology: https://www.nicevx.com/methodology
+- Content sources: https://www.nicevx.com/content-sources
+- Editorial policy: https://www.nicevx.com/editorial-policy
+- Report content: https://www.nicevx.com/report
+- About: https://www.nicevx.com/about
 
 ## Legal
-- Terms of Service: https://www.nicevx.com/terms
-- Privacy Policy: https://www.nicevx.com/privacy
+- Terms: https://www.nicevx.com/terms
+- Privacy: https://www.nicevx.com/privacy
 - DMCA: https://www.nicevx.com/dmca
 - 18 USC 2257: https://www.nicevx.com/usc2257
-- All content is from consenting adults 18+

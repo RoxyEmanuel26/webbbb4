@@ -1,11 +1,12 @@
 import { Suspense } from 'react';
 import SkeletonGrid from '@/components/SkeletonGrid';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import SearchResultsShared from '@/components/SearchResultsShared';
 import { getSearchMetadata } from '@/utils/seo';
 export const runtime = 'edge';
 import { ALL_CATEGORIES } from '@/data/allCategories';
+import { getCatalogVideos, getCollection } from '@/lib/catalog';
 
 // Set valid slugs untuk O(1) lookup validasi kategori
 const VALID_CAT_SLUGS = new Set(
@@ -38,7 +39,8 @@ export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const catName = resolvedParams?.catName || '';
   const query = catName.replace(/-/g, ' ');
-  return getSearchMetadata({ query, isCat: true, isTag: false, page: 1, catName });
+  const metadata = getSearchMetadata({ query, isCat: true, isTag: false, page: 1, catName });
+  return { ...metadata, robots: { index: false, follow: true } };
 }
 
 export default async function CategoryPage({ params, searchParams }) {
@@ -50,6 +52,7 @@ export default async function CategoryPage({ params, searchParams }) {
   if (!catName || !VALID_CAT_SLUGS.has(catName.toLowerCase())) {
     notFound();
   }
+  if (getCollection(catName.toLowerCase())) permanentRedirect(`/collections/${catName.toLowerCase()}`);
 
   const query = catName.replace(/-/g, ' ');
   const page = parseInt(resolvedSearchParams?.page) || 1;
@@ -57,6 +60,7 @@ export default async function CategoryPage({ params, searchParams }) {
   
   const seo = getSearchMetadata({ query, isCat: true, isTag: false, page, catName });
   const related = getRelatedCategories(catName.toLowerCase());
+  const initialVideos = getCatalogVideos().filter((video) => [video.category, ...(video.tags || [])].some((value) => String(value).toLowerCase() === query.toLowerCase()));
 
   return (
     <>
@@ -71,6 +75,7 @@ export default async function CategoryPage({ params, searchParams }) {
           seoDesc={seo.description} 
           seoCanonical={seo.alternates.canonical} 
           seoQuery={query}
+          initialVideos={initialVideos}
         />
       </Suspense>
 

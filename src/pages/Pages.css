@@ -586,3 +586,28 @@
 .related-cat-all {
   font-weight: 700;
 }
+
+.collection-lead { color: var(--color-text-secondary); line-height: 1.7; max-width: 900px; margin: 0 0 24px; }
+.collection-page { padding-top: 32px; padding-bottom: 56px; }
+.breadcrumbs { color: var(--color-text-muted); margin-bottom: 16px; }
+.breadcrumbs a, .collection-editorial a, .discovery-panel a { color: var(--color-accent); }
+.collection-stats { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+.collection-stats span { padding: 7px 12px; border: 1px solid var(--color-border); border-radius: 999px; color: var(--color-text-secondary); }
+.collection-editorial { max-width: 920px; line-height: 1.75; color: var(--color-text-secondary); margin-bottom: 32px; }
+.collection-editorial p { margin-bottom: 16px; }
+.collection-directory { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-top: 24px; }
+.collection-directory-card { display: flex; flex-direction: column; gap: 7px; padding: 18px; border: 1px solid var(--color-border); background: var(--color-bg-card); border-radius: 10px; color: var(--color-text-primary); text-decoration: none; }
+.collection-directory-card span, .collection-directory-card small { color: var(--color-text-muted); }
+.related-collections { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+.related-collections h2 { width: 100%; }
+.related-collections a { color: var(--color-accent); }
+.video-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.discovery-panel { padding: 20px; margin-top: 18px; border: 1px solid var(--color-border); background: var(--color-bg-card); border-radius: 10px; }
+.discovery-panel dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 12px; }
+.discovery-panel dl div { padding: 12px; background: rgba(255,255,255,.03); border-radius: 8px; }
+.discovery-panel dt { color: var(--color-text-muted); font-size: .78rem; }
+.discovery-panel dd { margin: 4px 0 0; font-weight: 700; }
+.related-video-list { display: flex; flex-direction: column; gap: var(--space-3); }
+.personal-shelves { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--color-border); }
+.personal-shelves > div { margin-bottom: 24px; }
+.personal-shelves .video-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }

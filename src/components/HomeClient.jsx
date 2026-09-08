@@ -1,184 +1,62 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import React from 'react';
+import { useSearchParams } from 'next/navigation';
 import VideoCard from '@/components/VideoCard';
 import Pagination from '@/components/Pagination';
-import SkeletonCard from '@/components/SkeletonCard';
 import TagsBar from '@/components/TagsBar';
 import SortBar from '@/components/SortBar';
-
-
-const API_BASE = 'https://www.eporner.com/api/v2/video';
+import PersonalShelf from '@/components/PersonalShelf';
 
 const SORT_OPTIONS = [
-  { value: 'latest',       label: '🕐 Latest' },
+  { value: 'latest', label: '🕐 Latest' },
   { value: 'most-popular', label: '🔥 Most Viewed' },
-  { value: 'top-weekly',   label: '📈 Top This Week' },
-  { value: 'top-monthly',  label: '📅 Top This Month' },
+  { value: 'top-weekly', label: '📈 Discovery Score' },
+  { value: 'top-monthly', label: '⭐ Top Rated' },
 ];
 
-const FORBIDDEN_REGEX = /\b(gay|shemale|tranny|ladyboy|ts|transsexual|transgender|boy|men|cock suck|cock sucking)\b/i;
-
-function fixEncoding(str) {
-  if (!str) return str;
-  let fixed = String(str);
-  try {
-    if (/[\x80-\xFF]/.test(fixed)) fixed = decodeURIComponent(escape(fixed));
-  } catch (_) {}
-  return fixed
-    .replace(/&quot;/g, '"')
-    .replace(/&amp;/g, '&')
-    .replace(/&#039;/g, "'")
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>');
+function sortVideos(videos, order) {
+  const sorted = [...videos];
+  if (order === 'most-popular') return sorted.sort((a, b) => b.views - a.views);
+  if (order === 'top-monthly') return sorted.sort((a, b) => b.rating - a.rating || b.views - a.views);
+  if (order === 'top-weekly') return sorted.sort((a, b) => b.discoveryScore - a.discoveryScore);
+  return sorted.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
 }
 
-export default function HomeClient() {
-  const router = useRouter();
+export default function HomeClient({ initialVideos = [], initialTrendTags = [] }) {
   const searchParams = useSearchParams();
-
   const rawOrder = searchParams.get('order');
-  const isValidOrder = SORT_OPTIONS.some(o => o.value === rawOrder);
-  const orderParam = isValidOrder ? rawOrder : null;
-  const rawPage = parseInt(searchParams.get('page') || '1');
-  const page = !isNaN(rawPage) && rawPage > 0 ? rawPage : 1;
-  const sortLabel = SORT_OPTIONS.find(o => o.value === orderParam)?.label || '🕐 Latest';
-  const activeOrder = orderParam || 'latest';
-  const perPageCount = 36;
-
-  const [videos, setVideos] = useState([]);
-
-  const [trendTags, setTrendTags] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Fetch main videos
-      const url = new URL(`${API_BASE}/search/`);
-      url.searchParams.append('query', 'all');
-      url.searchParams.append('order', activeOrder);
-      url.searchParams.append('page', page);
-      url.searchParams.append('per_page', perPageCount);
-      url.searchParams.append('thumbsize', 'big');
-      url.searchParams.append('gay', 0);
-      url.searchParams.append('lq', 1);
-      url.searchParams.append('format', 'json');
-
-      const res = await fetch(url.toString());
-      if (!res.ok) throw new Error(`API error: ${res.status}`);
-      const data = await res.json();
-
-      if (data?.videos) {
-        const filtered = data.videos
-          .map(v => ({ ...v, title: fixEncoding(v.title), keywords: fixEncoding(v.keywords) }))
-          .filter(v => !FORBIDDEN_REGEX.test(v.keywords || '') && !FORBIDDEN_REGEX.test(v.title || ''));
-        setVideos(filtered);
-        setTotalPages(data.total_pages || 1);
-        setTotalCount(data.total_count || 0);
-      } else {
-        setVideos([]);
-      }
-
-      // Fetch trend tags & Top Weekly videos (combined request)
-      if (page === 1) {
-        try {
-          const tagUrl = new URL(`${API_BASE}/search/`);
-          tagUrl.searchParams.append('query', 'all');
-          tagUrl.searchParams.append('order', 'top-weekly');
-          tagUrl.searchParams.append('per_page', 50);
-          tagUrl.searchParams.append('gay', 0);
-          tagUrl.searchParams.append('lq', 1);
-          tagUrl.searchParams.append('format', 'json');
-          const tagRes = await fetch(tagUrl.toString());
-          const tagData = await tagRes.json();
-          if (tagData?.videos) {
-            const freq = {};
-            tagData.videos.forEach(v =>
-              String(v.keywords || '').split(',').forEach(k => {
-                const kw = k.trim().toLowerCase();
-                if (kw.length > 2 && kw.length < 25 && kw.split(/\s+/).length <= 2 && !FORBIDDEN_REGEX.test(kw)) {
-                  freq[kw] = (freq[kw] || 0) + 1;
-                }
-              })
-            );
-            setTrendTags(
-              Object.entries(freq)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 20)
-                .map(([k]) => k)
-            );
-          }
-        } catch (_) {}
-      }
-    } catch (err) {
-      console.error('HomeClient fetch error:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [activeOrder, perPageCount, page]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  const order = SORT_OPTIONS.some((option) => option.value === rawOrder) ? rawOrder : 'latest';
+  const rawPage = Number.parseInt(searchParams.get('page') || '1', 10);
+  const page = Number.isSafeInteger(rawPage) && rawPage > 0 ? rawPage : 1;
+  const perPage = 36;
+  const sorted = sortVideos(initialVideos, order);
+  const totalPages = Math.max(1, Math.ceil(sorted.length / perPage));
+  const videos = sorted.slice((page - 1) * perPage, page * perPage);
+  const sortLabel = SORT_OPTIONS.find((option) => option.value === order)?.label;
 
   return (
     <div className="home-page">
-      {trendTags.length > 0 && <TagsBar tags={trendTags} />}
-
+      {initialTrendTags.length > 0 && <TagsBar tags={initialTrendTags} />}
       <div className="page-wrapper content-area">
-
+        <PersonalShelf catalog={initialVideos} />
         <div className="section-header">
           <div className="section-title-group">
-            <h1 className="section-title">
-              {orderParam 
-                ? `Free HD Porn Videos & Sex Tube — ${sortLabel}` 
-                : 'Free HD Porn Videos & Sex Tube — Latest Videos'}
-            </h1>
-            {totalCount > 0 && (
-              <span className="section-count">{totalCount.toLocaleString()} videos</span>
-            )}
+            <h1 className="section-title">Curated Adult Video Discovery — {sortLabel}</h1>
+            <span className="section-count">{initialVideos.length.toLocaleString()} verified videos</span>
           </div>
-          <SortBar value={orderParam} options={SORT_OPTIONS} />
+          <SortBar value={rawOrder} options={SORT_OPTIONS} />
         </div>
-
-        {loading ? (
-          <div className="video-grid">
-            {Array.from({ length: perPageCount }).map((_, idx) => (
-              <SkeletonCard key={`skel-${idx}`} />
-            ))}
-          </div>
-        ) : error ? (
-          <div className="empty-block">
-            <p>Could not load videos. Please try again.</p>
-          </div>
-        ) : videos.length > 0 ? (
+        <p className="collection-lead">Every published item has a verified source, stable thumbnail, factual metadata, and a transparent discovery score. Trend claims appear only after measured snapshots exist.</p>
+        {videos.length > 0 ? (
           <>
             <div className="video-grid">
-              {videos.map((v, idx) => (
-                <React.Fragment key={`${v.id}-${idx}`}>
-                  <VideoCard video={v} priority={idx < 4} />
-                </React.Fragment>
-              ))}
+              {videos.map((video, index) => <VideoCard key={video.id} video={video} priority={index < 4} />)}
             </div>
-
             <Pagination currentPage={page} totalPages={totalPages} />
           </>
-        ) : (
-          <div className="empty-block">
-            <p>No videos found.</p>
-          </div>
-        )}
+        ) : <div className="empty-block"><p>The curated catalog is being refreshed.</p></div>}
       </div>
-
-
     </div>
   );
 }
