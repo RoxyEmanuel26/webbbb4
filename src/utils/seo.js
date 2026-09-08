@@ -1,5 +1,17 @@
 import { ALL_CATEGORIES } from '@/data/allCategories';
 
+const toCategorySlug = (name = '') => name.toLowerCase().replace(/\s+/g, '-');
+
+// A tag that is also one of our curated categories is not a distinct page.
+// Callers should redirect it to this canonical category URL instead of asking
+// Google to reconcile two equivalent URL patterns.
+export const getCategorySlugForTag = (tagName = '') => {
+  const normalizedTag = String(tagName).trim().toLowerCase();
+  return ALL_CATEGORIES.some((category) => toCategorySlug(category.name) === normalizedTag)
+    ? normalizedTag
+    : null;
+};
+
 export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName }) => {
   const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
   const seoQuery = capitalize((query || '').replace(/-/g, ' '));
@@ -24,13 +36,6 @@ export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName 
     : isTag
     ? `https://www.nicevx.com/tag/${tagName.toLowerCase()}`
     : `https://www.nicevx.com/search?query=${encodeURIComponent(query.toLowerCase())}`;
-
-  if (isTag && tagName) {
-    const isAlsoCat = ALL_CATEGORIES.some(c => c.name?.toLowerCase().replace(/\s+/g, '-') === tagName.toLowerCase());
-    if (isAlsoCat) {
-      seoCanonical = `https://www.nicevx.com/cat/${tagName.toLowerCase()}`;
-    }
-  }
 
   if (page > 1) {
     seoCanonical += (seoCanonical.includes('?') ? '&' : '?') + `page=${page}`;

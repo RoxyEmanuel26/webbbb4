@@ -1,7 +1,8 @@
 import { Suspense } from 'react';
 import SkeletonGrid from '@/components/SkeletonGrid';
 import SearchResultsShared from '@/components/SearchResultsShared';
-import { getSearchMetadata } from '@/utils/seo';
+import { permanentRedirect } from 'next/navigation';
+import { getCategorySlugForTag, getSearchMetadata } from '@/utils/seo';
 export const runtime = 'edge';
 
 export async function generateMetadata({ params }) {
@@ -13,8 +14,16 @@ export async function generateMetadata({ params }) {
 
 export default async function TagPage({ params, searchParams }) {
   const resolvedParams = await params;
-  const resolvedSearchParams = await searchParams;
   const tagName = resolvedParams?.tagName || '';
+  const categorySlug = getCategorySlugForTag(tagName);
+
+  // /tag/<category> previously declared /cat/<category> as its canonical while
+  // still returning 200. A permanent redirect gives crawlers one unambiguous URL.
+  if (categorySlug) {
+    permanentRedirect(`/cat/${categorySlug}`);
+  }
+
+  const resolvedSearchParams = await searchParams;
   const query = tagName.replace(/-/g, ' ');
   const page = parseInt(resolvedSearchParams?.page) || 1;
   const currentOrder = resolvedSearchParams?.order || 'new';

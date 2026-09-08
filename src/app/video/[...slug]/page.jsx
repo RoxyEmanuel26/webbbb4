@@ -94,14 +94,16 @@ export default async function VideoPage({ params }) {
     description = d.length > 155 ? d.substring(0, 152) + '...' : d;
   }
 
-  const seoDescription = videoTitle
+  const fallbackSeoDescription = videoTitle
     ? `Watch ${videoTitle} for free in full HD quality on NICEVX \u2014 one of the largest free adult video platforms on the web. This video is part of our collection of over 4 million free HD porn videos available in stunning 1080p quality, updated daily with the freshest content from top categories. NICEVX features a vast library of free adult content spanning popular categories including teen, MILF, amateur, Asian, hardcore, lesbian, and much more \u2014 all completely free and accessible without registration. Stream ${videoTitle} directly in your browser with no downloads required. Our advanced video player delivers smooth, buffer-free HD playback for the best viewing experience on any device. Explore thousands of related videos, browse by category, or discover top-rated content updated every day on NICEVX.`
     : 'NICEVX is one of the largest free HD porn video platforms on the web, featuring over 4 million videos in stunning 1080p quality. Browse our vast collection of free adult content spanning top categories including teen, MILF, amateur, Asian, hardcore, lesbian, and much more. All videos are completely free to watch with no registration required. Stream directly in your browser with our advanced player for smooth, buffer-free HD playback on any device. New content is added daily so there is always something fresh to discover. Explore thousands of videos, browse by category, or find top-rated content on NICEVX.';
 
   const aiEntry = id && aiData[id] ? aiData[id] : null;
-  const aiDescription = aiEntry?.seoDescription || null;
+  const aiDescription = typeof aiEntry?.seoDescription === 'string' ? aiEntry.seoDescription.trim() : null;
+  const seoDescription = aiDescription || fallbackSeoDescription;
   const aiCleanedTags = aiEntry?.cleanedTags || [];
   const aiCategory = aiEntry?.category || null;
+  const aiUploadDate = aiEntry?.uploadDate || null;
 
   const videoSchema = {
     '@context': 'https://schema.org',
@@ -112,7 +114,7 @@ export default async function VideoPage({ params }) {
     embedUrl: `https://www.eporner.com/embed/${id}/`,
     contentUrl: canonical,
     url: canonical,
-    uploadDate: '2024-01-01T00:00:00Z',
+    ...(aiUploadDate && { uploadDate: aiUploadDate }),
     isFamilyFriendly: false,
     ...(aiCategory && { genre: aiCategory }),
     ...(aiCleanedTags.length > 0 && { keywords: aiCleanedTags.join(', ') }),
@@ -142,7 +144,6 @@ export default async function VideoPage({ params }) {
               id={id}
               initialTitle={videoTitle || 'Free HD Porn Video'}
               seoDescription={seoDescription}
-              aiDescription={aiDescription}
               aiCleanedTags={aiCleanedTags}
             />
           </Suspense>

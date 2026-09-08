@@ -4,12 +4,29 @@ const path = require('path');
 const SITE_URL = 'https://www.nicevx.com';
 const API_BASE = 'https://www.eporner.com/api/v2';
 const PER_PAGE = 50;
-const MAX_PAGES = 400; // 50,000 video
+// Start with a crawlable batch instead of submitting the full upstream catalog
+// at once. Increase this only after Search Console shows the current batch is
+// being crawled and indexed consistently.
+const DEFAULT_MAX_SITEMAP_VIDEOS = 1000;
+const requestedMaxVideos = Number.parseInt(process.env.SITEMAP_MAX_VIDEOS || '', 10);
+const MAX_SITEMAP_VIDEOS = Number.isSafeInteger(requestedMaxVideos) && requestedMaxVideos > 0
+  ? requestedMaxVideos
+  : DEFAULT_MAX_SITEMAP_VIDEOS;
+const MAX_PAGES = Math.ceil(MAX_SITEMAP_VIDEOS / PER_PAGE);
 const URLS_PER_SITEMAP = 5000; // Batas chunk
 const BATCH_SIZE = 5;
+const DEFAULT_MAX_AI_PER_RUN = 50;
+const requestedAiBatchSize = Number.parseInt(process.env.SITEMAP_AI_BATCH_SIZE || '', 10);
+const MAX_AI_PER_RUN = Number.isSafeInteger(requestedAiBatchSize) && requestedAiBatchSize > 0
+  ? requestedAiBatchSize
+  : DEFAULT_MAX_AI_PER_RUN;
+const REQUIRE_AI_CURATION = process.env.SITEMAP_REQUIRE_AI_CURATION !== 'false';
+const MIN_DESCRIPTION_LENGTH = 120;
+const MAX_DESCRIPTION_LENGTH = 180;
+const API_RETRIES = 3;
+const API_TIMEOUT_MS = 15000;
 
 // Konfigurasi AI
-const MAX_AI_PER_RUN = 50; // Batasi max 50 video AI per run agar tidak lama & mahal
 let aiProcessedCount = 0;
 const AI_SEO_FILE = path.join(__dirname, '../src/data/ai-seo.json');
 let aiSeoData = {};
@@ -30,12 +47,19 @@ const isResumeMode = process.argv.includes('--resume');
 
 const sitemapsDir = path.join(__dirname, '../public/sitemaps');
 const publicDir = path.join(__dirname, '../public');
+const sitemapStagingDir = path.join(publicDir, `.sitemaps-staging-${process.pid}`);
+const sitemapIndexFile = path.join(publicDir, 'sitemap.xml');
+const sitemapIndexStagingFile = path.join(publicDir, `.sitemap-${process.pid}.xml`);
+let sitemapOutputDir = sitemapsDir;
 
 // Global Set untuk mencegah duplikat 100%
 const seenUrls = new Set();
 let startPage = 1;
 let currentChunkIndex = 1;
 let currentChunkUrls = [];
+let indexedVideoCount = 0;
+let skippedUncuratedCount = 0;
+let skippedSpamCount = 0;
 
 // Daftar kategori valid (top 80 berdasarkan allCategories.js)
 const VALID_CATEGORIES = [
@@ -51,6 +75,82 @@ const VALID_CATEGORIES = [
   "outdoor", "petite", "POV", "public", "redhead", "rough", "solo", "squirt", "step",
   "stepmom", "teen", "teen anal", "threesome"
 ];
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function fetchJson(url, label, { retries = API_RETRIES, silent = false } = {}) {
+  let lastError;
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    let timeoutId;
+    let timedOut = false;
+    try {
+      const controller = new AbortController();
+      timeoutId = setTimeout(() => {
+        timedOut = true;
+        controller.abort();
+      }, API_TIMEOUT_MS);
+      const response = await fetch(url, {
+        headers: { Accept: 'application/json' },
+        signal: controller.signal,
+      });
+      const body = await response.text();
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      try {
+        return JSON.parse(body);
+      } catch {
+        throw new Error(`respons bukan JSON (${response.headers.get('content-type') || 'content-type tidak diketahui'})`);
+      }
+    } catch (error) {
+      lastError = timedOut ? new Error(`timeout setelah ${API_TIMEOUT_MS / 1000} detik`) : error;
+      if (!silent && attempt < retries) {
+        console.warn(`[API] ${label} gagal (percobaan ${attempt}/${retries}): ${lastError.message}`);
+      }
+      if (attempt < retries) await sleep(attempt * 750);
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
+    }
+  }
+  throw new Error(`${label} gagal setelah ${retries} percobaan: ${lastError?.message || 'unknown error'}`);
+}
+
+async function renameWithRetry(source, destination, label) {
+  let lastError;
+  for (let attempt = 1; attempt <= API_RETRIES; attempt++) {
+    try {
+      fs.renameSync(source, destination);
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt < API_RETRIES) await sleep(attempt * 250);
+    }
+  }
+  throw new Error(`${label} gagal: ${lastError?.message || 'unknown error'}`);
+}
+
+async function persistAiSeoData() {
+  const temporaryFile = `${AI_SEO_FILE}.${process.pid}.${Date.now()}.tmp`;
+  try {
+    fs.writeFileSync(temporaryFile, JSON.stringify(aiSeoData, null, 2), 'utf-8');
+    await renameWithRetry(temporaryFile, AI_SEO_FILE, 'menyimpan ai-seo.json');
+  } finally {
+    if (fs.existsSync(temporaryFile)) fs.rmSync(temporaryFile, { force: true });
+  }
+}
+
+function getPublicationDate(video) {
+  const date = new Date(video?.added || '');
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+function hasUsableCuration(entry) {
+  const description = typeof entry?.seoDescription === 'string' ? entry.seoDescription.trim() : '';
+  return !entry?.isSpam
+    && typeof description === 'string'
+    && description.length >= MIN_DESCRIPTION_LENGTH
+    && description.length <= MAX_DESCRIPTION_LENGTH;
+}
 
 async function curateWithDeepSeek(video) {
   if (!DEEPSEEK_API_KEY) return null;
@@ -74,12 +174,9 @@ async function curateWithDeepSeek(video) {
   // Fetch keywords nyata dari endpoint /video/id/ — endpoint /search/ hanya mengembalikan judul sebagai keywords
   let realKeywords = video.keywords || '';
   try {
-    const detailRes = await fetch(`${API_BASE}/video/id/?id=${video.id}&format=json`);
-    if (detailRes.ok) {
-      const detailData = await detailRes.json();
-      if (detailData && detailData.keywords && detailData.keywords !== video.title) {
-        realKeywords = detailData.keywords;
-      }
+    const detailData = await fetchJson(`${API_BASE}/video/id/?id=${video.id}&format=json`, `detail video ${video.id}`, { retries: 2, silent: true });
+    if (detailData?.keywords && detailData.keywords !== video.title) {
+      realKeywords = detailData.keywords;
     }
   } catch (_) { }
 
@@ -123,12 +220,33 @@ Respond ONLY with raw JSON:
         response_format: { type: 'json_object' }
       })
     });
+    if (!res.ok) throw new Error(`DeepSeek HTTP ${res.status}`);
     const data = await res.json();
-    const result = JSON.parse(data.choices[0].message.content);
+    const result = JSON.parse(data?.choices?.[0]?.message?.content || '');
+    const seoDescription = String(result.seoDescription || '').trim();
+    if (!result.isSpam && (seoDescription.length < MIN_DESCRIPTION_LENGTH || seoDescription.length > MAX_DESCRIPTION_LENGTH)) {
+      throw new Error(`deskripsi AI harus ${MIN_DESCRIPTION_LENGTH}-${MAX_DESCRIPTION_LENGTH} karakter`);
+    }
 
-    // Simpan ke memory & file (tambahkan priorityScore dari views asli)
-    aiSeoData[video.id] = { ...result, priorityScore };
-    fs.writeFileSync(AI_SEO_FILE, JSON.stringify(aiSeoData, null, 2), 'utf-8');
+    const cleanedTags = Array.isArray(result.cleanedTags)
+      ? [...new Set(result.cleanedTags
+        .map((tag) => String(tag).trim().toLowerCase())
+        .filter((tag) => tag.length > 1 && tag.length <= 40))].slice(0, 8)
+      : [];
+    const category = VALID_CATEGORIES.includes(String(result.category || '').toLowerCase())
+      ? String(result.category).toLowerCase()
+      : 'adult porn';
+
+    // Simpan secara atomik agar file tidak korup atau terkunci sementara di Windows.
+    aiSeoData[video.id] = {
+      seoDescription,
+      cleanedTags,
+      category,
+      isSpam: Boolean(result.isSpam),
+      priorityScore,
+      ...(getPublicationDate(video) && { uploadDate: getPublicationDate(video) }),
+    };
+    await persistAiSeoData();
     return aiSeoData[video.id];
   } catch (e) {
     console.error(`[AI Error] Gagal memproses ${video.id}: ${e.message}`);
@@ -149,11 +267,10 @@ function slugify(text) {
 
 function initState() {
   if (!isResumeMode) {
-    console.log('🧹 [Fresh Mode] Menghapus sitemap lama untuk menghindari Pagination Shift Bug...');
-    if (fs.existsSync(sitemapsDir)) {
-      fs.rmSync(sitemapsDir, { recursive: true, force: true });
-    }
-    fs.mkdirSync(sitemapsDir, { recursive: true });
+    console.log('🧪 [Fresh Mode] Membuat sitemap di staging; sitemap aktif akan diganti hanya setelah proses berhasil.');
+    if (fs.existsSync(sitemapStagingDir)) fs.rmSync(sitemapStagingDir, { recursive: true, force: true });
+    fs.mkdirSync(sitemapStagingDir, { recursive: true });
+    sitemapOutputDir = sitemapStagingDir;
     return;
   }
 
@@ -176,6 +293,7 @@ function initState() {
         const url = m.replace('<loc>', '').replace('</loc>', '');
         seenUrls.add(url);
         totalVideoUrls++;
+        indexedVideoCount++;
       });
     }
   }
@@ -227,7 +345,7 @@ function writeChunk(index, urlsArray) {
 ${xmlUrls}
 </urlset>`;
 
-  fs.writeFileSync(path.join(sitemapsDir, `sitemap-video-${index}.xml`), xml, 'utf-8');
+  fs.writeFileSync(path.join(sitemapOutputDir, `sitemap-video-${index}.xml`), xml, 'utf-8');
 }
 
 function writeStaticSitemap() {
@@ -271,7 +389,7 @@ function writeStaticSitemap() {
   </url>`).join('');
 
   const staticXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${staticBaseUrls}\n${categoryUrls}\n</urlset>`;
-  fs.writeFileSync(path.join(sitemapsDir, 'sitemap-static.xml'), staticXml, 'utf-8');
+  fs.writeFileSync(path.join(sitemapOutputDir, 'sitemap-static.xml'), staticXml, 'utf-8');
 }
 
 function writeIndexSitemap() {
@@ -287,7 +405,34 @@ function writeIndexSitemap() {
   }
 
   indexXml += `</sitemapindex>`;
-  fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), indexXml, 'utf-8');
+  fs.writeFileSync(isResumeMode ? sitemapIndexFile : sitemapIndexStagingFile, indexXml, 'utf-8');
+}
+
+async function publishSitemaps() {
+  if (isResumeMode) return;
+  const backupDir = `${sitemapsDir}.backup-${process.pid}`;
+  let movedExistingSitemaps = false;
+
+  try {
+    if (fs.existsSync(backupDir)) fs.rmSync(backupDir, { recursive: true, force: true });
+    if (fs.existsSync(sitemapsDir)) {
+      await renameWithRetry(sitemapsDir, backupDir, 'membackup sitemap aktif');
+      movedExistingSitemaps = true;
+    }
+    await renameWithRetry(sitemapStagingDir, sitemapsDir, 'menerbitkan sitemap baru');
+    await renameWithRetry(sitemapIndexStagingFile, sitemapIndexFile, 'menerbitkan sitemap index baru');
+    if (movedExistingSitemaps && fs.existsSync(backupDir)) fs.rmSync(backupDir, { recursive: true, force: true });
+  } catch (error) {
+    if (fs.existsSync(sitemapsDir) && !fs.existsSync(sitemapStagingDir)) {
+      await renameWithRetry(sitemapsDir, sitemapStagingDir, 'memulihkan staging sitemap');
+    }
+    if (movedExistingSitemaps && fs.existsSync(backupDir) && !fs.existsSync(sitemapsDir)) {
+      await renameWithRetry(backupDir, sitemapsDir, 'memulihkan sitemap aktif');
+    }
+    throw error;
+  } finally {
+    if (fs.existsSync(backupDir)) fs.rmSync(backupDir, { recursive: true, force: true });
+  }
 }
 
 async function run() {
@@ -296,8 +441,7 @@ async function run() {
   console.log('dYs? Mengambil daftar video yang dihapus dari Eporner...');
   let removedIds = new Set();
   try {
-    const removedRes = await fetch(`${API_BASE}/video/removed/?format=json`);
-    const removedData = await removedRes.json();
+    const removedData = await fetchJson(`${API_BASE}/video/removed/?format=json`, 'daftar video yang dihapus', { retries: 1 });
     if (Array.isArray(removedData)) {
       removedData.forEach(item => removedIds.add(item.id));
       console.log(`dY~" Berhasil mengambil ${removedIds.size} ID video yang dihapus.`);
@@ -315,16 +459,19 @@ async function run() {
     console.log(`Mengambil halaman ${i} s/d ${end}...`);
     for (let p = i; p <= end; p++) {
       batchPromises.push(
-        fetch(`${API_BASE}/video/search/?query=&per_page=${PER_PAGE}&page=${p}&order=latest`)
-          .then(res => res.json())
+        fetchJson(`${API_BASE}/video/search/?query=&per_page=${PER_PAGE}&page=${p}&order=latest`, `halaman API ${p}`)
           .catch(e => {
-            console.error(`Gagal mengambil halaman ${p}`);
+            console.error(`[API] Gagal mengambil halaman ${p}: ${e.message}`);
             return null;
           })
       );
     }
 
     const results = await Promise.all(batchPromises);
+
+    if (results.some((data) => !Array.isArray(data?.videos))) {
+      throw new Error('Sitemap tidak diterbitkan karena satu atau lebih halaman sumber gagal dimuat. Sitemap aktif dipertahankan.');
+    }
 
     for (const data of results) {
       if (data && data.videos) {
@@ -337,7 +484,7 @@ async function run() {
 
           const url = `${SITE_URL}/video/${slugify(video.title)}-${video.id}`;
 
-          if (!seenUrls.has(url)) {
+          if (!seenUrls.has(url) && indexedVideoCount < MAX_SITEMAP_VIDEOS) {
             // ---> AI Curation Tembak Disini <---
             await curateWithDeepSeek(video);
 
@@ -345,15 +492,22 @@ async function run() {
 
             // GATEKEEPER: Buang video jika terdeteksi SPAM / Bukan Niche
             if (aiData && aiData.isSpam) {
+              skippedSpamCount++;
               console.log(`[Gatekeeper] 🚫 Video diblokir karena terdeteksi spam: ${video.title}`);
               continue; // Langsung lompat ke video berikutnya, JANGAN dimasukkan ke sitemap
             }
 
+            if (REQUIRE_AI_CURATION && !hasUsableCuration(aiData)) {
+              skippedUncuratedCount++;
+              continue;
+            }
+
             const fallbackDesc = video.title + ' free HD porn video on NICEVX.';
-            const finalDesc = aiData ? aiData.seoDescription : fallbackDesc;
+            const finalDesc = hasUsableCuration(aiData) ? aiData.seoDescription.trim() : fallbackDesc;
             const finalPriority = (aiData && aiData.priorityScore) ? aiData.priorityScore : 0.8;
 
             seenUrls.add(url);
+            indexedVideoCount++;
 
             // Tags: gunakan cleanedTags dari AI jika tersedia (bermakna).
             // API /search/ mengembalikan keywords = judul video (bukan tag asli),
@@ -379,7 +533,7 @@ async function run() {
 
             if (currentChunkUrls.length >= URLS_PER_SITEMAP) {
               writeChunk(currentChunkIndex, currentChunkUrls);
-              console.log(`💾 Tersimpan: sitemap-video-${currentChunkIndex}.xml (10,000 URLs) - RAM Dikeringkan.`);
+              console.log(`💾 Tersimpan: sitemap-video-${currentChunkIndex}.xml (${URLS_PER_SITEMAP} URLs) - RAM Dikeringkan.`);
               currentChunkIndex++;
               currentChunkUrls = [];
             }
@@ -397,9 +551,16 @@ async function run() {
   console.log('📦 Membuat sitemap-static.xml dan Index Sitemap...');
   writeStaticSitemap();
   writeIndexSitemap();
+  await publishSitemaps();
 
-  console.log(`✅ Total URL unik yang dikumpulkan: ${seenUrls.size}`);
+  console.log(`✅ Total URL video untuk sitemap: ${indexedVideoCount} (batas: ${MAX_SITEMAP_VIDEOS})`);
+  console.log(`🧠 Kurasi AI: ${indexedVideoCount} diterbitkan, ${skippedUncuratedCount} belum layak, ${skippedSpamCount} spam.`);
   console.log('🎉 Selesai 100%! Semua file tersimpan dengan aman.');
 }
 
-run();
+run().catch((error) => {
+  console.error(`❌ Sitemap gagal diterbitkan: ${error.message}`);
+  if (fs.existsSync(sitemapStagingDir)) fs.rmSync(sitemapStagingDir, { recursive: true, force: true });
+  if (fs.existsSync(sitemapIndexStagingFile)) fs.rmSync(sitemapIndexStagingFile, { force: true });
+  process.exitCode = 1;
+});
