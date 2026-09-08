@@ -60,6 +60,7 @@ let currentChunkUrls = [];
 let indexedVideoCount = 0;
 let skippedUncuratedCount = 0;
 let skippedSpamCount = 0;
+let skippedEncodingCount = 0;
 
 // Daftar kategori valid (top 80 berdasarkan allCategories.js)
 const VALID_CATEGORIES = [
@@ -77,6 +78,64 @@ const VALID_CATEGORIES = [
 ];
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Eporner occasionally returns UTF-8 bytes that were decoded as Latin-1.
+// Repair only when the candidate measurably removes mojibake markers, so valid
+// accented text, Japanese, and emoji remain untouched.
+function mojibakeScore(value) {
+  const text = String(value || '');
+  const replacementCharacters = (text.match(/\uFFFD/g) || []).length;
+  const c1Controls = (text.match(/[\u0080-\u009F]/g) || []).length;
+  const brokenUtf8Sequences = (text.match(/[\u00C2-\u00F4][\u0080-\u00BF]/g) || []).length;
+  return (replacementCharacters * 10) + (c1Controls * 4) + (brokenUtf8Sequences * 2);
+}
+
+function repairMojibake(value) {
+  let current = String(value || '');
+
+  for (let pass = 0; pass < 2; pass++) {
+    const currentScore = mojibakeScore(current);
+    if (currentScore === 0) break;
+
+    // Latin-1 reversal is lossless only when every source character is a byte.
+    if ([...current].some((character) => character.codePointAt(0) > 0xFF)) break;
+
+    const candidate = Buffer.from(current, 'latin1').toString('utf8');
+    const candidateScore = mojibakeScore(candidate);
+    if (candidate.includes('\uFFFD') || candidateScore >= currentScore) break;
+    current = candidate;
+  }
+
+  return current.normalize('NFC');
+}
+
+function hasSuspiciousEncoding(value) {
+  return mojibakeScore(value) > 0;
+}
+
+function normalizeVideo(video) {
+  return {
+    ...video,
+    title: repairMojibake(video?.title),
+    keywords: repairMojibake(video?.keywords),
+  };
+}
+
+function normalizeAiSeoEntry(entry) {
+  if (!entry || typeof entry !== 'object') return entry;
+  return {
+    ...entry,
+    seoDescription: repairMojibake(entry.seoDescription),
+    cleanedTags: Array.isArray(entry.cleanedTags)
+      ? entry.cleanedTags.map((tag) => repairMojibake(tag))
+      : entry.cleanedTags,
+    category: repairMojibake(entry.category),
+  };
+}
+
+for (const [videoId, entry] of Object.entries(aiSeoData)) {
+  aiSeoData[videoId] = normalizeAiSeoEntry(entry);
+}
 
 async function fetchJson(url, label, { retries = API_RETRIES, silent = false } = {}) {
   let lastError;
@@ -172,11 +231,11 @@ async function curateWithDeepSeek(video) {
   const categoryList = VALID_CATEGORIES.join(', ');
 
   // Fetch keywords nyata dari endpoint /video/id/ — endpoint /search/ hanya mengembalikan judul sebagai keywords
-  let realKeywords = video.keywords || '';
+  let realKeywords = repairMojibake(video.keywords || '');
   try {
     const detailData = await fetchJson(`${API_BASE}/video/id/?id=${video.id}&format=json`, `detail video ${video.id}`, { retries: 2, silent: true });
     if (detailData?.keywords && detailData.keywords !== video.title) {
-      realKeywords = detailData.keywords;
+      realKeywords = repairMojibake(detailData.keywords);
     }
   } catch (_) { }
 
@@ -223,18 +282,19 @@ Respond ONLY with raw JSON:
     if (!res.ok) throw new Error(`DeepSeek HTTP ${res.status}`);
     const data = await res.json();
     const result = JSON.parse(data?.choices?.[0]?.message?.content || '');
-    const seoDescription = String(result.seoDescription || '').trim();
+    const seoDescription = repairMojibake(result.seoDescription).trim();
     if (!result.isSpam && (seoDescription.length < MIN_DESCRIPTION_LENGTH || seoDescription.length > MAX_DESCRIPTION_LENGTH)) {
       throw new Error(`deskripsi AI harus ${MIN_DESCRIPTION_LENGTH}-${MAX_DESCRIPTION_LENGTH} karakter`);
     }
 
     const cleanedTags = Array.isArray(result.cleanedTags)
       ? [...new Set(result.cleanedTags
-        .map((tag) => String(tag).trim().toLowerCase())
+        .map((tag) => repairMojibake(tag).trim().toLowerCase())
         .filter((tag) => tag.length > 1 && tag.length <= 40))].slice(0, 8)
       : [];
-    const category = VALID_CATEGORIES.includes(String(result.category || '').toLowerCase())
-      ? String(result.category).toLowerCase()
+    const normalizedCategory = repairMojibake(result.category).trim().toLowerCase();
+    const category = VALID_CATEGORIES.includes(normalizedCategory)
+      ? normalizedCategory
       : 'adult porn';
 
     // Simpan secara atomik agar file tidak korup atau terkunci sementara di Windows.
@@ -255,14 +315,12 @@ Respond ONLY with raw JSON:
 }
 
 function slugify(text) {
-  return String(text || '')
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
+  return repairMojibake(text)
     .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9 -]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-');
+    // Keep this transformation aligned with VideoCard.createSlug so sitemap
+    // URLs and internal links always resolve to the same canonical URL.
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '');
 }
 
 function initState() {
@@ -310,8 +368,9 @@ function initState() {
 }
 
 function escapeXml(unsafe) {
-  if (typeof unsafe !== 'string') return '';
-  return unsafe.replace(/[<>&'"]/g, function (c) {
+  const safeText = repairMojibake(unsafe)
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
+  return safeText.replace(/[<>&'"]/g, function (c) {
     switch (c) {
       case '<': return '&lt;';
       case '>': return '&gt;';
@@ -475,7 +534,8 @@ async function run() {
 
     for (const data of results) {
       if (data && data.videos) {
-        for (const video of data.videos) {
+        for (const rawVideo of data.videos) {
+          const video = normalizeVideo(rawVideo);
           // GATEKEEPER 1: Skip if video has been removed by Eporner
           if (removedIds.has(video.id)) {
             console.log(`[Gatekeeper] dY~ Video dilewati karena sudah dihapus Eporner: ${video.id}`);
@@ -506,16 +566,22 @@ async function run() {
             const finalDesc = hasUsableCuration(aiData) ? aiData.seoDescription.trim() : fallbackDesc;
             const finalPriority = (aiData && aiData.priorityScore) ? aiData.priorityScore : 0.8;
 
-            seenUrls.add(url);
-            indexedVideoCount++;
-
             // Tags: gunakan cleanedTags dari AI jika tersedia (bermakna).
             // API /search/ mengembalikan keywords = judul video (bukan tag asli),
             // sehingga rawTags dari API tidak memiliki nilai SEO tambahan.
             // Tag nyata hanya bisa didapat dari AI yang memproses data dari endpoint /video/id/.
             const finalTags = (aiData && aiData.cleanedTags && aiData.cleanedTags.length > 0)
-              ? aiData.cleanedTags.slice(0, 32)
+              ? aiData.cleanedTags.map((tag) => repairMojibake(tag)).slice(0, 32)
               : [];
+
+            if ([video.title, finalDesc, ...finalTags].some(hasSuspiciousEncoding)) {
+              skippedEncodingCount++;
+              console.warn(`[Encoding] Video dilewati karena teks sumber masih rusak: ${video.id}`);
+              continue;
+            }
+
+            seenUrls.add(url);
+            indexedVideoCount++;
 
             currentChunkUrls.push({
               url: url,
@@ -554,7 +620,7 @@ async function run() {
   await publishSitemaps();
 
   console.log(`✅ Total URL video untuk sitemap: ${indexedVideoCount} (batas: ${MAX_SITEMAP_VIDEOS})`);
-  console.log(`🧠 Kurasi AI: ${indexedVideoCount} diterbitkan, ${skippedUncuratedCount} belum layak, ${skippedSpamCount} spam.`);
+  console.log(`🧠 Kurasi AI: ${indexedVideoCount} diterbitkan, ${skippedUncuratedCount} belum layak, ${skippedSpamCount} spam, ${skippedEncodingCount} encoding rusak.`);
   console.log('🎉 Selesai 100%! Semua file tersimpan dengan aman.');
 }
 
