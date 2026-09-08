@@ -146,7 +146,7 @@ const Footer = () => (
               target="_blank"
               rel="noopener noreferrer"
             >
-              Alternative Link <ExternalLink size={13} aria-hidden="true" />
+              Alternatif Link <ExternalLink size={13} aria-hidden="true" />
             </a>
           </nav>
         </div>
