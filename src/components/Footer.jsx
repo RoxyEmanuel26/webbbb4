@@ -116,9 +116,6 @@ const Footer = () => (
             <Link href="/about" className="footer-nav-link">
               About
             </Link>
-            <Link href="/methodology" className="footer-nav-link">
-              How It Works
-            </Link>
             <Link href="/content-sources" className="footer-nav-link">
               Content Sources
             </Link>

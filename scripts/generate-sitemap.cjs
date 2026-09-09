@@ -660,12 +660,6 @@ function writeStaticSitemap(catalog, collections) {
       lastmod: now
     },
     {
-      route: '/methodology',
-      changefreq: 'monthly',
-      priority: '0.5',
-      lastmod: now
-    },
-    {
       route: '/content-sources',
       changefreq: 'monthly',
       priority: '0.5',

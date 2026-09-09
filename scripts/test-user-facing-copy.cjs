@@ -3,6 +3,16 @@ const fs = require("fs");
 const path = require("path");
 
 const root = path.join(__dirname, "..");
+assert.equal(
+  fs.existsSync(path.join(root, "src/app/methodology/page.jsx")),
+  false,
+  "Methodology must not be a public route",
+);
+assert.equal(
+  fs.existsSync(path.join(root, "public/llms.txt")),
+  false,
+  "AI-facing llms.txt must not be published",
+);
 const visibleFiles = [
   "src/app/collections/page.jsx",
   "src/app/collections/[slug]/page.jsx",
@@ -55,6 +65,15 @@ assert.equal(
   collectionPage.includes("collection.intent"),
   false,
   "Internal collection intent must not be rendered",
+);
+const footer = fs.readFileSync(
+  path.join(root, "src/components/Footer.jsx"),
+  "utf8",
+);
+assert.equal(
+  footer.includes("/methodology"),
+  false,
+  "Footer must not link to the removed methodology page",
 );
 
 console.log("User-facing copy regression tests passed.");
