@@ -337,52 +337,62 @@ Return raw JSON with exactly these keys: intent, selectionRule, editorialIntro.
 Rules:
 - intent: one factual English sentence, between eighty and one hundred sixty characters.
 - selectionRule: one factual English sentence, between eighty and two hundred twenty characters.
-- editorialIntro: four to six distinct paragraphs separated by blank lines, between four hundred and six hundred fifty words total.
+- editorialIntro: exactly five distinct paragraphs separated by blank lines. Each paragraph must contain ninety to one hundred five words, for a total between four hundred fifty and five hundred twenty five words.
 - Explain how this collection is selected, ranked, verified, compared, refreshed, and reported using only the supplied facts and NICEVX methodology.
 - Do not quote any number, date, performer, studio, website, or person name in the prose. The factual statistics panel displays numeric facts separately.
 - Do not claim NICEVX hosts, owns, produces, endorses, or guarantees the videos.
 - Do not invent scenes, performers, studios, production context, trends, or viewing quality.
 - Avoid repetitive promotional language and keyword stuffing.`;
 
-  try {
-    const response = await fetch('https://api.deepseek.com/chat/completions', {
+  let previousDraft = '';
+  let previousError = '';
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const correction = attempt === 0 ? '' : `\n\nThe previous draft failed validation because: ${previousError}. Correct it without adding new facts. Previous draft:\n${previousDraft}`;
+    try {
+      const response = await fetch('https://api.deepseek.com/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${DEEPSEEK_API_KEY}`
       },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [{ role: 'user', content: prompt }],
-        response_format: { type: 'json_object' }
-      })
-    });
-    if (!response.ok) throw new Error(`DeepSeek HTTP ${response.status}`);
-    const payload = await response.json();
-    const result = JSON.parse(payload?.choices?.[0]?.message?.content || '');
-    const intent = repairMojibake(result.intent).trim();
-    const selectionRule = repairMojibake(result.selectionRule).trim();
-    const editorialIntro = repairMojibake(result.editorialIntro).trim();
-    const paragraphs = editorialIntro.split(/\n\s*\n/).filter(Boolean);
-    if (intent.length < 80 || intent.length > 160) throw new Error('intent harus 80-160 karakter');
-    if (selectionRule.length < 80 || selectionRule.length > 220) throw new Error('selectionRule harus 80-220 karakter');
-    if (wordCount(editorialIntro) < 400 || wordCount(editorialIntro) > 650) throw new Error('editorialIntro harus 400-650 kata');
-    if (paragraphs.length < 4 || paragraphs.length > 6) throw new Error('editorialIntro harus 4-6 paragraf');
-    if ([intent, selectionRule, editorialIntro].some(hasUnsafeCollectionEditorial)) throw new Error('editorial mengandung klaim yang tidak diizinkan');
-    return {
-      ...collection,
-      intent,
-      selectionRule,
-      editorialIntro,
-      status: 'editorial-approved',
-      editorialUpdatedAt: new Date().toISOString(),
-      editorialFactsHash: facts.hash,
-      source: 'deepseek'
-    };
-  } catch (error) {
-    console.error(`[Collection AI] ${collection.slug} ditolak: ${error.message}`);
-    return null;
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages: [{ role: 'user', content: `${prompt}${correction}` }],
+          response_format: { type: 'json_object' },
+          max_tokens: 1800,
+          temperature: 0.25
+        })
+      });
+      if (!response.ok) throw new Error(`DeepSeek HTTP ${response.status}`);
+      const payload = await response.json();
+      previousDraft = payload?.choices?.[0]?.message?.content || '';
+      const result = JSON.parse(previousDraft);
+      const intent = repairMojibake(result.intent).trim();
+      const selectionRule = repairMojibake(result.selectionRule).trim();
+      const editorialIntro = repairMojibake(result.editorialIntro).trim();
+      const paragraphs = editorialIntro.split(/\n\s*\n/).filter(Boolean);
+      if (intent.length < 80 || intent.length > 160) throw new Error('intent harus 80-160 karakter');
+      if (selectionRule.length < 80 || selectionRule.length > 220) throw new Error('selectionRule harus 80-220 karakter');
+      if (wordCount(editorialIntro) < 400 || wordCount(editorialIntro) > 650) throw new Error(`editorialIntro berisi ${wordCount(editorialIntro)} kata; wajib 400-650 kata`);
+      if (paragraphs.length < 4 || paragraphs.length > 6) throw new Error(`editorialIntro berisi ${paragraphs.length} paragraf; wajib 4-6 paragraf`);
+      if ([intent, selectionRule, editorialIntro].some(hasUnsafeCollectionEditorial)) throw new Error('editorial mengandung klaim yang tidak diizinkan');
+      return {
+        ...collection,
+        intent,
+        selectionRule,
+        editorialIntro,
+        status: 'editorial-approved',
+        editorialUpdatedAt: new Date().toISOString(),
+        editorialFactsHash: facts.hash,
+        source: attempt === 0 ? 'deepseek' : 'deepseek-repaired'
+      };
+    } catch (error) {
+      previousError = error.message;
+      if (attempt === 0) console.warn(`[Collection AI] ${collection.slug} memperbaiki draf: ${error.message}`);
+      else console.error(`[Collection AI] ${collection.slug} ditolak setelah perbaikan: ${error.message}`);
+    }
   }
+  return null;
 }
 
 async function refreshCollections(catalog) {
