@@ -25,6 +25,9 @@ const formatViews = (views) =>
     maximumFractionDigits: 1,
   }).format(views || 0);
 
+const collectionDescription = (collection) =>
+  `Browse ${collection.name} videos, compare the latest additions, and find related picks on NICEVX.`;
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const collection = getCollection(slug);
@@ -36,8 +39,8 @@ export async function generateMetadata({ params }) {
   const videos = getCollectionVideos(collection);
   const indexable = isCollectionIndexable(collection, videos);
   return {
-    title: `${collection.name} Curated Video Collection — NICEVX`,
-    description: collection.intent,
+    title: `${collection.name} Videos — NICEVX`,
+    description: collectionDescription(collection),
     alternates: {
       canonical: `https://www.nicevx.com/collections/${collection.slug}`,
     },
@@ -51,10 +54,6 @@ export default async function CollectionPage({ params }) {
   if (!collection) notFound();
   const videos = getCollectionVideos(collection);
   const stats = getCollectionStats(collection);
-  const indexable = isCollectionIndexable(collection, videos);
-  const introParagraphs = collection.editorialIntro.split("\n\n");
-  const summaryWords = introParagraphs[0].trim().split(/\s+/).slice(0, 82);
-  const summary = `${summaryWords.join(" ")}${introParagraphs[0].trim().split(/\s+/).length > summaryWords.length ? "…" : ""}`;
   const related = getCollections()
     .filter((item) => item.slug !== slug && item.videos.length > 0)
     .slice(0, 4);
@@ -62,8 +61,8 @@ export default async function CollectionPage({ params }) {
     {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
-      name: `${collection.name} curated videos`,
-      description: collection.intent,
+      name: `${collection.name} videos`,
+      description: collectionDescription(collection),
       url: `https://www.nicevx.com/collections/${slug}`,
     },
     {
@@ -115,28 +114,20 @@ export default async function CollectionPage({ params }) {
         <Link href="/">Home</Link> /{" "}
         <Link href="/collections">Collections</Link> / {collection.name}
       </nav>
-      <h1>{collection.name} curated videos</h1>
-      <p className="collection-lead">{summary}</p>
+      <h1>{collection.name} Videos</h1>
+      <p className="collection-lead">{collectionDescription(collection)}</p>
       <div className="collection-stats">
-        <span className={indexable ? "is-qualified" : "is-growing"}>
-          {indexable
-            ? `${videos.length} verified videos`
-            : `Growing collection · ${videos.length} verified videos`}
-        </span>
-        <span>
-          {indexable
-            ? "Quality gate passed"
-            : `${videos.length}/12 videos toward quality gate`}
-        </span>
+        <span>{videos.length} videos</span>
+        <span>Updated regularly</span>
       </div>
       <section
         className="collection-facts"
         aria-labelledby="collection-facts-heading"
       >
-        <h2 id="collection-facts-heading">Collection snapshot</h2>
+        <h2 id="collection-facts-heading">At a glance</h2>
         <dl>
           <div>
-            <dt>Active videos</dt>
+            <dt>Videos</dt>
             <dd>{stats.videoCount}</dd>
           </div>
           <div>
@@ -144,17 +135,11 @@ export default async function CollectionPage({ params }) {
             <dd>{formatDuration(stats.medianDurationSeconds)}</dd>
           </div>
           <div>
-            <dt>Source views</dt>
+            <dt>Total views</dt>
             <dd>{formatViews(stats.totalViews)}</dd>
           </div>
           <div>
-            <dt>HD share</dt>
-            <dd>
-              {stats.hdShare === null ? "Not reported" : `${stats.hdShare}%`}
-            </dd>
-          </div>
-          <div>
-            <dt>Last verified</dt>
+            <dt>Last updated</dt>
             <dd>
               {stats.updatedAt
                 ? new Date(stats.updatedAt).toISOString().slice(0, 10)
@@ -162,12 +147,12 @@ export default async function CollectionPage({ params }) {
             </dd>
           </div>
           <div>
-            <dt>Related tags</dt>
+            <dt>Explore similar</dt>
             <dd>{stats.relatedTags.join(", ") || "Not available"}</dd>
           </div>
         </dl>
       </section>
-      <h2>Ranked discoveries</h2>
+      <h2>Videos</h2>
       {videos.length ? (
         <div className="video-grid">
           {videos.map((video, index) => (
@@ -175,17 +160,8 @@ export default async function CollectionPage({ params }) {
           ))}
         </div>
       ) : (
-        <p>This collection has not yet reached its publication threshold.</p>
+        <p>More videos are coming soon.</p>
       )}
-      <section
-        className="collection-editorial"
-        aria-labelledby="about-collection"
-      >
-        <h2 id="about-collection">About this collection</h2>
-        {introParagraphs.map((paragraph) => (
-          <p key={paragraph.slice(0, 40)}>{paragraph}</p>
-        ))}
-      </section>
       {related.length > 0 && (
         <nav className="related-collections">
           <h2>Related collections</h2>

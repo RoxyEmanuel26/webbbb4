@@ -90,6 +90,7 @@ jobs:
       - name: Enforce catalog publication gates
         shell: bash
         run: |
+          npm run test:copy
           npm run validate:collections
           node - <<'NODE'
           const catalog = require('./src/data/curated-video-catalog.json');

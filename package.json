@@ -12,6 +12,7 @@
     "sitemap": "node scripts/generate-sitemap.cjs",
     "validate:collections": "node scripts/collection-engine.cjs validate",
     "test:collections": "node scripts/test-collection-engine.cjs",
+    "test:copy": "node scripts/test-user-facing-copy.cjs",
     "lint": "next lint"
   },
   "dependencies": {

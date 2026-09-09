@@ -1,24 +1,32 @@
-import React from 'react';
-import CategoriesClient from './CategoriesClient';
+import React from "react";
+import CategoriesClient from "./CategoriesClient";
 
 export const metadata = {
-  title: 'All Porn Categories — NICEVX',
-  description: 'Browse all free HD porn video categories on NICEVX. Explore teen, MILF, Asian, amateur, lesbian, anal, hardcore and 100+ more categories. Updated daily.',
+  title: "Video Categories — NICEVX",
+  description:
+    "Browse adult video categories on NICEVX and find something that matches your interests.",
   alternates: {
-    canonical: 'https://www.nicevx.com/cats'
+    canonical: "https://www.nicevx.com/cats",
   },
   openGraph: {
-    title: 'All Porn Categories — NICEVX',
-    description: 'Browse all free HD porn video categories on NICEVX. Updated daily with the best adult content.',
-    url: 'https://www.nicevx.com/cats',
-    type: 'website',
-    images: [{ url: '/favicon.png', width: 512, height: 512, alt: 'All Porn Categories — NICEVX' }],
+    title: "Video Categories — NICEVX",
+    description: "Browse adult video categories on NICEVX.",
+    url: "https://www.nicevx.com/cats",
+    type: "website",
+    images: [
+      {
+        url: "/favicon.png",
+        width: 512,
+        height: 512,
+        alt: "Video Categories — NICEVX",
+      },
+    ],
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'All Porn Categories — NICEVX',
-    description: 'Browse all free HD porn video categories on NICEVX. Updated daily with the best adult content.',
-    images: ['/favicon.png'],
+    card: "summary_large_image",
+    title: "Video Categories — NICEVX",
+    description: "Browse adult video categories on NICEVX.",
+    images: ["/favicon.png"],
   },
 };
 
@@ -26,36 +34,38 @@ export default function CategoriesPage() {
   const breadcrumbsSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": [
+    itemListElement: [
       {
         "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://www.nicevx.com/"
+        position: 1,
+        name: "Home",
+        item: "https://www.nicevx.com/",
       },
       {
         "@type": "ListItem",
-        "position": 2,
-        "name": "Categories",
-        "item": "https://www.nicevx.com/cats"
-      }
-    ]
+        position: 2,
+        name: "Categories",
+        item: "https://www.nicevx.com/cats",
+      },
+    ],
   };
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify([
-          {
-            "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            "name": "All Porn Categories — NICEVX",
-            "description": "Browse all free HD porn video categories on NICEVX.",
-            "url": "https://www.nicevx.com/cats"
-          },
-          breadcrumbsSchema
-        ]) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([
+            {
+              "@context": "https://schema.org",
+              "@type": "CollectionPage",
+              name: "Video Categories — NICEVX",
+              description: "Browse adult video categories on NICEVX.",
+              url: "https://www.nicevx.com/cats",
+            },
+            breadcrumbsSchema,
+          ]),
+        }}
       />
       <CategoriesClient />
     </>

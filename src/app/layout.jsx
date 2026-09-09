@@ -1,89 +1,100 @@
-import '../index.css';
-import '../App.css';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import AgeGateModal from '../components/AgeGateModal';
+import "../index.css";
+import "../App.css";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import AgeGateModal from "../components/AgeGateModal";
 
-import Script from 'next/script';
+import Script from "next/script";
 
-export const runtime = 'edge';
+export const runtime = "edge";
 
 export const metadata = {
-  metadataBase: new URL('https://www.nicevx.com/'),
+  metadataBase: new URL("https://www.nicevx.com/"),
   title: {
-    default: 'NICEVX — Curated Adult Video Discovery',
-    template: '%s',
+    default: "NICEVX — Adult Videos",
+    template: "%s",
   },
-  description: 'A curated adult video discovery catalog ranked from factual source signals, with transparent methodology and privacy-first local recommendations.',
-  keywords: ['free porn videos', 'HD porn', 'adult videos', 'free sex videos', 'porn tube', 'NICEVX', 'watch porn online'],
-  authors: [{ name: 'NICEVX' }],
-  creator: 'NICEVX',
-  publisher: 'NICEVX',
+  description:
+    "Browse adult videos, popular categories, and new weekly additions on NICEVX.",
+  keywords: [
+    "free porn videos",
+    "HD porn",
+    "adult videos",
+    "free sex videos",
+    "porn tube",
+    "NICEVX",
+    "watch porn online",
+  ],
+  authors: [{ name: "NICEVX" }],
+  creator: "NICEVX",
+  publisher: "NICEVX",
   robots: {
     index: true,
     follow: true,
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   openGraph: {
-    title: 'NICEVX — Curated Adult Video Discovery',
-    description: 'A curated adult video discovery catalog ranked from factual source signals.',
-    url: 'https://www.nicevx.com/',
-    siteName: 'NICEVX',
-    type: 'website',
-    locale: 'en_US',
+    title: "NICEVX — Adult Videos",
+    description:
+      "Browse adult videos, popular categories, and new weekly additions.",
+    url: "https://www.nicevx.com/",
+    siteName: "NICEVX",
+    type: "website",
+    locale: "en_US",
     images: [
       {
-        url: '/favicon.png',
+        url: "/favicon.png",
         width: 512,
         height: 512,
-        alt: 'NICEVX — Free HD Porn Videos',
+        alt: "NICEVX — Free HD Porn Videos",
       },
     ],
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'NICEVX — Curated Adult Video Discovery',
-    description: 'A curated adult video discovery catalog ranked from factual source signals.',
-    images: ['/favicon.png'],
+    card: "summary_large_image",
+    title: "NICEVX — Adult Videos",
+    description:
+      "Browse adult videos, popular categories, and new weekly additions.",
+    images: ["/favicon.png"],
   },
   icons: {
-    icon: '/favicon.png',
-    shortcut: '/favicon.png',
-    apple: '/favicon.png',
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
   alternates: {
-    canonical: 'https://www.nicevx.com/',
+    canonical: "https://www.nicevx.com/",
   },
-  other: { rating: 'adult' },
+  other: { rating: "adult" },
 };
 
 export const viewport = {
-  themeColor: '#0f0f11',
-  width: 'device-width',
+  themeColor: "#0f0f11",
+  width: "device-width",
   initialScale: 1,
   maximumScale: 5,
 };
 
 export default function RootLayout({ children }) {
   const websiteSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'NICEVX',
-    url: 'https://www.nicevx.com',
-    description: 'Curated adult video discovery using factual source signals.',
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "NICEVX",
+    url: "https://www.nicevx.com",
+    description: "Adult videos, categories, and weekly additions.",
     potentialAction: {
-      '@type': 'SearchAction',
+      "@type": "SearchAction",
       target: {
-        '@type': 'EntryPoint',
-        urlTemplate: 'https://www.nicevx.com/search?query={search_term_string}',
+        "@type": "EntryPoint",
+        urlTemplate: "https://www.nicevx.com/search?query={search_term_string}",
       },
-      'query-input': 'required name=search_term_string',
+      "query-input": "required name=search_term_string",
     },
   };
 
@@ -95,8 +106,9 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
-        <script dangerouslySetInnerHTML={{
-          __html: `
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
             (function() {
               try {
                 var search = window.location.search;
@@ -115,20 +127,19 @@ export default function RootLayout({ children }) {
                 }
               } catch (e) {}
             })();
-          `
-        }} />
+          `,
+          }}
+        />
       </head>
       <body>
-        <Script 
-          src="https://analytics.ahrefs.com/analytics.js" 
-          data-key="VdAtEZ/WUhk9qsBEzocURw" 
-          strategy="lazyOnload" 
+        <Script
+          src="https://analytics.ahrefs.com/analytics.js"
+          data-key="VdAtEZ/WUhk9qsBEzocURw"
+          strategy="lazyOnload"
         />
         <AgeGateModal />
         <Navbar />
-        <main>
-          {children}
-        </main>
+        <main>{children}</main>
         <Footer />
       </body>
     </html>

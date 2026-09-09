@@ -1,7 +1,34 @@
-import EditorialPage from '@/components/EditorialPage';
-export const metadata = { title: 'Discovery Methodology — NICEVX', description: 'How NICEVX selects, scores, and publishes curated video records.', alternates: { canonical: 'https://www.nicevx.com/methodology' } };
-export default function Page() { return <EditorialPage title="Discovery methodology" lead="NICEVX ranks a limited verified catalog from recorded source facts; it does not ask AI to invent popularity or trends." sections={[
-  { heading: 'Publication gate', body: ['A record needs an available source page, working embed URL, stable thumbnail, valid upload date, duration, and readable editorial metadata. Pages not present in the curated catalog return 404 and cannot enter the sitemap.'] },
-  { heading: 'Discovery Score', body: ['The score weights measured seven-day view growth at 40%, source-rating percentile at 25%, view percentile within the assigned category at 15%, freshness at 10%, and metadata completeness at 10%. Seven-day growth contributes zero until a comparable snapshot at least six days older exists. Shorter changes may be shown only as explicitly labeled snapshot-to-snapshot evidence.'] },
-  { heading: 'Collection gate', body: ['A collection requires at least 12 active curated videos, a unique editorial introduction of at least 400 words, useful facts, breadcrumbs, and related collections before it is indexable. Other collection and legacy category pages remain noindex, follow.'] },
-]} />; }
+import EditorialPage from "@/components/EditorialPage";
+export const metadata = {
+  title: "How NICEVX Works",
+  description: "How videos and collections are organized on NICEVX.",
+  alternates: { canonical: "https://www.nicevx.com/methodology" },
+};
+export default function Page() {
+  return (
+    <EditorialPage
+      title="How NICEVX works"
+      lead="The site keeps browsing simple while checking that every listed video is still available."
+      sections={[
+        {
+          heading: "Choosing what to show",
+          body: [
+            "Videos need a working player, thumbnail, title, and source page before they appear. Unavailable videos are removed during regular updates.",
+          ],
+        },
+        {
+          heading: "Ordering videos",
+          body: [
+            "Lists can be sorted by newest, most viewed, top rated, or recommended. Recommendations use the information shown on the site, such as popularity, rating, and recency.",
+          ],
+        },
+        {
+          heading: "Building collections",
+          body: [
+            "Collections grow as suitable videos are added. Similar collections are kept separate only when they offer a useful way to browse.",
+          ],
+        },
+      ]}
+    />
+  );
+}

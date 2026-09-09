@@ -621,6 +621,9 @@
 .collection-facts dt { color: var(--color-text-muted); font-size: .78rem; }
 .collection-facts dd { margin: 5px 0 0; color: var(--color-text-primary); font-weight: 700; overflow-wrap: anywhere; }
 @media (max-width: 600px) { .collection-directory { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } .collection-directory-card, .collection-directory-content { min-height: 150px; } .collection-directory-content { padding: 13px; } .collection-directory-content small { font-size: .68rem; } }
+.empty-page { min-height: 62vh; display: grid; place-items: center; text-align: center; }
+.empty-page .empty-block { max-width: 460px; }
+.empty-code { color: var(--color-primary); font-size: clamp(3rem, 10vw, 6rem); font-weight: 800; line-height: 1; letter-spacing: -.05em; }
 .related-collections { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
 .related-collections h2 { width: 100%; }
 .related-collections a { color: var(--color-accent); }

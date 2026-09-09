@@ -315,7 +315,7 @@ Respond ONLY with raw JSON:
 
 function hasUnsafeCollectionEditorial(value) {
   const text = String(value || '');
-  return hasSuspiciousEncoding(text) || /https?:\/\//i.test(text) || /\b(?:19|20)\d{2}\b/.test(text) || /\d/.test(text) || /\bNICEVX\s+(?:hosts|owns|produces|created)\b/i.test(text) || /\b(?:guaranteed|buffer-free|exclusive footage)\b/i.test(text);
+  return hasSuspiciousEncoding(text) || /https?:\/\//i.test(text) || /\b(?:19|20)\d{2}\b/.test(text) || /\d/.test(text) || /\bNICEVX\s+(?:hosts|owns|produces|created)\b/i.test(text) || /\b(?:guaranteed|buffer-free|exclusive footage|watch time|interaction patterns|completion rates|publication gate|quality gate|sitemap|noindex|metadata packet|ranking algorithm|legal age|consensual|properly licensed)\b/i.test(text);
 }
 
 async function curateCollectionEditorial(collection, facts) {
@@ -338,10 +338,12 @@ Rules:
 - intent: one factual English sentence, between eighty and one hundred sixty characters.
 - selectionRule: one factual English sentence, between eighty and two hundred twenty characters.
 - editorialIntro: exactly five distinct paragraphs separated by blank lines. Each paragraph must contain ninety to one hundred five words, for a total between four hundred fifty and five hundred twenty five words.
-- Explain how this collection is selected, ranked, verified, compared, refreshed, and reported using only the supplied facts and NICEVX methodology.
+- Write for a visitor choosing what to watch. Describe the category in plain English and explain how the visible duration, views, ratings, and related tags can help someone browse.
 - Do not quote any number, date, performer, studio, website, or person name in the prose. The factual statistics panel displays numeric facts separately.
 - Do not claim NICEVX hosts, owns, produces, endorses, or guarantees the videos.
 - Do not invent scenes, performers, studios, production context, trends, or viewing quality.
+- Do not discuss AI, prompts, metadata, algorithms, verification, publication rules, quality gates, indexing, sitemaps, APIs, or internal workflows.
+- Do not claim access to watch time, interaction patterns, completion rates, consent checks, age checks, licensing reviews, or manual content reviews.
 - Avoid repetitive promotional language and keyword stuffing.`;
 
   const messages = [{ role: 'user', content: prompt }];

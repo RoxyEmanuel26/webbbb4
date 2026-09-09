@@ -64,10 +64,8 @@ const Footer = () => (
             </div>
           </Link>
           <p className="footer-brand-desc">
-            NICEVX is a curated adult video discovery catalog. Published records
-            are checked for availability and ranked from factual source signals
-            with a transparent methodology. NICEVX embeds media hosted by
-            Eporner.
+            Browse adult videos by category, save favorites on your device, and
+            discover something new. Videos play through Eporner.
           </p>
         </div>
 
@@ -119,7 +117,7 @@ const Footer = () => (
               About
             </Link>
             <Link href="/methodology" className="footer-nav-link">
-              Methodology
+              How It Works
             </Link>
             <Link href="/content-sources" className="footer-nav-link">
               Content Sources
@@ -162,8 +160,8 @@ const Footer = () => (
           All models appearing on this website are 18 years of age or older.
         </p>
         <p className="footer-disclaimer">
-          This site is powered by the <strong>Eporner API v2</strong> and
-          contains adult content intended for mature audiences only.
+          Videos are provided by <strong>Eporner</strong>. This website is for
+          adults only.
         </p>
       </div>
     </div>
