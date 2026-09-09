@@ -55,3 +55,6 @@ parse_cats.py
 curl_*.html
 *.csv
 scripts/*
+!scripts/generate-sitemap.cjs
+!scripts/collection-engine.cjs
+!scripts/test-collection-engine.cjs

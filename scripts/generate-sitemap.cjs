@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { MAX_EDITORIALS_PER_RUN, MIN_COLLECTION_VIDEOS, bootstrapCollections, buildFacts, discoverCandidates, getCollectionVideos, getOverlapBlocker, isQualified, validateManifest, wordCount } = require('./collection-engine.cjs');
 
 const SITE_URL = 'https://www.nicevx.com';
 const API_BASE = 'https://www.eporner.com/api/v2';
@@ -10,9 +11,7 @@ const PER_PAGE = 50;
 const HARD_MAX_SITEMAP_VIDEOS = 250;
 const DEFAULT_MAX_SITEMAP_VIDEOS = HARD_MAX_SITEMAP_VIDEOS;
 const requestedMaxVideos = Number.parseInt(process.env.SITEMAP_MAX_VIDEOS || '', 10);
-const MAX_SITEMAP_VIDEOS = Number.isSafeInteger(requestedMaxVideos) && requestedMaxVideos > 0
-  ? Math.min(requestedMaxVideos, HARD_MAX_SITEMAP_VIDEOS)
-  : DEFAULT_MAX_SITEMAP_VIDEOS;
+const MAX_SITEMAP_VIDEOS = Number.isSafeInteger(requestedMaxVideos) && requestedMaxVideos > 0 ? Math.min(requestedMaxVideos, HARD_MAX_SITEMAP_VIDEOS) : DEFAULT_MAX_SITEMAP_VIDEOS;
 const MAX_PAGES = Math.ceil(MAX_SITEMAP_VIDEOS / PER_PAGE);
 const URLS_PER_SITEMAP = 5000; // Batas chunk
 const BATCH_SIZE = 5;
@@ -20,9 +19,9 @@ const BATCH_SIZE = 5;
 // DeepSeek credits or publishing a large untested batch.
 const DEFAULT_MAX_AI_PER_RUN = 0;
 const requestedAiBatchSize = Number.parseInt(process.env.SITEMAP_AI_BATCH_SIZE || '', 10);
-const MAX_AI_PER_RUN = Number.isSafeInteger(requestedAiBatchSize) && requestedAiBatchSize >= 0
-  ? requestedAiBatchSize
-  : DEFAULT_MAX_AI_PER_RUN;
+const MAX_AI_PER_RUN = Number.isSafeInteger(requestedAiBatchSize) && requestedAiBatchSize >= 0 ? requestedAiBatchSize : DEFAULT_MAX_AI_PER_RUN;
+const requestedCollectionBatchSize = Number.parseInt(process.env.COLLECTION_AI_BATCH_SIZE || '', 10);
+const MAX_COLLECTION_AI_PER_RUN = Number.isSafeInteger(requestedCollectionBatchSize) && requestedCollectionBatchSize >= 0 ? Math.min(requestedCollectionBatchSize, MAX_EDITORIALS_PER_RUN) : 0;
 const REQUIRE_AI_CURATION = process.env.SITEMAP_REQUIRE_AI_CURATION !== 'false';
 const MIN_DESCRIPTION_LENGTH = 120;
 const MAX_DESCRIPTION_LENGTH = 180;
@@ -38,7 +37,9 @@ const SNAPSHOTS_FILE = path.join(__dirname, '../src/data/discovery-snapshots.jso
 const COLLECTIONS_FILE = path.join(__dirname, '../src/data/collections.json');
 let aiSeoData = {};
 if (fs.existsSync(AI_SEO_FILE)) {
-  try { aiSeoData = JSON.parse(fs.readFileSync(AI_SEO_FILE, 'utf-8')); } catch (e) { }
+  try {
+    aiSeoData = JSON.parse(fs.readFileSync(AI_SEO_FILE, 'utf-8'));
+  } catch (e) {}
 } else {
   if (!fs.existsSync(path.dirname(AI_SEO_FILE))) fs.mkdirSync(path.dirname(AI_SEO_FILE), { recursive: true });
 }
@@ -49,7 +50,7 @@ if (!DEEPSEEK_API_KEY) {
     const envFile = fs.readFileSync(path.join(__dirname, '../.env'), 'utf-8');
     const match = envFile.match(/DEEPSEEK_API_KEY=["']?(.*?)["']?$/m);
     if (match) DEEPSEEK_API_KEY = match[1].trim();
-  } catch (e) { }
+  } catch (e) {}
 }
 
 const isResumeMode = process.argv.includes('--resume');
@@ -82,19 +83,7 @@ if (fs.existsSync(sitemapsDir)) {
 }
 
 // Daftar kategori valid (top 80 berdasarkan allCategories.js)
-const VALID_CATEGORIES = [
-  "adult porn", "amateur", "american", "anal", "anal teen", "asian", "asian anal",
-  "bbc", "bbc interracial", "bbw", "bdsm", "big ass", "big ass latina", "big boobs",
-  "big natural tits", "big tits", "black", "blonde", "blowjob", "bondage", "busty",
-  "creampie", "deepthroat", "dildo", "double penetration", "ebony", "ebony big ass",
-  "first time", "free porn", "gangbang", "german", "hairy", "handjob", "hardcore",
-  "hd porn", "hentai", "homemade", "indian", "indian homemade", "interracial",
-  "interracial anal", "japanese", "japanese milf", "japanese sex", "latina",
-  "latina anal", "lesbian", "lesbians", "lingerie", "massage", "masturbation",
-  "mature", "mature anal", "milf", "milf mom", "mom", "old man", "orgasm", "orgy",
-  "outdoor", "petite", "POV", "public", "redhead", "rough", "solo", "squirt", "step",
-  "stepmom", "teen", "teen anal", "threesome"
-];
+const VALID_CATEGORIES = ['adult porn', 'amateur', 'american', 'anal', 'anal teen', 'asian', 'asian anal', 'bbc', 'bbc interracial', 'bbw', 'bdsm', 'big ass', 'big ass latina', 'big boobs', 'big natural tits', 'big tits', 'black', 'blonde', 'blowjob', 'bondage', 'busty', 'creampie', 'deepthroat', 'dildo', 'double penetration', 'ebony', 'ebony big ass', 'first time', 'free porn', 'gangbang', 'german', 'hairy', 'handjob', 'hardcore', 'hd porn', 'hentai', 'homemade', 'indian', 'indian homemade', 'interracial', 'interracial anal', 'japanese', 'japanese milf', 'japanese sex', 'latina', 'latina anal', 'lesbian', 'lesbians', 'lingerie', 'massage', 'masturbation', 'mature', 'mature anal', 'milf', 'milf mom', 'mom', 'old man', 'orgasm', 'orgy', 'outdoor', 'petite', 'POV', 'public', 'redhead', 'rough', 'solo', 'squirt', 'step', 'stepmom', 'teen', 'teen anal', 'threesome'];
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -106,7 +95,7 @@ function mojibakeScore(value) {
   const replacementCharacters = (text.match(/\uFFFD/g) || []).length;
   const c1Controls = (text.match(/[\u0080-\u009F]/g) || []).length;
   const brokenUtf8Sequences = (text.match(/[\u00C2-\u00F4][\u0080-\u00BF]/g) || []).length;
-  return (replacementCharacters * 10) + (c1Controls * 4) + (brokenUtf8Sequences * 2);
+  return replacementCharacters * 10 + c1Controls * 4 + brokenUtf8Sequences * 2;
 }
 
 function repairMojibake(value) {
@@ -117,7 +106,7 @@ function repairMojibake(value) {
     if (currentScore === 0) break;
 
     // Latin-1 reversal is lossless only when every source character is a byte.
-    if ([...current].some((character) => character.codePointAt(0) > 0xFF)) break;
+    if ([...current].some((character) => character.codePointAt(0) > 0xff)) break;
 
     const candidate = Buffer.from(current, 'latin1').toString('utf8');
     const candidateScore = mojibakeScore(candidate);
@@ -136,7 +125,7 @@ function normalizeVideo(video) {
   return {
     ...video,
     title: repairMojibake(video?.title),
-    keywords: repairMojibake(video?.keywords),
+    keywords: repairMojibake(video?.keywords)
   };
 }
 
@@ -145,10 +134,8 @@ function normalizeAiSeoEntry(entry) {
   return {
     ...entry,
     seoDescription: repairMojibake(entry.seoDescription),
-    cleanedTags: Array.isArray(entry.cleanedTags)
-      ? entry.cleanedTags.map((tag) => repairMojibake(tag))
-      : entry.cleanedTags,
-    category: repairMojibake(entry.category),
+    cleanedTags: Array.isArray(entry.cleanedTags) ? entry.cleanedTags.map((tag) => repairMojibake(tag)) : entry.cleanedTags,
+    category: repairMojibake(entry.category)
   };
 }
 
@@ -169,7 +156,7 @@ async function fetchJson(url, label, { retries = API_RETRIES, silent = false } =
       }, API_TIMEOUT_MS);
       const response = await fetch(url, {
         headers: { Accept: 'application/json' },
-        signal: controller.signal,
+        signal: controller.signal
       });
       const body = await response.text();
       if (!response.ok) {
@@ -224,10 +211,7 @@ function getPublicationDate(video) {
 
 function hasUsableCuration(entry) {
   const description = typeof entry?.seoDescription === 'string' ? entry.seoDescription.trim() : '';
-  return !entry?.isSpam
-    && typeof description === 'string'
-    && description.length >= MIN_DESCRIPTION_LENGTH
-    && description.length <= MAX_DESCRIPTION_LENGTH;
+  return !entry?.isSpam && typeof description === 'string' && description.length >= MIN_DESCRIPTION_LENGTH && description.length <= MAX_DESCRIPTION_LENGTH;
 }
 
 async function curateWithDeepSeek(video) {
@@ -241,22 +225,21 @@ async function curateWithDeepSeek(video) {
   // priorityScore dihitung dari data views asli (bukan tebakan AI)
   // Views > 100k = 1.0, > 50k = 0.9, > 10k = 0.8, > 1k = 0.7, else = 0.6
   const views = parseInt(video.views) || 0;
-  const priorityScore = views > 100000 ? 1.0
-    : views > 50000 ? 0.9
-      : views > 10000 ? 0.8
-        : views > 1000 ? 0.7
-          : 0.6;
+  const priorityScore = views > 100000 ? 1.0 : views > 50000 ? 0.9 : views > 10000 ? 0.8 : views > 1000 ? 0.7 : 0.6;
 
   const categoryList = VALID_CATEGORIES.join(', ');
 
   // Fetch keywords nyata dari endpoint /video/id/ — endpoint /search/ hanya mengembalikan judul sebagai keywords
   let realKeywords = repairMojibake(video.keywords || '');
   try {
-    const detailData = await fetchJson(`${API_BASE}/video/id/?id=${video.id}&format=json`, `detail video ${video.id}`, { retries: 2, silent: true });
+    const detailData = await fetchJson(`${API_BASE}/video/id/?id=${video.id}&format=json`, `detail video ${video.id}`, {
+      retries: 2,
+      silent: true
+    });
     if (detailData?.keywords && detailData.keywords !== video.title) {
       realKeywords = repairMojibake(detailData.keywords);
     }
-  } catch (_) { }
+  } catch (_) {}
 
   const prompt = `Video details:
 - Title: "${video.title}"
@@ -290,7 +273,7 @@ Respond ONLY with raw JSON:
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+        Authorization: `Bearer ${DEEPSEEK_API_KEY}`
       },
       body: JSON.stringify({
         model: 'deepseek-chat',
@@ -306,15 +289,9 @@ Respond ONLY with raw JSON:
       throw new Error(`deskripsi AI harus ${MIN_DESCRIPTION_LENGTH}-${MAX_DESCRIPTION_LENGTH} karakter`);
     }
 
-    const cleanedTags = Array.isArray(result.cleanedTags)
-      ? [...new Set(result.cleanedTags
-        .map((tag) => repairMojibake(tag).trim().toLowerCase())
-        .filter((tag) => tag.length > 1 && tag.length <= 40))].slice(0, 8)
-      : [];
+    const cleanedTags = Array.isArray(result.cleanedTags) ? [...new Set(result.cleanedTags.map((tag) => repairMojibake(tag).trim().toLowerCase()).filter((tag) => tag.length > 1 && tag.length <= 40))].slice(0, 8) : [];
     const normalizedCategory = repairMojibake(result.category).trim().toLowerCase();
-    const category = VALID_CATEGORIES.includes(normalizedCategory)
-      ? normalizedCategory
-      : 'adult porn';
+    const category = VALID_CATEGORIES.includes(normalizedCategory) ? normalizedCategory : 'adult porn';
 
     // Simpan secara atomik agar file tidak korup atau terkunci sementara di Windows.
     aiSeoData[video.id] = {
@@ -323,7 +300,9 @@ Respond ONLY with raw JSON:
       category,
       isSpam: Boolean(result.isSpam),
       priorityScore,
-      ...(getPublicationDate(video) && { uploadDate: getPublicationDate(video) }),
+      ...(getPublicationDate(video) && {
+        uploadDate: getPublicationDate(video)
+      })
     };
     newlyCuratedIds.add(video.id);
     await persistAiSeoData();
@@ -334,13 +313,117 @@ Respond ONLY with raw JSON:
   }
 }
 
+function hasUnsafeCollectionEditorial(value) {
+  const text = String(value || '');
+  return hasSuspiciousEncoding(text) || /https?:\/\//i.test(text) || /\b(?:19|20)\d{2}\b/.test(text) || /\d/.test(text) || /\bNICEVX\s+(?:hosts|owns|produces|created)\b/i.test(text) || /\b(?:guaranteed|buffer-free|exclusive footage)\b/i.test(text);
+}
+
+async function curateCollectionEditorial(collection, facts) {
+  if (!DEEPSEEK_API_KEY || MAX_COLLECTION_AI_PER_RUN === 0) return null;
+  const prompt = `You are editing a factual collection page for NICEVX, an adult video discovery catalog that embeds third-party media.
+
+Verified fact packet:
+${JSON.stringify({
+  name: facts.name,
+  aliases: facts.aliases,
+  videoCount: facts.videoCount,
+  medianDurationSeconds: facts.medianDurationSeconds,
+  totalViews: facts.totalViews,
+  topTags: facts.topTags
+})}
+
+Return raw JSON with exactly these keys: intent, selectionRule, editorialIntro.
+
+Rules:
+- intent: one factual English sentence, between eighty and one hundred sixty characters.
+- selectionRule: one factual English sentence, between eighty and two hundred twenty characters.
+- editorialIntro: four to six distinct paragraphs separated by blank lines, between four hundred and six hundred fifty words total.
+- Explain how this collection is selected, ranked, verified, compared, refreshed, and reported using only the supplied facts and NICEVX methodology.
+- Do not quote any number, date, performer, studio, website, or person name in the prose. The factual statistics panel displays numeric facts separately.
+- Do not claim NICEVX hosts, owns, produces, endorses, or guarantees the videos.
+- Do not invent scenes, performers, studios, production context, trends, or viewing quality.
+- Avoid repetitive promotional language and keyword stuffing.`;
+
+  try {
+    const response = await fetch('https://api.deepseek.com/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${DEEPSEEK_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: [{ role: 'user', content: prompt }],
+        response_format: { type: 'json_object' }
+      })
+    });
+    if (!response.ok) throw new Error(`DeepSeek HTTP ${response.status}`);
+    const payload = await response.json();
+    const result = JSON.parse(payload?.choices?.[0]?.message?.content || '');
+    const intent = repairMojibake(result.intent).trim();
+    const selectionRule = repairMojibake(result.selectionRule).trim();
+    const editorialIntro = repairMojibake(result.editorialIntro).trim();
+    const paragraphs = editorialIntro.split(/\n\s*\n/).filter(Boolean);
+    if (intent.length < 80 || intent.length > 160) throw new Error('intent harus 80-160 karakter');
+    if (selectionRule.length < 80 || selectionRule.length > 220) throw new Error('selectionRule harus 80-220 karakter');
+    if (wordCount(editorialIntro) < 400 || wordCount(editorialIntro) > 650) throw new Error('editorialIntro harus 400-650 kata');
+    if (paragraphs.length < 4 || paragraphs.length > 6) throw new Error('editorialIntro harus 4-6 paragraf');
+    if ([intent, selectionRule, editorialIntro].some(hasUnsafeCollectionEditorial)) throw new Error('editorial mengandung klaim yang tidak diizinkan');
+    return {
+      ...collection,
+      intent,
+      selectionRule,
+      editorialIntro,
+      status: 'editorial-approved',
+      editorialUpdatedAt: new Date().toISOString(),
+      editorialFactsHash: facts.hash,
+      source: 'deepseek'
+    };
+  } catch (error) {
+    console.error(`[Collection AI] ${collection.slug} ditolak: ${error.message}`);
+    return null;
+  }
+}
+
+async function refreshCollections(catalog) {
+  const original = readJsonFile(COLLECTIONS_FILE, []);
+  let collections = bootstrapCollections(original, catalog);
+
+  if (MAX_COLLECTION_AI_PER_RUN > 0) {
+    const discovered = discoverCandidates(collections, catalog);
+    if (discovered.length) {
+      collections = [...collections, ...discovered];
+      console.log(`[Collections] ${discovered.length} kandidat baru: ${discovered.map((item) => item.slug).join(', ')}`);
+    }
+
+    const editorialQueue = collections
+      .filter((collection) => collection.status !== 'editorial-approved')
+      .filter((collection) => getCollectionVideos(collection, catalog).length >= MIN_COLLECTION_VIDEOS)
+      .filter((collection) => !getOverlapBlocker(collection, collections, catalog))
+      .sort((left, right) => Number(left.source === 'automatic') - Number(right.source === 'automatic') || getCollectionVideos(right, catalog).length - getCollectionVideos(left, catalog).length || left.slug.localeCompare(right.slug))
+      .slice(0, MAX_COLLECTION_AI_PER_RUN);
+
+    for (const queued of editorialQueue) {
+      const curated = await curateCollectionEditorial(queued, buildFacts(queued, catalog));
+      if (curated) collections = collections.map((collection) => (collection.slug === curated.slug ? curated : collection));
+    }
+  }
+
+  const errors = validateManifest(collections, catalog);
+  if (errors.length) throw new Error(`Manifest collection tidak valid: ${errors.join('; ')}`);
+  if (JSON.stringify(collections) !== JSON.stringify(original)) await writeJsonAtomic(COLLECTIONS_FILE, collections);
+  return collections;
+}
+
 function slugify(text) {
-  return repairMojibake(text)
-    .toLowerCase()
-    // Keep this transformation aligned with VideoCard.createSlug so sitemap
-    // URLs and internal links always resolve to the same canonical URL.
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)+/g, '');
+  return (
+    repairMojibake(text)
+      .toLowerCase()
+      // Keep this transformation aligned with VideoCard.createSlug so sitemap
+      // URLs and internal links always resolve to the same canonical URL.
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '')
+  );
 }
 
 function initState() {
@@ -354,7 +437,7 @@ function initState() {
 
   if (!fs.existsSync(sitemapsDir)) fs.mkdirSync(sitemapsDir, { recursive: true });
 
-  const files = fs.readdirSync(sitemapsDir).filter(f => f.startsWith('sitemap-video-') && f.endsWith('.xml'));
+  const files = fs.readdirSync(sitemapsDir).filter((f) => f.startsWith('sitemap-video-') && f.endsWith('.xml'));
   if (files.length === 0) return;
 
   let totalVideoUrls = 0;
@@ -367,7 +450,7 @@ function initState() {
     const content = fs.readFileSync(path.join(sitemapsDir, file), 'utf-8');
     const matches = content.match(/<loc>(.*?)<\/loc>/g);
     if (matches) {
-      matches.forEach(m => {
+      matches.forEach((m) => {
         const url = m.replace('<loc>', '').replace('</loc>', '');
         seenUrls.add(url);
         totalVideoUrls++;
@@ -388,21 +471,29 @@ function initState() {
 }
 
 function escapeXml(unsafe) {
-  const safeText = repairMojibake(unsafe)
-    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
+  const safeText = repairMojibake(unsafe).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
   return safeText.replace(/[<>&'"]/g, function (c) {
     switch (c) {
-      case '<': return '&lt;';
-      case '>': return '&gt;';
-      case '&': return '&amp;';
-      case '\'': return '&apos;';
-      case '"': return '&quot;';
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '&':
+        return '&amp;';
+      case "'":
+        return '&apos;';
+      case '"':
+        return '&quot;';
     }
   });
 }
 
 function readJsonFile(file, fallback) {
-  try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch (_) { return fallback; }
+  try {
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch (_) {
+    return fallback;
+  }
 }
 
 async function writeJsonAtomic(file, value) {
@@ -448,60 +539,68 @@ function buildDiscoveryCatalog(videos) {
   for (const video of videos) {
     const entries = Array.isArray(history[video.id]) ? history[video.id] : [];
     const withoutToday = entries.filter((entry) => entry.date !== snapshotDate);
-    history[video.id] = [...withoutToday, {
-      date: snapshotDate,
-      views: video.views,
-      rating: video.rating,
-      category: video.category,
-      availability: video.availability,
-    }].slice(-8);
+    history[video.id] = [
+      ...withoutToday,
+      {
+        date: snapshotDate,
+        views: video.views,
+        rating: video.rating,
+        category: video.category,
+        availability: video.availability
+      }
+    ].slice(-8);
   }
 
-  const finalized = videos.map((video) => {
-    const entries = history[video.id] || [];
-    const previousEntry = entries.length >= 2 ? entries[entries.length - 2] : null;
-    const viewGrowth = previousEntry ? Math.max(0, video.views - (Number(previousEntry.views) || 0)) : null;
-    const sevenDayCutoff = new Date(`${snapshotDate}T00:00:00.000Z`).getTime() - (6 * 86400000);
-    const sevenDayBaseline = entries.find((entry) => new Date(`${entry.date}T00:00:00.000Z`).getTime() <= sevenDayCutoff) || null;
-    const viewGrowth7d = sevenDayBaseline ? Math.max(0, video.views - (Number(sevenDayBaseline.views) || 0)) : null;
-    const velocityValues = videos.map((candidate) => {
-      const candidateEntries = history[candidate.id] || [];
-      const candidateBaseline = candidateEntries.find((entry) => new Date(`${entry.date}T00:00:00.000Z`).getTime() <= sevenDayCutoff) || null;
-      return candidateBaseline ? Math.max(0, candidate.views - (Number(candidateBaseline.views) || 0)) : 0;
-    });
-    const velocity = sevenDayBaseline ? percentile(viewGrowth7d, velocityValues) : 0;
-    const ratingPosition = percentile(video.rating, allRatings);
-    const categoryViews = percentile(video.views, byCategory.get(video.category) || [video.views]);
-    const ageDays = Math.max(0, (now - new Date(video.uploadDate).getTime()) / 86400000);
-    const freshness = Math.max(0, 1 - Math.min(ageDays, 365) / 365);
-    const completenessFields = [video.title, video.description, video.tags.length, video.thumbnail, video.embedUrl, video.durationSeconds, video.uploadDate, video.sourceUrl];
-    const completeness = completenessFields.filter(Boolean).length / completenessFields.length;
-    const score = Math.round((velocity * 40 + ratingPosition * 25 + categoryViews * 15 + freshness * 10 + completeness * 10) * 10) / 10;
+  const finalized = videos
+    .map((video) => {
+      const entries = history[video.id] || [];
+      const previousEntry = entries.length >= 2 ? entries[entries.length - 2] : null;
+      const viewGrowth = previousEntry ? Math.max(0, video.views - (Number(previousEntry.views) || 0)) : null;
+      const sevenDayCutoff = new Date(`${snapshotDate}T00:00:00.000Z`).getTime() - 6 * 86400000;
+      const sevenDayBaseline = entries.find((entry) => new Date(`${entry.date}T00:00:00.000Z`).getTime() <= sevenDayCutoff) || null;
+      const viewGrowth7d = sevenDayBaseline ? Math.max(0, video.views - (Number(sevenDayBaseline.views) || 0)) : null;
+      const velocityValues = videos.map((candidate) => {
+        const candidateEntries = history[candidate.id] || [];
+        const candidateBaseline = candidateEntries.find((entry) => new Date(`${entry.date}T00:00:00.000Z`).getTime() <= sevenDayCutoff) || null;
+        return candidateBaseline ? Math.max(0, candidate.views - (Number(candidateBaseline.views) || 0)) : 0;
+      });
+      const velocity = sevenDayBaseline ? percentile(viewGrowth7d, velocityValues) : 0;
+      const ratingPosition = percentile(video.rating, allRatings);
+      const categoryViews = percentile(video.views, byCategory.get(video.category) || [video.views]);
+      const ageDays = Math.max(0, (now - new Date(video.uploadDate).getTime()) / 86400000);
+      const freshness = Math.max(0, 1 - Math.min(ageDays, 365) / 365);
+      const completenessFields = [video.title, video.description, video.tags.length, video.thumbnail, video.embedUrl, video.durationSeconds, video.uploadDate, video.sourceUrl];
+      const completeness = completenessFields.filter(Boolean).length / completenessFields.length;
+      const score = Math.round((velocity * 40 + ratingPosition * 25 + categoryViews * 15 + freshness * 10 + completeness * 10) * 10) / 10;
 
-    return {
-      ...video,
-      discoveryScore: score,
-      scoreBreakdown: {
-        viewGrowth7d: sevenDayBaseline ? Math.round(velocity * 400) / 10 : null,
-        ratingPercentile: Math.round(ratingPosition * 250) / 10,
-        categoryViewsPercentile: Math.round(categoryViews * 150) / 10,
-        freshness: Math.round(freshness * 100) / 10,
-        metadataCompleteness: Math.round(completeness * 100) / 10,
-      },
-      viewGrowth,
-      viewGrowth7d,
-      trendStatus: previousEntry ? (viewGrowth > 0 ? 'rising' : 'steady') : 'insufficient-data',
-      discoveryReason: sevenDayBaseline
-        ? `Ranked from measured seven-day view growth, source rating, category popularity, freshness, and metadata completeness.`
-        : `Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots.`,
-    };
-  }).sort((a, b) => b.discoveryScore - a.discoveryScore || b.views - a.views);
+      return {
+        ...video,
+        discoveryScore: score,
+        scoreBreakdown: {
+          viewGrowth7d: sevenDayBaseline ? Math.round(velocity * 400) / 10 : null,
+          ratingPercentile: Math.round(ratingPosition * 250) / 10,
+          categoryViewsPercentile: Math.round(categoryViews * 150) / 10,
+          freshness: Math.round(freshness * 100) / 10,
+          metadataCompleteness: Math.round(completeness * 100) / 10
+        },
+        viewGrowth,
+        viewGrowth7d,
+        trendStatus: previousEntry ? (viewGrowth > 0 ? 'rising' : 'steady') : 'insufficient-data',
+        discoveryReason: sevenDayBaseline ? `Ranked from measured seven-day view growth, source rating, category popularity, freshness, and metadata completeness.` : `Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots.`
+      };
+    })
+    .sort((a, b) => b.discoveryScore - a.discoveryScore || b.views - a.views);
 
-  return { finalized, snapshots: { generatedAt: new Date().toISOString(), history } };
+  return {
+    finalized,
+    snapshots: { generatedAt: new Date().toISOString(), history }
+  };
 }
 
 function writeChunk(index, urlsArray) {
-  const xmlUrls = urlsArray.map(item => `
+  const xmlUrls = urlsArray
+    .map(
+      (item) => `
   <url>
     <loc>${item.url}</loc>
     <priority>${item.priority || 0.8}</priority>
@@ -510,12 +609,14 @@ function writeChunk(index, urlsArray) {
       <video:title>${escapeXml(item.title)}</video:title>
       <video:description>${escapeXml(item.description)}</video:description>
       <video:player_loc>${escapeXml(item.player_loc)}</video:player_loc>
-      ${(item.duration > 0 && item.duration <= 28800) ? `<video:duration>${item.duration}</video:duration>` : ''}
+      ${item.duration > 0 && item.duration <= 28800 ? `<video:duration>${item.duration}</video:duration>` : ''}
       <video:publication_date>${item.publication_date}</video:publication_date>
       <video:family_friendly>no</video:family_friendly>
-      ${(item.tags && item.tags.length > 0) ? item.tags.map(t => `<video:tag>${escapeXml(t)}</video:tag>`).join('\n      ') : ''}
+      ${item.tags && item.tags.length > 0 ? item.tags.map((t) => `<video:tag>${escapeXml(t)}</video:tag>`).join('\n      ') : ''}
     </video:video>
-  </url>`).join('');
+  </url>`
+    )
+    .join('');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -526,47 +627,96 @@ ${xmlUrls}
   fs.writeFileSync(path.join(sitemapOutputDir, `sitemap-video-${index}.xml`), xml, 'utf-8');
 }
 
-function writeStaticSitemap(catalog) {
+function writeStaticSitemap(catalog, collections) {
   const now = new Date().toISOString();
-  const collections = readJsonFile(COLLECTIONS_FILE, []);
-  const wordCount = (value) => String(value || '').trim().split(/\s+/).filter(Boolean).length;
-  const collectionCount = (collection) => catalog.filter((video) => {
-    const signals = [video.category, ...(video.tags || [])].map((value) => String(value).toLowerCase());
-    return collection.aliases.some((alias) => signals.includes(alias.toLowerCase()));
-  }).length;
-  const qualifiedCollections = collections.filter((collection) => collectionCount(collection) >= 12 && wordCount(collection.editorialIntro) >= 400);
+  const qualifiedCollections = collections.filter((collection) => isQualified(collection, collections, catalog));
 
   const staticBaseUrls = [
     { route: '/', changefreq: 'daily', priority: '1.0', lastmod: now },
     { route: '/cats', changefreq: 'weekly', priority: '0.8', lastmod: now },
-    { route: '/collections', changefreq: 'weekly', priority: '0.8', lastmod: now },
-    { route: '/methodology', changefreq: 'monthly', priority: '0.5', lastmod: now },
-    { route: '/content-sources', changefreq: 'monthly', priority: '0.5', lastmod: now },
-    { route: '/editorial-policy', changefreq: 'monthly', priority: '0.5', lastmod: now },
+    {
+      route: '/collections',
+      changefreq: 'weekly',
+      priority: '0.8',
+      lastmod: now
+    },
+    {
+      route: '/methodology',
+      changefreq: 'monthly',
+      priority: '0.5',
+      lastmod: now
+    },
+    {
+      route: '/content-sources',
+      changefreq: 'monthly',
+      priority: '0.5',
+      lastmod: now
+    },
+    {
+      route: '/editorial-policy',
+      changefreq: 'monthly',
+      priority: '0.5',
+      lastmod: now
+    },
     { route: '/report', changefreq: 'monthly', priority: '0.5', lastmod: now },
     { route: '/about', changefreq: 'monthly', priority: '0.5', lastmod: now },
     ...(catalog.some((video) => Number.isFinite(video.viewGrowth7d))
-      ? [{ route: '/trends/weekly', changefreq: 'weekly', priority: '0.7', lastmod: now }]
+      ? [
+          {
+            route: '/trends/weekly',
+            changefreq: 'weekly',
+            priority: '0.7',
+            lastmod: now
+          }
+        ]
       : []),
-    { route: '/terms', changefreq: 'monthly', priority: '0.3', lastmod: '2025-01-01' },
-    { route: '/privacy', changefreq: 'monthly', priority: '0.3', lastmod: '2025-01-01' },
-    { route: '/dmca', changefreq: 'monthly', priority: '0.3', lastmod: '2025-01-01' },
-    { route: '/usc2257', changefreq: 'monthly', priority: '0.3', lastmod: '2025-01-01' },
-  ].map(p => `
+    {
+      route: '/terms',
+      changefreq: 'monthly',
+      priority: '0.3',
+      lastmod: '2025-01-01'
+    },
+    {
+      route: '/privacy',
+      changefreq: 'monthly',
+      priority: '0.3',
+      lastmod: '2025-01-01'
+    },
+    {
+      route: '/dmca',
+      changefreq: 'monthly',
+      priority: '0.3',
+      lastmod: '2025-01-01'
+    },
+    {
+      route: '/usc2257',
+      changefreq: 'monthly',
+      priority: '0.3',
+      lastmod: '2025-01-01'
+    }
+  ]
+    .map(
+      (p) => `
   <url>
     <loc>${SITE_URL}${p.route}</loc>
     <lastmod>${p.lastmod}</lastmod>
     <changefreq>${p.changefreq}</changefreq>
     <priority>${p.priority}</priority>
-  </url>`).join('');
+  </url>`
+    )
+    .join('');
 
-  const categoryUrls = qualifiedCollections.map(collection => `
+  const categoryUrls = qualifiedCollections
+    .map(
+      (collection) => `
   <url>
     <loc>${SITE_URL}/collections/${collection.slug}</loc>
     <lastmod>${now}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
-  </url>`).join('');
+  </url>`
+    )
+    .join('');
 
   const staticXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${staticBaseUrls}\n${categoryUrls}\n</urlset>`;
   fs.writeFileSync(path.join(sitemapOutputDir, 'sitemap-static.xml'), staticXml, 'utf-8');
@@ -633,11 +783,10 @@ async function run() {
     console.log(`Mengambil halaman ${i} s/d ${end}...`);
     for (let p = i; p <= end; p++) {
       batchPromises.push(
-        fetchJson(`${API_BASE}/video/search/?query=&per_page=${PER_PAGE}&page=${p}&order=latest`, `halaman API ${p}`)
-          .catch(e => {
-            console.error(`[API] Gagal mengambil halaman ${p}: ${e.message}`);
-            return null;
-          })
+        fetchJson(`${API_BASE}/video/search/?query=&per_page=${PER_PAGE}&page=${p}&order=latest`, `halaman API ${p}`).catch((e) => {
+          console.error(`[API] Gagal mengambil halaman ${p}: ${e.message}`);
+          return null;
+        })
       );
     }
 
@@ -687,15 +836,13 @@ async function run() {
 
             const fallbackDesc = video.title + ' free HD porn video on NICEVX.';
             const finalDesc = hasUsableCuration(aiData) ? aiData.seoDescription.trim() : fallbackDesc;
-            const finalPriority = (aiData && aiData.priorityScore) ? aiData.priorityScore : 0.8;
+            const finalPriority = aiData && aiData.priorityScore ? aiData.priorityScore : 0.8;
 
             // Tags: gunakan cleanedTags dari AI jika tersedia (bermakna).
             // API /search/ mengembalikan keywords = judul video (bukan tag asli),
             // sehingga rawTags dari API tidak memiliki nilai SEO tambahan.
             // Tag nyata hanya bisa didapat dari AI yang memproses data dari endpoint /video/id/.
-            const finalTags = (aiData && aiData.cleanedTags && aiData.cleanedTags.length > 0)
-              ? aiData.cleanedTags.map((tag) => repairMojibake(tag)).slice(0, 32)
-              : [];
+            const finalTags = aiData && aiData.cleanedTags && aiData.cleanedTags.length > 0 ? aiData.cleanedTags.map((tag) => repairMojibake(tag)).slice(0, 32) : [];
 
             if ([video.title, finalDesc, ...finalTags].some(hasSuspiciousEncoding)) {
               skippedEncodingCount++;
@@ -721,7 +868,7 @@ async function run() {
               player_loc: video.embed,
               duration: video.length_sec || 0,
               publication_date: publicationDate,
-              tags: finalTags,
+              tags: finalTags
             });
 
             catalogCandidates.push({
@@ -748,7 +895,7 @@ async function run() {
               rating: Number.parseFloat(video.rate) || 0,
               rate: Number.parseFloat(video.rate) || 0,
               availability: 'available',
-              syncedAt: new Date().toISOString(),
+              syncedAt: new Date().toISOString()
             });
 
             if (currentChunkUrls.length >= URLS_PER_SITEMAP) {
@@ -768,16 +915,18 @@ async function run() {
   // the detail endpoint so refreshes preserve good URLs and remove only items
   // that are actually unavailable or fail a factual metadata gate.
   const catalogIds = new Set(catalogCandidates.map((video) => video.id));
-  const existingIds = [...previouslyPublishedIds]
-    .filter((id) => hasUsableCuration(aiSeoData[id]))
-    .filter((id) => !catalogIds.has(id));
+  const existingIds = [...previouslyPublishedIds].filter((id) => hasUsableCuration(aiSeoData[id])).filter((id) => !catalogIds.has(id));
 
   for (let offset = 0; offset < existingIds.length && indexedVideoCount < MAX_SITEMAP_VIDEOS; offset += 10) {
     const ids = existingIds.slice(offset, offset + 10);
-    const details = await Promise.all(ids.map((id) =>
-      fetchJson(`${API_BASE}/video/id/?id=${id}&thumbsize=big&format=json`, `validasi video ${id}`, { retries: 2, silent: true })
-        .catch(() => null)
-    ));
+    const details = await Promise.all(
+      ids.map((id) =>
+        fetchJson(`${API_BASE}/video/id/?id=${id}&thumbsize=big&format=json`, `validasi video ${id}`, {
+          retries: 2,
+          silent: true
+        }).catch(() => null)
+      )
+    );
 
     for (const rawVideo of details) {
       if (indexedVideoCount >= MAX_SITEMAP_VIDEOS) break;
@@ -802,7 +951,7 @@ async function run() {
         player_loc: video.embed,
         duration: video.length_sec || 0,
         publication_date: publicationDate,
-        tags,
+        tags
       });
       catalogCandidates.push({
         id: video.id,
@@ -828,7 +977,7 @@ async function run() {
         rating: Number.parseFloat(video.rate) || 0,
         rate: Number.parseFloat(video.rate) || 0,
         availability: 'available',
-        syncedAt: new Date().toISOString(),
+        syncedAt: new Date().toISOString()
       });
     }
   }
@@ -838,7 +987,10 @@ async function run() {
   currentChunkUrls = currentChunkUrls.map((item) => {
     const id = item.url.match(/-([A-Za-z0-9]{11})$/)?.[1];
     const score = scoreById.get(id) || 0;
-    return { ...item, priority: Math.max(0.5, Math.min(0.9, 0.5 + score / 250)).toFixed(1) };
+    return {
+      ...item,
+      priority: Math.max(0.5, Math.min(0.9, 0.5 + score / 250)).toFixed(1)
+    };
   });
 
   if (currentChunkUrls.length > 0) {
@@ -846,11 +998,15 @@ async function run() {
     console.log(`💾 Tersimpan: sitemap-video-${currentChunkIndex}.xml (${currentChunkUrls.length} URLs)`);
   }
 
+  const managedCollections = await refreshCollections(finalized);
   console.log('📦 Membuat sitemap-static.xml dan Index Sitemap...');
-  writeStaticSitemap(finalized);
+  writeStaticSitemap(finalized, managedCollections);
   writeIndexSitemap();
   await publishSitemaps();
-  await writeJsonAtomic(CATALOG_FILE, { generatedAt: new Date().toISOString(), videos: finalized });
+  await writeJsonAtomic(CATALOG_FILE, {
+    generatedAt: new Date().toISOString(),
+    videos: finalized
+  });
   await writeJsonAtomic(SNAPSHOTS_FILE, snapshots);
 
   console.log(`✅ Total URL video untuk sitemap: ${indexedVideoCount} (batas: ${MAX_SITEMAP_VIDEOS})`);

@@ -10,6 +10,8 @@
     "preview": "npm run pages:build && wrangler pages dev .vercel/output/static",
     "deploy": "npm run sitemap && npm run pages:build && wrangler pages deploy .vercel/output/static",
     "sitemap": "node scripts/generate-sitemap.cjs",
+    "validate:collections": "node scripts/collection-engine.cjs validate",
+    "test:collections": "node scripts/test-collection-engine.cjs",
     "lint": "next lint"
   },
   "dependencies": {
