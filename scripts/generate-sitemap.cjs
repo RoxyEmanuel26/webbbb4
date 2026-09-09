@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { MAX_EDITORIALS_PER_RUN, MIN_COLLECTION_VIDEOS, bootstrapCollections, buildFacts, discoverCandidates, getCollectionVideos, getOverlapBlocker, isQualified, validateManifest, wordCount } = require('./collection-engine.cjs');
+const { MAX_EDITORIALS_PER_RUN, MIN_COLLECTION_VIDEOS, bootstrapCollections, buildFacts, discoverCandidates, getCollectionVideos, getOverlapBlocker, isQualified, trimEditorialIntro, validateManifest, wordCount } = require('./collection-engine.cjs');
 
 const SITE_URL = 'https://www.nicevx.com';
 const API_BASE = 'https://www.eporner.com/api/v2';
@@ -344,10 +344,10 @@ Rules:
 - Do not invent scenes, performers, studios, production context, trends, or viewing quality.
 - Avoid repetitive promotional language and keyword stuffing.`;
 
+  const messages = [{ role: 'user', content: prompt }];
   let previousDraft = '';
   let previousError = '';
-  for (let attempt = 0; attempt < 2; attempt++) {
-    const correction = attempt === 0 ? '' : `\n\nThe previous draft failed validation because: ${previousError}. Correct it without adding new facts. Previous draft:\n${previousDraft}`;
+  for (let attempt = 0; attempt < 3; attempt++) {
     try {
       const response = await fetch('https://api.deepseek.com/chat/completions', {
       method: 'POST',
@@ -357,7 +357,7 @@ Rules:
       },
         body: JSON.stringify({
           model: 'deepseek-chat',
-          messages: [{ role: 'user', content: `${prompt}${correction}` }],
+          messages,
           response_format: { type: 'json_object' },
           max_tokens: 1800,
           temperature: 0.25
@@ -369,7 +369,8 @@ Rules:
       const result = JSON.parse(previousDraft);
       const intent = repairMojibake(result.intent).trim();
       const selectionRule = repairMojibake(result.selectionRule).trim();
-      const editorialIntro = repairMojibake(result.editorialIntro).trim();
+      const untrimmedIntro = repairMojibake(result.editorialIntro).trim();
+      const editorialIntro = trimEditorialIntro(untrimmedIntro);
       const paragraphs = editorialIntro.split(/\n\s*\n/).filter(Boolean);
       if (intent.length < 80 || intent.length > 160) throw new Error('intent harus 80-160 karakter');
       if (selectionRule.length < 80 || selectionRule.length > 220) throw new Error('selectionRule harus 80-220 karakter');
@@ -384,12 +385,18 @@ Rules:
         status: 'editorial-approved',
         editorialUpdatedAt: new Date().toISOString(),
         editorialFactsHash: facts.hash,
-        source: attempt === 0 ? 'deepseek' : 'deepseek-repaired'
+        source: editorialIntro !== untrimmedIntro ? 'deepseek-trimmed' : attempt === 0 ? 'deepseek' : 'deepseek-repaired'
       };
     } catch (error) {
       previousError = error.message;
-      if (attempt === 0) console.warn(`[Collection AI] ${collection.slug} memperbaiki draf: ${error.message}`);
-      else console.error(`[Collection AI] ${collection.slug} ditolak setelah perbaikan: ${error.message}`);
+      if (attempt < 2) {
+        console.warn(`[Collection AI] ${collection.slug} memperbaiki draf: ${error.message}`);
+        messages.push({ role: 'assistant', content: previousDraft });
+        messages.push({
+          role: 'user',
+          content: `Rewrite the entire JSON response to fix this validation error: ${previousError}. Do not return the same draft. Keep every statement grounded in the original verified fact packet. The editorialIntro must have exactly five blank-line-separated paragraphs and total between four hundred fifty and five hundred twenty five words.`
+        });
+      } else console.error(`[Collection AI] ${collection.slug} ditolak setelah perbaikan: ${error.message}`);
     }
   }
   return null;

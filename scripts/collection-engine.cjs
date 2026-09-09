@@ -97,6 +97,30 @@ const wordCount = (value) =>
     .trim()
     .split(/\s+/)
     .filter(Boolean).length;
+
+function trimEditorialIntro(value, maxWords = MAX_EDITORIAL_WORDS) {
+  const original = String(value || "").trim();
+  if (wordCount(original) <= maxWords) return original;
+  const paragraphs = original.split(/\n\s*\n/).filter(Boolean);
+  while (
+    wordCount(paragraphs.join("\n\n")) > maxWords &&
+    paragraphs.length >= 4
+  ) {
+    const lastIndex = paragraphs.length - 1;
+    const sentences = paragraphs[lastIndex]
+      .split(/(?<=[.!?])\s+/)
+      .filter(Boolean);
+    if (sentences.length > 1)
+      paragraphs[lastIndex] = sentences.slice(0, -1).join(" ");
+    else if (paragraphs.length > 4) paragraphs.pop();
+    else break;
+  }
+  const trimmed = paragraphs.join("\n\n").trim();
+  return wordCount(trimmed) >= MIN_EDITORIAL_WORDS &&
+    wordCount(trimmed) <= maxWords
+    ? trimmed
+    : original;
+}
 const slugify = (value) =>
   normalizeSignal(value)
     .normalize("NFKD")
@@ -393,6 +417,7 @@ module.exports = {
   getCollectionVideos,
   getOverlapBlocker,
   isQualified,
+  trimEditorialIntro,
   validateSitemapParity,
   validateManifest,
   wordCount,

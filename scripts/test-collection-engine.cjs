@@ -5,8 +5,10 @@ const {
   getCollectionVideos,
   getOverlapBlocker,
   isQualified,
+  trimEditorialIntro,
   validateManifest,
   validateSitemapParity,
+  wordCount,
 } = require("./collection-engine.cjs");
 
 const intro = Array.from({ length: 420 }, (_, index) => `word${index}`).join(
@@ -137,6 +139,15 @@ assert.equal(
   validateSitemapParity([approved], twelveVideos, "").length,
   1,
   "missing qualified sitemap URL must fail",
+);
+const overlong = Array.from(
+  { length: 5 },
+  (_, paragraph) =>
+    `${Array.from({ length: 120 }, (_, word) => `p${paragraph}w${word}`).join(" ")}. ${Array.from({ length: 12 }, (_, word) => `tail${paragraph}w${word}`).join(" ")}.`,
+).join("\n\n");
+assert.ok(
+  wordCount(trimEditorialIntro(overlong)) <= 650,
+  "overlong editorial should trim at a sentence or paragraph boundary",
 );
 
 console.log("Collection engine tests passed.");
