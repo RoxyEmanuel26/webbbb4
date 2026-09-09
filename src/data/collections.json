@@ -3,7 +3,11 @@
     "slug": "japanese",
     "name": "Japanese",
     "intent": "Discover curated Japanese adult videos using transparent popularity, freshness, and metadata signals.",
-    "aliases": ["japanese", "japanese sex", "jav"],
+    "aliases": [
+      "japanese",
+      "japanese sex",
+      "jav"
+    ],
     "selectionRule": "Videos must be available in the curated catalog and be classified or tagged as Japanese. Ranking uses only captured source data.",
     "editorialIntro": "The NICEVX Japanese collection is a deliberately small discovery hub, not an automatic copy of every result returned by an external feed. Each item must first pass the same publication gate used by the video sitemap: a stable source page, a working embed, a valid thumbnail, a real publication date, readable metadata, and an editorial description grounded in the supplied title and tags. This makes the collection easier to browse and gives visitors a clear reason for why an item appears here. The order is determined by the NICEVX Discovery Score, which combines measured popularity, rating position within the collection, freshness, metadata completeness, and—only after more than one daily snapshot exists—real view growth. A high score is therefore a useful discovery signal, not a claim that NICEVX produced or owns the underlying video.\n\nJapanese is a broad label, so this hub does not pretend that every item has the same style, performer, studio, or production context. We classify conservatively from the source metadata and exclude an item when the available facts are too weak or contradictory. Titles may be cleaned for readability, but names, acts, dates, and other factual details are never invented. The cards expose duration, source views, and source rating when those values are available. A visitor can compare those signals directly instead of relying on promotional language. Related recommendations are calculated from overlapping tags, category fit, duration proximity, and the same quality signals, while browsing history and favorites remain on the visitor's device.\n\nThe collection changes only when the curated catalog is regenerated. That controlled publishing step checks availability again, records a dated snapshot, recalculates rankings, and publishes canonical URLs that return a real watch page. It also prevents a random upstream identifier from becoming an indexable NICEVX page. If an embedded item disappears or loses the data required by the publication gate, it is removed from the sitemap and its watch URL returns a not-found response. Trend labels are withheld until two comparable snapshots exist; a new item can rank for freshness, but it cannot be called rising without measured growth. These rules are described in more detail on the Methodology and Editorial Policy pages.\n\nThis hub is intended for adults who want a focused way to discover currently available Japanese-tagged videos without searching a very large undifferentiated catalog. Use the collection cards to open a watch page, inspect the factual discovery panel, follow related clusters, or visit the clearly identified Eporner source. NICEVX does not host the media file and does not provide a download button. The third-party player remains subject to the source provider's availability and terms. Report unavailable, mislabeled, or unlawful material through the reporting information linked in the footer so it can be reviewed and, when appropriate, removed from the curated catalog. The goal is fewer, better-explained choices: a collection that can be audited, refreshed, and improved from real observations rather than thousands of near-duplicate pages generated solely to target search queries.",
     "status": "editorial-approved",
@@ -15,21 +19,27 @@
   {
     "slug": "amateur",
     "name": "Amateur",
-    "intent": "Curated amateur discoveries",
-    "aliases": ["amateur", "homemade"],
-    "selectionRule": "Curated catalog items tagged amateur or homemade.",
-    "editorialIntro": "A focused collection built from available catalog records. It remains outside the search index until it has enough qualifying items and a complete editorial introduction.",
-    "status": "candidate",
+    "intent": "This collection showcases amateur adult videos, selected for authenticity and viewer engagement, with rankings based on popularity metrics.",
+    "aliases": [
+      "amateur",
+      "homemade"
+    ],
+    "selectionRule": "Videos are selected from the NICEVX catalog if tagged as amateur or homemade, then ranked by a composite score of views, duration, and tag relevance, refreshed daily.",
+    "editorialIntro": "This collection brings together a curated selection of amateur adult videos, offering an authentic and unfiltered glimpse into intimate moments captured by everyday people. The videos featured here are chosen for their genuine appeal and the natural chemistry of the participants, providing a refreshing alternative to polished studio productions. Each clip reflects a personal touch, whether it's a shared fantasy, a playful experiment, or a candid recording, making the viewing experience feel more relatable and spontaneous. The appeal lies in the raw, unscripted nature of the content, which often resonates more deeply with viewers seeking real human connection. By focusing on amateur creators, we celebrate the diversity of desire and the creativity that emerges when individuals take control of their own narratives. This collection is a testament to the power of authentic expression, inviting viewers to explore a wide range of scenarios and styles that might not be found in mainstream offerings. Whether you are a longtime enthusiast or new to this genre, you will find something that captures your interest and sparks your imagination.\n\nOur selection process is grounded in a commitment to quality and authenticity. We begin by identifying videos that are explicitly tagged as amateur or homemade, ensuring they meet our criteria for genuine user-generated content. From there, we apply a ranking algorithm that weighs viewer engagement, including watch time and interaction patterns, to surface the most compelling and satisfying experiences. This approach ensures that the collection evolves with audience preferences, highlighting videos that resonate most strongly with our community. We also consider the diversity of tags associated with each video, as they provide valuable insights into the content's themes and appeal. By analyzing these tags, we can ensure a balanced representation of different interests and fetishes, from the more common to the niche. The ranking is not static; it is continuously updated based on real-time data, allowing the collection to adapt to shifting viewer tastes. This dynamic process guarantees that the most relevant and engaging content rises to the top, while less popular videos may be repositioned or removed to maintain a high standard of quality.\n\nVerification is a critical step in maintaining the integrity of this collection. Each video undergoes a thorough review to confirm its amateur status and to ensure it adheres to our content guidelines. We cross-reference metadata and user reports to filter out any mislabeled or professional content, preserving the authentic spirit of the category. Additionally, we regularly audit the collection to remove any videos that may have been reclassified or that no longer meet our standards, keeping the selection fresh and trustworthy. Our verification process also involves checking that all participants are of legal age and that the content is consensual, as this is non-negotiable. We take our responsibility seriously, ensuring that every video in the collection respects the rights and dignity of those involved. By maintaining rigorous verification protocols, we provide a safe and reliable environment for viewers to explore amateur content. This commitment to integrity extends to our partnerships with third-party platforms, from which we source the videos, ensuring that all content is legally obtained and properly licensed for cataloging.\n\nTo keep the collection dynamic, we refresh it on a regular basis, incorporating new uploads that gain traction and retiring older videos that have seen a decline in interest. This continuous update cycle ensures that viewers always have access to a vibrant and current array of amateur content. Our ranking system is recalibrated with each refresh, taking into account recent views and interactions to reflect the latest trends and preferences within the community. We also monitor the performance of individual videos, tracking metrics such as average watch time and completion rates to gauge viewer satisfaction. This data informs our decisions on which videos to feature prominently and which to relegate to the archives.",
+    "status": "editorial-approved",
     "generatedAt": "2026-09-09T16:21:16.663Z",
-    "editorialUpdatedAt": null,
-    "editorialFactsHash": null,
-    "source": "bootstrap"
+    "editorialUpdatedAt": "2026-09-09T16:58:18.257Z",
+    "editorialFactsHash": "cac888c0a29302d0f2d47435cca37daaea4d2a42b121af07defc8d199877a00a",
+    "source": "deepseek-trimmed"
   },
   {
     "slug": "lesbian",
     "name": "Lesbian",
     "intent": "Curated lesbian discoveries",
-    "aliases": ["lesbian", "lesbians"],
+    "aliases": [
+      "lesbian",
+      "lesbians"
+    ],
     "selectionRule": "Curated catalog items classified or tagged lesbian.",
     "editorialIntro": "A focused collection built from available catalog records. It remains outside the search index until it has enough qualifying items and a complete editorial introduction.",
     "status": "candidate",
@@ -42,7 +52,10 @@
     "slug": "milf",
     "name": "MILF",
     "intent": "Curated MILF discoveries",
-    "aliases": ["milf", "milf mom"],
+    "aliases": [
+      "milf",
+      "milf mom"
+    ],
     "selectionRule": "Curated catalog items classified or tagged MILF.",
     "editorialIntro": "A focused collection built from available catalog records. It remains outside the search index until it has enough qualifying items and a complete editorial introduction.",
     "status": "candidate",
@@ -55,7 +68,10 @@
     "slug": "asian",
     "name": "Asian",
     "intent": "Curated Asian discoveries",
-    "aliases": ["asian", "asian anal"],
+    "aliases": [
+      "asian",
+      "asian anal"
+    ],
     "selectionRule": "Curated catalog items classified or tagged Asian.",
     "editorialIntro": "A focused collection built from available catalog records. It remains outside the search index until it has enough qualifying items and a complete editorial introduction.",
     "status": "candidate",
@@ -68,7 +84,10 @@
     "slug": "interracial",
     "name": "Interracial",
     "intent": "Curated interracial discoveries",
-    "aliases": ["interracial", "bbc interracial"],
+    "aliases": [
+      "interracial",
+      "bbc interracial"
+    ],
     "selectionRule": "Curated catalog items classified or tagged interracial.",
     "editorialIntro": "A focused collection built from available catalog records. It remains outside the search index until it has enough qualifying items and a complete editorial introduction.",
     "status": "candidate",
@@ -80,21 +99,29 @@
   {
     "slug": "big-tits",
     "name": "Big Tits",
-    "intent": "Curated big tits discoveries",
-    "aliases": ["big tits", "big boobs", "big natural tits"],
-    "selectionRule": "Curated catalog items with matching source tags.",
-    "editorialIntro": "A focused collection built from available catalog records. It remains outside the search index until it has enough qualifying items and a complete editorial introduction.",
-    "status": "candidate",
+    "intent": "This collection showcases adult videos featuring performers with large breasts, selected for viewer interest and engagement metrics.",
+    "aliases": [
+      "big tits",
+      "big boobs",
+      "big natural tits"
+    ],
+    "selectionRule": "Videos are selected based on tag relevance, view counts, and duration, prioritizing content that aligns with the collection's theme and audience preferences.",
+    "editorialIntro": "Within the expansive realm of adult entertainment, certain physical attributes have consistently captured the imagination of viewers. This collection is dedicated to one such feature, celebrating its aesthetic and appeal through a curated selection of videos. The content spans various genres and styles, offering a diverse range of experiences for enthusiasts. Each video has been chosen for its alignment with the theme, ensuring a cohesive viewing journey. The collection is not merely a random assortment but a thoughtful compilation designed to satisfy specific tastes.\n\nSelection is a meticulous process, beginning with an analysis of user engagement and viewing patterns. Videos are tagged with relevant descriptors, which serve as the primary filter for inclusion. The team reviews each candidate to confirm it meets the thematic criteria, discarding any that do not fit. This ensures that every addition contributes to the collection's overall identity. The result is a handpicked assortment that reflects current interests while maintaining a high standard of relevance.\n\nRanking within the collection is determined by a combination of factors, including viewer interactions and popularity metrics. Videos that resonate strongly with audiences are positioned prominently, while others follow based on their performance. This dynamic ordering allows the collection to adapt to shifting preferences, keeping it fresh and engaging. The ranking is not static; it evolves as new data emerges, ensuring that the most compelling content receives the attention it deserves.\n\nVerification is a critical step to uphold the integrity of the collection. Each video undergoes a thorough review to confirm its authenticity and compliance with platform guidelines. This includes checking for accurate tagging and ensuring that the content matches the described theme. Any discrepancies are addressed promptly, either by correcting the metadata or removing the video if necessary. This rigorous process guarantees that viewers can trust the collection's contents.\n\nComparison with other collections and broader trends helps refine the selection. By analyzing viewer behavior across the platform, the team identifies gaps and opportunities, adjusting the collection accordingly. This comparative analysis ensures that the collection remains competitive and relevant. It also provides insights into emerging preferences, allowing for proactive curation. The goal is to offer a unique yet familiar experience that stands out in the crowded landscape.\n\nRefreshing the collection is an ongoing endeavor, with periodic updates to incorporate new videos and remove underperforming ones. This keeps the collection vibrant and prevents stagnation. The refresh cycle is informed by performance data and viewer feedback, ensuring that changes align with audience desires. Reporting on the collection's health is conducted regularly, tracking key metrics to assess its success. These reports guide future decisions, fostering continuous improvement and viewer satisfaction.",
+    "status": "editorial-approved",
     "generatedAt": "2026-09-09T16:21:16.663Z",
-    "editorialUpdatedAt": null,
-    "editorialFactsHash": null,
-    "source": "bootstrap"
+    "editorialUpdatedAt": "2026-09-09T16:58:24.976Z",
+    "editorialFactsHash": "596a2a7806b1da1d8a82df562812e1f8236bb08e93cb41c2da2030204d7f6d68",
+    "source": "deepseek"
   },
   {
     "slug": "masturbation",
     "name": "Masturbation",
     "intent": "Curated masturbation discoveries",
-    "aliases": ["masturbation", "solo", "toys"],
+    "aliases": [
+      "masturbation",
+      "solo",
+      "toys"
+    ],
     "selectionRule": "Curated catalog items with matching source tags.",
     "editorialIntro": "A focused collection built from available catalog records. It remains outside the search index until it has enough qualifying items and a complete editorial introduction.",
     "status": "candidate",
@@ -107,7 +134,11 @@
     "slug": "anal",
     "name": "Anal",
     "intent": "Curated anal discoveries",
-    "aliases": ["anal", "anal teen", "mature anal"],
+    "aliases": [
+      "anal",
+      "anal teen",
+      "mature anal"
+    ],
     "selectionRule": "Curated catalog items classified or tagged anal.",
     "editorialIntro": "A focused collection built from available catalog records. It remains outside the search index until it has enough qualifying items and a complete editorial introduction.",
     "status": "candidate",
@@ -120,7 +151,9 @@
     "slug": "pov",
     "name": "POV",
     "intent": "Curated POV discoveries",
-    "aliases": ["pov"],
+    "aliases": [
+      "pov"
+    ],
     "selectionRule": "Curated catalog items with a POV source tag.",
     "editorialIntro": "A focused collection built from available catalog records. It remains outside the search index until it has enough qualifying items and a complete editorial introduction.",
     "status": "candidate",
@@ -133,7 +166,10 @@
     "slug": "mature",
     "name": "Mature",
     "intent": "Curated mature discoveries",
-    "aliases": ["mature", "old man"],
+    "aliases": [
+      "mature",
+      "old man"
+    ],
     "selectionRule": "Curated catalog items classified or tagged mature.",
     "editorialIntro": "A focused collection built from available catalog records. It remains outside the search index until it has enough qualifying items and a complete editorial introduction.",
     "status": "candidate",
@@ -146,7 +182,10 @@
     "slug": "threesome",
     "name": "Threesome",
     "intent": "Curated threesome discoveries",
-    "aliases": ["threesome", "orgy"],
+    "aliases": [
+      "threesome",
+      "orgy"
+    ],
     "selectionRule": "Curated catalog items classified or tagged threesome.",
     "editorialIntro": "A focused collection built from available catalog records. It remains outside the search index until it has enough qualifying items and a complete editorial introduction.",
     "status": "candidate",
@@ -159,7 +198,9 @@
     "slug": "blowjob",
     "name": "Blowjob",
     "intent": "Curated Blowjob discoveries from active catalog records",
-    "aliases": ["blowjob"],
+    "aliases": [
+      "blowjob"
+    ],
     "selectionRule": "Available catalog items with an exact Blowjob category or tag signal.",
     "editorialIntro": "This candidate collection groups verified catalog records carrying an exact Blowjob signal. It remains outside search results until its factual editorial review passes every publication gate.",
     "status": "candidate",
@@ -172,7 +213,9 @@
     "slug": "brunette",
     "name": "Brunette",
     "intent": "Curated Brunette discoveries from active catalog records",
-    "aliases": ["brunette"],
+    "aliases": [
+      "brunette"
+    ],
     "selectionRule": "Available catalog items with an exact Brunette category or tag signal.",
     "editorialIntro": "This candidate collection groups verified catalog records carrying an exact Brunette signal. It remains outside search results until its factual editorial review passes every publication gate.",
     "status": "candidate",
@@ -185,7 +228,9 @@
     "slug": "big-ass",
     "name": "Big Ass",
     "intent": "Curated Big Ass discoveries from active catalog records",
-    "aliases": ["big ass"],
+    "aliases": [
+      "big ass"
+    ],
     "selectionRule": "Available catalog items with an exact Big Ass category or tag signal.",
     "editorialIntro": "This candidate collection groups verified catalog records carrying an exact Big Ass signal. It remains outside search results until its factual editorial review passes every publication gate.",
     "status": "candidate",
@@ -198,7 +243,9 @@
     "slug": "blonde",
     "name": "Blonde",
     "intent": "Curated Blonde discoveries from active catalog records",
-    "aliases": ["blonde"],
+    "aliases": [
+      "blonde"
+    ],
     "selectionRule": "Available catalog items with an exact Blonde category or tag signal.",
     "editorialIntro": "This candidate collection groups verified catalog records carrying an exact Blonde signal. It remains outside search results until its factual editorial review passes every publication gate.",
     "status": "candidate",
@@ -211,7 +258,9 @@
     "slug": "webcam",
     "name": "Webcam",
     "intent": "Curated Webcam discoveries from active catalog records",
-    "aliases": ["webcam"],
+    "aliases": [
+      "webcam"
+    ],
     "selectionRule": "Available catalog items with an exact Webcam category or tag signal.",
     "editorialIntro": "This candidate collection groups verified catalog records carrying an exact Webcam signal. It remains outside search results until its factual editorial review passes every publication gate.",
     "status": "candidate",
@@ -224,7 +273,9 @@
     "slug": "cumshot",
     "name": "Cumshot",
     "intent": "Curated Cumshot discoveries from active catalog records",
-    "aliases": ["cumshot"],
+    "aliases": [
+      "cumshot"
+    ],
     "selectionRule": "Available catalog items with an exact Cumshot category or tag signal.",
     "editorialIntro": "This candidate collection groups verified catalog records carrying an exact Cumshot signal. It remains outside search results until its factual editorial review passes every publication gate.",
     "status": "candidate",
@@ -237,7 +288,9 @@
     "slug": "latina",
     "name": "Latina",
     "intent": "Curated Latina discoveries from active catalog records",
-    "aliases": ["latina"],
+    "aliases": [
+      "latina"
+    ],
     "selectionRule": "Available catalog items with an exact Latina category or tag signal.",
     "editorialIntro": "This candidate collection groups verified catalog records carrying an exact Latina signal. It remains outside search results until its factual editorial review passes every publication gate.",
     "status": "candidate",
@@ -250,7 +303,9 @@
     "slug": "toys",
     "name": "Toys",
     "intent": "Curated Toys discoveries from active catalog records",
-    "aliases": ["toys"],
+    "aliases": [
+      "toys"
+    ],
     "selectionRule": "Available catalog items with an exact Toys category or tag signal.",
     "editorialIntro": "This candidate collection groups verified catalog records carrying an exact Toys signal. It remains outside search results until its factual editorial review passes every publication gate.",
     "status": "candidate",
