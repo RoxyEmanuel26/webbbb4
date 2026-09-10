@@ -95,16 +95,8 @@ export default function VideoPlayerClient({ video, initialRelated = [] }) {
                 aria-pressed={favorite}
               >
                 <Heart size={16} fill={favorite ? "currentColor" : "none"} />{" "}
-                {favorite ? "Saved locally" : "Save to favorites"}
+                {favorite ? "Saved" : "Save video"}
               </button>
-              <a
-                className="back-btn"
-                href={video.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer nofollow"
-              >
-                View original source on Eporner
-              </a>
             </div>
           </div>
         </div>

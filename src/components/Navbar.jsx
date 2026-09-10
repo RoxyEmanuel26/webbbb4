@@ -3,13 +3,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { Search, Flame, TrendingUp, Star, Clock } from 'lucide-react';
+import { Search, Heart } from 'lucide-react';
 import './Navbar.css';
 
 const NAV_LINKS = [
   { label: 'Home',       path: '/' },
   { label: 'Collections', path: '/collections' },
   { label: 'Categories', path: '/cats/' },
+  { label: 'Saved', path: '/saved', icon: Heart },
 ];
 
 const Navbar = () => {
@@ -51,7 +52,9 @@ const Navbar = () => {
 
         {/* Nav Links */}
         <nav className="navbar-links" aria-label="Main navigation">
-          {NAV_LINKS.map((link) => (
+          {NAV_LINKS.map((link) => {
+            const Icon = link.icon;
+            return (
             link.external ? (
               <a
                 key={link.path}
@@ -69,10 +72,11 @@ const Navbar = () => {
                 href={link.path}
                 prefetch={false}
               >
+                {Icon && <Icon size={15} aria-hidden="true" />}
                 {link.label}
               </Link>
             )
-          ))}
+          )})}
         </nav>
 
         {/* Search */}

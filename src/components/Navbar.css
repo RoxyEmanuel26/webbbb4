@@ -81,6 +81,7 @@
 .navbar-link {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   height: var(--navbar-height);
   padding: 0 var(--space-3);
   color: var(--color-text-nav);

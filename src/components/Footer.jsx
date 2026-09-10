@@ -64,7 +64,7 @@ const Footer = () => (
             </div>
           </Link>
           <p className="footer-brand-desc">
-            Browse adult videos by category, save favorites on your device, and
+            Browse adult videos by category, save videos for later, and
             discover something new. Videos play through Eporner.
           </p>
         </div>
