@@ -59,3 +59,4 @@ scripts/*
 !scripts/collection-engine.cjs
 !scripts/test-collection-engine.cjs
 !scripts/test-user-facing-copy.cjs
+!scripts/test-workflow-schedule.cjs
