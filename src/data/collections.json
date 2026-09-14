@@ -116,19 +116,19 @@
   {
     "slug": "masturbation",
     "name": "Masturbation",
-    "intent": "Curated masturbation discoveries",
+    "intent": "This page helps visitors browse solo adult videos where performers use toys or manual stimulation, with visible duration, views, and tags to guide their choice.",
     "aliases": [
       "masturbation",
       "solo",
       "toys"
     ],
-    "selectionRule": "Curated catalog items with matching source tags.",
-    "editorialIntro": "A focused collection built from available catalog records. It remains outside the search index until it has enough qualifying items and a complete editorial introduction.",
-    "status": "candidate",
+    "selectionRule": "Videos are included when their titles, descriptions, or tags indicate solo masturbation, toy use, or related terms, and the page shows duration, views, ratings, and tags to support browsing.",
+    "editorialIntro": "This collection gathers videos that center on solo pleasure, where one performer stimulates themselves, often with toys or by hand. The category is broad enough to include quiet, intimate sessions and more energetic displays, but the common thread is self-directed action without a partner. As you browse, you will see a range of durations, from short clips to longer sessions, so you can match your available time to what you want to watch. The visible duration helps you decide whether a video fits a quick break or a longer, unhurried viewing period.\n\nViews offer a rough signal of how many other visitors have chosen a video, but they are not a measure of quality or personal fit. A high view count can suggest broad appeal, while a lower count may point to a niche style that suits you better. Ratings, when present, give another perspective, though they reflect only the opinions of those who chose to rate. Use views and ratings together with duration to narrow the list, but treat them as guides rather than verdicts. Your own preferences remain the most important filter.\n\nTags describe the visible and stated characteristics of each video, such as performer look, setting, or activity style. Common tags in this collection include amateur, homemade, big tits, brunette, webcam, big ass, milf, and blonde. Scanning tags can help you find a performer type or atmosphere you enjoy, or avoid elements you do not. Because tags are applied to many videos, they make it easy to compare similar entries side by side. Combine tags with duration and views to build a shortlist that matches your mood.\n\nWhen choosing what to watch, start with the duration that fits your moment, then check tags that align with your interests. If a video has a rating, read it as one data point among many, not as a final judgment. Views can help you spot popular entries, but a lower view count does not mean a video is worse for you. The goal is to find something that holds your attention and feels worth your time. Trust your own reaction over any single number.\n\nThis page does not host, own, produce, or endorse the videos shown. It presents embedded media from third parties and displays factual details to help you decide what to open. No performer names, studios, or websites are listed here, and no claims are made about production context or viewing quality. Use the visible duration, views, ratings, and tags as practical tools for browsing. If a video does not appeal, simply move to the next one and keep exploring until you find a good match.",
+    "status": "editorial-approved",
     "generatedAt": "2026-09-09T16:21:16.663Z",
-    "editorialUpdatedAt": null,
-    "editorialFactsHash": null,
-    "source": "bootstrap"
+    "editorialUpdatedAt": "2026-09-14T09:03:58.412Z",
+    "editorialFactsHash": "f35f5d70cfae4b3ce217ed5b7d901e4ec8c5c5554632787cfe8bd6950e88ad78",
+    "source": "deepseek-repaired"
   },
   {
     "slug": "anal",
@@ -197,17 +197,17 @@
   {
     "slug": "blowjob",
     "name": "Blowjob",
-    "intent": "Curated Blowjob discoveries from active catalog records",
+    "intent": "To help visitors browse a catalog of blowjob videos by showing duration, views, and related tags so they can choose what to watch.",
     "aliases": [
       "blowjob"
     ],
-    "selectionRule": "Available catalog items with an exact Blowjob category or tag signal.",
-    "editorialIntro": "This candidate collection groups verified catalog records carrying an exact Blowjob signal. It remains outside search results until its factual editorial review passes every publication gate.",
-    "status": "candidate",
+    "selectionRule": "Videos are listed when they are categorized under blowjob and may also carry related tags such as cumshot, big tits, amateur, big ass, brunette, hardcore, homemade, or milf.",
+    "editorialIntro": "Welcome to this collection of blowjob videos. Here you will find a range of clips grouped under one clear category. The page is designed to help you decide what to watch without needing to search through many separate listings. Each entry shows a duration, a view count, and a set of related tags. These details give you a quick sense of what each video offers. You can compare options side by side and pick something that matches your mood. The goal is simple: make browsing straightforward and let you focus on choosing.\n\nDuration is one of the most useful details when you are deciding what to watch. A shorter clip may suit a quick break, while a longer one can be saved for when you have more time. The visible runtime helps you plan without guessing. You can scan the list and notice which videos run for a few minutes and which ones go on much longer. That difference matters when you want to settle in or just sample something briefly. Use duration as your first filter, then look at the other details.\n\nViews offer another way to compare entries. A higher number suggests that more people have opened that video, which can be a helpful signal when you are unsure where to start. It does not tell you whether you will enjoy it, but it does show which clips have drawn more attention. You can use views alongside duration to balance popularity with the length you prefer. Some visitors like to begin with the most-viewed items, while others prefer to explore less-seen ones. Either approach is fine.\n\nRatings, when shown, give a quick summary of how viewers responded. A rating is not a guarantee, but it can help you decide whether a video is worth your time. Combine ratings with tags to narrow your choices. Tags describe themes, styles, and visual elements that appear in the videos. If a tag matches your interest, you can focus on those entries. If not, you can skip them. This makes browsing faster and more personal.\n\nRelated tags also help you discover connections between videos. You might notice that certain tags appear often, which can point you toward similar content. Use those tags to move from one video to another that shares a theme. The statistics panel shows counts and other numeric facts separately, so you can see how common each tag is. Let your own preferences guide you. Browse at your own pace, compare the details, and choose what to watch.",
+    "status": "editorial-approved",
     "generatedAt": "2026-09-09T16:21:16.663Z",
-    "editorialUpdatedAt": null,
-    "editorialFactsHash": null,
-    "source": "bootstrap"
+    "editorialUpdatedAt": "2026-09-14T09:03:46.475Z",
+    "editorialFactsHash": "b78796e543eb80badcc8f4930b28fd3f294a917044e64c9c052ed6730f68f835",
+    "source": "deepseek"
   },
   {
     "slug": "brunette",
