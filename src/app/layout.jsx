@@ -13,7 +13,7 @@ export const metadata = {
     template: "%s",
   },
   description:
-    "Browse adult videos, popular categories, and new weekly additions on NICEVX.",
+    "Browse adult videos, popular categories, and new daily additions on NICEVX.",
   keywords: [
     "free porn videos",
     "HD porn",
@@ -40,7 +40,7 @@ export const metadata = {
   openGraph: {
     title: "NICEVX — Adult Videos",
     description:
-      "Browse adult videos, popular categories, and new weekly additions.",
+      "Browse adult videos, popular categories, and new daily additions.",
     url: "https://www.nicevx.com/",
     siteName: "NICEVX",
     type: "website",
@@ -58,7 +58,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "NICEVX — Adult Videos",
     description:
-      "Browse adult videos, popular categories, and new weekly additions.",
+      "Browse adult videos, popular categories, and new daily additions.",
     images: ["/favicon.png"],
   },
   icons: {
@@ -85,7 +85,7 @@ export default function RootLayout({ children }) {
     "@type": "WebSite",
     name: "NICEVX",
     url: "https://www.nicevx.com",
-    description: "Adult videos, categories, and weekly additions.",
+    description: "Adult videos, categories, and daily additions.",
     potentialAction: {
       "@type": "SearchAction",
       target: {
@@ -134,6 +134,12 @@ export default function RootLayout({ children }) {
           src="https://analytics.ahrefs.com/analytics.js"
           data-key="VdAtEZ/WUhk9qsBEzocURw"
           strategy="lazyOnload"
+        />
+        <Script
+          id="adsterra-social-bar"
+          src="https://glamournakedemployee.com/6b/5f/74/6b5f74f06f7a6a6df37d65cea9803a1d.js"
+          data-cfasync="false"
+          strategy="afterInteractive"
         />
         <AgeGateModal />
         <Navbar />

@@ -7,6 +7,7 @@ import {
   getCollectionVideos,
   getCollections,
   isCollectionIndexable,
+  toVideoCard,
 } from "@/lib/catalog";
 import "../../../pages/Pages.css";
 
@@ -159,8 +160,8 @@ export default async function CollectionPage({ params }) {
       <h2>Videos</h2>
       {videos.length ? (
         <div className="video-grid">
-          {videos.map((video, index) => (
-            <VideoCard key={video.id} video={video} priority={index < 4} />
+          {videos.slice(0, 180).map((video, index) => (
+            <VideoCard key={video.id} video={toVideoCard(video)} priority={index < 4} />
           ))}
         </div>
       ) : (

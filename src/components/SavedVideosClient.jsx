@@ -1,31 +1,35 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import VideoCard from "@/components/VideoCard";
 
 const FAVORITES_KEY = "nicevx_favorites_v1";
+const SAVED_VIDEOS_KEY = "nicevx_saved_videos_v2";
+const HISTORY_KEY = "nicevx_watch_history_v1";
 
-export default function SavedVideosClient({ catalog = [] }) {
-  const [favoriteIds, setFavoriteIds] = useState([]);
+export default function SavedVideosClient() {
+  const [savedVideos, setSavedVideos] = useState([]);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     try {
-      const stored = JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]");
-      setFavoriteIds(Array.isArray(stored) ? stored : []);
+      const stored = JSON.parse(localStorage.getItem(SAVED_VIDEOS_KEY) || "[]");
+      const saved = Array.isArray(stored) ? stored.filter((video) => video?.id && video?.canonicalUrl) : [];
+      if (saved.length) {
+        setSavedVideos(saved);
+      } else {
+        const ids = new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]"));
+        const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+        setSavedVideos(Array.isArray(history) ? history.filter((video) => ids.has(video.id)) : []);
+      }
     } catch (_) {
-      setFavoriteIds([]);
+      setSavedVideos([]);
     } finally {
       setReady(true);
     }
   }, []);
-
-  const savedVideos = useMemo(() => {
-    const byId = new Map(catalog.map((video) => [video.id, video]));
-    return favoriteIds.map((id) => byId.get(id)).filter(Boolean);
-  }, [catalog, favoriteIds]);
 
   return (
     <section className="saved-page" aria-labelledby="saved-title">

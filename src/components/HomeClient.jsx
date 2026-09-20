@@ -27,6 +27,7 @@ function sortVideos(videos, order) {
 
 export default function HomeClient({
   initialVideos = [],
+  totalCatalogCount = 0,
   initialTrendTags = [],
 }) {
   const searchParams = useSearchParams();
@@ -53,7 +54,7 @@ export default function HomeClient({
           <div className="section-title-group">
             <h1 className="section-title">Adult Videos</h1>
             <span className="section-count">
-              {initialVideos.length.toLocaleString()} videos · {sortLabel}
+              {totalCatalogCount.toLocaleString()} videos · {sortLabel}
             </span>
           </div>
           <SortBar value={order} options={SORT_OPTIONS} />

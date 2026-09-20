@@ -5,7 +5,7 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import SearchResultsShared from '@/components/SearchResultsShared';
 import { getSearchMetadata } from '@/utils/seo';
 import { ALL_CATEGORIES } from '@/data/allCategories';
-import { getCatalogVideos, getCollection } from '@/lib/catalog';
+import { getCatalogVideos, getCollection, toVideoCard } from '@/lib/catalog';
 
 export const dynamicParams = false;
 
@@ -62,7 +62,10 @@ export default async function CategoryPage({ params }) {
   const query = catName.replace(/-/g, ' ');
   const seo = getSearchMetadata({ query, isCat: true, isTag: false, page: 1, catName });
   const related = getRelatedCategories(catName.toLowerCase());
-  const initialVideos = getCatalogVideos().filter((video) => [video.category, ...(video.tags || [])].some((value) => String(value).toLowerCase() === query.toLowerCase()));
+  const initialVideos = getCatalogVideos()
+    .filter((video) => [video.category, ...(video.tags || [])].some((value) => String(value).toLowerCase() === query.toLowerCase()))
+    .slice(0, 180)
+    .map(toVideoCard);
 
   return (
     <>

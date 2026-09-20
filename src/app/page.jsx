@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import HomeClient from "@/components/HomeClient";
 import SkeletonGrid from "@/components/SkeletonGrid";
 import "../pages/Pages.css";
-import { getCatalogVideos, getTrendTags } from "@/lib/catalog";
+import { getCatalogVideos, getTrendTags, toVideoCard } from "@/lib/catalog";
 
 export function generateMetadata() {
   const currentYear = new Date().getFullYear();
@@ -32,9 +32,25 @@ export function generateMetadata() {
 
 export default function Home() {
   const catalog = getCatalogVideos();
+  const featured = [];
+  const seen = new Set();
+  const add = (items) => items.forEach((video) => {
+    if (!seen.has(video.id) && featured.length < 180) {
+      seen.add(video.id);
+      featured.push(video);
+    }
+  });
+  add([...catalog].sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate)).slice(0, 72));
+  add([...catalog].sort((a, b) => b.discoveryScore - a.discoveryScore).slice(0, 54));
+  add([...catalog].sort((a, b) => b.views - a.views).slice(0, 36));
+  add([...catalog].sort((a, b) => b.rating - a.rating || b.views - a.views).slice(0, 36));
   return (
     <Suspense fallback={<SkeletonGrid />}>
-      <HomeClient initialVideos={catalog} initialTrendTags={getTrendTags(10)} />
+      <HomeClient
+        initialVideos={featured.map(toVideoCard)}
+        totalCatalogCount={catalog.length}
+        initialTrendTags={getTrendTags(10)}
+      />
     </Suspense>
   );
 }

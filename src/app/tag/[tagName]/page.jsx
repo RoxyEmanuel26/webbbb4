@@ -10,14 +10,17 @@ export const dynamicParams = false;
 const toSlug = (value = '') => String(value).trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
 export function generateStaticParams() {
-  const tags = new Set();
+  const tags = new Map();
   getCatalogVideos().forEach((video) => {
     (video.tags || []).forEach((tag) => {
       const slug = toSlug(tag);
-      if (slug) tags.add(slug);
+      if (slug) tags.set(slug, (tags.get(slug) || 0) + 1);
     });
   });
-  return [...tags].map((tagName) => ({ tagName }));
+  return [...tags.entries()]
+    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+    .slice(0, 250)
+    .map(([tagName]) => ({ tagName }));
 }
 
 export async function generateMetadata({ params }) {

@@ -8,7 +8,9 @@ const PER_PAGE = 50;
 // Start with a crawlable batch instead of submitting the full upstream catalog
 // at once. Increase this only after Search Console shows the current batch is
 // being crawled and indexed consistently.
-const HARD_MAX_SITEMAP_VIDEOS = 250;
+// A rolling ceiling keeps Cloudflare's static file count and client payloads
+// bounded while still allowing a 100-video daily refresh for many months.
+const HARD_MAX_SITEMAP_VIDEOS = 5000;
 const DEFAULT_MAX_SITEMAP_VIDEOS = HARD_MAX_SITEMAP_VIDEOS;
 const requestedMaxVideos = Number.parseInt(process.env.SITEMAP_MAX_VIDEOS || '', 10);
 const MAX_SITEMAP_VIDEOS = Number.isSafeInteger(requestedMaxVideos) && requestedMaxVideos > 0 ? Math.min(requestedMaxVideos, HARD_MAX_SITEMAP_VIDEOS) : DEFAULT_MAX_SITEMAP_VIDEOS;
@@ -20,6 +22,8 @@ const BATCH_SIZE = 5;
 const DEFAULT_MAX_AI_PER_RUN = 0;
 const requestedAiBatchSize = Number.parseInt(process.env.SITEMAP_AI_BATCH_SIZE || '', 10);
 const MAX_AI_PER_RUN = Number.isSafeInteger(requestedAiBatchSize) && requestedAiBatchSize >= 0 ? requestedAiBatchSize : DEFAULT_MAX_AI_PER_RUN;
+const requestedMinimumNewVideos = Number.parseInt(process.env.SITEMAP_MIN_NEW_VIDEOS || '', 10);
+const MIN_NEW_VIDEOS = Number.isSafeInteger(requestedMinimumNewVideos) && requestedMinimumNewVideos >= 0 ? requestedMinimumNewVideos : 0;
 const requestedCollectionBatchSize = Number.parseInt(process.env.COLLECTION_AI_BATCH_SIZE || '', 10);
 const MAX_COLLECTION_AI_PER_RUN = Number.isSafeInteger(requestedCollectionBatchSize) && requestedCollectionBatchSize >= 0 ? Math.min(requestedCollectionBatchSize, MAX_EDITORIALS_PER_RUN) : 0;
 const REQUIRE_AI_CURATION = process.env.SITEMAP_REQUIRE_AI_CURATION !== 'false';
@@ -1011,6 +1015,11 @@ async function run() {
     console.log(`💾 Tersimpan: sitemap-video-${currentChunkIndex}.xml (${currentChunkUrls.length} URLs)`);
   }
 
+  const publishedNewVideos = finalized.filter((video) => newlyCuratedIds.has(video.id)).length;
+  if (publishedNewVideos < MIN_NEW_VIDEOS) {
+    throw new Error(`Target video baru tidak tercapai: ${publishedNewVideos}/${MIN_NEW_VIDEOS}. Publikasi dibatalkan agar tidak menerbitkan batch parsial.`);
+  }
+
   const managedCollections = await refreshCollections(finalized);
   console.log('📦 Membuat sitemap-static.xml dan Index Sitemap...');
   writeStaticSitemap(finalized, managedCollections);
@@ -1023,6 +1032,7 @@ async function run() {
   await writeJsonAtomic(SNAPSHOTS_FILE, snapshots);
 
   console.log(`✅ Total URL video untuk sitemap: ${indexedVideoCount} (batas: ${MAX_SITEMAP_VIDEOS})`);
+  console.log(`🆕 Video baru yang lolos seluruh gate: ${publishedNewVideos}/${MIN_NEW_VIDEOS}`);
   console.log(`🧠 Kurasi AI: ${indexedVideoCount} diterbitkan, ${skippedUncuratedCount} belum layak, ${skippedSpamCount} spam, ${skippedEncodingCount} encoding rusak, ${skippedInvalidDateCount} metadata wajib tidak valid.`);
   console.log('🎉 Selesai 100%! Semua file tersimpan dengan aman.');
 }

@@ -9,6 +9,7 @@ dist/
 dist-ssr/
 .cloudflare/
 .vercel/
+.wrangler/
 
 # Agent & Knowledge Graph Tooling
 .agents/
@@ -61,3 +62,5 @@ scripts/*
 !scripts/test-user-facing-copy.cjs
 !scripts/test-workflow-schedule.cjs
 !scripts/test-cloudflare-performance.cjs
+!scripts/prepare-cloudflare-static.cjs
+!scripts/test-adsterra-placement.cjs

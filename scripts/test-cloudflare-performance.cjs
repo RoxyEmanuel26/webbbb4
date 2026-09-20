@@ -34,12 +34,19 @@ for (const absolutePath of appSources) {
   );
 }
 
+assert.match(read("src/app/tag/[tagName]/page.jsx"), /\.slice\(0, 250\)/);
+assert.match(read("src/app/page.jsx"), /featured\.length < 180/);
+
 assert.equal(
   fs.existsSync(path.join(root, "src/app/api/eporner/route.js")),
   false,
   "The unused public Eporner proxy must stay removed; search fetches the provider from the browser",
 );
+assert.match(read("next.config.mjs"), /output:\s*["']export["']/);
+assert.doesNotMatch(read("package.json"), /@cloudflare\/next-on-pages/);
+assert.match(read("package.json"), /prepare-cloudflare-static\.cjs/);
+assert.match(read("scripts/prepare-cloudflare-static.cjs"), /zero Worker artifacts/);
 assert.doesNotMatch(read("next.config.mjs"), /Cache-Control[^\n]*no-store/);
 assert.doesNotMatch(read("public/_headers"), /Cache-Control:\s*no-store/);
 
-console.log("Cloudflare performance gates passed: the site is pre-rendered and has no request-time application route.");
+console.log("Cloudflare performance gates passed: pure static export, bounded client feed, and zero request-time application routes.");

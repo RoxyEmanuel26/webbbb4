@@ -8,6 +8,7 @@ import { recordVisit, trackLocalEvent } from "@/lib/privacyMetrics";
 import "../../../pages/Pages.css";
 
 const FAVORITES_KEY = "nicevx_favorites_v1";
+const SAVED_VIDEOS_KEY = "nicevx_saved_videos_v2";
 const HISTORY_KEY = "nicevx_watch_history_v1";
 
 function formatViews(value) {
@@ -20,8 +21,9 @@ export default function VideoPlayerClient({ video, initialRelated = [] }) {
   useEffect(() => {
     recordVisit();
     try {
+      const saved = JSON.parse(localStorage.getItem(SAVED_VIDEOS_KEY) || "[]");
       const favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]");
-      setFavorite(favorites.includes(video.id));
+      setFavorite((Array.isArray(saved) && saved.some((item) => item.id === video.id)) || favorites.includes(video.id));
       const history = JSON.parse(
         localStorage.getItem(HISTORY_KEY) || "[]",
       ).filter((entry) => entry.id !== video.id);
@@ -44,6 +46,24 @@ export default function VideoPlayerClient({ video, initialRelated = [] }) {
       if (favorites.has(video.id)) favorites.delete(video.id);
       else favorites.add(video.id);
       localStorage.setItem(FAVORITES_KEY, JSON.stringify([...favorites]));
+      const saved = JSON.parse(localStorage.getItem(SAVED_VIDEOS_KEY) || "[]");
+      const savedVideos = Array.isArray(saved) ? saved.filter((item) => item?.id !== video.id) : [];
+      if (favorites.has(video.id)) {
+        savedVideos.unshift({
+          id: video.id,
+          canonicalUrl: video.canonicalUrl,
+          title: video.title,
+          thumbnail: video.thumbnail,
+          views: video.views,
+          rating: video.rating,
+          length_min: video.length_min,
+          category: video.category,
+          tags: video.tags,
+          uploadDate: video.uploadDate,
+          discoveryScore: video.discoveryScore,
+        });
+      }
+      localStorage.setItem(SAVED_VIDEOS_KEY, JSON.stringify(savedVideos.slice(0, 100)));
       setFavorite(favorites.has(video.id));
     } catch (_) {}
   };

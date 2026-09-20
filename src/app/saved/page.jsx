@@ -1,5 +1,4 @@
 import SavedVideosClient from "@/components/SavedVideosClient";
-import { getCatalogVideos } from "@/lib/catalog";
 import "../../pages/Pages.css";
 
 export const metadata = {
@@ -12,7 +11,7 @@ export const metadata = {
 export default function SavedPage() {
   return (
     <main className="page-wrapper saved-page-wrapper">
-      <SavedVideosClient catalog={getCatalogVideos()} />
+      <SavedVideosClient />
     </main>
   );
 }

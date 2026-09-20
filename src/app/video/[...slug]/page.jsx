@@ -1,6 +1,7 @@
 import { notFound, permanentRedirect } from 'next/navigation';
+import Script from 'next/script';
 import VideoPlayerClient from './VideoPlayerClient';
-import { getCatalogVideos, getRelatedVideos, getVideoById } from '@/lib/catalog';
+import { getCatalogVideos, getRelatedVideos, getVideoById, toVideoCard } from '@/lib/catalog';
 
 export const dynamicParams = false;
 
@@ -51,8 +52,14 @@ export default async function VideoPage({ params }) {
 
   return (
     <article className="video-page-article" itemScope itemType="https://schema.org/VideoObject">
+      <Script
+        id="adsterra-video-popunder"
+        src="https://glamournakedemployee.com/c5/d4/ca/c5d4ca9c6ad3af9bb2af16d5405c0a02.js"
+        data-cfasync="false"
+        strategy="afterInteractive"
+      />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }} />
-      <VideoPlayerClient video={video} initialRelated={getRelatedVideos(video)} />
+      <VideoPlayerClient video={video} initialRelated={getRelatedVideos(video).map(toVideoCard)} />
     </article>
   );
 }

@@ -17,16 +17,11 @@ assert.equal(
   false,
   "The old Monday-only expansion schedule must be removed",
 );
-assert.match(workflow, /1\|3\|5\) ai_batch=2/);
-assert.match(workflow, /\*\) ai_batch=1/);
-assert.match(workflow, /SITEMAP_MAX_VIDEOS: "250"/);
+assert.equal((workflow.match(/ai_batch=125/g) || []).length, 3);
+assert.match(workflow, /SITEMAP_MAX_VIDEOS: "5000"/);
+assert.match(workflow, /SITEMAP_MIN_NEW_VIDEOS: \$\{\{ steps\.publication\.outputs\.min_new \}\}/);
+assert.equal((workflow.match(/min_new=100/g) || []).length, 3);
 assert.match(workflow, /SITEMAP_REQUIRE_AI_CURATION: "true"/);
 assert.match(workflow, /concurrency:[\s\S]*cancel-in-progress: false/);
 
-const weeklyTotal = [2, 1, 2, 1, 2, 1, 1].reduce(
-  (total, dailyBatch) => total + dailyBatch,
-  0,
-);
-assert.equal(weeklyTotal, 10, "Daily batches must total 10 videos per week");
-
-console.log("Daily discovery workflow tests passed: 10 videos/week, 250 maximum.");
+console.log("Daily discovery workflow tests passed: at least 100 accepted videos/day, 5000 rolling maximum.");

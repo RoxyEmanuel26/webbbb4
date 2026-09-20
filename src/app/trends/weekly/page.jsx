@@ -1,5 +1,5 @@
 import VideoCard from "@/components/VideoCard";
-import { getCatalogVideos } from "@/lib/catalog";
+import { getCatalogVideos, toVideoCard } from "@/lib/catalog";
 import "../../../pages/Pages.css";
 
 export async function generateMetadata() {
@@ -30,7 +30,7 @@ export default function WeeklyTrendsPage() {
       {rising.length ? (
         <div className="video-grid">
           {rising.map((video) => (
-            <VideoCard key={video.id} video={video} />
+            <VideoCard key={video.id} video={toVideoCard(video)} />
           ))}
         </div>
       ) : (
