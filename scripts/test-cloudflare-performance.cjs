@@ -36,6 +36,8 @@ for (const absolutePath of appSources) {
 
 assert.match(read("src/app/tag/[tagName]/page.jsx"), /\.slice\(0, 250\)/);
 assert.match(read("src/app/page.jsx"), /featured\.length < 180/);
+assert.match(read("src/components/VideoCard.jsx"), /video\.thumbnail/);
+assert.match(read("scripts/generate-sitemap.cjs"), /Preservation-first publication/);
 
 assert.equal(
   fs.existsSync(path.join(root, "src/app/api/eporner/route.js")),

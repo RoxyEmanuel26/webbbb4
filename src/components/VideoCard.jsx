@@ -25,11 +25,13 @@ const createSlug = (title) => {
 
 const VideoCard = ({ video, compact = false, priority = false }) => {
   const [thumbIdx, setThumbIdx] = useState(0);
+  const [failedSrc, setFailedSrc] = useState("");
   const hoverInterval = useRef(null);
   const isPrefetched = useRef(false);
   
   const thumbs = video.thumbs || [];
-  const src    = thumbs[thumbIdx]?.src || video.default_thumb?.src || '';
+  const src = thumbs[thumbIdx]?.src || video.default_thumb?.src || video.thumbnail || '/logo.webp';
+  const displayedSrc = failedSrc === src ? '/logo.webp' : src;
 
   // Cleanup interval on unmount
   useEffect(() => {
@@ -71,15 +73,16 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
     setThumbIdx(0);
   };
 
-  const rating   = parseFloat(video.rate || 0);
+  const rating   = parseFloat(video.rate ?? video.rating ?? 0);
   const duration = video.length_min || '—';
   const views    = formatViews(video.views || 0);
   const ratingPct = ratingToPercent(rating);
   const slug     = createSlug(video.title);
 
   const getPrimaryKeyword = () => {
-    if (!video.keywords) return '';
-    const kws = String(video.keywords)
+    const keywordSource = video.keywords || (video.tags || []).join(',');
+    if (!keywordSource) return '';
+    const kws = String(keywordSource)
       .split(',')
       .map(k => k.trim())
       .filter(k => k.length > 2 && k.length < 25 && k.split(/\s+/).length <= 2 && !FORBIDDEN_REGEX.test(k));
@@ -105,7 +108,7 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
         onContextMenu={(e) => e.preventDefault()} // Prevent long-press from opening menu on mobile
       >
         <img
-          src={src}
+          src={displayedSrc}
           alt={video.title}
           className="vcard__thumb"
           loading={priority ? "eager" : "lazy"}
@@ -113,6 +116,7 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
           draggable="false"
           width="640"
           height="360"
+          onError={() => setFailedSrc(src)}
         />
         {/* Duration Badge */}
         <span className="vcard__duration" aria-label={`Duration: ${duration}`}>

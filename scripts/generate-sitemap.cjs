@@ -10,7 +10,7 @@ const PER_PAGE = 50;
 // being crawled and indexed consistently.
 // A rolling ceiling keeps Cloudflare's static file count and client payloads
 // bounded while still allowing a 100-video daily refresh for many months.
-const HARD_MAX_SITEMAP_VIDEOS = 5000;
+const HARD_MAX_SITEMAP_VIDEOS = 8500;
 const DEFAULT_MAX_SITEMAP_VIDEOS = HARD_MAX_SITEMAP_VIDEOS;
 const requestedMaxVideos = Number.parseInt(process.env.SITEMAP_MAX_VIDEOS || '', 10);
 const MAX_SITEMAP_VIDEOS = Number.isSafeInteger(requestedMaxVideos) && requestedMaxVideos > 0 ? Math.min(requestedMaxVideos, HARD_MAX_SITEMAP_VIDEOS) : DEFAULT_MAX_SITEMAP_VIDEOS;
@@ -793,7 +793,41 @@ async function run() {
 
   initState();
 
-  for (let i = startPage; i <= MAX_PAGES; i += BATCH_SIZE) {
+  // Preservation-first publication: existing videos occupy the catalog before
+  // new candidates. Reaching the hard ceiling stops expansion instead of
+  // silently replacing older canonical URLs.
+  const previousCatalogPayload = readJsonFile(CATALOG_FILE, { videos: [] });
+  const previousCatalog = Array.isArray(previousCatalogPayload.videos) ? previousCatalogPayload.videos : [];
+  for (const video of previousCatalog) {
+    if (indexedVideoCount >= MAX_SITEMAP_VIDEOS) break;
+    if (!video?.id || !video.canonicalUrl || !video.title || !video.description || !video.thumbnail || !video.embedUrl || !video.uploadDate) continue;
+    if (seenUrls.has(video.canonicalUrl)) continue;
+
+    seenUrls.add(video.canonicalUrl);
+    indexedVideoCount++;
+    catalogCandidates.push(video);
+    currentChunkUrls.push({
+      url: video.canonicalUrl,
+      priority: Math.max(0.5, Math.min(0.9, 0.5 + (Number(video.discoveryScore) || 0) / 250)).toFixed(1),
+      title: video.title,
+      description: video.description,
+      thumbnail_loc: video.thumbnail,
+      player_loc: video.embedUrl,
+      duration: video.durationSeconds || video.length_sec || 0,
+      publication_date: video.uploadDate,
+      tags: Array.isArray(video.tags) ? video.tags : []
+    });
+
+    if (currentChunkUrls.length >= URLS_PER_SITEMAP) {
+      writeChunk(currentChunkIndex, currentChunkUrls);
+      currentChunkIndex++;
+      currentChunkUrls = [];
+    }
+  }
+  console.log(`[Retention] ${indexedVideoCount} video lama dipertahankan sebelum menambah kandidat baru.`);
+  const minimumNewForRun = Math.min(MIN_NEW_VIDEOS, Math.max(0, MAX_SITEMAP_VIDEOS - indexedVideoCount));
+
+  for (let i = startPage; i <= MAX_PAGES && minimumNewForRun > 0; i += BATCH_SIZE) {
     const batchPromises = [];
     const end = Math.min(i + BATCH_SIZE - 1, MAX_PAGES);
 
@@ -925,6 +959,11 @@ async function run() {
         }
       }
     }
+
+    if (MAX_AI_PER_RUN > 0 && aiProcessedCount >= MAX_AI_PER_RUN) {
+      console.log(`[AI] Batas ${MAX_AI_PER_RUN} percobaan tercapai; pengambilan halaman sumber dihentikan.`);
+      break;
+    }
   }
 
   // A curated video does not become unavailable merely because it moved beyond
@@ -1016,8 +1055,8 @@ async function run() {
   }
 
   const publishedNewVideos = finalized.filter((video) => newlyCuratedIds.has(video.id)).length;
-  if (publishedNewVideos < MIN_NEW_VIDEOS) {
-    throw new Error(`Target video baru tidak tercapai: ${publishedNewVideos}/${MIN_NEW_VIDEOS}. Publikasi dibatalkan agar tidak menerbitkan batch parsial.`);
+  if (publishedNewVideos < minimumNewForRun) {
+    throw new Error(`Target video baru tidak tercapai: ${publishedNewVideos}/${minimumNewForRun}. Publikasi dibatalkan agar tidak menerbitkan batch parsial.`);
   }
 
   const managedCollections = await refreshCollections(finalized);
@@ -1032,7 +1071,7 @@ async function run() {
   await writeJsonAtomic(SNAPSHOTS_FILE, snapshots);
 
   console.log(`✅ Total URL video untuk sitemap: ${indexedVideoCount} (batas: ${MAX_SITEMAP_VIDEOS})`);
-  console.log(`🆕 Video baru yang lolos seluruh gate: ${publishedNewVideos}/${MIN_NEW_VIDEOS}`);
+  console.log(`🆕 Video baru yang lolos seluruh gate: ${publishedNewVideos}/${minimumNewForRun}${minimumNewForRun < MIN_NEW_VIDEOS ? ' (kapasitas aman hampir/penuh)' : ''}`);
   console.log(`🧠 Kurasi AI: ${indexedVideoCount} diterbitkan, ${skippedUncuratedCount} belum layak, ${skippedSpamCount} spam, ${skippedEncodingCount} encoding rusak, ${skippedInvalidDateCount} metadata wajib tidak valid.`);
   console.log('🎉 Selesai 100%! Semua file tersimpan dengan aman.');
 }

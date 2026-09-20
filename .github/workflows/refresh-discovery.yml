@@ -98,7 +98,7 @@ jobs:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           SITEMAP_AI_BATCH_SIZE: ${{ steps.publication.outputs.ai_batch }}
           COLLECTION_AI_BATCH_SIZE: ${{ steps.publication.outputs.collection_ai_batch }}
-          SITEMAP_MAX_VIDEOS: "5000"
+          SITEMAP_MAX_VIDEOS: "8500"
           SITEMAP_MIN_NEW_VIDEOS: ${{ steps.publication.outputs.min_new }}
           SITEMAP_REQUIRE_AI_CURATION: "true"
         run: npm run sitemap
@@ -122,12 +122,12 @@ jobs:
             !video.sourceUrl || !video.embedUrl || !video.thumbnail ||
             Number.isNaN(Date.parse(video.uploadDate)) || video.availability !== 'available'
           );
-          if (videos.length > 5000) throw new Error(`Catalog hard limit exceeded: ${videos.length}/5000`);
+          if (videos.length > 8500) throw new Error(`Catalog hard limit exceeded: ${videos.length}/8500`);
           if (ids.size !== videos.length) throw new Error('Duplicate video IDs detected');
           if (urls.size !== videos.length) throw new Error('Duplicate canonical URLs detected');
           if (descriptions.size !== videos.length) throw new Error('Duplicate AI descriptions detected');
           if (invalid.length) throw new Error(`${invalid.length} catalog records failed required metadata gates`);
-          console.log(`Catalog gate passed: ${videos.length}/5000 verified videos`);
+          console.log(`Catalog gate passed: ${videos.length}/8500 verified videos`);
           NODE
 
       - name: Build before publication
