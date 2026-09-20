@@ -27,7 +27,6 @@ const appSources = fs
 
 for (const absolutePath of appSources) {
   const relativePath = path.relative(root, absolutePath).replaceAll("\\", "/");
-  if (relativePath === "src/app/api/eporner/route.js") continue;
   assert.doesNotMatch(
     fs.readFileSync(absolutePath, "utf8"),
     /export const runtime\s*=\s*["']edge["']/,
@@ -35,10 +34,12 @@ for (const absolutePath of appSources) {
   );
 }
 
-assert.match(read("src/app/api/eporner/route.js"), /export const runtime\s*=\s*["']edge["']/);
-assert.match(read("src/app/api/eporner/route.js"), /PERF_SAMPLE_RATE/);
-assert.match(read("src/lib/eporner.js"), /cacheEverything:\s*true/);
+assert.equal(
+  fs.existsSync(path.join(root, "src/app/api/eporner/route.js")),
+  false,
+  "The unused public Eporner proxy must stay removed; search fetches the provider from the browser",
+);
 assert.doesNotMatch(read("next.config.mjs"), /Cache-Control[^\n]*no-store/);
 assert.doesNotMatch(read("public/_headers"), /Cache-Control:\s*no-store/);
 
-console.log("Cloudflare performance gates passed: public pages static, only API uses Edge runtime.");
+console.log("Cloudflare performance gates passed: the site is pre-rendered and has no request-time application route.");
