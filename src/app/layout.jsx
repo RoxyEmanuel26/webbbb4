@@ -6,8 +6,6 @@ import AgeGateModal from "../components/AgeGateModal";
 
 import Script from "next/script";
 
-export const runtime = "edge";
-
 export const metadata = {
   metadataBase: new URL("https://www.nicevx.com/"),
   title: {

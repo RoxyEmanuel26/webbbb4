@@ -10,7 +10,11 @@ import {
 } from "@/lib/catalog";
 import "../../../pages/Pages.css";
 
-export const runtime = "edge";
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return getCollections().map((collection) => ({ slug: collection.slug }));
+}
 
 const formatDuration = (seconds) => {
   const minutes = Math.round((Number(seconds) || 0) / 60);

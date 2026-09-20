@@ -2,8 +2,6 @@ import VideoCard from "@/components/VideoCard";
 import { getCatalogVideos } from "@/lib/catalog";
 import "../../../pages/Pages.css";
 
-export const runtime = "edge";
-
 export async function generateMetadata() {
   const hasEvidence = getCatalogVideos().some((video) =>
     Number.isFinite(video.viewGrowth7d),

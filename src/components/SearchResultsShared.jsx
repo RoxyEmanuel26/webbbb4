@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { ALL_CATEGORIES } from '@/data/allCategories';
 import VideoCard from '@/components/VideoCard';
 import SkeletonCard from '@/components/SkeletonCard';
 import Pagination from '@/components/Pagination';
@@ -100,6 +99,32 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
     fetchData();
   }, [fetchData]);
 
+  const catalogPage = useMemo(() => {
+    if (!hasServerCatalog) return null;
+    const sorted = [...videos];
+    if (currentOrder === 'top-rated') {
+      sorted.sort((a, b) => Number(b.rating || b.rate || 0) - Number(a.rating || a.rate || 0));
+    } else if (currentOrder === 'most-popular') {
+      sorted.sort((a, b) => Number(b.views || 0) - Number(a.views || 0));
+    } else if (currentOrder === 'top-weekly') {
+      sorted.sort((a, b) => Number(b.viewGrowth7d || 0) - Number(a.viewGrowth7d || 0));
+    } else if (currentOrder === 'top-monthly') {
+      sorted.sort((a, b) => Number(b.discoveryScore || 0) - Number(a.discoveryScore || 0));
+    } else {
+      sorted.sort((a, b) => Date.parse(b.uploadDate || 0) - Date.parse(a.uploadDate || 0));
+    }
+    const perPage = 36;
+    return {
+      videos: sorted.slice((page - 1) * perPage, page * perPage),
+      totalPages: Math.max(1, Math.ceil(sorted.length / perPage)),
+      totalCount: sorted.length,
+    };
+  }, [currentOrder, hasServerCatalog, page, videos]);
+
+  const visibleVideos = catalogPage?.videos || videos;
+  const visibleTotalPages = catalogPage?.totalPages || totalPages;
+  const visibleTotalCount = catalogPage?.totalCount ?? totalCount;
+
   const breadcrumbsSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -134,8 +159,8 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
         <div className="section-header">
           <div className="section-title-group">
             <h1 className="section-title">{getPageTitle()}</h1>
-            {totalCount > 0 && (
-              <span className="section-count">{totalCount.toLocaleString()} results</span>
+            {visibleTotalCount > 0 && (
+              <span className="section-count">{visibleTotalCount.toLocaleString()} results</span>
             )}
           </div>
           <SortBar value={currentOrder} options={SORT_OPTIONS} />
@@ -147,10 +172,10 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
               <SkeletonCard key={`skel-${idx}`} />
             ))}
           </div>
-        ) : videos.length > 0 ? (
+        ) : visibleVideos.length > 0 ? (
           <>
             <div className="video-grid">
-              {videos.map((v, idx) => (
+              {visibleVideos.map((v, idx) => (
                 <React.Fragment key={`${v.id}-${idx}`}>
                   <VideoCard video={v} priority={idx < 4} />
 
@@ -158,7 +183,7 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
               ))}
             </div>
 
-            <Pagination currentPage={page} totalPages={totalPages} />
+            <Pagination currentPage={page} totalPages={visibleTotalPages} />
 
           </>
         ) : (

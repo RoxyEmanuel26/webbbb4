@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 // Build: 2026-07-29
+const catalogCacheControl = 'public, max-age=300, s-maxage=86400, stale-while-revalidate=604800';
+
 const nextConfig = {
   reactStrictMode: true,
   /**
@@ -40,13 +42,22 @@ const nextConfig = {
           },
         ],
       },
-      // ── Halaman CATS (semi-static, bisa di-cache lebih lama) ─────────────
-      {
-        source: '/cats',
-        headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=3600, stale-while-revalidate=3600' },
-        ],
-      },
+      // Catalog pages are generated during the daily publication workflow.
+      // Cache the generated HTML at the edge instead of re-rendering it in a
+      // Worker for every visitor and crawler request.
+      ...[
+        '/video/:path*',
+        '/cat/:path*',
+        '/tag/:path*',
+        '/cats',
+        '/collections/:path*',
+        '/saved',
+        '/trends/:path*',
+        '/search',
+      ].map((source) => ({
+        source,
+        headers: [{ key: 'Cache-Control', value: catalogCacheControl }],
+      })),
       {
         source: '/sitemap.xml',
         headers: [
@@ -65,35 +76,7 @@ const nextConfig = {
       {
         source: '/',
         headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=300, stale-while-revalidate=60' },
-        ],
-      },
-      // ── SSR pages: NO CACHE — harus render fresh setiap request ───────────
-      // Video, Cat, Tag pages mengandung metadata SEO (title, canonical, schema)
-      // yang harus selalu akurat. s-maxage menyebabkan Cloudflare menyajikan
-      // HTML lama bahkan setelah deploy baru.
-      {
-        source: '/video/:path*',
-        headers: [
-          { key: 'Cache-Control', value: 'no-store' },
-        ],
-      },
-      {
-        source: '/cat/:path*',
-        headers: [
-          { key: 'Cache-Control', value: 'no-store' },
-        ],
-      },
-      {
-        source: '/tag/:path*',
-        headers: [
-          { key: 'Cache-Control', value: 'no-store' },
-        ],
-      },
-      {
-        source: '/search',
-        headers: [
-          { key: 'Cache-Control', value: 'no-store' },
+          { key: 'Cache-Control', value: catalogCacheControl },
         ],
       },
     ];

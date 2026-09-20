@@ -3,7 +3,22 @@ import SkeletonGrid from '@/components/SkeletonGrid';
 import SearchResultsShared from '@/components/SearchResultsShared';
 import { permanentRedirect } from 'next/navigation';
 import { getCategorySlugForTag, getSearchMetadata } from '@/utils/seo';
-export const runtime = 'edge';
+import { getCatalogVideos } from '@/lib/catalog';
+
+export const dynamicParams = false;
+
+const toSlug = (value = '') => String(value).trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+export function generateStaticParams() {
+  const tags = new Set();
+  getCatalogVideos().forEach((video) => {
+    (video.tags || []).forEach((tag) => {
+      const slug = toSlug(tag);
+      if (slug) tags.add(slug);
+    });
+  });
+  return [...tags].map((tagName) => ({ tagName }));
+}
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
@@ -12,7 +27,7 @@ export async function generateMetadata({ params }) {
   return getSearchMetadata({ query, isCat: false, isTag: true, page: 1, tagName });
 }
 
-export default async function TagPage({ params, searchParams }) {
+export default async function TagPage({ params }) {
   const resolvedParams = await params;
   const tagName = resolvedParams?.tagName || '';
   const categorySlug = getCategorySlugForTag(tagName);
@@ -23,12 +38,8 @@ export default async function TagPage({ params, searchParams }) {
     permanentRedirect(`/cat/${categorySlug}`);
   }
 
-  const resolvedSearchParams = await searchParams;
   const query = tagName.replace(/-/g, ' ');
-  const page = parseInt(resolvedSearchParams?.page) || 1;
-  const currentOrder = resolvedSearchParams?.order || 'new';
-  
-  const seo = getSearchMetadata({ query, isCat: false, isTag: true, page, tagName });
+  const seo = getSearchMetadata({ query, isCat: false, isTag: true, page: 1, tagName });
 
   return (
     <Suspense fallback={<SkeletonGrid />}>
@@ -36,8 +47,6 @@ export default async function TagPage({ params, searchParams }) {
         isCat={false} 
         isTag={true} 
         query={query} 
-        page={page}
-        currentOrder={currentOrder}
         seoTitle={seo.title} 
         seoDesc={seo.description} 
         seoCanonical={seo.alternates.canonical} 

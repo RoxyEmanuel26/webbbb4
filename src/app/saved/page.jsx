@@ -2,8 +2,6 @@ import SavedVideosClient from "@/components/SavedVideosClient";
 import { getCatalogVideos } from "@/lib/catalog";
 import "../../pages/Pages.css";
 
-export const runtime = "edge";
-
 export const metadata = {
   title: "Saved Videos — NICEVX",
   description: "Open the videos you saved on NICEVX.",

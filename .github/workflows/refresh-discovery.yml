@@ -104,6 +104,7 @@ jobs:
         shell: bash
         run: |
           npm run test:workflow
+          npm run test:performance
           npm run test:copy
           npm run validate:collections
           node - <<'NODE'

@@ -1,8 +1,12 @@
-export const runtime = 'edge';
-
 import { notFound, permanentRedirect } from 'next/navigation';
 import VideoPlayerClient from './VideoPlayerClient';
-import { getRelatedVideos, getVideoById } from '@/lib/catalog';
+import { getCatalogVideos, getRelatedVideos, getVideoById } from '@/lib/catalog';
+
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return getCatalogVideos().map((video) => ({ slug: [video.canonicalSlug] }));
+}
 
 function extractId(slug) {
   return slug?.join('/').match(/-([A-Za-z0-9]{11})$/)?.[1] || null;

@@ -1,37 +1,17 @@
 import { Suspense } from 'react';
 import SkeletonGrid from '@/components/SkeletonGrid';
 import SearchResultsShared from '@/components/SearchResultsShared';
-import { getSearchMetadata } from '@/utils/seo';
-export const runtime = 'edge';
+export const metadata = {
+  title: 'Search Videos — NICEVX',
+  description: 'Search videos on NICEVX.',
+  robots: 'noindex, nofollow',
+  alternates: { canonical: 'https://www.nicevx.com/search' },
+};
 
-export async function generateMetadata({ searchParams }) {
-  const resolvedSearchParams = await searchParams;
-  const query = resolvedSearchParams?.query || 'all';
-  const page = parseInt(resolvedSearchParams?.page) || 1;
-  return getSearchMetadata({ query, isCat: false, isTag: false, page });
-}
-
-export default async function SearchPage({ searchParams }) {
-  const resolvedSearchParams = await searchParams;
-  const query = resolvedSearchParams?.query || 'all';
-  const page = parseInt(resolvedSearchParams?.page) || 1;
-  const currentOrder = resolvedSearchParams?.order || 'latest';
-  
-  const seo = getSearchMetadata({ query, isCat: false, isTag: false, page });
-
+export default function SearchPage() {
   return (
     <Suspense fallback={<SkeletonGrid />}>
-      <SearchResultsShared 
-        isCat={false} 
-        isTag={false} 
-        query={query} 
-        page={page}
-        currentOrder={currentOrder}
-        seoTitle={seo.title} 
-        seoDesc={seo.description} 
-        seoCanonical={seo.alternates.canonical} 
-        seoQuery={query}
-      />
+      <SearchResultsShared isCat={false} isTag={false} />
     </Suspense>
   );
 }

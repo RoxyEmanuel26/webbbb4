@@ -1,4 +1,8 @@
 const API_BASE = 'https://www.eporner.com/api/v2/video';
+const EDGE_FETCH_OPTIONS = {
+  headers: { Accept: 'application/json' },
+  cf: { cacheEverything: true, cacheTtl: 900 },
+};
 
 const fixEncoding = (str) => {
   if (!str) return str;
@@ -49,7 +53,7 @@ export const epornerServerApi = {
       }
     });
 
-    const response = await fetch(url.toString());
+    const response = await fetch(url.toString(), EDGE_FETCH_OPTIONS);
     
     if (!response.ok) {
       const errText = await response.text();
@@ -75,7 +79,7 @@ export const epornerServerApi = {
     url.searchParams.append('thumbsize', thumbsize);
     url.searchParams.append('format', 'json');
 
-    const response = await fetch(url.toString());
+    const response = await fetch(url.toString(), EDGE_FETCH_OPTIONS);
     
     if (!response.ok) {
       const errText = await response.text();

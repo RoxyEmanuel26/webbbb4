@@ -3,7 +3,6 @@ import CollectionCover from "@/components/CollectionCover";
 import { getCollectionCover, getCollections } from "@/lib/catalog";
 import "../../pages/Pages.css";
 
-export const runtime = "edge";
 export const metadata = {
   title: "Video Collections — NICEVX",
   description:

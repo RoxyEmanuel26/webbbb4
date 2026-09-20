@@ -14,6 +14,7 @@
     "test:collections": "node scripts/test-collection-engine.cjs",
     "test:copy": "node scripts/test-user-facing-copy.cjs",
     "test:workflow": "node scripts/test-workflow-schedule.cjs",
+    "test:performance": "node scripts/test-cloudflare-performance.cjs",
     "lint": "next lint"
   },
   "dependencies": {

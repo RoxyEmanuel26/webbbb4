@@ -4,53 +4,16 @@ import SkeletonGrid from "@/components/SkeletonGrid";
 import "../pages/Pages.css";
 import { getCatalogVideos, getTrendTags } from "@/lib/catalog";
 
-export const runtime = "edge";
-
-const SORT_OPTIONS = [
-  { value: "latest", label: "Latest" },
-  { value: "most-popular", label: "Most Viewed" },
-  { value: "top-weekly", label: "Top This Week" },
-  { value: "top-monthly", label: "Top This Month" },
-];
-
-export async function generateMetadata({ searchParams }) {
-  const params = await searchParams;
-  const rawOrderParam = params?.order;
-  const isValidOrder = SORT_OPTIONS.some((o) => o.value === rawOrderParam);
-  const orderParam = isValidOrder ? rawOrderParam : null;
-  const sortLabel =
-    SORT_OPTIONS.find((o) => o.value === orderParam)?.label || "Latest";
-
-  const rawPage = parseInt(params?.page);
-  const page = !isNaN(rawPage) && rawPage > 1 ? rawPage : 1;
+export function generateMetadata() {
   const currentYear = new Date().getFullYear();
-
-  const seoTitle = orderParam
-    ? `Free HD ${sortLabel} Porn Videos ${currentYear} — NICEVX`
-    : page > 1
-      ? `Free HD Porn Videos — Page ${page} — NICEVX`
-      : `NICEVX — Adult Videos ${currentYear}`;
-
-  const seoDesc = orderParam
-    ? `Browse ${sortLabel.toLowerCase()} adult videos on NICEVX, with new additions every week.`
-    : `Browse adult videos, popular categories, and new weekly additions on NICEVX.`;
-
-  let seoCanonical = orderParam
-    ? `https://www.nicevx.com/?order=${orderParam}`
-    : "https://www.nicevx.com/";
-
-  if (page > 1) {
-    seoCanonical += (seoCanonical.includes("?") ? "&" : "?") + `page=${page}`;
-  }
-
-  // /?order=* diblokir robots.txt DAN noindex untuk konsistensi penuh
-  // /?page=* (>1) juga di-noindex agar Google fokus mengindeks halaman video/kategori, bukan halaman list yang tak berujung
-  const robots = orderParam || page > 1 ? "noindex, follow" : "index, follow";
+  const seoTitle = `NICEVX — Adult Videos ${currentYear}`;
+  const seoDesc = "Browse adult videos, popular categories, and new daily additions on NICEVX.";
+  const seoCanonical = "https://www.nicevx.com/";
 
   return {
     title: seoTitle,
     description: seoDesc,
-    robots,
+    robots: "index, follow",
     alternates: { canonical: seoCanonical },
     openGraph: {
       title: seoTitle,
@@ -67,12 +30,7 @@ export async function generateMetadata({ searchParams }) {
   };
 }
 
-export default async function Home({ searchParams }) {
-  const params = await searchParams;
-
-  // Parameter tracking (utm_, fbclid, dll) sekarang dihandle secara client-side di layout.jsx
-  // untuk mencegah masalah cache dan error 500 di Cloudflare Pages.
-
+export default function Home() {
   const catalog = getCatalogVideos();
   return (
     <Suspense fallback={<SkeletonGrid />}>

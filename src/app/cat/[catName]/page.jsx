@@ -4,9 +4,10 @@ import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import SearchResultsShared from '@/components/SearchResultsShared';
 import { getSearchMetadata } from '@/utils/seo';
-export const runtime = 'edge';
 import { ALL_CATEGORIES } from '@/data/allCategories';
 import { getCatalogVideos, getCollection } from '@/lib/catalog';
+
+export const dynamicParams = false;
 
 // Set valid slugs untuk O(1) lookup validasi kategori
 const VALID_CAT_SLUGS = new Set(
@@ -14,6 +15,12 @@ const VALID_CAT_SLUGS = new Set(
 );
 
 const toSlug = (name) => name.toLowerCase().replace(/\s+/g, '-');
+
+export function generateStaticParams() {
+  return ALL_CATEGORIES
+    .map((category) => toSlug(category.name))
+    .map((catName) => ({ catName }));
+}
 
 // Deterministically pick sibling categories to cross-link from a category page.
 // Server-rendered (this is a server component) so the links are crawlable, which
@@ -43,9 +50,8 @@ export async function generateMetadata({ params }) {
   return { ...metadata, robots: { index: false, follow: true } };
 }
 
-export default async function CategoryPage({ params, searchParams }) {
+export default async function CategoryPage({ params }) {
   const resolvedParams = await params;
-  const resolvedSearchParams = await searchParams;
   const catName = resolvedParams?.catName || '';
 
   // Validasi: jika slug bukan kategori valid, kembalikan 404 (bukan soft 404)
@@ -53,12 +59,8 @@ export default async function CategoryPage({ params, searchParams }) {
     notFound();
   }
   if (getCollection(catName.toLowerCase())) permanentRedirect(`/collections/${catName.toLowerCase()}`);
-
   const query = catName.replace(/-/g, ' ');
-  const page = parseInt(resolvedSearchParams?.page) || 1;
-  const currentOrder = resolvedSearchParams?.order || 'new';
-  
-  const seo = getSearchMetadata({ query, isCat: true, isTag: false, page, catName });
+  const seo = getSearchMetadata({ query, isCat: true, isTag: false, page: 1, catName });
   const related = getRelatedCategories(catName.toLowerCase());
   const initialVideos = getCatalogVideos().filter((video) => [video.category, ...(video.tags || [])].some((value) => String(value).toLowerCase() === query.toLowerCase()));
 
@@ -69,8 +71,6 @@ export default async function CategoryPage({ params, searchParams }) {
           isCat={true} 
           isTag={false} 
           query={query} 
-          page={page}
-          currentOrder={currentOrder}
           seoTitle={seo.title} 
           seoDesc={seo.description} 
           seoCanonical={seo.alternates.canonical} 
