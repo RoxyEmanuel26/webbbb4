@@ -27,8 +27,11 @@ const MIN_NEW_VIDEOS = Number.isSafeInteger(requestedMinimumNewVideos) && reques
 const requestedCollectionBatchSize = Number.parseInt(process.env.COLLECTION_AI_BATCH_SIZE || '', 10);
 const MAX_COLLECTION_AI_PER_RUN = Number.isSafeInteger(requestedCollectionBatchSize) && requestedCollectionBatchSize >= 0 ? Math.min(requestedCollectionBatchSize, MAX_EDITORIALS_PER_RUN) : 0;
 const REQUIRE_AI_CURATION = process.env.SITEMAP_REQUIRE_AI_CURATION !== 'false';
-const MIN_DESCRIPTION_LENGTH = 120;
-const MAX_DESCRIPTION_LENGTH = 180;
+// Search snippets do not have a hard 120-180 character requirement. Keep a
+// broad quality envelope so a factual DeepSeek response is not discarded just
+// because it is a few words shorter or longer than the prompt target.
+const MIN_DESCRIPTION_LENGTH = 80;
+const MAX_DESCRIPTION_LENGTH = 320;
 const API_RETRIES = 3;
 const API_TIMEOUT_MS = 15000;
 
@@ -251,7 +254,7 @@ async function curateWithDeepSeek(video) {
 - Views: ${views}
 
 Tasks:
-1. SEO Writer: Write a factually accurate, unique 2-sentence SEO description in English (140–160 characters total).
+1. SEO Writer: Write a factually accurate, unique 1-2 sentence description in English (140–180 characters preferred).
    Rules:
    - MUST naturally incorporate 2–3 of the most relevant keywords from the Tags/keywords list above.
    - Base it strictly on the title AND tags — do NOT invent content not hinted at by the data.
@@ -282,7 +285,9 @@ Respond ONLY with raw JSON:
       body: JSON.stringify({
         model: 'deepseek-chat',
         messages: [{ role: 'user', content: prompt }],
-        response_format: { type: 'json_object' }
+        response_format: { type: 'json_object' },
+        max_tokens: 320,
+        temperature: 0.3
       })
     });
     if (!res.ok) throw new Error(`DeepSeek HTTP ${res.status}`);

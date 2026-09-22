@@ -6,6 +6,10 @@ const workflow = fs.readFileSync(
   path.join(__dirname, "../.github/workflows/refresh-discovery.yml"),
   "utf8",
 );
+const generator = fs.readFileSync(
+  path.join(__dirname, "generate-sitemap.cjs"),
+  "utf8",
+);
 
 assert.equal(
   (workflow.match(/- cron: "0 19 \* \* \*"/g) || []).length,
@@ -24,5 +28,8 @@ assert.equal((workflow.match(/min_new=100/g) || []).length, 3);
 assert.match(workflow, /SITEMAP_REQUIRE_AI_CURATION: "true"/);
 assert.match(workflow, /weekday="\$\(TZ=Asia\/Jakarta date \+%u\)"/);
 assert.match(workflow, /concurrency:[\s\S]*cancel-in-progress: false/);
+assert.match(generator, /const MIN_DESCRIPTION_LENGTH = 80;/);
+assert.match(generator, /const MAX_DESCRIPTION_LENGTH = 320;/);
+assert.match(generator, /140–180 characters preferred/);
 
 console.log("Daily discovery workflow tests passed: at least 100 accepted videos/day, 8500 preservation-first maximum.");
