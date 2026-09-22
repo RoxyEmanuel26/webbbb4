@@ -12,7 +12,7 @@ const generator = fs.readFileSync(
 );
 
 assert.equal(
-  (workflow.match(/- cron: "0 19 \* \* \*"/g) || []).length,
+  (workflow.match(/- cron: "17 19 \* \* \*"/g) || []).length,
   1,
   "The catalog must have exactly one daily schedule",
 );

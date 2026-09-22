@@ -2,9 +2,10 @@ name: Refresh discovery catalog
 
 on:
   schedule:
-    # Daily refresh at 02:00 WIB (19:00 UTC on the previous calendar day),
+    # Daily refresh at 02:17 WIB (19:17 UTC on the previous calendar day),
+    # avoiding the high-load start-of-hour window used by many scheduled jobs,
     # published as one static deployment.
-    - cron: "0 19 * * *"
+    - cron: "17 19 * * *"
   workflow_dispatch:
     inputs:
       mode:
@@ -54,7 +55,7 @@ jobs:
           min_new=0
           collection_ai_batch=0
 
-          if [[ "$EVENT_NAME" == "schedule" && "$EVENT_SCHEDULE" == "0 19 * * *" ]]; then
+          if [[ "$EVENT_NAME" == "schedule" && "$EVENT_SCHEDULE" == "17 19 * * *" ]]; then
             mode="daily"
             # Allow extra attempts so the publication gate can still deliver
             # at least 100 accepted videos when a candidate is rejected.
