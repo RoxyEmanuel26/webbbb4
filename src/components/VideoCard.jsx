@@ -78,6 +78,16 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
   const views    = formatViews(video.views || 0);
   const ratingPct = ratingToPercent(rating);
   const slug     = createSlug(video.title);
+  const videoHref = (() => {
+    if (!video.canonicalUrl) return `/watch?id=${encodeURIComponent(video.id)}`;
+    try {
+      const canonical = new URL(video.canonicalUrl, 'https://www.nicevx.com');
+      if (canonical.hostname === 'www.nicevx.com' || canonical.hostname === 'nicevx.com') {
+        return `${canonical.pathname}${canonical.search}`;
+      }
+    } catch (_) {}
+    return `/video/${slug}-${video.id}`;
+  })();
 
   const getPrimaryKeyword = () => {
     const keywordSource = video.keywords || (video.tags || []).join(',');
@@ -101,7 +111,7 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
     >
       {/* Thumbnail */}
       <Link 
-        href={`/video/${slug}-${video.id}`} 
+        href={videoHref}
         prefetch={false}
         className="vcard__thumb-wrap" 
         aria-label={video.title}
@@ -130,7 +140,7 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
       {/* Info */}
       <div className="vcard__info">
         <h3 className="vcard__title">
-          <Link href={`/video/${slug}-${video.id}`} prefetch={false}>{video.title}</Link>
+          <Link href={videoHref} prefetch={false}>{video.title}</Link>
         </h3>
         <div className="vcard__meta">
           <span className="vcard__meta-item vcard__views">

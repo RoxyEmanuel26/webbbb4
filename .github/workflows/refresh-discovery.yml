@@ -1,15 +1,10 @@
 name: Refresh discovery catalog
 
 on:
-  schedule:
-    # Daily refresh at 02:17 WIB (19:17 UTC on the previous calendar day),
-    # avoiding the high-load start-of-hour window used by many scheduled jobs,
-    # published as one static deployment.
-    - cron: "17 19 * * *"
   workflow_dispatch:
     inputs:
       mode:
-        description: Run maintenance, a 100-video daily batch, collections, or recovery batch
+        description: Optional manual maintenance only; live browsing does not require this workflow
         required: true
         default: maintenance
         type: choice
@@ -47,7 +42,6 @@ jobs:
         shell: bash
         env:
           EVENT_NAME: ${{ github.event_name }}
-          EVENT_SCHEDULE: ${{ github.event.schedule }}
           REQUESTED_MODE: ${{ inputs.mode }}
         run: |
           mode="maintenance"
@@ -55,18 +49,7 @@ jobs:
           min_new=0
           collection_ai_batch=0
 
-          if [[ "$EVENT_NAME" == "schedule" && "$EVENT_SCHEDULE" == "17 19 * * *" ]]; then
-            mode="daily"
-            # Allow extra attempts so the publication gate can still deliver
-            # at least 100 accepted videos when a candidate is rejected.
-            ai_batch=125
-            min_new=100
-            weekday="$(TZ=Asia/Jakarta date +%u)"
-            # Collection expansion remains deliberately limited to Monday WIB.
-            if [[ "$weekday" == "1" ]]; then
-              collection_ai_batch=2
-            fi
-          elif [[ "$EVENT_NAME" == "workflow_dispatch" && "$REQUESTED_MODE" == "daily" ]]; then
+          if [[ "$EVENT_NAME" == "workflow_dispatch" && "$REQUESTED_MODE" == "daily" ]]; then
             mode="daily"
             ai_batch=125
             min_new=100

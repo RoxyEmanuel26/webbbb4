@@ -1,11 +1,10 @@
 import { Suspense } from 'react';
 import SkeletonGrid from '@/components/SkeletonGrid';
 import Link from 'next/link';
-import { notFound, permanentRedirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import SearchResultsShared from '@/components/SearchResultsShared';
 import { getSearchMetadata } from '@/utils/seo';
 import { ALL_CATEGORIES } from '@/data/allCategories';
-import { getCatalogVideos, getCollection, toVideoCard } from '@/lib/catalog';
 
 export const dynamicParams = false;
 
@@ -58,14 +57,9 @@ export default async function CategoryPage({ params }) {
   if (!catName || !VALID_CAT_SLUGS.has(catName.toLowerCase())) {
     notFound();
   }
-  if (getCollection(catName.toLowerCase())) permanentRedirect(`/collections/${catName.toLowerCase()}`);
   const query = catName.replace(/-/g, ' ');
   const seo = getSearchMetadata({ query, isCat: true, isTag: false, page: 1, catName });
   const related = getRelatedCategories(catName.toLowerCase());
-  const initialVideos = getCatalogVideos()
-    .filter((video) => [video.category, ...(video.tags || [])].some((value) => String(value).toLowerCase() === query.toLowerCase()))
-    .slice(0, 180)
-    .map(toVideoCard);
 
   return (
     <>
@@ -78,7 +72,6 @@ export default async function CategoryPage({ params }) {
           seoDesc={seo.description} 
           seoCanonical={seo.alternates.canonical} 
           seoQuery={query}
-          initialVideos={initialVideos}
         />
       </Suspense>
 

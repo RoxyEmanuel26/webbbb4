@@ -11,25 +11,18 @@ const generator = fs.readFileSync(
   "utf8",
 );
 
-assert.equal(
-  (workflow.match(/- cron: "17 19 \* \* \*"/g) || []).length,
-  1,
-  "The catalog must have exactly one daily schedule",
-);
-assert.equal(
-  workflow.includes('cron: "47 3 * * 1"'),
-  false,
-  "The old Monday-only expansion schedule must be removed",
-);
-assert.equal((workflow.match(/ai_batch=125/g) || []).length, 3);
+assert.doesNotMatch(workflow, /^\s*schedule:/m, "Catalog refresh must not run on a GitHub schedule");
+assert.doesNotMatch(workflow, /cron:/, "No automatic cron trigger may remain");
+assert.match(workflow, /workflow_dispatch:/, "Manual maintenance must remain available");
+assert.equal((workflow.match(/ai_batch=125/g) || []).length, 2);
 assert.match(workflow, /SITEMAP_MAX_VIDEOS: "8500"/);
 assert.match(workflow, /SITEMAP_MIN_NEW_VIDEOS: \$\{\{ steps\.publication\.outputs\.min_new \}\}/);
-assert.equal((workflow.match(/min_new=100/g) || []).length, 3);
+assert.equal((workflow.match(/min_new=100/g) || []).length, 2);
 assert.match(workflow, /SITEMAP_REQUIRE_AI_CURATION: "true"/);
-assert.match(workflow, /weekday="\$\(TZ=Asia\/Jakarta date \+%u\)"/);
+assert.doesNotMatch(workflow, /EVENT_SCHEDULE|github\.event\.schedule|TZ=Asia\/Jakarta/);
 assert.match(workflow, /concurrency:[\s\S]*cancel-in-progress: false/);
 assert.match(generator, /const MIN_DESCRIPTION_LENGTH = 80;/);
 assert.match(generator, /const MAX_DESCRIPTION_LENGTH = 320;/);
 assert.match(generator, /140–180 characters preferred/);
 
-console.log("Daily discovery workflow tests passed: at least 100 accepted videos/day, 8500 preservation-first maximum.");
+console.log("Workflow tests passed: automatic schedules disabled; manual preservation-first maintenance remains available.");

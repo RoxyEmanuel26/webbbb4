@@ -6,6 +6,7 @@ import VideoCard from '@/components/VideoCard';
 import SkeletonCard from '@/components/SkeletonCard';
 import Pagination from '@/components/Pagination';
 import SortBar from '@/components/SortBar';
+import TagsBar from '@/components/TagsBar';
 
 import '../pages/Pages.css';
 
@@ -35,7 +36,7 @@ function fixEncoding(str) {
     .replace(/&gt;/g, '>');
 }
 
-export default function SearchResultsShared({ query: propQuery, isCat, isTag, page: propPage, currentOrder: propOrder, seoTitle: propSeoTitle, seoDesc: propSeoDesc, seoCanonical: propSeoCanonical, seoQuery: propSeoQuery, initialVideos = null }) {
+export default function SearchResultsShared({ query: propQuery, isCat, isTag, page: propPage, currentOrder: propOrder, seoTitle: propSeoTitle, seoDesc: propSeoDesc, seoCanonical: propSeoCanonical, seoQuery: propSeoQuery, initialVideos = null, pageTitle, trendTags = [] }) {
   const searchParams = useSearchParams();
 
   const rawQuery = propQuery ?? (searchParams.get('query') || 'all');
@@ -140,6 +141,7 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
   };
 
   const getPageTitle = () => {
+    if (pageTitle) return pageTitle;
     if (isCat) return <span style={{textTransform: 'capitalize'}}>Category: {query}</span>;
     if (isTag) return <span style={{textTransform: 'capitalize'}}>Tag: {query}</span>;
     if (query === 'all') return 'All Videos';
@@ -155,6 +157,7 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
           breadcrumbsSchema
         ]).replace(/</g, '\\u003c') }}
       />
+      {trendTags.length > 0 && <TagsBar tags={trendTags} />}
       <div className="page-wrapper search-content">
         <div className="section-header">
           <div className="section-title-group">

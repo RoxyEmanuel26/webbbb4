@@ -34,9 +34,17 @@ for (const absolutePath of appSources) {
   );
 }
 
-assert.match(read("src/app/tag/[tagName]/page.jsx"), /\.slice\(0, 250\)/);
-assert.match(read("src/app/page.jsx"), /featured\.length < 180/);
+assert.match(read("src/app/tag/[tagName]/page.jsx"), /SearchResultsShared/);
+assert.match(read("src/app/page.jsx"), /SearchResultsShared/);
+assert.doesNotMatch(read("src/app/page.jsx"), /initialVideos=/);
+assert.match(read("src/app/cat/[catName]/page.jsx"), /SearchResultsShared/);
+assert.doesNotMatch(read("src/app/cat/[catName]/page.jsx"), /initialVideos=/);
+assert.match(read("src/components/SearchResultsShared.jsx"), /https:\/\/www\.eporner\.com\/api\/v2\/video/);
+assert.match(read("src/components/SearchResultsShared.jsx"), /data\.total_pages/);
 assert.match(read("src/components/VideoCard.jsx"), /video\.thumbnail/);
+assert.match(read("src/components/VideoCard.jsx"), /\/watch\?id=/);
+assert.match(read("src/app/watch/LiveWatchClient.jsx"), /\/id\/\?id=/);
+assert.match(read("src/app/watch/page.jsx"), /index: false, follow: true/);
 assert.match(read("scripts/generate-sitemap.cjs"), /Preservation-first publication/);
 
 assert.equal(
@@ -51,4 +59,4 @@ assert.match(read("scripts/prepare-cloudflare-static.cjs"), /zero Worker artifac
 assert.doesNotMatch(read("next.config.mjs"), /Cache-Control[^\n]*no-store/);
 assert.doesNotMatch(read("public/_headers"), /Cache-Control:\s*no-store/);
 
-console.log("Cloudflare performance gates passed: pure static export, bounded client feed, and zero request-time application routes.");
+console.log("Cloudflare performance gates passed: pure static export, browser-direct paginated API, and zero request-time application routes.");
