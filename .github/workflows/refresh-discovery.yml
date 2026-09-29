@@ -1,10 +1,14 @@
 name: Refresh discovery catalog
 
 on:
+  schedule:
+    # 02:17 WIB every day (19:17 UTC on the previous calendar day).
+    # The offset avoids the busy top-of-hour window used by many cron jobs.
+    - cron: "17 19 * * *"
   workflow_dispatch:
     inputs:
       mode:
-        description: Optional manual maintenance only; live browsing does not require this workflow
+        description: Run sitemap maintenance, the small daily batch, collections, or a recovery batch
         required: true
         default: maintenance
         type: choice
@@ -42,6 +46,7 @@ jobs:
         shell: bash
         env:
           EVENT_NAME: ${{ github.event_name }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
           REQUESTED_MODE: ${{ inputs.mode }}
         run: |
           mode="maintenance"
@@ -49,10 +54,14 @@ jobs:
           min_new=0
           collection_ai_batch=0
 
-          if [[ "$EVENT_NAME" == "workflow_dispatch" && "$REQUESTED_MODE" == "daily" ]]; then
+          if [[ "$EVENT_NAME" == "schedule" && "$EVENT_SCHEDULE" == "17 19 * * *" ]]; then
             mode="daily"
-            ai_batch=125
-            min_new=100
+            ai_batch=15
+            min_new=10
+          elif [[ "$EVENT_NAME" == "workflow_dispatch" && "$REQUESTED_MODE" == "daily" ]]; then
+            mode="daily"
+            ai_batch=15
+            min_new=10
           elif [[ "$EVENT_NAME" == "workflow_dispatch" && "$REQUESTED_MODE" == "collections" ]]; then
             mode="collections"
             collection_ai_batch=2
@@ -83,8 +92,9 @@ jobs:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           SITEMAP_AI_BATCH_SIZE: ${{ steps.publication.outputs.ai_batch }}
           COLLECTION_AI_BATCH_SIZE: ${{ steps.publication.outputs.collection_ai_batch }}
-          SITEMAP_MAX_VIDEOS: "8500"
+          SITEMAP_MAX_VIDEOS: "4000"
           SITEMAP_MIN_NEW_VIDEOS: ${{ steps.publication.outputs.min_new }}
+          SITEMAP_REVALIDATE_BATCH_SIZE: "50"
           SITEMAP_REQUIRE_AI_CURATION: "true"
         run: npm run sitemap
 
@@ -95,6 +105,7 @@ jobs:
           npm run test:performance
           npm run test:ads
           npm run test:copy
+          npm run validate:sitemap
           npm run validate:collections
           node - <<'NODE'
           const catalog = require('./src/data/curated-video-catalog.json');
@@ -107,12 +118,12 @@ jobs:
             !video.sourceUrl || !video.embedUrl || !video.thumbnail ||
             Number.isNaN(Date.parse(video.uploadDate)) || video.availability !== 'available'
           );
-          if (videos.length > 8500) throw new Error(`Catalog hard limit exceeded: ${videos.length}/8500`);
+          if (videos.length > 4000) throw new Error(`Catalog publication limit exceeded: ${videos.length}/4000`);
           if (ids.size !== videos.length) throw new Error('Duplicate video IDs detected');
           if (urls.size !== videos.length) throw new Error('Duplicate canonical URLs detected');
           if (descriptions.size !== videos.length) throw new Error('Duplicate AI descriptions detected');
           if (invalid.length) throw new Error(`${invalid.length} catalog records failed required metadata gates`);
-          console.log(`Catalog gate passed: ${videos.length}/8500 verified videos`);
+          console.log(`Catalog gate passed: ${videos.length}/4000 verified videos`);
           NODE
 
       - name: Build before publication
@@ -131,4 +142,5 @@ jobs:
             exit 0
           fi
           git commit -m "seo: ${PUBLICATION_MODE} discovery catalog refresh"
+          git pull --rebase origin main
           git push origin HEAD:main

@@ -8,13 +8,15 @@ echo ==================================================
 echo         NICEVX SITEMAP GENERATOR MENU
 echo ==================================================
 echo.
+echo   Sitemap sekarang diperbarui otomatis setiap hari
+echo   melalui GitHub Actions. File ini hanya untuk recovery.
+echo.
 echo   1. Update Kategori Static (CEPAT - Hitungan Detik)
 echo      - Jalankan ini setiap kali Anda menambahkan 
 echo        keyword baru di allCategories.js
 echo.
-echo   2. Generate Full Sitemap (LAMA - Bisa Berjam-jam)
-echo      - Fetch 100.000+ video dari API Eporner
-echo      - Gunakan ini sebulan sekali untuk update video
+echo   2. Jalankan Batch Harian Manual (10 video)
+echo      - Gunakan hanya jika workflow otomatis gagal
 echo.
 echo   3. Resume Full Sitemap (LANJUTKAN)
 echo      - Lanjutkan jika menu nomor 2 terputus/error
@@ -43,10 +45,17 @@ goto MENU
 
 :FULL
 cls
-echo Peringatan: Proses ini bisa memakan waktu lama!
-echo Menjalankan Generate Full Sitemap...
+echo Menjalankan batch sitemap harian manual...
 echo ==================================================
+set SITEMAP_AI_BATCH_SIZE=15
+set SITEMAP_MIN_NEW_VIDEOS=10
+set SITEMAP_MAX_VIDEOS=4000
+set SITEMAP_REQUIRE_AI_CURATION=true
 node scripts\generate-sitemap.cjs
+set SITEMAP_AI_BATCH_SIZE=
+set SITEMAP_MIN_NEW_VIDEOS=
+set SITEMAP_MAX_VIDEOS=
+set SITEMAP_REQUIRE_AI_CURATION=
 echo ==================================================
 echo.
 echo Selesai! Tekan tombol apa saja untuk kembali ke menu.

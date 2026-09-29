@@ -64,3 +64,4 @@ scripts/*
 !scripts/test-cloudflare-performance.cjs
 !scripts/prepare-cloudflare-static.cjs
 !scripts/test-adsterra-placement.cjs
+!scripts/validate-sitemap.cjs

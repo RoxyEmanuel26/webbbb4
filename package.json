@@ -11,6 +11,7 @@
     "deploy": "npm run sitemap && npm run pages:build && wrangler pages deploy .vercel/output/static",
     "sitemap": "node scripts/generate-sitemap.cjs",
     "validate:collections": "node scripts/collection-engine.cjs validate",
+    "validate:sitemap": "node scripts/validate-sitemap.cjs",
     "test:collections": "node scripts/test-collection-engine.cjs",
     "test:copy": "node scripts/test-user-facing-copy.cjs",
     "test:workflow": "node scripts/test-workflow-schedule.cjs",

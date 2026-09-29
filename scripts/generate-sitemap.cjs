@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { execFileSync } = require('child_process');
 const { MAX_EDITORIALS_PER_RUN, MIN_COLLECTION_VIDEOS, bootstrapCollections, buildFacts, discoverCandidates, getCollectionVideos, getOverlapBlocker, isQualified, trimEditorialIntro, validateManifest, wordCount } = require('./collection-engine.cjs');
 
 const SITE_URL = 'https://www.nicevx.com';
@@ -26,6 +27,8 @@ const requestedMinimumNewVideos = Number.parseInt(process.env.SITEMAP_MIN_NEW_VI
 const MIN_NEW_VIDEOS = Number.isSafeInteger(requestedMinimumNewVideos) && requestedMinimumNewVideos >= 0 ? requestedMinimumNewVideos : 0;
 const requestedCollectionBatchSize = Number.parseInt(process.env.COLLECTION_AI_BATCH_SIZE || '', 10);
 const MAX_COLLECTION_AI_PER_RUN = Number.isSafeInteger(requestedCollectionBatchSize) && requestedCollectionBatchSize >= 0 ? Math.min(requestedCollectionBatchSize, MAX_EDITORIALS_PER_RUN) : 0;
+const requestedRevalidationBatchSize = Number.parseInt(process.env.SITEMAP_REVALIDATE_BATCH_SIZE || '', 10);
+const REVALIDATE_BATCH_SIZE = Number.isSafeInteger(requestedRevalidationBatchSize) && requestedRevalidationBatchSize >= 0 ? Math.min(requestedRevalidationBatchSize, 200) : 0;
 const REQUIRE_AI_CURATION = process.env.SITEMAP_REQUIRE_AI_CURATION !== 'false';
 // Search snippets do not have a hard 120-180 character requirement. Keep a
 // broad quality envelope so a factual DeepSeek response is not discarded just
@@ -34,6 +37,7 @@ const MIN_DESCRIPTION_LENGTH = 80;
 const MAX_DESCRIPTION_LENGTH = 320;
 const API_RETRIES = 3;
 const API_TIMEOUT_MS = 15000;
+const RUN_TIMESTAMP = new Date().toISOString();
 
 // Konfigurasi AI
 let aiProcessedCount = 0;
@@ -81,6 +85,8 @@ let skippedEncodingCount = 0;
 let skippedInvalidDateCount = 0;
 const catalogCandidates = [];
 const previouslyPublishedIds = new Set();
+const chunkLastmods = new Map();
+let staticSitemapLastmod = RUN_TIMESTAMP;
 
 if (fs.existsSync(sitemapsDir)) {
   for (const file of fs.readdirSync(sitemapsDir).filter((name) => /^sitemap-video-\d+\.xml$/.test(name))) {
@@ -516,6 +522,29 @@ function escapeXml(unsafe) {
   });
 }
 
+function toW3cDate(value, fallback = '2025-01-01T00:00:00.000Z') {
+  const timestamp = Date.parse(value || '');
+  return Number.isNaN(timestamp) ? fallback : new Date(timestamp).toISOString();
+}
+
+function latestDate(values, fallback = '2025-01-01T00:00:00.000Z') {
+  const timestamps = values.map((value) => Date.parse(value || '')).filter(Number.isFinite);
+  return timestamps.length ? new Date(Math.max(...timestamps)).toISOString() : fallback;
+}
+
+function gitLastModified(relativePath, fallback = '2025-01-01T00:00:00.000Z') {
+  try {
+    const result = execFileSync('git', ['log', '-1', '--format=%cI', '--', relativePath], {
+      cwd: path.join(__dirname, '..'),
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore']
+    }).trim();
+    return toW3cDate(result, fallback);
+  } catch (_) {
+    return fallback;
+  }
+}
+
 function readJsonFile(file, fallback) {
   try {
     return JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -550,6 +579,53 @@ function isoDuration(seconds) {
   return `PT${hours ? `${hours}H` : ''}${minutes ? `${minutes}M` : ''}${remainingSeconds ? `${remainingSeconds}S` : ''}`;
 }
 
+async function refreshCatalogBatch(catalog) {
+  if (!REVALIDATE_BATCH_SIZE || catalog.length === 0) return catalog;
+  const count = Math.min(REVALIDATE_BATCH_SIZE, catalog.length);
+  const dayNumber = Math.floor(Date.parse(`${RUN_TIMESTAMP.slice(0, 10)}T00:00:00.000Z`) / 86400000);
+  const start = (dayNumber * count) % catalog.length;
+  const selectedIds = Array.from({ length: count }, (_, offset) => catalog[(start + offset) % catalog.length].id);
+  const refreshedById = new Map();
+
+  for (let offset = 0; offset < selectedIds.length; offset += 10) {
+    const ids = selectedIds.slice(offset, offset + 10);
+    const details = await Promise.all(ids.map((id) =>
+      fetchJson(`${API_BASE}/video/id/?id=${id}&thumbsize=big&format=json`, `refresh video ${id}`, {
+        retries: 2,
+        silent: true
+      }).catch(() => null)
+    ));
+    for (const raw of details) {
+      if (raw?.id && raw?.embed && raw?.default_thumb?.src && raw?.url) refreshedById.set(raw.id, normalizeVideo(raw));
+    }
+  }
+
+  console.log(`[Refresh] ${refreshedById.size}/${count} video lama diperbarui dari detail API.`);
+  return catalog.map((video) => {
+    const fresh = refreshedById.get(video.id);
+    if (!fresh) return video;
+    const durationSeconds = Number.parseInt(fresh.length_sec, 10) || video.durationSeconds || 0;
+    return {
+      ...video,
+      thumbnail: fresh.default_thumb.src,
+      default_thumb: fresh.default_thumb,
+      thumbs: Array.isArray(fresh.thumbs) ? fresh.thumbs : video.thumbs,
+      embedUrl: fresh.embed,
+      embed: fresh.embed,
+      sourceUrl: fresh.url,
+      durationSeconds,
+      duration: isoDuration(durationSeconds),
+      length_sec: durationSeconds,
+      length_min: fresh.length_min || video.length_min,
+      views: Number.parseInt(fresh.views, 10) || 0,
+      rating: Number.parseFloat(fresh.rate) || 0,
+      rate: Number.parseFloat(fresh.rate) || 0,
+      availability: 'available',
+      syncedAt: RUN_TIMESTAMP
+    };
+  });
+}
+
 function buildDiscoveryCatalog(videos) {
   const previous = readJsonFile(SNAPSHOTS_FILE, { history: {} });
   const history = previous.history && typeof previous.history === 'object' ? previous.history : {};
@@ -567,27 +643,33 @@ function buildDiscoveryCatalog(videos) {
   for (const video of videos) {
     const entries = Array.isArray(history[video.id]) ? history[video.id] : [];
     const withoutToday = entries.filter((entry) => entry.date !== snapshotDate);
-    history[video.id] = [
-      ...withoutToday,
-      {
-        date: snapshotDate,
-        views: video.views,
-        rating: video.rating,
-        category: video.category,
-        availability: video.availability
-      }
-    ].slice(-8);
+    const wasSyncedToday = String(video.syncedAt || '').slice(0, 10) === snapshotDate;
+    history[video.id] = (wasSyncedToday
+      ? [
+          ...withoutToday,
+          {
+            date: snapshotDate,
+            views: video.views,
+            rating: video.rating,
+            category: video.category,
+            availability: video.availability
+          }
+        ]
+      : withoutToday
+    ).slice(-8);
   }
 
   const finalized = videos
     .map((video) => {
       const entries = history[video.id] || [];
-      const previousEntry = entries.length >= 2 ? entries[entries.length - 2] : null;
+      const syncedToday = String(video.syncedAt || '').slice(0, 10) === snapshotDate;
+      const previousEntry = syncedToday && entries.length >= 2 ? entries[entries.length - 2] : null;
       const viewGrowth = previousEntry ? Math.max(0, video.views - (Number(previousEntry.views) || 0)) : null;
       const sevenDayCutoff = new Date(`${snapshotDate}T00:00:00.000Z`).getTime() - 6 * 86400000;
-      const sevenDayBaseline = entries.find((entry) => new Date(`${entry.date}T00:00:00.000Z`).getTime() <= sevenDayCutoff) || null;
+      const sevenDayBaseline = syncedToday ? entries.find((entry) => new Date(`${entry.date}T00:00:00.000Z`).getTime() <= sevenDayCutoff) || null : null;
       const viewGrowth7d = sevenDayBaseline ? Math.max(0, video.views - (Number(sevenDayBaseline.views) || 0)) : null;
       const velocityValues = videos.map((candidate) => {
+        if (String(candidate.syncedAt || '').slice(0, 10) !== snapshotDate) return 0;
         const candidateEntries = history[candidate.id] || [];
         const candidateBaseline = candidateEntries.find((entry) => new Date(`${entry.date}T00:00:00.000Z`).getTime() <= sevenDayCutoff) || null;
         return candidateBaseline ? Math.max(0, candidate.views - (Number(candidateBaseline.views) || 0)) : 0;
@@ -616,8 +698,7 @@ function buildDiscoveryCatalog(videos) {
         trendStatus: previousEntry ? (viewGrowth > 0 ? 'rising' : 'steady') : 'insufficient-data',
         discoveryReason: sevenDayBaseline ? `Ranked from measured seven-day view growth, source rating, category popularity, freshness, and metadata completeness.` : `Ranked from source rating, category popularity, freshness, and metadata completeness; seven-day growth is waiting for enough snapshots.`
       };
-    })
-    .sort((a, b) => b.discoveryScore - a.discoveryScore || b.views - a.views);
+    });
 
   return {
     finalized,
@@ -626,12 +707,14 @@ function buildDiscoveryCatalog(videos) {
 }
 
 function writeChunk(index, urlsArray) {
+  const chunkLastmod = latestDate(urlsArray.map((item) => item.lastmod || item.publication_date));
+  chunkLastmods.set(index, chunkLastmod);
   const xmlUrls = urlsArray
     .map(
       (item) => `
   <url>
     <loc>${item.url}</loc>
-    <priority>${item.priority || 0.8}</priority>
+    <lastmod>${toW3cDate(item.lastmod || item.publication_date)}</lastmod>
     <video:video>
       <video:thumbnail_loc>${escapeXml(item.thumbnail_loc)}</video:thumbnail_loc>
       <video:title>${escapeXml(item.title)}</video:title>
@@ -656,65 +739,54 @@ ${xmlUrls}
 }
 
 function writeStaticSitemap(catalog, collections) {
-  const now = new Date().toISOString();
   const qualifiedCollections = collections.filter((collection) => isQualified(collection, collections, catalog));
+  const catalogLastmod = latestDate(catalog.map((video) => video.syncedAt || video.uploadDate));
+  const collectionsLastmod = latestDate([
+    catalogLastmod,
+    gitLastModified('src/data/collections.json'),
+    gitLastModified('src/app/collections/page.jsx')
+  ]);
 
   const staticBaseUrls = [
-    { route: '/', changefreq: 'daily', priority: '1.0', lastmod: now },
-    { route: '/cats', changefreq: 'weekly', priority: '0.8', lastmod: now },
+    { route: '/', lastmod: catalogLastmod },
+    { route: '/cats', lastmod: gitLastModified('src/data/allCategories.js') },
     {
       route: '/collections',
-      changefreq: 'weekly',
-      priority: '0.8',
-      lastmod: now
+      lastmod: collectionsLastmod
     },
     {
       route: '/content-sources',
-      changefreq: 'monthly',
-      priority: '0.5',
-      lastmod: now
+      lastmod: gitLastModified('src/app/content-sources/page.jsx')
     },
     {
       route: '/editorial-policy',
-      changefreq: 'monthly',
-      priority: '0.5',
-      lastmod: now
+      lastmod: gitLastModified('src/app/editorial-policy/page.jsx')
     },
-    { route: '/report', changefreq: 'monthly', priority: '0.5', lastmod: now },
-    { route: '/about', changefreq: 'monthly', priority: '0.5', lastmod: now },
+    { route: '/report', lastmod: gitLastModified('src/app/report/page.jsx') },
+    { route: '/about', lastmod: gitLastModified('src/app/about/page.jsx') },
     ...(catalog.some((video) => Number.isFinite(video.viewGrowth7d))
       ? [
           {
             route: '/trends/weekly',
-            changefreq: 'weekly',
-            priority: '0.7',
-            lastmod: now
+            lastmod: catalogLastmod
           }
         ]
       : []),
     {
       route: '/terms',
-      changefreq: 'monthly',
-      priority: '0.3',
-      lastmod: '2025-01-01'
+      lastmod: gitLastModified('src/app/terms/page.jsx')
     },
     {
       route: '/privacy',
-      changefreq: 'monthly',
-      priority: '0.3',
-      lastmod: '2025-01-01'
+      lastmod: gitLastModified('src/app/privacy/page.jsx')
     },
     {
       route: '/dmca',
-      changefreq: 'monthly',
-      priority: '0.3',
-      lastmod: '2025-01-01'
+      lastmod: gitLastModified('src/app/dmca/page.jsx')
     },
     {
       route: '/usc2257',
-      changefreq: 'monthly',
-      priority: '0.3',
-      lastmod: '2025-01-01'
+      lastmod: gitLastModified('src/app/usc2257/page.jsx')
     }
   ]
     .map(
@@ -722,23 +794,30 @@ function writeStaticSitemap(catalog, collections) {
   <url>
     <loc>${SITE_URL}${p.route}</loc>
     <lastmod>${p.lastmod}</lastmod>
-    <changefreq>${p.changefreq}</changefreq>
-    <priority>${p.priority}</priority>
   </url>`
     )
     .join('');
 
   const categoryUrls = qualifiedCollections
-    .map(
-      (collection) => `
+    .map((collection) => {
+      const collectionVideos = getCollectionVideos(collection, catalog);
+      const lastmod = latestDate([
+        collection.editorialUpdatedAt,
+        collection.generatedAt,
+        ...collectionVideos.map((video) => video.syncedAt || video.uploadDate)
+      ]);
+      return `
   <url>
     <loc>${SITE_URL}/collections/${collection.slug}</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>`
-    )
+    <lastmod>${lastmod}</lastmod>
+  </url>`;
+    })
     .join('');
+
+  staticSitemapLastmod = latestDate([
+    ...Array.from(staticBaseUrls.matchAll(/<lastmod>([^<]+)<\/lastmod>/g), (match) => match[1]),
+    ...Array.from(categoryUrls.matchAll(/<lastmod>([^<]+)<\/lastmod>/g), (match) => match[1])
+  ]);
 
   const staticXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${staticBaseUrls}\n${categoryUrls}\n</urlset>`;
   fs.writeFileSync(path.join(sitemapOutputDir, 'sitemap-static.xml'), staticXml, 'utf-8');
@@ -746,15 +825,15 @@ function writeStaticSitemap(catalog, collections) {
 }
 
 function writeIndexSitemap() {
-  const now = new Date().toISOString();
   let indexXml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-  indexXml += `  <sitemap>\n    <loc>${SITE_URL}/sitemaps/sitemap-static.xml</loc>\n    <lastmod>${now}</lastmod>\n  </sitemap>\n`;
+  indexXml += `  <sitemap>\n    <loc>${SITE_URL}/sitemaps/sitemap-static.xml</loc>\n    <lastmod>${staticSitemapLastmod}</lastmod>\n  </sitemap>\n`;
 
   const maxChunk = currentChunkUrls.length > 0 ? currentChunkIndex : currentChunkIndex - 1;
 
   for (let i = 1; i <= maxChunk; i++) {
-    indexXml += `  <sitemap>\n    <loc>${SITE_URL}/sitemaps/sitemap-video-${i}.xml</loc>\n    <lastmod>${now}</lastmod>\n  </sitemap>\n`;
+    const lastmod = chunkLastmods.get(i) || latestDate(catalogCandidates.map((video) => video.syncedAt || video.uploadDate));
+    indexXml += `  <sitemap>\n    <loc>${SITE_URL}/sitemaps/sitemap-video-${i}.xml</loc>\n    <lastmod>${lastmod}</lastmod>\n  </sitemap>\n`;
   }
 
   indexXml += `</sitemapindex>`;
@@ -802,7 +881,8 @@ async function run() {
   // new candidates. Reaching the hard ceiling stops expansion instead of
   // silently replacing older canonical URLs.
   const previousCatalogPayload = readJsonFile(CATALOG_FILE, { videos: [] });
-  const previousCatalog = Array.isArray(previousCatalogPayload.videos) ? previousCatalogPayload.videos : [];
+  const storedCatalog = Array.isArray(previousCatalogPayload.videos) ? previousCatalogPayload.videos : [];
+  const previousCatalog = await refreshCatalogBatch(storedCatalog);
   for (const video of previousCatalog) {
     if (indexedVideoCount >= MAX_SITEMAP_VIDEOS) break;
     if (!video?.id || !video.canonicalUrl || !video.title || !video.description || !video.thumbnail || !video.embedUrl || !video.uploadDate) continue;
@@ -813,7 +893,7 @@ async function run() {
     catalogCandidates.push(video);
     currentChunkUrls.push({
       url: video.canonicalUrl,
-      priority: Math.max(0.5, Math.min(0.9, 0.5 + (Number(video.discoveryScore) || 0) / 250)).toFixed(1),
+      lastmod: video.syncedAt || video.uploadDate,
       title: video.title,
       description: video.description,
       thumbnail_loc: video.thumbnail,
@@ -856,6 +936,9 @@ async function run() {
       if (data && data.videos) {
         for (const rawVideo of data.videos) {
           const video = normalizeVideo(rawVideo);
+          // A provider may edit a title, but an existing NICEVX ID must keep
+          // its original canonical URL instead of creating a duplicate slug.
+          if (previouslyPublishedIds.has(video.id)) continue;
           // GATEKEEPER 1: Skip if video has been removed by Eporner
           if (removedIds.has(video.id)) {
             console.log(`[Gatekeeper] dY~ Video dilewati karena sudah dihapus Eporner: ${video.id}`);
@@ -892,8 +975,6 @@ async function run() {
 
             const fallbackDesc = video.title + ' free HD porn video on NICEVX.';
             const finalDesc = hasUsableCuration(aiData) ? aiData.seoDescription.trim() : fallbackDesc;
-            const finalPriority = aiData && aiData.priorityScore ? aiData.priorityScore : 0.8;
-
             // Tags: gunakan cleanedTags dari AI jika tersedia (bermakna).
             // API /search/ mengembalikan keywords = judul video (bukan tag asli),
             // sehingga rawTags dari API tidak memiliki nilai SEO tambahan.
@@ -917,7 +998,7 @@ async function run() {
 
             currentChunkUrls.push({
               url: url,
-              priority: finalPriority,
+              lastmod: RUN_TIMESTAMP,
               title: video.title,
               description: finalDesc,
               thumbnail_loc: video.default_thumb ? video.default_thumb.src : '',
@@ -951,7 +1032,7 @@ async function run() {
               rating: Number.parseFloat(video.rate) || 0,
               rate: Number.parseFloat(video.rate) || 0,
               availability: 'available',
-              syncedAt: new Date().toISOString()
+              syncedAt: RUN_TIMESTAMP
             });
 
             if (currentChunkUrls.length >= URLS_PER_SITEMAP) {
@@ -1005,7 +1086,7 @@ async function run() {
       indexedVideoCount++;
       currentChunkUrls.push({
         url,
-        priority: entry.priorityScore || 0.8,
+        lastmod: entry.syncedAt || publicationDate,
         title: video.title,
         description,
         thumbnail_loc: video.default_thumb.src,
@@ -1038,22 +1119,12 @@ async function run() {
         rating: Number.parseFloat(video.rate) || 0,
         rate: Number.parseFloat(video.rate) || 0,
         availability: 'available',
-        syncedAt: new Date().toISOString()
+        syncedAt: RUN_TIMESTAMP
       });
     }
   }
 
   const { finalized, snapshots } = buildDiscoveryCatalog(catalogCandidates);
-  const scoreById = new Map(finalized.map((video) => [video.id, video.discoveryScore]));
-  currentChunkUrls = currentChunkUrls.map((item) => {
-    const id = item.url.match(/-([A-Za-z0-9]{11})$/)?.[1];
-    const score = scoreById.get(id) || 0;
-    return {
-      ...item,
-      priority: Math.max(0.5, Math.min(0.9, 0.5 + score / 250)).toFixed(1)
-    };
-  });
-
   if (currentChunkUrls.length > 0) {
     writeChunk(currentChunkIndex, currentChunkUrls);
     console.log(`💾 Tersimpan: sitemap-video-${currentChunkIndex}.xml (${currentChunkUrls.length} URLs)`);
