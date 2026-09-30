@@ -460,6 +460,11 @@ function slugify(text) {
   );
 }
 
+function buildCanonicalSlug(title, id) {
+  const titleSlug = slugify(title);
+  return `${titleSlug || 'video'}-${id}`;
+}
+
 function initState() {
   if (!isResumeMode) {
     console.log('🧪 [Fresh Mode] Membuat sitemap di staging; sitemap aktif akan diganti hanya setelah proses berhasil.');
@@ -945,7 +950,8 @@ async function run() {
             continue;
           }
 
-          const url = `${SITE_URL}/video/${slugify(video.title)}-${video.id}`;
+          const canonicalSlug = buildCanonicalSlug(video.title, video.id);
+          const url = `${SITE_URL}/video/${canonicalSlug}`;
 
           if (!seenUrls.has(url) && indexedVideoCount < MAX_SITEMAP_VIDEOS) {
             // ---> AI Curation Tembak Disini <---
@@ -1010,7 +1016,7 @@ async function run() {
 
             catalogCandidates.push({
               id: video.id,
-              canonicalSlug: `${slugify(video.title)}-${video.id}`,
+              canonicalSlug,
               canonicalUrl: url,
               title: video.title,
               description: finalDesc,
@@ -1078,7 +1084,8 @@ async function run() {
       const publicationDate = getPublicationDate(video) || entry?.uploadDate || null;
       const description = entry?.seoDescription?.trim();
       const tags = Array.isArray(entry?.cleanedTags) ? entry.cleanedTags.slice(0, 32) : [];
-      const url = `${SITE_URL}/video/${slugify(video.title)}-${video.id}`;
+      const canonicalSlug = buildCanonicalSlug(video.title, video.id);
+      const url = `${SITE_URL}/video/${canonicalSlug}`;
       if (!publicationDate || !video.embed || !video.default_thumb?.src || !video.url || seenUrls.has(url)) continue;
       if ([video.title, description, ...tags].some(hasSuspiciousEncoding)) continue;
 
@@ -1097,7 +1104,7 @@ async function run() {
       });
       catalogCandidates.push({
         id: video.id,
-        canonicalSlug: `${slugify(video.title)}-${video.id}`,
+        canonicalSlug,
         canonicalUrl: url,
         title: video.title,
         description,

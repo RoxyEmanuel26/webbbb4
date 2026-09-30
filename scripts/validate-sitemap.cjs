@@ -56,6 +56,10 @@ const catalogVideos = (catalog.videos || []).filter((video) => video.availabilit
 const canonicalVideos = new Set(catalogVideos.map((video) => video.canonicalUrl));
 assert.equal(new Set(catalogVideos.map((video) => video.id)).size, catalogVideos.length, 'Catalog contains duplicate video IDs');
 assert.equal(canonicalVideos.size, catalogVideos.length, 'Catalog contains duplicate canonical URLs');
+for (const video of catalogVideos) {
+  assert.match(video.canonicalSlug || '', /^[a-z0-9][a-z0-9-]*-[A-Za-z0-9]+$/, `Invalid canonical video slug: ${video.canonicalSlug}`);
+  assert.equal(video.canonicalUrl, `https://www.nicevx.com/video/${video.canonicalSlug}`, `Canonical URL/slug mismatch: ${video.id}`);
+}
 let videoUrlCount = 0;
 
 for (let index = 0; index < childUrls.length; index++) {
