@@ -23,6 +23,7 @@ assert.equal((workflow.match(/min_new=100/g) || []).length, 1);
 assert.match(workflow, /SITEMAP_REQUIRE_AI_CURATION: "true"/);
 assert.match(workflow, /EVENT_SCHEDULE: \$\{\{ github\.event\.schedule \}\}/);
 assert.match(workflow, /npm run validate:sitemap/);
+assert.match(workflow, /npm run test:seo-render/);
 assert.match(workflow, /git pull --rebase origin main/);
 assert.match(workflow, /concurrency:[\s\S]*cancel-in-progress: false/);
 assert.match(generator, /const MIN_DESCRIPTION_LENGTH = 80;/);

@@ -16,6 +16,7 @@
     "test:copy": "node scripts/test-user-facing-copy.cjs",
     "test:workflow": "node scripts/test-workflow-schedule.cjs",
     "test:performance": "node scripts/test-cloudflare-performance.cjs",
+    "test:seo-render": "node scripts/test-seo-render.cjs",
     "test:ads": "node scripts/test-adsterra-placement.cjs",
     "lint": "next lint"
   },

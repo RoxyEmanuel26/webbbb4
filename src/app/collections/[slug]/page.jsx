@@ -30,8 +30,16 @@ const formatViews = (views) =>
     maximumFractionDigits: 1,
   }).format(views || 0);
 
-const collectionDescription = (collection) =>
-  `Browse ${collection.name} videos, compare the latest additions, and find related picks on NICEVX.`;
+const collectionDescription = (collection, stats) => {
+  if (!stats?.videoCount) return `Browse ${collection.name} videos on NICEVX.`;
+  const duration = stats.medianDurationSeconds
+    ? ` The median video length is ${formatDuration(stats.medianDurationSeconds)}.`
+    : "";
+  const tags = stats.relatedTags.length
+    ? ` Common related tags include ${stats.relatedTags.slice(0, 3).join(", ")}.`
+    : "";
+  return `Explore ${stats.videoCount} available ${collection.name} videos on NICEVX.${duration}${tags}`;
+};
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -42,10 +50,11 @@ export async function generateMetadata({ params }) {
       robots: { index: false, follow: false },
     };
   const videos = getCollectionVideos(collection);
+  const stats = getCollectionStats(collection);
   const indexable = isCollectionIndexable(collection, videos);
   return {
     title: `${collection.name} Videos — NICEVX`,
-    description: collectionDescription(collection),
+    description: collectionDescription(collection, stats),
     alternates: {
       canonical: `https://www.nicevx.com/collections/${collection.slug}`,
     },
@@ -67,7 +76,7 @@ export default async function CollectionPage({ params }) {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
       name: `${collection.name} videos`,
-      description: collectionDescription(collection),
+      description: collectionDescription(collection, stats),
       url: `https://www.nicevx.com/collections/${slug}`,
     },
     {
@@ -120,7 +129,7 @@ export default async function CollectionPage({ params }) {
         <Link href="/collections">Collections</Link> / {collection.name}
       </nav>
       <h1>{collection.name} Videos</h1>
-      <p className="collection-lead">{collectionDescription(collection)}</p>
+      <p className="collection-lead">{collectionDescription(collection, stats)}</p>
       <div className="collection-stats">
         <span>{videos.length} videos</span>
         <span>Updated regularly</span>

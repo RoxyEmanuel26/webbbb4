@@ -1,7 +1,14 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import Script from 'next/script';
 import VideoPlayerClient from './VideoPlayerClient';
-import { getCatalogVideos, getRelatedVideos, getVideoById, toVideoCard } from '@/lib/catalog';
+import {
+  getCatalogVideos,
+  getCollections,
+  getRelatedVideos,
+  getVideoById,
+  isCollectionIndexable,
+  toVideoCard,
+} from '@/lib/catalog';
 
 export const dynamicParams = false;
 
@@ -33,6 +40,13 @@ export default async function VideoPage({ params }) {
   const video = getVideoById(extractId(slug));
   if (!video) notFound();
   if (slug.join('/') !== video.canonicalSlug) permanentRedirect(`/video/${video.canonicalSlug}`);
+  const relatedCollections = getCollections()
+    .filter((collection) =>
+      isCollectionIndexable(collection, collection.videos) &&
+      collection.videos.some((item) => item.id === video.id),
+    )
+    .slice(0, 3)
+    .map(({ slug: collectionSlug, name }) => ({ slug: collectionSlug, name }));
 
   const schema = {
     '@context': 'https://schema.org',
@@ -59,7 +73,11 @@ export default async function VideoPage({ params }) {
         strategy="afterInteractive"
       />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }} />
-      <VideoPlayerClient video={video} initialRelated={getRelatedVideos(video).map(toVideoCard)} />
+      <VideoPlayerClient
+        video={video}
+        initialRelated={getRelatedVideos(video).map(toVideoCard)}
+        relatedCollections={relatedCollections}
+      />
     </article>
   );
 }

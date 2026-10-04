@@ -1,13 +1,39 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import SearchResultsShared from "@/components/SearchResultsShared";
 import SkeletonGrid from "@/components/SkeletonGrid";
+import VideoCard from "@/components/VideoCard";
 import "../pages/Pages.css";
-import { getTrendTags } from "@/lib/catalog";
+import {
+  getCatalogVideos,
+  getCollections,
+  getTrendTags,
+  isCollectionIndexable,
+  toVideoCard,
+} from "@/lib/catalog";
+
+function getHomepagePicks() {
+  return getCatalogVideos()
+    .filter((video) =>
+      video.availability === "available" &&
+      video.canonicalUrl &&
+      video.thumbnail &&
+      video.title?.length >= 14 &&
+      !/^(?:sku\b|untitled$|hidden$|video$)/i.test(video.title) &&
+      !/[\uFFFD\u0080-\u009F]/.test(video.title),
+    )
+    .sort((left, right) =>
+      (Number(right.discoveryScore) || 0) - (Number(left.discoveryScore) || 0) ||
+      (Number(right.views) || 0) - (Number(left.views) || 0) ||
+      left.id.localeCompare(right.id),
+    )
+    .slice(0, 24)
+    .map(toVideoCard);
+}
 
 export function generateMetadata() {
-  const currentYear = new Date().getFullYear();
-  const seoTitle = `NICEVX — Adult Videos ${currentYear}`;
-  const seoDesc = "Browse adult videos, popular categories, and new daily additions on NICEVX.";
+  const seoTitle = "NICEVX | Adult Video Collections and New Additions";
+  const seoDesc = "Explore popular videos and focused collections. Compare duration and source views, then browse the latest additions.";
   const seoCanonical = "https://www.nicevx.com/";
 
   return {
@@ -31,17 +57,48 @@ export function generateMetadata() {
 }
 
 export default function Home() {
+  const picks = getHomepagePicks();
+  const collections = getCollections()
+    .filter((collection) => isCollectionIndexable(collection, collection.videos))
+    .slice(0, 8);
+
   return (
-    <Suspense fallback={<SkeletonGrid />}>
-      <SearchResultsShared
-        query="all"
-        pageTitle="Adult Videos"
-        seoTitle="NICEVX — Adult Videos"
-        seoDesc="Browse adult videos, popular categories, and new additions on NICEVX."
-        seoCanonical="https://www.nicevx.com/"
-        seoQuery="Videos"
-        trendTags={getTrendTags(10)}
-      />
-    </Suspense>
+    <main className="home-page">
+      <section className="page-wrapper content-area" aria-labelledby="home-title">
+        <h1 id="home-title" className="section-title">Adult videos</h1>
+        <p className="home-intro">Find videos worth watching, then browse the latest additions below.</p>
+        <h2 className="section-title">Popular videos</h2>
+        <div className="video-grid home-picks-grid">
+          {picks.map((video, index) => (
+            <VideoCard key={video.id} video={video} priority={index < 4} />
+          ))}
+        </div>
+        {collections.length > 0 && (
+          <nav className="home-collection-links" aria-label="Browse collections">
+            <h2 className="section-title">Browse collections</h2>
+            <div>
+              {collections.map((collection) => (
+                <Link key={collection.slug} href={`/collections/${collection.slug}`}>
+                  {collection.name}
+                </Link>
+              ))}
+              <Link href="/collections">All collections</Link>
+            </div>
+          </nav>
+        )}
+      </section>
+      <Suspense fallback={<SkeletonGrid />}>
+        <SearchResultsShared
+          query="all"
+          pageTitle="Latest videos"
+          headingLevel="h2"
+          seoTitle="NICEVX | Adult Video Collections and New Additions"
+          seoDesc="Explore popular videos and focused collections. Compare duration and source views, then browse the latest additions."
+          seoCanonical="https://www.nicevx.com/"
+          seoQuery="Videos"
+          trendTags={getTrendTags(10)}
+        />
+      </Suspense>
+    </main>
   );
 }

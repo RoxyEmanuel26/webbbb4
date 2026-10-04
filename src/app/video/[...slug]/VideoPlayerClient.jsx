@@ -15,7 +15,7 @@ function formatViews(value) {
   return Number(value || 0).toLocaleString("en-US");
 }
 
-export default function VideoPlayerClient({ video, initialRelated = [] }) {
+export default function VideoPlayerClient({ video, initialRelated = [], relatedCollections = [] }) {
   const [favorite, setFavorite] = useState(false);
 
   useEffect(() => {
@@ -107,6 +107,18 @@ export default function VideoPlayerClient({ video, initialRelated = [] }) {
             <p className="video-info-desc" itemProp="description">
               {video.description}
             </p>
+            {relatedCollections.length > 0 && (
+              <nav className="video-collection-links" aria-label="Browse related collections">
+                <h2>Browse this topic</h2>
+                <div>
+                  {relatedCollections.map((collection) => (
+                    <Link key={collection.slug} href={`/collections/${collection.slug}`}>
+                      {collection.name}
+                    </Link>
+                  ))}
+                </div>
+              </nav>
+            )}
             <div className="video-actions">
               <button
                 type="button"

@@ -129,6 +129,9 @@ jobs:
       - name: Build before publication
         run: npm run build
 
+      - name: Verify crawlable HTML
+        run: npm run test:seo-render
+
       - name: Commit verified publication
         shell: bash
         env:

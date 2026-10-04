@@ -36,7 +36,7 @@ function fixEncoding(str) {
     .replace(/&gt;/g, '>');
 }
 
-export default function SearchResultsShared({ query: propQuery, isCat, isTag, page: propPage, currentOrder: propOrder, seoTitle: propSeoTitle, seoDesc: propSeoDesc, seoCanonical: propSeoCanonical, seoQuery: propSeoQuery, initialVideos = null, pageTitle, trendTags = [] }) {
+export default function SearchResultsShared({ query: propQuery, isCat, isTag, page: propPage, currentOrder: propOrder, seoTitle: propSeoTitle, seoDesc: propSeoDesc, seoCanonical: propSeoCanonical, seoQuery: propSeoQuery, initialVideos = null, pageTitle, headingLevel = 'h1', trendTags = [] }) {
   const searchParams = useSearchParams();
 
   const rawQuery = propQuery ?? (searchParams.get('query') || 'all');
@@ -147,6 +147,7 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
     if (query === 'all') return 'All Videos';
     return `"${query}"`;
   };
+  const Heading = headingLevel === 'h2' ? 'h2' : 'h1';
 
   return (
     <div className="search-page">
@@ -161,7 +162,7 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
       <div className="page-wrapper search-content">
         <div className="section-header">
           <div className="section-title-group">
-            <h1 className="section-title">{getPageTitle()}</h1>
+            <Heading className="section-title">{getPageTitle()}</Heading>
             {visibleTotalCount > 0 && (
               <span className="section-count">{visibleTotalCount.toLocaleString()} results</span>
             )}

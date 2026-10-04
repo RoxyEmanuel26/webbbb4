@@ -65,3 +65,4 @@ scripts/*
 !scripts/prepare-cloudflare-static.cjs
 !scripts/test-adsterra-placement.cjs
 !scripts/validate-sitemap.cjs
+!scripts/test-seo-render.cjs

@@ -153,16 +153,20 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
               {rating.toFixed(1)}
             </span>
           )}
-          {primaryKeyword && (
-            <Link 
-              href={`/tag/${primaryKeyword.toLowerCase().replace(/\s+/g, '-')}`}
+          {primaryKeyword && (video.canonicalUrl ? (
+            <span className="vcard__meta-item" style={{ color: 'var(--color-accent)', marginLeft: 'auto' }}>
+              #{primaryKeyword}
+            </span>
+          ) : (
+            <Link
+              href={`/search?query=${encodeURIComponent(primaryKeyword)}`}
               prefetch={false}
-              className="vcard__meta-item" 
+              className="vcard__meta-item"
               style={{ color: 'var(--color-accent)', textDecoration: 'none', marginLeft: 'auto' }}
             >
               #{primaryKeyword}
             </Link>
-          )}
+          ))}
         </div>
       </div>
     </div>

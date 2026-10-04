@@ -3,6 +3,8 @@ import SkeletonGrid from '@/components/SkeletonGrid';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import SearchResultsShared from '@/components/SearchResultsShared';
+import VideoCard from '@/components/VideoCard';
+import { getCollection, getCollectionVideos, toVideoCard } from '@/lib/catalog';
 import { getSearchMetadata } from '@/utils/seo';
 import { ALL_CATEGORIES } from '@/data/allCategories';
 
@@ -60,9 +62,27 @@ export default async function CategoryPage({ params }) {
   const query = catName.replace(/-/g, ' ');
   const seo = getSearchMetadata({ query, isCat: true, isTag: false, page: 1, catName });
   const related = getRelatedCategories(catName.toLowerCase());
+  const collection = getCollection(catName.toLowerCase());
+  const featured = collection ? getCollectionVideos(collection).slice(0, 12).map(toVideoCard) : [];
 
   return (
-    <>
+    <main className="category-page">
+      <section className="page-wrapper category-intro">
+        <h1 className="section-title">{query.replace(/\b\w/g, (letter) => letter.toUpperCase())} videos</h1>
+        {featured.length > 0 && (
+          <>
+            <p>Start with these videos, or browse more below.</p>
+            <div className="video-grid category-picks-grid">
+              {featured.map((video, index) => (
+                <VideoCard key={video.id} video={video} priority={index < 4} />
+              ))}
+            </div>
+            <p className="category-collection-link">
+              <Link href={`/collections/${collection.slug}`}>Browse the {collection.name} collection</Link>
+            </p>
+          </>
+        )}
+      </section>
       <Suspense fallback={<SkeletonGrid />}>
         <SearchResultsShared 
           isCat={true} 
@@ -72,6 +92,8 @@ export default async function CategoryPage({ params }) {
           seoDesc={seo.description} 
           seoCanonical={seo.alternates.canonical} 
           seoQuery={query}
+          pageTitle={`More ${query} videos`}
+          headingLevel="h2"
         />
       </Suspense>
 
@@ -97,6 +119,6 @@ export default async function CategoryPage({ params }) {
           </div>
         </nav>
       )}
-    </>
+    </main>
   );
 }
