@@ -12,6 +12,17 @@ const normalizeSignal = (value) =>
     .trim()
     .toLowerCase();
 
+const hasReadableTitle = (video) => {
+  const title = String(video?.title || "").trim();
+  return (
+    title.length >= 10 &&
+    title.length <= 140 &&
+    !/^(?:sku\b|untitled$|hidden$|video$)/i.test(title) &&
+    !/[\uFFFD\u0080-\u009F]/.test(title) &&
+    !/[\p{Extended_Pictographic}\p{So}]/u.test(title)
+  );
+};
+
 // Build immutable lookup indexes once when the generated catalog module is
 // loaded. Before this index existed, every SSR request repeatedly scanned and
 // normalized the full catalog for video, collection, cover, overlap, and
@@ -37,7 +48,9 @@ const collectionVideoIdsCache = new Map();
 const overlapCache = new Map();
 const collectionStatsCache = new Map();
 const collectionCoverCache = new Map();
+const collectionHighlightsCache = new Map();
 const relatedVideosCache = new Map();
+const videoContextCache = new Map();
 let sortedCollectionsCache = null;
 let trendTagsCache = null;
 
@@ -258,6 +271,108 @@ export function getCollectionStats(collectionOrSlug) {
   };
   collectionStatsCache.set(collection.slug, stats);
   return stats;
+}
+
+// These lists are derived from the published snapshot, not an extra API call or
+// generated editorial claim. They give visitors three genuinely different ways
+// into the same collection without publishing more near-duplicate URLs.
+export function getCollectionHighlights(collectionOrSlug, limit = 4) {
+  const collection =
+    typeof collectionOrSlug === "string"
+      ? getCollection(collectionOrSlug)
+      : collectionOrSlug;
+  if (!collection) return null;
+  const cacheKey = `${collection.slug}:${limit}`;
+  if (collectionHighlightsCache.has(cacheKey)) {
+    return collectionHighlightsCache.get(cacheKey);
+  }
+  const available = getCollectionVideos(collection).filter(hasReadableTitle);
+  const byId = (left, right) => String(left.id).localeCompare(String(right.id));
+  const highlights = {
+    recentlyPublished: [...available]
+      .filter((video) => Number.isFinite(Date.parse(video.uploadDate)))
+      .sort((left, right) =>
+        Date.parse(right.uploadDate) - Date.parse(left.uploadDate) || byId(left, right),
+      )
+      .slice(0, limit),
+    mostViewed: [...available]
+      .filter((video) => Number(video.views) > 0)
+      .sort((left, right) => Number(right.views) - Number(left.views) || byId(left, right))
+      .slice(0, limit),
+    shorter: [...available]
+      .filter((video) => Number(video.durationSeconds) > 0)
+      .sort((left, right) =>
+        Number(left.durationSeconds) - Number(right.durationSeconds) || byId(left, right),
+      )
+      .slice(0, limit),
+  };
+  collectionHighlightsCache.set(cacheKey, highlights);
+  return highlights;
+}
+
+export function getVideoContext(video) {
+  if (!video) return null;
+  if (videoContextCache.has(video.id)) return videoContextCache.get(video.id);
+  const matchingCollections = getCollections()
+    .filter((collection) =>
+      collection.videos.length >= 6 &&
+      collection.videos.some((item) => item.id === video.id),
+    )
+    .sort((left, right) =>
+      Number(isCollectionIndexable(right, right.videos)) -
+        Number(isCollectionIndexable(left, left.videos)) ||
+      left.videos.length - right.videos.length ||
+      left.slug.localeCompare(right.slug),
+    );
+  const collection = matchingCollections[0] || null;
+  const comparableVideos = collection ? collection.videos : videos;
+  const durations = comparableVideos
+    .map((item) => Number(item.durationSeconds))
+    .filter((duration) => Number.isFinite(duration) && duration > 0)
+    .sort((left, right) => left - right);
+  const middle = Math.floor(durations.length / 2);
+  const medianDurationSeconds = durations.length
+    ? durations.length % 2
+      ? durations[middle]
+      : Math.round((durations[middle - 1] + durations[middle]) / 2)
+    : null;
+  const viewed = comparableVideos
+    .filter((item) => Number(item.views) > 0)
+    .sort((left, right) =>
+      Number(right.views) - Number(left.views) ||
+      String(left.id).localeCompare(String(right.id)),
+    );
+  const sourceViewRank = Number(video.views) > 0
+    ? viewed.findIndex((item) => item.id === video.id) + 1
+    : null;
+  const sourceTags = new Set((video.tags || []).map(normalizeSignal));
+  const sameLength = Number(video.durationSeconds) > 0 ? comparableVideos
+    .filter((item) =>
+      item.id !== video.id &&
+      Number(item.durationSeconds) > 0 &&
+      hasReadableTitle(item) &&
+      (item.tags || []).some((tag) => sourceTags.has(normalizeSignal(tag))),
+    )
+    .sort((left, right) =>
+      Math.abs(Number(left.durationSeconds) - Number(video.durationSeconds)) -
+        Math.abs(Number(right.durationSeconds) - Number(video.durationSeconds)) ||
+      (Number(right.discoveryScore) || 0) - (Number(left.discoveryScore) || 0) ||
+      String(left.id).localeCompare(String(right.id)),
+    )
+    .slice(0, 3)
+    .map(toVideoCard) : [];
+  const context = {
+    collection: collection
+      ? { slug: collection.slug, name: collection.name }
+      : null,
+    comparableCount: comparableVideos.length,
+    medianDurationSeconds,
+    sourceViewRank: sourceViewRank > 0 ? sourceViewRank : null,
+    viewedCount: viewed.length,
+    sameLength,
+  };
+  videoContextCache.set(video.id, context);
+  return context;
 }
 
 export function getRelatedVideos(video, limit = 16) {

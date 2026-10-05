@@ -15,7 +15,13 @@ function formatViews(value) {
   return Number(value || 0).toLocaleString("en-US");
 }
 
-export default function VideoPlayerClient({ video, initialRelated = [], relatedCollections = [] }) {
+function formatDuration(seconds) {
+  const minutes = Math.round(Number(seconds) / 60);
+  if (!Number.isFinite(minutes) || minutes <= 0) return null;
+  return minutes < 60 ? `${minutes} min` : `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
+}
+
+export default function VideoPlayerClient({ video, initialRelated = [], relatedCollections = [], discoveryContext = null }) {
   const [favorite, setFavorite] = useState(false);
 
   useEffect(() => {
@@ -107,6 +113,39 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
             <p className="video-info-desc" itemProp="description">
               {video.description}
             </p>
+            {discoveryContext && (
+              <section className="video-context" aria-labelledby="video-context-heading">
+                <h2 id="video-context-heading">How this video compares</h2>
+                <p>
+                  {discoveryContext.collection ? (
+                    <>
+                      Within our <Link href={`/collections/${discoveryContext.collection.slug}`}>{discoveryContext.collection.name} collection</Link>
+                    </>
+                  ) : (
+                    <>Among videos currently listed on NICEVX</>
+                  )}
+                  {discoveryContext.medianDurationSeconds && Number(video.durationSeconds) > 0
+                    ? `, this video runs ${formatDuration(video.durationSeconds)} versus a median of ${formatDuration(discoveryContext.medianDurationSeconds)}.`
+                    : "."}
+                  {discoveryContext.sourceViewRank && discoveryContext.viewedCount > 1
+                    ? ` It ranks ${discoveryContext.sourceViewRank} of ${discoveryContext.viewedCount} by views on the original platform.`
+                    : ""}
+                </p>
+                {discoveryContext.sameLength.length > 0 && (
+                  <div className="video-context-neighbors">
+                    <h3>Similar length and tags</h3>
+                    <ul>
+                      {discoveryContext.sameLength.map((item) => (
+                        <li key={item.id}>
+                          <Link href={`/video/${item.canonicalSlug}`}>{item.title}</Link>
+                          <span>{item.length_min}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </section>
+            )}
             {relatedCollections.length > 0 && (
               <nav className="video-collection-links" aria-label="Browse related collections">
                 <h2>Browse this topic</h2>

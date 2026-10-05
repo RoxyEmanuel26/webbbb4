@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import VideoCard from "@/components/VideoCard";
 import {
   getCollection,
+  getCollectionHighlights,
   getCollectionStats,
   getCollectionVideos,
   getCollections,
@@ -68,8 +69,21 @@ export default async function CollectionPage({ params }) {
   if (!collection) notFound();
   const videos = getCollectionVideos(collection);
   const stats = getCollectionStats(collection);
+  const highlights = getCollectionHighlights(collection);
+  const videoIds = new Set(videos.map((video) => video.id));
   const related = getCollections()
     .filter((item) => item.slug !== slug && item.videos.length > 0)
+    .map((item) => ({
+      ...item,
+      sharedVideos: item.videos.filter((video) => videoIds.has(video.id)).length,
+    }))
+    .filter((item) => item.sharedVideos > 0)
+    .sort((left, right) =>
+      Number(isCollectionIndexable(right, right.videos)) -
+        Number(isCollectionIndexable(left, left.videos)) ||
+      right.sharedVideos - left.sharedVideos ||
+      left.name.localeCompare(right.name),
+    )
     .slice(0, 4);
   const schema = [
     {
@@ -130,10 +144,6 @@ export default async function CollectionPage({ params }) {
       </nav>
       <h1>{collection.name} Videos</h1>
       <p className="collection-lead">{collectionDescription(collection, stats)}</p>
-      <div className="collection-stats">
-        <span>{videos.length} videos</span>
-        <span>Updated regularly</span>
-      </div>
       <section
         className="collection-facts"
         aria-labelledby="collection-facts-heading"
@@ -149,7 +159,7 @@ export default async function CollectionPage({ params }) {
             <dd>{formatDuration(stats.medianDurationSeconds)}</dd>
           </div>
           <div>
-            <dt>Total views</dt>
+            <dt>Views on original platform</dt>
             <dd>{formatViews(stats.totalViews)}</dd>
           </div>
           <div>
@@ -166,6 +176,30 @@ export default async function CollectionPage({ params }) {
           </div>
         </dl>
       </section>
+      {videos.length >= 8 && (
+        <section className="collection-discovery" aria-labelledby="collection-discovery-heading">
+          <h2 id="collection-discovery-heading">Find something to watch</h2>
+          <div className="collection-discovery-grid">
+            {[
+              { title: "Recently published", videos: highlights.recentlyPublished, detail: (video) => new Date(video.uploadDate).toISOString().slice(0, 10) },
+              { title: "Most viewed", videos: highlights.mostViewed, detail: (video) => `${formatViews(video.views)} views on original platform` },
+              { title: "Shorter videos", videos: highlights.shorter, detail: (video) => formatDuration(video.durationSeconds) },
+            ].filter((group) => group.videos.length > 0).map((group) => (
+              <div className="collection-discovery-group" key={group.title}>
+                <h3>{group.title}</h3>
+                <ol>
+                  {group.videos.map((video) => (
+                    <li key={video.id}>
+                      <Link href={`/video/${video.canonicalSlug}`}>{video.title}</Link>
+                      <span>{group.detail(video)}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
       <h2>Videos</h2>
       {videos.length ? (
         <div className="video-grid">
@@ -181,7 +215,7 @@ export default async function CollectionPage({ params }) {
           <h2>Related collections</h2>
           {related.map((item) => (
             <Link key={item.slug} href={`/collections/${item.slug}`}>
-              {item.name}
+              {item.name} <span>({item.sharedVideos} shared)</span>
             </Link>
           ))}
         </nav>

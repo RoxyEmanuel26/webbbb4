@@ -5,6 +5,7 @@ import {
   getCatalogVideos,
   getCollections,
   getRelatedVideos,
+  getVideoContext,
   getVideoById,
   isCollectionIndexable,
   toVideoCard,
@@ -77,6 +78,7 @@ export default async function VideoPage({ params }) {
         video={video}
         initialRelated={getRelatedVideos(video).map(toVideoCard)}
         relatedCollections={relatedCollections}
+        discoveryContext={getVideoContext(video)}
       />
     </article>
   );
