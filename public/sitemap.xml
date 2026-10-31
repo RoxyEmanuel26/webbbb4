@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
-    <loc>https://www.nicevx.com/sitemaps/sitemap-static.xml</loc>
+    <loc>https://www.nicevx.com/sitemaps/sitemap-categories.xml</loc>
     <lastmod>2026-10-30T22:57:57.542Z</lastmod>
   </sitemap>
   <sitemap>
-    <loc>https://www.nicevx.com/sitemaps/sitemap-categories.xml</loc>
-    <lastmod>2026-10-30T22:57:57.542Z</lastmod>
+    <loc>https://www.nicevx.com/sitemaps/sitemap-static.xml</loc>
+    <lastmod>2026-10-31T01:11:33.439Z</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://www.nicevx.com/sitemaps/sitemap-video-1.xml</loc>

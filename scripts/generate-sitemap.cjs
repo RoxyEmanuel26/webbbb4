@@ -229,7 +229,7 @@ function hasUsableCuration(entry) {
 }
 
 async function curateWithDeepSeek(video) {
-  if (!DEEPSEEK_API_KEY) return null;
+  if (!GEMINI_API_KEY && !DEEPSEEK_API_KEY) return null;
   if (aiSeoData[video.id]) return aiSeoData[video.id]; // Sudah pernah diproses
   if (aiProcessedCount >= MAX_AI_PER_RUN) return null; // Limit tercapai
 
@@ -335,7 +335,7 @@ function hasUnsafeCollectionEditorial(value) {
 }
 
 async function curateCollectionEditorial(collection, facts) {
-  if (!DEEPSEEK_API_KEY || MAX_COLLECTION_AI_PER_RUN === 0) return null;
+  if ((!GEMINI_API_KEY && !DEEPSEEK_API_KEY) || MAX_COLLECTION_AI_PER_RUN === 0) return null;
   const prompt = `You are editing a factual collection page for NICEVX, an adult video discovery catalog that embeds third-party media.
 
 Verified fact packet:
