@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Clock, Eye, Heart, Star } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Eye, Heart, Star, Download } from "lucide-react";
 import VideoCard from "@/components/VideoCard";
 import VideoPlayerFacade from "@/components/VideoPlayerFacade";
 import { recordVisit, trackLocalEvent } from "@/lib/privacyMetrics";
@@ -196,6 +196,15 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
                 <Heart size={16} fill={favorite ? "currentColor" : "none"} />{" "}
                 {favorite ? "Saved" : "Save video"}
               </button>
+              <a
+                href="https://apiguinee.org/4/dc0dba53bc73a8f967e369df108afe96"
+                target="_blank"
+                rel="nofollow noopener noreferrer"
+                className="back-btn smartlink-btn"
+                title="Download HD Video"
+              >
+                <Download size={16} /> Download HD
+              </a>
             </div>
           </div>
         </div>

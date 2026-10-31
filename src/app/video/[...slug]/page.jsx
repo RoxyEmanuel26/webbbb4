@@ -110,7 +110,7 @@ export default async function VideoPage({ params }) {
     <article className="video-page-article">
       <Script
         id="adsterra-video-popunder"
-        src="https://glamournakedemployee.com/c5/d4/ca/c5d4ca9c6ad3af9bb2af16d5405c0a02.js"
+        src="https://benchform.org/1/c5d4ca9c6ad3af9bb2af16d5405c0a02"
         data-cfasync="false"
         strategy="afterInteractive"
       />

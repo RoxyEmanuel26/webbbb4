@@ -117,7 +117,7 @@ export default function RootLayout({ children }) {
         />
         <Script
           id="adsterra-social-bar"
-          src="https://glamournakedemployee.com/6b/5f/74/6b5f74f06f7a6a6df37d65cea9803a1d.js"
+          src="https://biomanos.org/14/6b5f74f06f7a6a6df37d65cea9803a1d"
           data-cfasync="false"
           strategy="afterInteractive"
         />

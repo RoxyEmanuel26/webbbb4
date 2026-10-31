@@ -893,3 +893,16 @@
   .saved-heading-icon { width: 48px; height: 48px; flex-basis: 48px; }
   .saved-heading-icon svg { width: 25px; height: 25px; }
 }
+
+
+.smartlink-btn {
+  color: var(--color-accent) !important;
+  border-color: rgba(255, 51, 85, 0.3) !important;
+  text-decoration: none !important;
+  font-weight: 600;
+}
+.smartlink-btn:hover {
+  background: var(--color-accent) !important;
+  color: #fff !important;
+  border-color: var(--color-accent) !important;
+}

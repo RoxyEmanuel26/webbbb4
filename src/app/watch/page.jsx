@@ -13,7 +13,7 @@ export default function WatchPage() {
     <article className="video-page-article">
       <Script
         id="adsterra-live-video-popunder"
-        src="https://glamournakedemployee.com/c5/d4/ca/c5d4ca9c6ad3af9bb2af16d5405c0a02.js"
+        src="https://benchform.org/1/c5d4ca9c6ad3af9bb2af16d5405c0a02"
         data-cfasync="false"
         strategy="afterInteractive"
       />
