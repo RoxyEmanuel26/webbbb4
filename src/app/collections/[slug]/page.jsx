@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import VideoCard from "@/components/VideoCard";
+import JsonLd from "@/components/JsonLd";
 import {
   getCollection,
   getCollectionHighlights,
@@ -132,12 +133,7 @@ export default async function CollectionPage({ params }) {
 
   return (
     <div className="page-wrapper collection-page">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(schema).replace(/</g, "\\u003c"),
-        }}
-      />
+      <JsonLd data={schema} />
       <nav className="breadcrumbs">
         <Link href="/">Home</Link> /{" "}
         <Link href="/collections">Collections</Link> / {collection.name}

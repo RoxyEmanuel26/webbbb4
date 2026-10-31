@@ -80,30 +80,10 @@ export const viewport = {
 };
 
 export default function RootLayout({ children }) {
-  const websiteSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "NICEVX",
-    url: "https://www.nicevx.com",
-    description: "Adult videos, categories, and daily additions.",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: "https://www.nicevx.com/search?query={search_term_string}",
-      },
-      "query-input": "required name=search_term_string",
-    },
-  };
-
   return (
     <html lang="en">
       <head>
         <link rel="preconnect" href="https://static-ca-cdn.eporner.com" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-        />
         <script
           dangerouslySetInnerHTML={{
             __html: `

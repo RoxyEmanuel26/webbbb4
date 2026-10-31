@@ -3,6 +3,8 @@ import Link from "next/link";
 import SearchResultsShared from "@/components/SearchResultsShared";
 import SkeletonGrid from "@/components/SkeletonGrid";
 import VideoCard from "@/components/VideoCard";
+import JsonLd from "@/components/JsonLd";
+import { websiteSchema, organizationSchema } from "@/lib/jsonld";
 import "../pages/Pages.css";
 import {
   getCatalogVideos,
@@ -64,6 +66,7 @@ export default function Home() {
 
   return (
     <div className="home-page">
+      <JsonLd data={[websiteSchema(), organizationSchema()]} />
       <section className="page-wrapper content-area" aria-labelledby="home-title">
         <h1 id="home-title" className="section-title">Free HD adult videos, curated daily</h1>
         <p className="home-intro">Find videos worth watching, compare duration and ratings, then browse the latest additions below.</p>

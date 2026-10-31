@@ -1,6 +1,8 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import Script from 'next/script';
 import VideoPlayerClient from './VideoPlayerClient';
+import JsonLd from '@/components/JsonLd';
+import { videoObjectSchema, breadcrumbListSchema } from '@/lib/jsonld';
 import {
   getCatalogVideos,
   getCollections,
@@ -97,21 +99,12 @@ export default async function VideoPage({ params }) {
     .slice(0, 3)
     .map(({ slug: collectionSlug, name }) => ({ slug: collectionSlug, name }));
 
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'VideoObject',
-    name: video.title,
-    description: video.description,
-    thumbnailUrl: video.thumbs.length ? video.thumbs.map((thumb) => thumb.src) : [video.thumbnail],
-    embedUrl: video.embedUrl,
-    url: video.canonicalUrl,
-    uploadDate: video.uploadDate,
-    ...(video.duration && { duration: video.duration }),
-    isFamilyFriendly: false,
-    genre: video.category,
-    keywords: video.tags.join(', '),
-    ...(video.views > 0 && { interactionStatistic: { '@type': 'InteractionCounter', interactionType: { '@type': 'WatchAction' }, userInteractionCount: video.views } }),
-  };
+  const categorySlug = (video.category || 'amateur').toLowerCase().replace(/\s+/g, '-');
+  const breadcrumbItems = [
+    { name: 'Home', url: '/' },
+    { name: video.category || 'Videos', url: `/cat/${categorySlug}` },
+    { name: video.title, url: video.canonicalUrl },
+  ];
 
   return (
     <article className="video-page-article">
@@ -121,7 +114,12 @@ export default async function VideoPage({ params }) {
         data-cfasync="false"
         strategy="afterInteractive"
       />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }} />
+      <JsonLd
+        data={[
+          videoObjectSchema(video),
+          breadcrumbListSchema(breadcrumbItems),
+        ]}
+      />
       <VideoPlayerClient
         video={video}
         initialRelated={getRelatedVideos(video).map(toVideoCard)}

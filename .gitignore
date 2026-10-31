@@ -68,3 +68,4 @@ scripts/*
 !scripts/test-seo-render.cjs
 !scripts/build-categories-sitemap.cjs
 !scripts/indexnow.cjs
+!scripts/test-jsonld.cjs

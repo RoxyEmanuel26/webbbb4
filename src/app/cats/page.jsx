@@ -1,5 +1,6 @@
 import React from "react";
 import CategoriesClient from "./CategoriesClient";
+import JsonLd from "@/components/JsonLd";
 
 export const metadata = {
   title: "Browse Adult Video Categories A-Z | NICEVX",
@@ -52,23 +53,20 @@ export default function CategoriesPage() {
     ],
   };
 
+  const schema = [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: "Video Categories — NICEVX",
+      description: "Browse adult video categories on NICEVX.",
+      url: "https://www.nicevx.com/cats",
+    },
+    breadcrumbsSchema,
+  ];
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify([
-            {
-              "@context": "https://schema.org",
-              "@type": "CollectionPage",
-              name: "Video Categories — NICEVX",
-              description: "Browse adult video categories on NICEVX.",
-              url: "https://www.nicevx.com/cats",
-            },
-            breadcrumbsSchema,
-          ]),
-        }}
-      />
+      <JsonLd data={schema} />
       <CategoriesClient />
     </>
   );

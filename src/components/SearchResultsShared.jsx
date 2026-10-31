@@ -126,19 +126,6 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
   const visibleTotalPages = catalogPage?.totalPages || totalPages;
   const visibleTotalCount = catalogPage?.totalCount ?? totalCount;
 
-  const breadcrumbsSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.nicevx.com/" },
-      ...(isCat ? [
-        { "@type": "ListItem", "position": 2, "name": "Categories", "item": "https://www.nicevx.com/cats/" },
-        { "@type": "ListItem", "position": 3, "name": seoQuery, "item": seoCanonical }
-      ] : [
-        { "@type": "ListItem", "position": 2, "name": seoQuery, "item": seoCanonical }
-      ])
-    ]
-  };
 
   const getPageTitle = () => {
     if (pageTitle) return pageTitle;
@@ -151,13 +138,6 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
 
   return (
     <div className="search-page">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify([
-          { "@context": "https://schema.org", "@type": "CollectionPage", "name": seoTitle, "description": seoDesc, "url": seoCanonical },
-          breadcrumbsSchema
-        ]).replace(/</g, '\\u003c') }}
-      />
       {trendTags.length > 0 && <TagsBar tags={trendTags} />}
       <div className="page-wrapper search-content">
         <div className="section-header">

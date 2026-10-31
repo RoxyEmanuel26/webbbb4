@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import SearchResultsShared from '@/components/SearchResultsShared';
 import VideoCard from '@/components/VideoCard';
+import JsonLd from '@/components/JsonLd';
+import { breadcrumbListSchema, itemListSchema } from '@/lib/jsonld';
 import { getCollection, toVideoCard } from '@/lib/catalog';
 import {
   getCategoryVideos,
@@ -127,8 +129,29 @@ export default async function CategoryPage({ params }) {
   // Render top curated catalog videos in server HTML
   const featured = catVideos.slice(0, 36).map(toVideoCard);
 
+  const breadcrumbs = [
+    { name: 'Home', url: '/' },
+    { name: 'Categories', url: '/cats' },
+    { name: titleCategory, url: `/cat/${slug}` },
+  ];
+
+  const jsonLdData = [
+    breadcrumbListSchema(breadcrumbs),
+  ];
+  if (catVideos.length > 0) {
+    jsonLdData.push(
+      itemListSchema({
+        name: `${titleCategory} Videos`,
+        url: `/cat/${slug}`,
+        items: catVideos,
+        maxItems: 36,
+      })
+    );
+  }
+
   return (
     <div className="category-page">
+      <JsonLd data={jsonLdData} />
       <section className="page-wrapper category-intro">
         <nav className="breadcrumb-nav" aria-label="Breadcrumb" style={{ marginBottom: '1rem', fontSize: '0.875rem', color: 'var(--color-muted)' }}>
           <Link href="/" style={{ color: 'var(--color-muted)', textDecoration: 'none' }}>Home</Link>
