@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Calendar, Clock, Eye, Heart, Star } from "lucide-react";
 import VideoCard from "@/components/VideoCard";
+import VideoPlayerFacade from "@/components/VideoPlayerFacade";
 import { recordVisit, trackLocalEvent } from "@/lib/privacyMetrics";
 import "../../../pages/Pages.css";
 
@@ -91,13 +92,9 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
       <div className="player-layout">
         <div className="player-main">
           <div className="player-box">
-            <iframe
-              src={video.embedUrl}
-              title={video.title}
-              allow="autoplay; fullscreen; picture-in-picture"
-              allowFullScreen
-              loading="eager"
-              onLoad={() => trackLocalEvent("play_start")}
+            <VideoPlayerFacade
+              video={video}
+              onPlayStart={() => trackLocalEvent("play_start")}
             />
           </div>
           <div className="video-info-block">

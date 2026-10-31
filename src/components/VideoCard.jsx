@@ -123,6 +123,8 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
           className="vcard__thumb"
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : "auto"}
+          decoding="async"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           draggable="false"
           width="640"
           height="360"

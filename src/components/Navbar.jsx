@@ -42,7 +42,7 @@ const Navbar = () => {
         <Link href="/" className="navbar-brand" aria-label="Home" prefetch={false}>
           <div className="brand-logo-mark">
             <div className="brand-icon-glow"></div>
-            <img src="/logo.webp" alt="Logo" width="34" height="34" style={{ position: 'relative', zIndex: 1, objectFit: 'contain' }} />
+            <img src="/logo.webp" alt="Logo" width="34" height="34" loading="eager" decoding="async" fetchPriority="high" style={{ position: 'relative', zIndex: 1, objectFit: 'contain' }} />
           </div>
           <div className="brand-text">
             <span className="brand-text-nice">NICE</span>
