@@ -1,7 +1,7 @@
 import EditorialPage from "@/components/EditorialPage";
 export const metadata = {
-  title: "About NICEVX",
-  description: "Learn more about NICEVX and how the site works.",
+  title: "About NICEVX – Free HD Adult Video Platform | NICEVX",
+  description: "Learn about NICEVX, an index of verified free adult videos, curated collections, privacy-first features, and content standards.",
   alternates: { canonical: "https://www.nicevx.com/about" },
 };
 export default function Page() {

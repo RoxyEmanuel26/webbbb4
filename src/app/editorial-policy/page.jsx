@@ -1,8 +1,7 @@
 import EditorialPage from "@/components/EditorialPage";
 export const metadata = {
-  title: "Editorial Policy — NICEVX",
-  description:
-    "Rules for titles, descriptions, classifications, and corrections.",
+  title: "Editorial & Content Curation Policy | NICEVX",
+  description: "Learn how NICEVX evaluates video quality, organizes topic collections, and maintains factual curation without automated spam.",
   alternates: { canonical: "https://www.nicevx.com/editorial-policy" },
 };
 export default function Page() {

@@ -76,6 +76,15 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
 
   return (
     <div className="page-wrapper player-page">
+      <nav className="breadcrumb-nav" aria-label="Breadcrumb" style={{ marginBottom: '1rem', fontSize: '0.875rem', color: 'var(--color-muted)' }}>
+        <Link href="/" style={{ color: 'var(--color-muted)', textDecoration: 'none' }}>Home</Link>
+        <span style={{ margin: '0 0.5rem' }}>/</span>
+        <Link href={`/cat/${(video.category || 'all').toLowerCase().replace(/\s+/g, '-')}`} style={{ color: 'var(--color-muted)', textDecoration: 'none' }}>
+          {video.category ? video.category.replace(/\b\w/g, (l) => l.toUpperCase()) : 'Videos'}
+        </Link>
+        <span style={{ margin: '0 0.5rem' }}>/</span>
+        <span style={{ color: 'var(--color-text)' }}>{video.title}</span>
+      </nav>
       <Link className="back-btn" href="/">
         <ArrowLeft size={16} /> Back to videos
       </Link>
@@ -92,7 +101,7 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
             />
           </div>
           <div className="video-info-block">
-            <h1 className="video-info-title" itemProp="name">
+            <h1 className="video-info-title">
               {video.title}
             </h1>
             <div className="video-info-meta">
@@ -110,7 +119,7 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
                 {new Date(video.uploadDate).toLocaleDateString("en-US")}
               </span>
             </div>
-            <p className="video-info-desc" itemProp="description">
+            <p className="video-info-desc">
               {video.description}
             </p>
             {discoveryContext && (

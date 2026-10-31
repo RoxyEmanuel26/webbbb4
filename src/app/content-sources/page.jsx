@@ -1,7 +1,7 @@
 import EditorialPage from "@/components/EditorialPage";
 export const metadata = {
-  title: "Content Sources — NICEVX",
-  description: "Where videos and information shown on NICEVX come from.",
+  title: "Verified Content Sources & Creators | NICEVX",
+  description: "Review our verified content provider guidelines and third-party content syndication standards on NICEVX.",
   alternates: { canonical: "https://www.nicevx.com/content-sources" },
 };
 export default function Page() {

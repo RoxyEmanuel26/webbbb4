@@ -3,8 +3,8 @@ import React from 'react';
 import '../../pages/Pages.css';
 
 export const metadata = {
-  title: 'Terms of Service — NICEVX',
-  description: 'Read the Terms of Service for NICEVX. By using our platform you agree to these terms.',
+  title: "Terms of Service & Adult User Agreement | NICEVX",
+  description: "Review the terms of use, legal age requirements, and community guidelines for accessing free adult entertainment on NICEVX.",
   robots: 'index, follow',
   alternates: {
     canonical: 'https://www.nicevx.com/terms'

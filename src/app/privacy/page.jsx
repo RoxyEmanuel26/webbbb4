@@ -2,8 +2,8 @@ import React from 'react';
 import '../../pages/Pages.css';
 
 export const metadata = {
-  title: 'Privacy Policy — NICEVX',
-  description: 'Read the Privacy Policy for NICEVX.',
+  title: "Privacy Policy & Visitor Data Protection | NICEVX",
+  description: "Learn how NICEVX protects visitor privacy through client-side local storage, minimal cookies, and strict data safeguards.",
   robots: 'index, follow',
   alternates: {
     canonical: 'https://www.nicevx.com/privacy'

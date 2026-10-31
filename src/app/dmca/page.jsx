@@ -2,8 +2,8 @@ import React from 'react';
 import '../../pages/Pages.css';
 
 export const metadata = {
-  title: 'DMCA Policy — NICEVX',
-  description: 'DMCA Notice and Takedown Policy for NICEVX.',
+  title: "DMCA Copyright Infringement & Removal Policy | NICEVX",
+  description: "Read the NICEVX DMCA notice procedures, designated copyright agent details, and fast-track takedown request instructions.",
   robots: 'index, follow',
   alternates: {
     canonical: 'https://www.nicevx.com/dmca'

@@ -2,8 +2,8 @@ import React from 'react';
 import '../../pages/Pages.css';
 
 export const metadata = {
-  title: '18 U.S.C. § 2257 — NICEVX',
-  description: '18 U.S.C. § 2257 Statement for NICEVX.',
+  title: "18 U.S.C. 2257 Compliance Statement | NICEVX",
+  description: "Official 18 U.S.C. 2257 record-keeping compliance statement, custodian records notice, and age verification declarations for NICEVX.",
   robots: 'index, follow',
   alternates: {
     canonical: 'https://www.nicevx.com/usc2257'

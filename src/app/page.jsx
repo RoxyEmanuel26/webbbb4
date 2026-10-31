@@ -32,8 +32,8 @@ function getHomepagePicks() {
 }
 
 export function generateMetadata() {
-  const seoTitle = "NICEVX | Adult Video Collections and New Additions";
-  const seoDesc = "Explore popular videos and focused collections. Compare duration and source views, then browse the latest additions.";
+  const seoTitle = "Free HD Porn Videos & Curated Collections | NICEVX";
+  const seoDesc = "Watch free HD adult videos and curated collections on NICEVX. Stream daily updated clips with verified durations, ratings, and smooth playback.";
   const seoCanonical = "https://www.nicevx.com/";
 
   return {
@@ -65,8 +65,8 @@ export default function Home() {
   return (
     <div className="home-page">
       <section className="page-wrapper content-area" aria-labelledby="home-title">
-        <h1 id="home-title" className="section-title">Adult videos</h1>
-        <p className="home-intro">Find videos worth watching, then browse the latest additions below.</p>
+        <h1 id="home-title" className="section-title">Free HD adult videos, curated daily</h1>
+        <p className="home-intro">Find videos worth watching, compare duration and ratings, then browse the latest additions below.</p>
         <h2 className="section-title">Popular videos</h2>
         <div className="video-grid home-picks-grid">
           {picks.map((video, index) => (
@@ -92,8 +92,8 @@ export default function Home() {
           query="all"
           pageTitle="Latest videos"
           headingLevel="h2"
-          seoTitle="NICEVX | Adult Video Collections and New Additions"
-          seoDesc="Explore popular videos and focused collections. Compare duration and source views, then browse the latest additions."
+          seoTitle="Free HD Porn Videos & Curated Collections | NICEVX"
+          seoDesc="Watch free HD adult videos and curated collections on NICEVX. Stream high-definition scenes updated daily with verified durations, ratings, and smooth playback."
           seoCanonical="https://www.nicevx.com/"
           seoQuery="Videos"
           trendTags={getTrendTags(10)}

@@ -15,21 +15,20 @@ export const getCategorySlugForTag = (tagName = '') => {
 export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName }) => {
   const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
   const seoQuery = capitalize((query || '').replace(/-/g, ' '));
-  const currentYear = new Date().getFullYear();
 
   const seoTitle = isCat
-    ? `Free HD ${seoQuery} Porn Videos ${currentYear} — NICEVX`
+    ? `${seoQuery} Porn Videos – Free HD Clips | NICEVX`
     : isTag
-    ? `Free #${seoQuery} Porn Videos ${currentYear} — NICEVX`
+    ? `Free #${seoQuery} Adult Videos & Clips | NICEVX`
     : query === 'all'
-    ? `All Free HD Porn Videos ${currentYear} — NICEVX`
-    : `${seoQuery} Free Porn Search Results ${currentYear} — NICEVX`;
+    ? 'All Free HD Porn Videos & Collections | NICEVX'
+    : `Search: ${seoQuery} – Free Adult Videos | NICEVX`;
 
   const seoDesc = isCat
-    ? `Watch free ${seoQuery} HD porn videos. Explore top-quality ${seoQuery} adult content updated daily in ${currentYear} on NICEVX.`
+    ? `Watch free ${seoQuery} HD porn videos on NICEVX. Stream top-rated clips with verified durations, ratings, and smooth high-definition playback.`
     : isTag
-    ? `Watch free #${seoQuery} HD porn videos on NICEVX. Explore the best ${seoQuery} adult content updated daily in ${currentYear}.`
-    : `Search results for ${seoQuery} on NICEVX. Find thousands of free HD porn videos matching your search in ${currentYear}.`;
+    ? `Browse trending #${seoQuery} adult videos on NICEVX. Stream verified free HD clips with fast streaming and daily updates.`
+    : `Search results for "${seoQuery}" on NICEVX. Find matching free HD adult videos and curated clips with fast streaming.`;
 
   let seoCanonical = isCat
     ? `https://www.nicevx.com/cat/${catName.toLowerCase()}`
@@ -54,7 +53,7 @@ export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName 
       url: '/favicon.png',
       width: 512,
       height: 512,
-      alt: `${seoQuery} — NICEVX Free HD Porn Videos`,
+      alt: `${seoQuery} — NICEVX Free HD Videos`,
     },
   ];
 
