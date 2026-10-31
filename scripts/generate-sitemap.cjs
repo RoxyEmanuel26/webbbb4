@@ -55,13 +55,64 @@ if (fs.existsSync(AI_SEO_FILE)) {
   if (!fs.existsSync(path.dirname(AI_SEO_FILE))) fs.mkdirSync(path.dirname(AI_SEO_FILE), { recursive: true });
 }
 
+let GEMINI_API_KEY = String(process.env.GEMINI_API_KEY || '').trim() || null;
 let DEEPSEEK_API_KEY = String(process.env.DEEPSEEK_API_KEY || '').trim() || null;
-if (!DEEPSEEK_API_KEY) {
-  try {
-    const envFile = fs.readFileSync(path.join(__dirname, '../.env'), 'utf-8');
-    const match = envFile.match(/DEEPSEEK_API_KEY=["']?(.*?)["']?$/m);
-    if (match) DEEPSEEK_API_KEY = match[1].trim();
-  } catch (e) {}
+try {
+  const envFile = fs.readFileSync(path.join(__dirname, '../.env'), 'utf-8');
+  if (!GEMINI_API_KEY) {
+    const geminiMatch = envFile.match(/GEMINI_API_KEY=["']?(.*?)["']?$/m);
+    if (geminiMatch) GEMINI_API_KEY = geminiMatch[1].trim();
+  }
+  if (!DEEPSEEK_API_KEY) {
+    const deepseekMatch = envFile.match(/DEEPSEEK_API_KEY=["']?(.*?)["']?$/m);
+    if (deepseekMatch) DEEPSEEK_API_KEY = deepseekMatch[1].trim();
+  }
+} catch (e) {}
+
+async function callGemini(prompt) {
+  if (!GEMINI_API_KEY) throw new Error('GEMINI_API_KEY not configured');
+  const model = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        responseMimeType: 'application/json',
+        temperature: 0.3
+      }
+    })
+  });
+  if (!res.ok) {
+    const errText = await res.text().catch(() => '');
+    throw new Error(`Gemini HTTP ${res.status}: ${errText.slice(0, 160)}`);
+  }
+  const data = await res.json();
+  const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!rawText) throw new Error('Empty Gemini response text');
+  return JSON.parse(rawText);
+}
+
+async function callDeepSeek(prompt, maxTokens = 320, temperature = 0.3) {
+  if (!DEEPSEEK_API_KEY) throw new Error('DEEPSEEK_API_KEY not configured');
+  const res = await fetch('https://api.deepseek.com/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${DEEPSEEK_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: 'deepseek-chat',
+      messages: [{ role: 'user', content: prompt }],
+      response_format: { type: 'json_object' },
+      max_tokens: maxTokens,
+      temperature
+    })
+  });
+  if (!res.ok) throw new Error(`DeepSeek HTTP ${res.status}`);
+  const data = await res.json();
+  return JSON.parse(data?.choices?.[0]?.message?.content || '{}');
 }
 
 const isResumeMode = process.argv.includes('--resume');
@@ -283,23 +334,21 @@ Respond ONLY with raw JSON:
 }`;
 
   try {
-    const res = await fetch('https://api.deepseek.com/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${DEEPSEEK_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [{ role: 'user', content: prompt }],
-        response_format: { type: 'json_object' },
-        max_tokens: 320,
-        temperature: 0.3
-      })
-    });
-    if (!res.ok) throw new Error(`DeepSeek HTTP ${res.status}`);
-    const data = await res.json();
-    const result = JSON.parse(data?.choices?.[0]?.message?.content || '');
+    let result = null;
+    let usedProvider = 'unknown';
+    if (GEMINI_API_KEY) {
+      try {
+        result = await callGemini(prompt);
+        usedProvider = 'gemini';
+      } catch (geminiErr) {
+        console.warn(`[AI Warning] Gemini gagal (${geminiErr.message}). Fallback ke DeepSeek...`);
+      }
+    }
+    if (!result && DEEPSEEK_API_KEY) {
+      result = await callDeepSeek(prompt, 320, 0.3);
+      usedProvider = 'deepseek';
+    }
+    if (!result) throw new Error('Semua provider AI (Gemini & DeepSeek) tidak menghasilkan respons');
     const seoDescription = repairMojibake(result.seoDescription).trim();
     if (!result.isSpam && (seoDescription.length < MIN_DESCRIPTION_LENGTH || seoDescription.length > MAX_DESCRIPTION_LENGTH)) {
       throw new Error(`deskripsi AI harus ${MIN_DESCRIPTION_LENGTH}-${MAX_DESCRIPTION_LENGTH} karakter`);
