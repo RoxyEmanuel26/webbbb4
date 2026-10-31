@@ -24,6 +24,9 @@ function formatDuration(seconds) {
 
 export default function VideoPlayerClient({ video, initialRelated = [], relatedCollections = [], discoveryContext = null }) {
   const [favorite, setFavorite] = useState(false);
+  const videoTags = Array.isArray(video.tags) && video.tags.length > 0
+    ? video.tags
+    : (video.keywords ? String(video.keywords).split(',').map((t) => t.trim()).filter(Boolean) : []);
 
   useEffect(() => {
     recordVisit();
@@ -116,9 +119,28 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
                 {new Date(video.uploadDate).toLocaleDateString("en-US")}
               </span>
             </div>
-            <p className="video-info-desc">
-              {video.description}
-            </p>
+            <div className="video-description-wrap">
+              <h2 className="video-section-subtitle">Video Description</h2>
+              <p className="video-info-desc">
+                {video.description || `Watch ${video.title} in full HD on NICEVX. Stream high definition scene with verified playback and crisp audio.`}
+              </p>
+            </div>
+            {videoTags.length > 0 && (
+              <div className="video-tags-wrap">
+                <span className="video-tags-label">Tags:</span>
+                <div className="keyword-tags">
+                  {videoTags.map((tag) => (
+                    <Link
+                      key={tag}
+                      href={`/search?query=${encodeURIComponent(tag)}`}
+                      className="keyword-tag"
+                    >
+                      #{tag}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
             {discoveryContext && (
               <section className="video-context" aria-labelledby="video-context-heading">
                 <h2 id="video-context-heading">How this video compares</h2>

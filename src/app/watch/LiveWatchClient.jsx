@@ -29,11 +29,41 @@ function fixEncoding(value) {
     .replace(/&gt;/g, '>');
 }
 
+function buildVideoDescription(video) {
+  if (video.description && String(video.description).trim().length > 20) {
+    return fixEncoding(video.description);
+  }
+  const title = fixEncoding(video.title || 'Featured adult video');
+  const keywords = fixEncoding(video.keywords || '');
+  const tags = keywords
+    .split(',')
+    .map((k) => k.trim())
+    .filter((k) => k.length > 0 && !FORBIDDEN_REGEX.test(k));
+  const tagPhrase = tags.length > 0 ? tags.slice(0, 5).join(', ') : 'curated adult scenes';
+  const durationPhrase = video.length_min ? `running ${video.length_min}` : 'in high definition';
+  return `Watch ${title} on NICEVX. Stream high definition video featuring ${tagPhrase}, ${durationPhrase} with verified ratings and high speed streaming playback.`;
+}
+
 function normalizeVideo(video) {
+  const title = fixEncoding(video.title) || 'Untitled video';
+  const keywords = fixEncoding(video.keywords || '');
+  const tags = keywords
+    .split(',')
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0 && !FORBIDDEN_REGEX.test(item));
+  const description = buildVideoDescription({
+    ...video,
+    title,
+    keywords,
+    tags,
+  });
+
   return {
     ...video,
-    title: fixEncoding(video.title) || 'Untitled video',
-    keywords: fixEncoding(video.keywords || ''),
+    title,
+    keywords,
+    tags,
+    description,
     rating: Number(video.rate || 0),
     thumbnail: video.default_thumb?.src || video.thumbs?.[0]?.src || '/logo.webp',
     embedUrl: video.embed,
@@ -154,6 +184,26 @@ export default function LiveWatchClient() {
               {video.rating > 0 && <span><Star size={14} /> {video.rating.toFixed(2)}/5 rating</span>}
               <span><Clock size={14} /> {video.length_min || '—'}</span>
             </div>
+            <div className="video-description-wrap">
+              <h2 className="video-section-subtitle">Video Description</h2>
+              <p className="video-info-desc">{video.description}</p>
+            </div>
+            {video.tags && video.tags.length > 0 && (
+              <div className="video-tags-wrap">
+                <span className="video-tags-label">Tags:</span>
+                <div className="keyword-tags">
+                  {video.tags.map((tag) => (
+                    <Link
+                      key={tag}
+                      href={`/search?query=${encodeURIComponent(tag)}`}
+                      className="keyword-tag"
+                    >
+                      #{tag}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="video-actions">
               <button type="button" className="back-btn" onClick={toggleFavorite} aria-pressed={favorite}>
                 <Heart size={16} fill={favorite ? 'currentColor' : 'none'} /> {favorite ? 'Saved' : 'Save video'}
