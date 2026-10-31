@@ -10,8 +10,8 @@ export const metadata = {
 
 export default function SavedPage() {
   return (
-    <main className="page-wrapper saved-page-wrapper">
+    <div>
       <SavedVideosClient />
-    </main>
+    </div>
   );
 }

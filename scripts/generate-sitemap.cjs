@@ -87,6 +87,7 @@ const catalogCandidates = [];
 const previouslyPublishedIds = new Set();
 const chunkLastmods = new Map();
 let staticSitemapLastmod = RUN_TIMESTAMP;
+let categoriesSitemapLastmod = RUN_TIMESTAMP;
 
 if (fs.existsSync(sitemapsDir)) {
   for (const file of fs.readdirSync(sitemapsDir).filter((name) => /^sitemap-video-\d+\.xml$/.test(name))) {
@@ -829,10 +830,57 @@ function writeStaticSitemap(catalog, collections) {
   console.log(`[Quality Gate] ${qualifiedCollections.length}/${collections.length} collection hub masuk sitemap.`);
 }
 
+function writeCategoriesSitemap(catalog) {
+  const catFile = path.join(__dirname, '../src/data/allCategories.js');
+  const rawCat = fs.readFileSync(catFile, 'utf8');
+  const cjsRaw = rawCat.replace('export const ALL_CATEGORIES', 'ALL_CATEGORIES');
+  const ALL_CATEGORIES = (new Function('return ' + cjsRaw))();
+
+  const toSlug = (name) => name.toLowerCase().replace(/\s+/g, '-');
+  const normalize = (value) => String(value || '').trim().toLowerCase();
+
+  const signalsByVideo = new Map(
+    catalog.map((v) => [v.id, new Set([v.category, ...(v.tags || [])].map(normalize))])
+  );
+
+  const qualifiedCategories = [];
+  for (const cat of ALL_CATEGORIES) {
+    const slug = toSlug(cat.name);
+    const targetSignal = normalize(cat.name);
+    const matches = catalog.filter((v) => {
+      if (v.availability !== 'available') return false;
+      const signals = signalsByVideo.get(v.id);
+      return signals && (signals.has(targetSignal) || signals.has(slug));
+    });
+
+    if (matches.length >= 12) {
+      const lastmod = latestDate(matches.map((v) => v.syncedAt || v.uploadDate));
+      qualifiedCategories.push({ slug, name: cat.name, count: matches.length, lastmod });
+    }
+  }
+
+  const catUrlXml = qualifiedCategories
+    .map(
+      (c) => `
+  <url>
+    <loc>${SITE_URL}/cat/${c.slug}</loc>
+    <lastmod>${c.lastmod}</lastmod>
+  </url>`
+    )
+    .join('');
+
+  categoriesSitemapLastmod = latestDate(qualifiedCategories.map((c) => c.lastmod));
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${catUrlXml}\n</urlset>`;
+  fs.writeFileSync(path.join(sitemapOutputDir, 'sitemap-categories.xml'), xml, 'utf-8');
+  console.log(`[Quality Gate] ${qualifiedCategories.length} category hub masuk sitemap-categories.xml.`);
+}
+
 function writeIndexSitemap() {
   let indexXml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
   indexXml += `  <sitemap>\n    <loc>${SITE_URL}/sitemaps/sitemap-static.xml</loc>\n    <lastmod>${staticSitemapLastmod}</lastmod>\n  </sitemap>\n`;
+  indexXml += `  <sitemap>\n    <loc>${SITE_URL}/sitemaps/sitemap-categories.xml</loc>\n    <lastmod>${categoriesSitemapLastmod}</lastmod>\n  </sitemap>\n`;
 
   const maxChunk = currentChunkUrls.length > 0 ? currentChunkIndex : currentChunkIndex - 1;
 
@@ -1145,6 +1193,7 @@ async function run() {
   const managedCollections = await refreshCollections(finalized);
   console.log('📦 Membuat sitemap-static.xml dan Index Sitemap...');
   writeStaticSitemap(finalized, managedCollections);
+  writeCategoriesSitemap(finalized);
   writeIndexSitemap();
   await publishSitemaps();
   await writeJsonAtomic(CATALOG_FILE, {

@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function NotFound() {
   return (
-    <main className="page-wrapper empty-page">
+    <div>
       <div className="empty-block">
         <span className="empty-code">404</span>
         <h1>Page not found</h1>
@@ -16,6 +16,6 @@ export default function NotFound() {
           Browse videos
         </Link>
       </div>
-    </main>
+    </div>
   );
 }

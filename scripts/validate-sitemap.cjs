@@ -105,9 +105,11 @@ for (let index = 0; index < childUrls.length; index++) {
       assert(!/[\uFFFD\u0080-\u009F]|(?:Ã.|Â.|â.)/.test(block), `Possible mojibake in video sitemap: ${loc}`);
       const duration = Number(matches(block, /<video:duration>(\d+)<\/video:duration>/g)[0] || 0);
       assert(!duration || (duration > 0 && duration <= 28800), `Invalid video duration: ${loc}`);
+    } else if (childUrl.pathname.includes('sitemap-categories')) {
+      assert(parsed.pathname.startsWith('/cat/'), `Categories sitemap must contain only /cat/ URLs: ${loc}`);
     } else {
       assert(!parsed.pathname.startsWith('/watch'), 'Live noindex watch URLs must stay out of sitemap');
-      assert(!parsed.pathname.startsWith('/cat/'), 'Noindex category URLs must stay out of sitemap');
+      assert(!parsed.pathname.startsWith('/cat/'), 'Category URLs belong in sitemap-categories.xml, not sitemap-static.xml');
     }
   }
 }

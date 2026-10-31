@@ -66,3 +66,5 @@ scripts/*
 !scripts/test-adsterra-placement.cjs
 !scripts/validate-sitemap.cjs
 !scripts/test-seo-render.cjs
+!scripts/build-categories-sitemap.cjs
+!scripts/indexnow.cjs

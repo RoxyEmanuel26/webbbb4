@@ -143,7 +143,7 @@ export default function RootLayout({ children }) {
         />
         <AgeGateModal />
         <Navbar />
-        <main>{children}</main>
+        <main id="main-content" className="site-main">{children}</main>
         <Footer />
       </body>
     </html>

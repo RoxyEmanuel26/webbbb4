@@ -22,7 +22,7 @@ export default function WeeklyTrendsPage() {
     .sort((a, b) => b.viewGrowth7d - a.viewGrowth7d)
     .slice(0, 36);
   return (
-    <main className="page-wrapper collection-page">
+    <div>
       <h1>Trending This Week</h1>
       <p className="collection-lead">
         See which videos are gaining the most views right now.
@@ -38,6 +38,6 @@ export default function WeeklyTrendsPage() {
           <p>Weekly trends will appear when there is enough recent activity.</p>
         </div>
       )}
-    </main>
+    </div>
   );
 }

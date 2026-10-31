@@ -29,7 +29,9 @@ const category = read(`cat/${qualifiedHub}.html`);
 const categoryVideos = localVideoLinks(category);
 assert.equal((category.match(/<h1\b/g) || []).length, 1, 'Category must have one H1 in the initial HTML');
 assert(categoryVideos.size >= 12, `Featured category has only ${categoryVideos.size} canonical video links`);
-assert.match(category, /<meta name="robots" content="noindex/, 'Category must remain noindex until it has distinct editorial value');
+assert.doesNotMatch(category, /<meta name="robots" content="noindex/, 'Qualified category hub must be indexable');
+const unqualifiedCategory = read('cat/1080p.html');
+assert.match(unqualifiedCategory, /<meta name="robots" content="noindex/, 'Unqualified category must remain noindex');
 assert(category.includes(`href="/collections/${qualifiedHub}"`), 'Category must link to its collection');
 
 const collection = read(`collections/${qualifiedHub}.html`);

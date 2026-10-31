@@ -8,5 +8,13 @@ Disallow: /api/
 Disallow: /*?order=*
 Disallow: /*&order=*
 Disallow: /search?*
+Disallow: /saved
+
+# Explicitly permit AI search and citation crawlers
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: PerplexityBot
+User-agent: ClaudeBot
+Allow: /
 
 Sitemap: https://www.nicevx.com/sitemap.xml

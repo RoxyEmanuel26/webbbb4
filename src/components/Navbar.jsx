@@ -9,7 +9,7 @@ import './Navbar.css';
 const NAV_LINKS = [
   { label: 'Home',       path: '/' },
   { label: 'Collections', path: '/collections' },
-  { label: 'Categories', path: '/cats/' },
+  { label: 'Categories', path: '/cats' },
   { label: 'Saved', path: '/saved', icon: Heart },
 ];
 

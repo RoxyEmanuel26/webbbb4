@@ -63,7 +63,7 @@ export default function Home() {
     .slice(0, 8);
 
   return (
-    <main className="home-page">
+    <div className="home-page">
       <section className="page-wrapper content-area" aria-labelledby="home-title">
         <h1 id="home-title" className="section-title">Adult videos</h1>
         <p className="home-intro">Find videos worth watching, then browse the latest additions below.</p>
@@ -99,6 +99,6 @@ export default function Home() {
           trendTags={getTrendTags(10)}
         />
       </Suspense>
-    </main>
+    </div>
   );
 }

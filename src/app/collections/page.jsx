@@ -13,7 +13,7 @@ export const metadata = {
 export default function CollectionsPage() {
   const collections = getCollections();
   return (
-    <main className="page-wrapper collection-page">
+    <div>
       <h1>Browse collections</h1>
       <p>Pick a category and start watching.</p>
       <div className="collection-directory">
@@ -35,6 +35,6 @@ export default function CollectionsPage() {
           </Link>
         ))}
       </div>
-    </main>
+    </div>
   );
 }

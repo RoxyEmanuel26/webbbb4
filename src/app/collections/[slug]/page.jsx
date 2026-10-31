@@ -131,7 +131,7 @@ export default async function CollectionPage({ params }) {
   ];
 
   return (
-    <main className="page-wrapper collection-page">
+    <div className="page-wrapper collection-page">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -220,6 +220,6 @@ export default async function CollectionPage({ params }) {
           ))}
         </nav>
       )}
-    </main>
+    </div>
   );
 }
