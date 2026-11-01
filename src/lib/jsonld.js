@@ -120,3 +120,18 @@ export function itemListSchema({ name, url, items = [], maxItems = 36 }) {
     })),
   };
 }
+
+export function faqPageSchema(faqs = []) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  };
+}

@@ -62,4 +62,12 @@ const videoBreadcrumb = videoSchemas.find((s) => s['@type'] === 'BreadcrumbList'
 assert(videoBreadcrumb, 'Video page must have BreadcrumbList schema');
 assert.equal(videoBreadcrumb.itemListElement.length, 3, 'Video breadcrumbs must have 3 levels: Home > Category > Video');
 
+
+// 5. About Page (FAQPage Schema for AI Search)
+const aboutHtml = read('about.html');
+const aboutSchemas = extractSchemas(aboutHtml);
+const faqObj = aboutSchemas.find((s) => s['@type'] === 'FAQPage');
+assert(faqObj, 'About page must contain FAQPage schema');
+assert(faqObj.mainEntity?.length >= 3, 'FAQPage must contain at least 3 Q&A entities');
+
 console.log('All JSON-LD Structured Data tests passed successfully!');

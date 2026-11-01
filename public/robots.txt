@@ -13,8 +13,13 @@ Disallow: /saved
 # Explicitly permit AI search and citation crawlers
 User-agent: GPTBot
 User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
 User-agent: PerplexityBot
 User-agent: ClaudeBot
+User-agent: anthropic-ai
+User-agent: Claude-Web
+User-agent: Google-Extended
+User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://www.nicevx.com/sitemap.xml
