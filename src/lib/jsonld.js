@@ -63,20 +63,21 @@ export function videoObjectSchema(video) {
   const thumbs = Array.isArray(video.thumbs) && video.thumbs.length > 0
     ? video.thumbs.map((t) => (typeof t === 'string' ? t : t.src)).filter(Boolean)
     : [video.thumbnail].filter(Boolean);
+  const embedUrl = video.embedUrl || video.embed || (video.id ? `https://www.eporner.com/embed/${video.id}/` : undefined);
 
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'VideoObject',
     name: video.title,
-    description: video.description || `Watch ${video.title} on NICEVX in full HD.`,
+    description: video.description || `Watch ${video.title} on NICEVX in full HD streaming.`,
     thumbnailUrl: thumbs.length ? thumbs : [`${SITE_URL}/favicon.png`],
     uploadDate: video.uploadDate,
     url: video.canonicalUrl || `${SITE_URL}/video/${video.canonicalSlug}`,
     isFamilyFriendly: false,
   };
 
-  if (video.embedUrl) {
-    schema.embedUrl = video.embedUrl;
+  if (embedUrl) {
+    schema.embedUrl = embedUrl;
   }
   if (duration) {
     schema.duration = duration;
@@ -106,18 +107,29 @@ export function itemListSchema({ name, url, items = [], maxItems = 36 }) {
     name,
     url: url.startsWith('http') ? url : `${SITE_URL}${url}`,
     numberOfItems: sliced.length,
-    itemListElement: sliced.map((video, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      item: {
-        '@type': 'VideoObject',
-        name: video.title,
-        url: video.canonicalUrl || `${SITE_URL}/video/${video.canonicalSlug}`,
-        thumbnailUrl: [video.thumbnail].filter(Boolean),
-        ...(video.uploadDate && { uploadDate: video.uploadDate }),
-        ...(video.durationSeconds && { duration: formatIsoDuration(video) }),
-      },
-    })),
+    itemListElement: sliced.map((video, index) => {
+      const embedUrl = video.embedUrl || video.embed || (video.id ? `https://www.eporner.com/embed/${video.id}/` : undefined);
+      const description = video.description || `Watch ${video.title} on NICEVX in full HD. High definition streaming video with verified duration and smooth playback.`;
+      const thumbs = Array.isArray(video.thumbs) && video.thumbs.length > 0
+        ? video.thumbs.map((t) => (typeof t === 'string' ? t : t.src)).filter(Boolean)
+        : [video.thumbnail].filter(Boolean);
+
+      return {
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'VideoObject',
+          name: video.title,
+          description,
+          url: video.canonicalUrl || `${SITE_URL}/video/${video.canonicalSlug}`,
+          thumbnailUrl: thumbs.length ? thumbs : [`${SITE_URL}/favicon.png`],
+          ...(embedUrl && { embedUrl }),
+          ...(video.uploadDate && { uploadDate: video.uploadDate }),
+          ...(video.durationSeconds && { duration: formatIsoDuration(video) }),
+          isFamilyFriendly: false,
+        },
+      };
+    }),
   };
 }
 

@@ -37,6 +37,10 @@ assert.equal(catBreadcrumbs.itemListElement[2].name, 'Amateur');
 const catItemList = catSchemas.find((s) => s['@type'] === 'ItemList');
 assert(catItemList, 'Category hub must have ItemList schema');
 assert(catItemList.itemListElement.length >= 12, 'Category ItemList must list items');
+const firstItem = catItemList.itemListElement[0].item;
+assert(firstItem.description && firstItem.description.length > 10, 'Category VideoObject must have description');
+assert(firstItem.embedUrl && firstItem.embedUrl.startsWith('https://'), 'Category VideoObject must have embedUrl');
+assert.equal(firstItem.isFamilyFriendly, false, 'Category VideoObject must have isFamilyFriendly false');
 
 // 3. Collection Page
 const colHtml = read('collections/amateur.html');
