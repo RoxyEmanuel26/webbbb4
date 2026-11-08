@@ -69,3 +69,4 @@ scripts/*
 !scripts/build-categories-sitemap.cjs
 !scripts/indexnow.cjs
 !scripts/test-jsonld.cjs
+prompt-perbaikan-seo-website.md

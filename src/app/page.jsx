@@ -83,7 +83,7 @@ export default function Home() {
     <div className="home-page">
       <JsonLd data={[websiteSchema(), organizationSchema()]} />
 
-      {/* Top Feed: Trending Tags & Latest Videos with Sort & Duration Filter */}
+      {/* 1. Top Section: Trending Tags & Latest Videos Feed with Sort & Duration Filter */}
       <Suspense fallback={<SkeletonGrid />}>
         <SearchResultsShared
           query="all"
@@ -97,21 +97,11 @@ export default function Home() {
         />
       </Suspense>
 
-      {/* Bottom Showcase: Curated Daily Picks, Popular Videos, Niche Discovery, Collections */}
-      <section className="page-wrapper content-area" aria-labelledby="home-title">
-        <h1 id="home-title" className="section-title">Free HD adult videos, curated daily</h1>
-        <p className="home-intro">Find videos worth watching, compare duration and ratings across our curated catalog.</p>
-        <h2 className="section-title">Popular videos</h2>
-        <div className="video-grid home-picks-grid">
-          {picks.map((video, index) => (
-            <VideoCard key={video.id} video={video} priority={index < 4} />
-          ))}
-        </div>
-
-        {/* Niche Discovery Section */}
-        <div className="home-niche-section">
+      {/* 2. Middle Section (Option 1): Unified Niche & Collections Discovery Bridge */}
+      <div className="page-wrapper">
+        <section className="home-discovery-bridge" aria-labelledby="mid-discovery-title">
           <div className="home-niche-header">
-            <h2 className="home-niche-title">
+            <h2 id="mid-discovery-title" className="home-niche-title">
               Explore Popular Categories
             </h2>
             <Link href="/cats" className="home-niche-see-all">
@@ -130,21 +120,46 @@ export default function Home() {
               </Link>
             ))}
           </div>
-        </div>
 
-        {collections.length > 0 && (
-          <nav className="home-collection-links" aria-label="Browse collections">
-            <h2 className="section-title">Browse collections</h2>
-            <div>
-              {collections.map((collection) => (
-                <Link key={collection.slug} href={`/collections/${collection.slug}`}>
-                  {collection.name}
+          {collections.length > 0 && (
+            <div className="home-discovery-collections">
+              <div className="home-discovery-collections-header">
+                <span className="home-discovery-collections-title">
+                  Featured Topic Collections
+                </span>
+                <Link href="/collections" className="home-niche-see-all">
+                  All collections &rarr;
                 </Link>
-              ))}
-              <Link href="/collections">All collections</Link>
+              </div>
+              <nav className="home-discovery-pills" aria-label="Featured collections">
+                {collections.map((collection) => (
+                  <Link
+                    key={collection.slug}
+                    href={`/collections/${collection.slug}`}
+                    className="home-discovery-pill"
+                  >
+                    {collection.name}
+                  </Link>
+                ))}
+                <Link href="/collections" className="home-discovery-pill view-all">
+                  All collections &rarr;
+                </Link>
+              </nav>
             </div>
-          </nav>
-        )}
+          )}
+        </section>
+      </div>
+
+      {/* 3. Bottom Section: Curated Daily Picks ("Popular Videos" 24 cards) */}
+      <section className="page-wrapper content-area" aria-labelledby="home-title">
+        <h1 id="home-title" className="section-title">Free HD adult videos, curated daily</h1>
+        <p className="home-intro">Find videos worth watching, compare duration and ratings across our curated catalog.</p>
+        <h2 className="section-title">Popular videos</h2>
+        <div className="video-grid home-picks-grid">
+          {picks.map((video, index) => (
+            <VideoCard key={video.id} video={video} priority={index < 4} />
+          ))}
+        </div>
       </section>
     </div>
   );
