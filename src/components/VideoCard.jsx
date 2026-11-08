@@ -60,7 +60,7 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
         hoverInterval.current = setInterval(() => {
           currentIdx = (currentIdx + 1) % thumbs.length;
           setThumbIdx(currentIdx);
-        }, 500); // ganti gambar setiap 500ms
+        }, 500); // cycle image every 500ms
       }
     }
   };
@@ -115,7 +115,7 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
         prefetch={false}
         className="vcard__thumb-wrap" 
         aria-label={video.title}
-        onContextMenu={(e) => e.preventDefault()} // Prevent long-press from opening menu on mobile
+        onContextMenu={(e) => e.preventDefault()}
       >
         <img
           src={displayedSrc}
@@ -130,6 +130,10 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
           height="360"
           onError={() => setFailedSrc(src)}
         />
+        {/* Play Overlay */}
+        <div className="vcard__overlay" aria-hidden="true">
+          <div className="vcard__play-icon">▶</div>
+        </div>
         {/* Duration Badge */}
         <span className="vcard__duration" aria-label={`Duration: ${duration}`}>
           <Clock size={10} aria-hidden="true" />
@@ -155,20 +159,14 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
               {rating.toFixed(1)}
             </span>
           )}
-          {primaryKeyword && (video.canonicalUrl ? (
-            <span className="vcard__meta-item" style={{ color: 'var(--color-accent)', marginLeft: 'auto' }}>
-              #{primaryKeyword}
-            </span>
-          ) : (
-            <Link
-              href={`/search?query=${encodeURIComponent(primaryKeyword)}`}
-              prefetch={false}
-              className="vcard__meta-item"
-              style={{ color: 'var(--color-accent)', textDecoration: 'none', marginLeft: 'auto' }}
+          {primaryKeyword && (
+            <span
+              className="vcard__meta-item vcard__tag"
+              style={{ color: 'var(--color-accent)', marginLeft: 'auto', fontWeight: 600, letterSpacing: '0.02em' }}
             >
               #{primaryKeyword}
-            </Link>
-          ))}
+            </span>
+          )}
         </div>
       </div>
     </div>

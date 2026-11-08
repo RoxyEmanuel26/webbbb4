@@ -14,6 +14,21 @@ import {
   toVideoCard,
 } from "@/lib/catalog";
 
+const POPULAR_NICHES = [
+  { name: "Japanese", slug: "japanese", count: "10,000+" },
+  { name: "Milf", slug: "milf", count: "20,000+" },
+  { name: "Anal", slug: "anal", count: "20,000+" },
+  { name: "Asian", slug: "asian", count: "15,000+" },
+  { name: "Amateur", slug: "amateur", count: "20,000+" },
+  { name: "Big Tits", slug: "big-tits", count: "20,000+" },
+  { name: "Creampie", slug: "creampie", count: "15,000+" },
+  { name: "POV", slug: "pov", count: "12,000+" },
+  { name: "Cosplay", slug: "cosplay", count: "5,000+" },
+  { name: "Blowjob", slug: "blowjob", count: "20,000+" },
+  { name: "Ebony", slug: "ebony", count: "10,000+" },
+  { name: "Hardcore", slug: "hardcore", count: "20,000+" },
+];
+
 function getHomepagePicks() {
   return getCatalogVideos()
     .filter((video) =>
@@ -76,6 +91,31 @@ export default function Home() {
             <VideoCard key={video.id} video={video} priority={index < 4} />
           ))}
         </div>
+
+        {/* Niche Discovery Section */}
+        <div className="home-niche-section">
+          <div className="home-niche-header">
+            <h2 className="home-niche-title">
+              Explore Popular Categories
+            </h2>
+            <Link href="/cats" className="home-niche-see-all">
+              All categories &rarr;
+            </Link>
+          </div>
+          <div className="home-niche-grid">
+            {POPULAR_NICHES.map((niche) => (
+              <Link
+                key={niche.slug}
+                href={`/cat/${niche.slug}`}
+                className="home-niche-card"
+              >
+                <span className="home-niche-name">{niche.name}</span>
+                <span className="home-niche-count">{niche.count}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
         {collections.length > 0 && (
           <nav className="home-collection-links" aria-label="Browse collections">
             <h2 className="section-title">Browse collections</h2>

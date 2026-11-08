@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Clock, Eye, Heart, Star, Download } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Eye, Heart, Star, Download, ChevronDown } from "lucide-react";
 import VideoCard from "@/components/VideoCard";
 import VideoPlayerFacade from "@/components/VideoPlayerFacade";
 import { recordVisit, trackLocalEvent } from "@/lib/privacyMetrics";
@@ -119,73 +119,8 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
                 {new Date(video.uploadDate).toLocaleDateString("en-US")}
               </span>
             </div>
-            <div className="video-description-wrap">
-              <h2 className="video-section-subtitle">Video Description</h2>
-              <p className="video-info-desc">
-                {video.description || `Watch ${video.title} in full HD on NICEVX. Stream high definition scene with verified playback and crisp audio.`}
-              </p>
-            </div>
-            {videoTags.length > 0 && (
-              <div className="video-tags-wrap">
-                <span className="video-tags-label">Tags:</span>
-                <div className="keyword-tags">
-                  {videoTags.map((tag) => (
-                    <Link
-                      key={tag}
-                      href={`/search?query=${encodeURIComponent(tag)}`}
-                      className="keyword-tag"
-                    >
-                      #{tag}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-            {discoveryContext && (
-              <section className="video-context" aria-labelledby="video-context-heading">
-                <h2 id="video-context-heading">How this video compares</h2>
-                <p>
-                  {discoveryContext.collection ? (
-                    <>
-                      Within our <Link href={`/collections/${discoveryContext.collection.slug}`}>{discoveryContext.collection.name} collection</Link>
-                    </>
-                  ) : (
-                    <>Among videos currently listed on NICEVX</>
-                  )}
-                  {discoveryContext.medianDurationSeconds && Number(video.durationSeconds) > 0
-                    ? `, this video runs ${formatDuration(video.durationSeconds)} versus a median of ${formatDuration(discoveryContext.medianDurationSeconds)}.`
-                    : "."}
-                  {discoveryContext.sourceViewRank && discoveryContext.viewedCount > 1
-                    ? ` It ranks ${discoveryContext.sourceViewRank} of ${discoveryContext.viewedCount} by views on the original platform.`
-                    : ""}
-                </p>
-                {discoveryContext.sameLength.length > 0 && (
-                  <div className="video-context-neighbors">
-                    <h3>Similar length and tags</h3>
-                    <ul>
-                      {discoveryContext.sameLength.map((item) => (
-                        <li key={item.id}>
-                          <Link href={`/video/${item.canonicalSlug}`}>{item.title}</Link>
-                          <span>{item.length_min}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </section>
-            )}
-            {relatedCollections.length > 0 && (
-              <nav className="video-collection-links" aria-label="Browse related collections">
-                <h2>Browse this topic</h2>
-                <div>
-                  {relatedCollections.map((collection) => (
-                    <Link key={collection.slug} href={`/collections/${collection.slug}`}>
-                      {collection.name}
-                    </Link>
-                  ))}
-                </div>
-              </nav>
-            )}
+
+            {/* Quick Actions directly beneath metadata */}
             <div className="video-actions">
               <button
                 type="button"
@@ -206,6 +141,83 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
                 <Download size={16} /> Download HD
               </a>
             </div>
+
+            {/* Collapsible Details: Crawled 100% by Googlebot, clean on mobile */}
+            <details className="video-details-accordion" open>
+              <summary className="video-details-summary">
+                <span>Video Details &amp; Comparison</span>
+                <ChevronDown size={16} className="summary-chevron" aria-hidden="true" />
+              </summary>
+              <div className="video-details-body">
+                <div className="video-description-wrap">
+                  <h2 className="video-section-subtitle">Video Description</h2>
+                  <p className="video-info-desc">
+                    {video.description || `Watch ${video.title} in full HD on NICEVX. Stream high definition scene with verified playback and crisp audio.`}
+                  </p>
+                </div>
+                {videoTags.length > 0 && (
+                  <div className="video-tags-wrap">
+                    <span className="video-tags-label">Tags:</span>
+                    <div className="keyword-tags">
+                      {videoTags.map((tag) => (
+                        <Link
+                          key={tag}
+                          href={`/search?query=${encodeURIComponent(tag)}`}
+                          className="keyword-tag"
+                        >
+                          #{tag}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {discoveryContext && (
+                  <section className="video-context" aria-labelledby="video-context-heading">
+                    <h2 id="video-context-heading">How this video compares</h2>
+                    <p>
+                      {discoveryContext.collection ? (
+                        <>
+                          Within our <Link href={`/collections/${discoveryContext.collection.slug}`}>{discoveryContext.collection.name} collection</Link>
+                        </>
+                      ) : (
+                        <>Among videos currently listed on NICEVX</>
+                      )}
+                      {discoveryContext.medianDurationSeconds && Number(video.durationSeconds) > 0
+                        ? `, this video runs ${formatDuration(video.durationSeconds)} versus a median of ${formatDuration(discoveryContext.medianDurationSeconds)}.`
+                        : "."}
+                      {discoveryContext.sourceViewRank && discoveryContext.viewedCount > 1
+                        ? ` It ranks ${discoveryContext.sourceViewRank} of ${discoveryContext.viewedCount} by views on the original platform.`
+                        : ""}
+                    </p>
+                    {discoveryContext.sameLength.length > 0 && (
+                      <div className="video-context-neighbors">
+                        <h3>Similar length and tags</h3>
+                        <ul>
+                          {discoveryContext.sameLength.map((item) => (
+                            <li key={item.id}>
+                              <Link href={`/video/${item.canonicalSlug}`}>{item.title}</Link>
+                              <span>{item.length_min}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </section>
+                )}
+                {relatedCollections.length > 0 && (
+                  <nav className="video-collection-links" aria-label="Browse related collections">
+                    <h2>Browse this topic</h2>
+                    <div>
+                      {relatedCollections.map((collection) => (
+                        <Link key={collection.slug} href={`/collections/${collection.slug}`}>
+                          {collection.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </nav>
+                )}
+              </div>
+            </details>
           </div>
         </div>
 

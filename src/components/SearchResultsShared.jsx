@@ -36,7 +36,36 @@ function fixEncoding(str) {
     .replace(/&gt;/g, '>');
 }
 
-export default function SearchResultsShared({ query: propQuery, isCat, isTag, page: propPage, currentOrder: propOrder, seoTitle: propSeoTitle, seoDesc: propSeoDesc, seoCanonical: propSeoCanonical, seoQuery: propSeoQuery, initialVideos = null, pageTitle, headingLevel = 'h1', trendTags = [] }) {
+function getDurationSeconds(v) {
+  if (typeof v.length_sec === 'number' && v.length_sec > 0) return v.length_sec;
+  if (typeof v.durationSeconds === 'number' && v.durationSeconds > 0) return v.durationSeconds;
+  if (typeof v.length_min === 'string') {
+    const parts = v.length_min.split(':').map(Number);
+    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+      return parts[0] * 60 + parts[1];
+    }
+    if (parts.length === 3 && !isNaN(parts[0]) && !isNaN(parts[1]) && !isNaN(parts[2])) {
+      return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    }
+  }
+  return 0;
+}
+
+export default function SearchResultsShared({
+  query: propQuery,
+  isCat,
+  isTag,
+  page: propPage,
+  currentOrder: propOrder,
+  seoTitle: propSeoTitle,
+  seoDesc: propSeoDesc,
+  seoCanonical: propSeoCanonical,
+  seoQuery: propSeoQuery,
+  initialVideos = null,
+  pageTitle,
+  headingLevel = 'h1',
+  trendTags = [],
+}) {
   const searchParams = useSearchParams();
 
   const rawQuery = propQuery ?? (searchParams.get('query') || 'all');
@@ -46,9 +75,11 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
   const page = !isNaN(rawPage) && rawPage > 0 ? rawPage : 1;
 
   const rawOrder = propOrder ?? searchParams.get('order');
-  const isValidOrder = SORT_OPTIONS.some(o => o.value === rawOrder);
+  const isValidOrder = SORT_OPTIONS.some((o) => o.value === rawOrder);
   const currentOrder = isValidOrder ? rawOrder : 'latest';
-  
+
+  const durationFilter = searchParams.get('duration') || 'all';
+
   const seoTitle = propSeoTitle ?? `Watch Free HD Porn Videos — NICEVX`;
   const seoDesc = propSeoDesc ?? `Watch free HD porn videos on NICEVX. Stream top-quality adult content.`;
   const seoCanonical = propSeoCanonical ?? `https://www.nicevx.com/search?query=${encodeURIComponent(query)}`;
@@ -80,8 +111,8 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
 
       if (data?.videos) {
         const filtered = data.videos
-          .map(v => ({ ...v, title: fixEncoding(v.title), keywords: fixEncoding(v.keywords) }))
-          .filter(v => !FORBIDDEN_REGEX.test(v.keywords || '') && !FORBIDDEN_REGEX.test(v.title || ''));
+          .map((v) => ({ ...v, title: fixEncoding(v.title), keywords: fixEncoding(v.keywords) }))
+          .filter((v) => !FORBIDDEN_REGEX.test(v.keywords || '') && !FORBIDDEN_REGEX.test(v.title || ''));
         setVideos(filtered);
         setTotalPages(data.total_pages || 1);
         setTotalCount(data.total_count || 0);
@@ -100,9 +131,22 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
     fetchData();
   }, [fetchData]);
 
+  // Apply duration filter
+  const durationFilteredVideos = useMemo(() => {
+    if (!durationFilter || durationFilter === 'all') return videos;
+    return videos.filter((v) => {
+      const sec = getDurationSeconds(v);
+      if (sec <= 0) return true;
+      if (durationFilter === 'short') return sec < 600;
+      if (durationFilter === 'medium') return sec >= 600 && sec <= 1500;
+      if (durationFilter === 'long') return sec > 1500;
+      return true;
+    });
+  }, [videos, durationFilter]);
+
   const catalogPage = useMemo(() => {
     if (!hasServerCatalog) return null;
-    const sorted = [...videos];
+    const sorted = [...durationFilteredVideos];
     if (currentOrder === 'top-rated') {
       sorted.sort((a, b) => Number(b.rating || b.rate || 0) - Number(a.rating || a.rate || 0));
     } else if (currentOrder === 'most-popular') {
@@ -120,17 +164,16 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
       totalPages: Math.max(1, Math.ceil(sorted.length / perPage)),
       totalCount: sorted.length,
     };
-  }, [currentOrder, hasServerCatalog, page, videos]);
+  }, [currentOrder, durationFilteredVideos, hasServerCatalog, page]);
 
-  const visibleVideos = catalogPage?.videos || videos;
+  const visibleVideos = catalogPage?.videos || durationFilteredVideos;
   const visibleTotalPages = catalogPage?.totalPages || totalPages;
-  const visibleTotalCount = catalogPage?.totalCount ?? totalCount;
-
+  const visibleTotalCount = catalogPage?.totalCount ?? (durationFilter !== 'all' ? durationFilteredVideos.length : totalCount);
 
   const getPageTitle = () => {
     if (pageTitle) return pageTitle;
-    if (isCat) return <span style={{textTransform: 'capitalize'}}>Category: {query}</span>;
-    if (isTag) return <span style={{textTransform: 'capitalize'}}>Tag: {query}</span>;
+    if (isCat) return <span style={{ textTransform: 'capitalize' }}>Category: {query}</span>;
+    if (isTag) return <span style={{ textTransform: 'capitalize' }}>Tag: {query}</span>;
     if (query === 'all') return 'All Videos';
     return `"${query}"`;
   };
@@ -162,25 +205,22 @@ export default function SearchResultsShared({ query: propQuery, isCat, isTag, pa
               {visibleVideos.map((v, idx) => (
                 <React.Fragment key={`${v.id}-${idx}`}>
                   <VideoCard video={v} priority={idx < 4} />
-
                 </React.Fragment>
               ))}
             </div>
 
             <Pagination currentPage={page} totalPages={visibleTotalPages} />
-
           </>
         ) : (
           <div className="empty-block">
             <p style={{ fontSize: '2rem' }}>🔍</p>
-            <p>No videos found for <strong style={{textTransform: 'capitalize'}}>&quot;{query}&quot;</strong></p>
+            <p>No videos found for <strong style={{ textTransform: 'capitalize' }}>&quot;{query}&quot;</strong>{durationFilter !== 'all' ? ` in selected duration (${durationFilter})` : ''}</p>
             <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
-              Try different keywords or browse by category.
+              Try adjusting your duration filter or browse by category.
             </p>
           </div>
         )}
       </div>
-
     </div>
   );
 }

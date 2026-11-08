@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { ArrowLeft, Clock, Eye, Heart, Star, Download } from 'lucide-react';
+import { ArrowLeft, Clock, Eye, Heart, Star, Download, ChevronDown } from 'lucide-react';
 import VideoCard from '@/components/VideoCard';
 import VideoPlayerFacade from '@/components/VideoPlayerFacade';
 import { recordVisit, trackLocalEvent } from '@/lib/privacyMetrics';
@@ -29,45 +29,42 @@ function fixEncoding(value) {
     .replace(/&gt;/g, '>');
 }
 
-function buildVideoDescription(video) {
-  if (video.description && String(video.description).trim().length > 20) {
-    return fixEncoding(video.description);
-  }
-  const title = fixEncoding(video.title || 'Featured adult video');
-  const keywords = fixEncoding(video.keywords || '');
-  const tags = keywords
-    .split(',')
-    .map((k) => k.trim())
-    .filter((k) => k.length > 0 && !FORBIDDEN_REGEX.test(k));
-  const tagPhrase = tags.length > 0 ? tags.slice(0, 5).join(', ') : 'curated adult scenes';
-  const durationPhrase = video.length_min ? `running ${video.length_min}` : 'in high definition';
-  return `Watch ${title} on NICEVX. Stream high definition video featuring ${tagPhrase}, ${durationPhrase} with verified ratings and high speed streaming playback.`;
+function buildVideoDescription(video, tags) {
+  const parts = [];
+  const tagList = tags.slice(0, 4).join(', ');
+  if (video.title) parts.push(video.title);
+  if (tagList) parts.push(`featuring ${tagList}`);
+  const base = parts.join(' ');
+  const duration = video.length_min ? ` (${video.length_min})` : '';
+  const views = video.views ? ` with ${Number(video.views).toLocaleString('en-US')} views` : '';
+  return `Watch ${base}${duration}${views} in high definition on NICEVX. Stream verified adult videos with smooth playback.`;
 }
 
-function normalizeVideo(video) {
-  const title = fixEncoding(video.title) || 'Untitled video';
-  const keywords = fixEncoding(video.keywords || '');
-  const tags = keywords
-    .split(',')
-    .map((item) => item.trim())
-    .filter((item) => item.length > 0 && !FORBIDDEN_REGEX.test(item));
-  const description = buildVideoDescription({
-    ...video,
-    title,
-    keywords,
-    tags,
-  });
+function normalizeVideo(raw) {
+  if (!raw || !raw.id) return null;
+  const tags = (raw.keywords ? String(raw.keywords).split(',') : [])
+    .map((tag) => fixEncoding(tag.trim()))
+    .filter((tag) => tag.length > 0 && !FORBIDDEN_REGEX.test(tag));
+
+  const title = fixEncoding(raw.title || '');
+  if (FORBIDDEN_REGEX.test(title)) return null;
 
   return {
-    ...video,
+    id: raw.id,
     title,
-    keywords,
+    description: buildVideoDescription({ ...raw, title }, tags),
     tags,
-    description,
-    rating: Number(video.rate || 0),
-    thumbnail: video.default_thumb?.src || video.thumbs?.[0]?.src || '/logo.webp',
-    embedUrl: video.embed,
-    canonicalUrl: `/watch?id=${encodeURIComponent(video.id)}`,
+    category: tags[0] || 'adult porn',
+    thumbnail: raw.default_thumb?.src || raw.thumbs?.[0]?.src || '',
+    thumbs: raw.thumbs || [],
+    embedUrl: raw.embed || `https://www.eporner.com/embed/${raw.id}/`,
+    durationSeconds: Number(raw.length_sec || 0),
+    length_min: raw.length_min || '',
+    views: Number(raw.views || 0),
+    rating: Number(raw.rate || 0),
+    rate: Number(raw.rate || 0),
+    uploadDate: raw.added ? new Date(raw.added).toISOString() : new Date().toISOString(),
+    availability: 'available',
   };
 }
 
@@ -77,63 +74,78 @@ function formatViews(value) {
 
 export default function LiveWatchClient() {
   const searchParams = useSearchParams();
-  const id = searchParams.get('id') || '';
-  const validId = /^[A-Za-z0-9]{11}$/.test(id);
+  const videoId = searchParams.get('id');
   const [video, setVideo] = useState(null);
   const [related, setRelated] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [favorite, setFavorite] = useState(false);
-  const [state, setState] = useState(validId ? 'loading' : 'invalid');
 
   useEffect(() => {
-    if (!validId) return;
-    const controller = new AbortController();
+    if (!videoId) {
+      setError('Video ID not provided');
+      setLoading(false);
+      return;
+    }
 
-    async function loadVideo() {
-      setState('loading');
+    recordVisit();
+    let isCancelled = false;
+
+    async function fetchVideo() {
+      setLoading(true);
+      setError(null);
       try {
-        const detailUrl = `${API_BASE}/id/?id=${encodeURIComponent(id)}&thumbsize=big&format=json`;
-        const response = await fetch(detailUrl, { signal: controller.signal });
-        if (!response.ok) throw new Error(`Video API returned ${response.status}`);
-        const raw = await response.json();
-        if (!raw?.id || !raw?.embed) throw new Error('Video unavailable');
-        const current = normalizeVideo(raw);
-        if (FORBIDDEN_REGEX.test(`${current.title} ${current.keywords}`)) throw new Error('Video unavailable');
-        setVideo(current);
-        setState('ready');
-        recordVisit();
-
-        try {
-          const saved = JSON.parse(localStorage.getItem(SAVED_VIDEOS_KEY) || '[]');
-          const favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
-          setFavorite((Array.isArray(saved) && saved.some((item) => item.id === id)) || favorites.includes(id));
-          const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]').filter((item) => item.id !== id);
-          history.unshift({ id, url: current.canonicalUrl, title: current.title, thumbnail: current.thumbnail, watchedAt: new Date().toISOString() });
-          localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 24)));
-        } catch (_) {}
-
-        const relatedQuery = current.keywords.split(',').map((item) => item.trim()).find(Boolean) || current.title.split(/\s+/).slice(0, 3).join(' ');
-        const relatedUrl = new URL(`${API_BASE}/search/`);
-        relatedUrl.searchParams.set('query', relatedQuery || 'all');
-        relatedUrl.searchParams.set('order', 'latest');
-        relatedUrl.searchParams.set('page', '1');
-        relatedUrl.searchParams.set('per_page', '12');
-        relatedUrl.searchParams.set('thumbsize', 'big');
-        relatedUrl.searchParams.set('gay', '0');
-        relatedUrl.searchParams.set('lq', '1');
-        relatedUrl.searchParams.set('format', 'json');
-        const relatedResponse = await fetch(relatedUrl, { signal: controller.signal });
-        if (relatedResponse.ok) {
-          const data = await relatedResponse.json();
-          setRelated((data.videos || []).filter((item) => item.id !== id && !FORBIDDEN_REGEX.test(`${item.title || ''} ${item.keywords || ''}`)).slice(0, 10).map(normalizeVideo));
+        const res = await fetch(`${API_BASE}/id/?id=${encodeURIComponent(videoId)}&thumbsize=big&format=json`);
+        if (!res.ok) throw new Error(`Video not found (status ${res.status})`);
+        const data = await res.json();
+        if (data && data.id) {
+          const norm = normalizeVideo(data);
+          if (!norm) throw new Error('Video is not available');
+          if (!isCancelled) {
+            setVideo(norm);
+            try {
+              const saved = JSON.parse(localStorage.getItem(SAVED_VIDEOS_KEY) || '[]');
+              const favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+              setFavorite((Array.isArray(saved) && saved.some((item) => item.id === norm.id)) || favorites.includes(norm.id));
+              const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]').filter((entry) => entry.id !== norm.id);
+              history.unshift({
+                id: norm.id,
+                url: `/watch?id=${encodeURIComponent(norm.id)}`,
+                title: norm.title,
+                thumbnail: norm.thumbnail,
+                watchedAt: new Date().toISOString(),
+              });
+              localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 24)));
+            } catch (_) {}
+            const searchTag = norm.tags[0] || 'popular';
+            const relRes = await fetch(`${API_BASE}/search/?query=${encodeURIComponent(searchTag)}&per_page=12&thumbsize=big&gay=0&lq=1&format=json`);
+            if (relRes.ok) {
+              const relData = await relRes.json();
+              if (relData && Array.isArray(relData.videos) && !isCancelled) {
+                const normRelated = relData.videos
+                  .filter((item) => item.id !== norm.id)
+                  .map(normalizeVideo)
+                  .filter(Boolean)
+                  .slice(0, 8);
+                setRelated(normRelated);
+              }
+            }
+          }
+        } else {
+          throw new Error('Video details could not be loaded');
         }
-      } catch (error) {
-        if (error.name !== 'AbortError') setState('unavailable');
+      } catch (err) {
+        if (!isCancelled) setError(err.message || 'Error loading video');
+      } finally {
+        if (!isCancelled) setLoading(false);
       }
     }
 
-    loadVideo();
-    return () => controller.abort();
-  }, [id, validId]);
+    fetchVideo();
+    return () => {
+      isCancelled = true;
+    };
+  }, [videoId]);
 
   const toggleFavorite = () => {
     if (!video) return;
@@ -142,19 +154,40 @@ export default function LiveWatchClient() {
       if (favorites.has(video.id)) favorites.delete(video.id);
       else favorites.add(video.id);
       localStorage.setItem(FAVORITES_KEY, JSON.stringify([...favorites]));
-      const stored = JSON.parse(localStorage.getItem(SAVED_VIDEOS_KEY) || '[]');
-      const saved = Array.isArray(stored) ? stored.filter((item) => item?.id !== video.id) : [];
-      if (favorites.has(video.id)) saved.unshift(video);
-      localStorage.setItem(SAVED_VIDEOS_KEY, JSON.stringify(saved.slice(0, 100)));
+      const saved = JSON.parse(localStorage.getItem(SAVED_VIDEOS_KEY) || '[]');
+      const savedVideos = Array.isArray(saved) ? saved.filter((item) => item?.id !== video.id) : [];
+      if (favorites.has(video.id)) {
+        savedVideos.unshift({
+          id: video.id,
+          canonicalUrl: `/watch?id=${encodeURIComponent(video.id)}`,
+          title: video.title,
+          thumbnail: video.thumbnail,
+          views: video.views,
+          rating: video.rating,
+          length_min: video.length_min,
+          category: video.category,
+          tags: video.tags,
+          uploadDate: video.uploadDate,
+        });
+      }
+      localStorage.setItem(SAVED_VIDEOS_KEY, JSON.stringify(savedVideos.slice(0, 100)));
       setFavorite(favorites.has(video.id));
     } catch (_) {}
   };
 
-  if (state === 'loading') {
-    return <div className="page-wrapper player-page"><div className="player-box" aria-label="Loading video" /></div>;
+  if (loading) {
+    return (
+      <div className="page-wrapper player-page">
+        <div className="player-layout">
+          <div className="player-main">
+            <div className="player-box skeleton" style={{ minHeight: '360px' }} />
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  if (state !== 'ready' || !video) {
+  if (error || !video) {
     return (
       <div className="page-wrapper player-page">
         <div className="empty-block">
@@ -184,26 +217,8 @@ export default function LiveWatchClient() {
               {video.rating > 0 && <span><Star size={14} /> {video.rating.toFixed(2)}/5 rating</span>}
               <span><Clock size={14} /> {video.length_min || '—'}</span>
             </div>
-            <div className="video-description-wrap">
-              <h2 className="video-section-subtitle">Video Description</h2>
-              <p className="video-info-desc">{video.description}</p>
-            </div>
-            {video.tags && video.tags.length > 0 && (
-              <div className="video-tags-wrap">
-                <span className="video-tags-label">Tags:</span>
-                <div className="keyword-tags">
-                  {video.tags.map((tag) => (
-                    <Link
-                      key={tag}
-                      href={`/search?query=${encodeURIComponent(tag)}`}
-                      className="keyword-tag"
-                    >
-                      #{tag}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
+
+            {/* Quick Actions directly beneath metadata */}
             <div className="video-actions">
               <button type="button" className="back-btn" onClick={toggleFavorite} aria-pressed={favorite}>
                 <Heart size={16} fill={favorite ? 'currentColor' : 'none'} /> {favorite ? 'Saved' : 'Save video'}
@@ -218,6 +233,36 @@ export default function LiveWatchClient() {
                 <Download size={16} /> Download HD
               </a>
             </div>
+
+            {/* Collapsible Details */}
+            <details className="video-details-accordion" open>
+              <summary className="video-details-summary">
+                <span>Video Details</span>
+                <ChevronDown size={16} className="summary-chevron" aria-hidden="true" />
+              </summary>
+              <div className="video-details-body">
+                <div className="video-description-wrap">
+                  <h2 className="video-section-subtitle">Video Description</h2>
+                  <p className="video-info-desc">{video.description}</p>
+                </div>
+                {video.tags && video.tags.length > 0 && (
+                  <div className="video-tags-wrap">
+                    <span className="video-tags-label">Tags:</span>
+                    <div className="keyword-tags">
+                      {video.tags.map((tag) => (
+                        <Link
+                          key={tag}
+                          href={`/search?query=${encodeURIComponent(tag)}`}
+                          className="keyword-tag"
+                        >
+                          #{tag}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </details>
           </div>
         </div>
         {related.length > 0 && (
