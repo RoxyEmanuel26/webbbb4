@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { Search, Heart, Flame, Tag, ArrowRight } from 'lucide-react';
+import { Search, Heart, Flame, Tag, ArrowRight, Shuffle } from 'lucide-react';
 import { ALL_CATEGORIES } from '@/data/allCategories';
 import './Navbar.css';
 
@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { label: 'Stars',       path: '/pornstars' },
   { label: 'Collections', path: '/collections' },
   { label: 'Categories',  path: '/cats' },
+  { label: 'Random',      path: '/random', icon: Shuffle },
   { label: 'Saved',       path: '/saved', icon: Heart },
 ];
 

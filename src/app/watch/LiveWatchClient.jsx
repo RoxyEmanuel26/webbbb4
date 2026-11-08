@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { ArrowLeft, Clock, Eye, Heart, Star, Download, ChevronDown, Film, X } from 'lucide-react';
+import { ArrowLeft, Clock, Eye, Heart, Star, Download, ChevronDown, Film, X, Play } from 'lucide-react';
 import VideoCard from '@/components/VideoCard';
 import VideoPlayerFacade from '@/components/VideoPlayerFacade';
 import { recordVisit, trackLocalEvent } from '@/lib/privacyMetrics';
@@ -82,6 +82,7 @@ export default function LiveWatchClient() {
   const [error, setError] = useState(null);
   const [favorite, setFavorite] = useState(false);
   const [previewThumb, setPreviewThumb] = useState(null);
+  const [autoplay, setAutoplay] = useState(true);
 
   useEffect(() => {
     if (!videoId) {
@@ -371,6 +372,51 @@ export default function LiveWatchClient() {
         </div>
         {related.length > 0 && (
           <aside className="player-sidebar">
+            {/* Up Next Card */}
+            {related[0] && (
+              <div className="up-next-card">
+                <div className="up-next-header">
+                  <span className="up-next-label">
+                    <Play size={12} fill="var(--color-accent)" style={{ color: 'var(--color-accent)' }} /> Up Next
+                  </span>
+                  <label className="autoplay-toggle" title="Toggle autoplay next video">
+                    <span className="autoplay-text">Autoplay</span>
+                    <input
+                      type="checkbox"
+                      checked={autoplay}
+                      onChange={(e) => setAutoplay(e.target.checked)}
+                      aria-label="Autoplay next video"
+                    />
+                    <span className="autoplay-slider" />
+                  </label>
+                </div>
+                <div className="up-next-body">
+                  <Link href={`/watch?id=${encodeURIComponent(related[0].id)}`} className="up-next-thumb-link">
+                    <img
+                      src={related[0].thumbnail}
+                      alt={related[0].title}
+                      className="up-next-thumb"
+                      width="120"
+                      height="68"
+                      loading="lazy"
+                    />
+                    {related[0].length_min && (
+                      <span className="up-next-duration">{related[0].length_min}</span>
+                    )}
+                  </Link>
+                  <div className="up-next-details">
+                    <Link href={`/watch?id=${encodeURIComponent(related[0].id)}`} className="up-next-title">
+                      {related[0].title}
+                    </Link>
+                    <span className="up-next-views">{formatViews(related[0].views)} views</span>
+                    <Link href={`/watch?id=${encodeURIComponent(related[0].id)}`} className="play-next-btn">
+                      Play Next ▶
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <h2 className="sidebar-heading">Related videos</h2>
             <div className="related-video-list">
               {related.map((item) => <div key={item.id} onClick={() => trackLocalEvent('related_click')}><VideoCard video={item} compact /></div>)}

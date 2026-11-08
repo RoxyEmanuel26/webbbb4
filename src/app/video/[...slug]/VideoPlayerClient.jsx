@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Clock, Eye, Heart, Star, Download, ChevronDown, Film, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Calendar, Clock, Eye, Heart, Star, Download, ChevronDown, Film, X, Play } from "lucide-react";
 import VideoCard from "@/components/VideoCard";
 import VideoPlayerFacade from "@/components/VideoPlayerFacade";
 import { recordVisit, trackLocalEvent } from "@/lib/privacyMetrics";
@@ -23,9 +24,30 @@ function formatDuration(seconds) {
   return minutes < 60 ? `${minutes} min` : `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
 }
 
+function getNextVideoHref(v) {
+  if (!v) return '/';
+  if (v.canonicalSlug) return `/video/${v.canonicalSlug}`;
+  if (v.canonicalUrl) {
+    try {
+      const u = new URL(v.canonicalUrl, 'https://www.nicevx.com');
+      return `${u.pathname}${u.search}`;
+    } catch (_) {}
+  }
+  return `/watch?id=${encodeURIComponent(v.id)}`;
+}
+
 export default function VideoPlayerClient({ video, initialRelated = [], relatedCollections = [], discoveryContext = null }) {
+  const router = useRouter();
   const [favorite, setFavorite] = useState(false);
   const [previewThumb, setPreviewThumb] = useState(null);
+  const [autoplay, setAutoplay] = useState(true);
+  const [countdown, setCountdown] = useState(null);
+  const [showStickyNext, setShowStickyNext] = useState(false);
+  const [dismissSticky, setDismissSticky] = useState(false);
+  const countdownTimer = useRef(null);
+
+  const nextVideo = initialRelated && initialRelated.length > 0 ? initialRelated[0] : null;
+
   const videoTags = Array.isArray(video.tags) && video.tags.length > 0
     ? video.tags
     : (video.keywords ? String(video.keywords).split(',').map((t) => t.trim()).filter(Boolean) : []);
@@ -36,9 +58,33 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
     `${video.title || ""} ${video.keywords || ""} ${(video.tags || []).join(" ")}`,
   );
 
+  const handleToggleAutoplay = (enabled) => {
+    setAutoplay(enabled);
+    if (!enabled && countdownTimer.current) {
+      clearInterval(countdownTimer.current);
+      countdownTimer.current = null;
+      setCountdown(null);
+    }
+    try {
+      localStorage.setItem('nicevx_autoplay_next', String(enabled));
+    } catch (_) {}
+  };
+
+  const cancelCountdown = () => {
+    if (countdownTimer.current) {
+      clearInterval(countdownTimer.current);
+      countdownTimer.current = null;
+    }
+    setCountdown(null);
+  };
+
   useEffect(() => {
     recordVisit();
     try {
+      const savedAutoplay = localStorage.getItem('nicevx_autoplay_next');
+      if (savedAutoplay !== null) {
+        setAutoplay(savedAutoplay === 'true');
+      }
       const saved = JSON.parse(localStorage.getItem(SAVED_VIDEOS_KEY) || "[]");
       const favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]");
       setFavorite((Array.isArray(saved) && saved.some((item) => item.id === video.id)) || favorites.includes(video.id));
@@ -54,7 +100,21 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
       });
       localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 24)));
     } catch (_) {}
-  }, [video]);
+
+    const handleScroll = () => {
+      if (window.scrollY > 480 && !dismissSticky) {
+        setShowStickyNext(true);
+      } else {
+        setShowStickyNext(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (countdownTimer.current) clearInterval(countdownTimer.current);
+    };
+  }, [video, dismissSticky]);
 
   const toggleFavorite = () => {
     try {
@@ -329,6 +389,51 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
         </div>
 
         <aside className="player-sidebar">
+          {/* Up Next Autoplay Card */}
+          {nextVideo && (
+            <div className="up-next-card">
+              <div className="up-next-header">
+                <span className="up-next-label">
+                  <Play size={12} fill="var(--color-accent)" style={{ color: 'var(--color-accent)' }} /> Up Next
+                </span>
+                <label className="autoplay-toggle" title="Toggle autoplay next video">
+                  <span className="autoplay-text">Autoplay</span>
+                  <input
+                    type="checkbox"
+                    checked={autoplay}
+                    onChange={(e) => handleToggleAutoplay(e.target.checked)}
+                    aria-label="Autoplay next video"
+                  />
+                  <span className="autoplay-slider" />
+                </label>
+              </div>
+              <div className="up-next-body">
+                <Link href={getNextVideoHref(nextVideo)} className="up-next-thumb-link">
+                  <img
+                    src={nextVideo.thumbnail}
+                    alt={nextVideo.title}
+                    className="up-next-thumb"
+                    width="120"
+                    height="68"
+                    loading="lazy"
+                  />
+                  {nextVideo.length_min && (
+                    <span className="up-next-duration">{nextVideo.length_min}</span>
+                  )}
+                </Link>
+                <div className="up-next-details">
+                  <Link href={getNextVideoHref(nextVideo)} className="up-next-title">
+                    {nextVideo.title}
+                  </Link>
+                  <span className="up-next-views">{formatViews(nextVideo.views)} views</span>
+                  <Link href={getNextVideoHref(nextVideo)} className="play-next-btn">
+                    Play Next ▶
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+
           <h2 className="sidebar-heading">Related videos</h2>
           <div className="related-video-list">
             {initialRelated.map((related) => (
@@ -342,6 +447,31 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
           </div>
         </aside>
       </div>
+
+      {/* Floating Sticky Next Bar when scrolled down */}
+      {showStickyNext && nextVideo && (
+        <aside className="sticky-next-bar" aria-label="Up next quick bar">
+          <div className="sticky-next-inner">
+            <div className="sticky-next-info">
+              <span className="sticky-next-label">Up Next:</span>
+              <span className="sticky-next-title">{nextVideo.title}</span>
+            </div>
+            <div className="sticky-next-actions">
+              <Link href={getNextVideoHref(nextVideo)} className="sticky-play-btn">
+                Play Next ▶
+              </Link>
+              <button
+                type="button"
+                className="sticky-close-btn"
+                onClick={() => setDismissSticky(true)}
+                aria-label="Dismiss up next bar"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        </aside>
+      )}
     </div>
   );
 }
