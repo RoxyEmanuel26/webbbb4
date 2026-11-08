@@ -73,3 +73,4 @@ prompt-perbaikan-seo-website.md
 docs
 !scripts/build-models-sitemap.cjs
 
+!scripts/sync-eporner-removed.cjs

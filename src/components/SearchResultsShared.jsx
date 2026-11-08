@@ -16,6 +16,7 @@ const SORT_OPTIONS = [
   { value: 'latest',       label: '🕐 Latest' },
   { value: 'top-rated',    label: '⭐ Top Rated' },
   { value: 'most-popular', label: '🔥 Most Viewed' },
+  { value: 'longest',      label: '🎬 Longest' },
   { value: 'top-weekly',   label: '📈 This Week' },
   { value: 'top-monthly',  label: '📅 This Month' },
 ];

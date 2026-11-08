@@ -19,6 +19,7 @@
     "test:seo-render": "node scripts/test-seo-render.cjs",
     "test:jsonld": "node scripts/test-jsonld.cjs",
     "test:ads": "node scripts/test-adsterra-placement.cjs",
+    "sync:removed": "node scripts/sync-eporner-removed.cjs",
     "indexnow": "node scripts/indexnow.cjs",
     "lint": "next lint"
   },
