@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { ArrowLeft, Clock, Eye, Heart, Star, Download, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Clock, Eye, Heart, Star, Download, ChevronDown, Film, X } from 'lucide-react';
 import VideoCard from '@/components/VideoCard';
 import VideoPlayerFacade from '@/components/VideoPlayerFacade';
 import { recordVisit, trackLocalEvent } from '@/lib/privacyMetrics';
@@ -81,6 +81,7 @@ export default function LiveWatchClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [favorite, setFavorite] = useState(false);
+  const [previewThumb, setPreviewThumb] = useState(null);
 
   useEffect(() => {
     if (!videoId) {
@@ -249,6 +250,93 @@ export default function LiveWatchClient() {
                 <Download size={16} /> Download HD
               </a>
             </div>
+
+            {/* Scene Highlights Storyboard Rail */}
+            {Array.isArray(video.thumbs) && video.thumbs.length > 1 && (
+              <section className="video-storyboard-section" aria-label="Scene Highlights Storyboard">
+                <div className="video-storyboard-header">
+                  <h2 className="video-storyboard-title">
+                    <Film size={15} style={{ color: 'var(--color-accent)' }} /> Scene Highlights ({video.thumbs.length} Key Moments)
+                  </h2>
+                  <span className="video-storyboard-tip">Click frame to preview</span>
+                </div>
+                <div className="video-storyboard-rail" tabIndex={0} role="region" aria-label="Scene thumbnails carousel">
+                  {video.thumbs.map((thumb, idx) => {
+                    const thumbSrc = typeof thumb === 'string' ? thumb : thumb?.src;
+                    if (!thumbSrc) return null;
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        className={`video-storyboard-item ${previewThumb?.index === idx ? 'active' : ''}`}
+                        onClick={() => setPreviewThumb({ src: thumbSrc, index: idx })}
+                        aria-label={`View scene frame ${idx + 1} of ${video.thumbs.length}`}
+                      >
+                        <img
+                          src={thumbSrc}
+                          alt={`${video.title} scene frame ${idx + 1}`}
+                          loading="lazy"
+                          width="160"
+                          height="90"
+                          className="video-storyboard-img"
+                        />
+                        <span className="video-storyboard-badge">#{idx + 1}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Inline Frame Modal Preview if clicked */}
+                {previewThumb && (
+                  <div className="video-storyboard-modal" onClick={() => setPreviewThumb(null)}>
+                    <div className="video-storyboard-modal-content" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        className="video-storyboard-modal-close"
+                        onClick={() => setPreviewThumb(null)}
+                        aria-label="Close scene preview"
+                      >
+                        <X size={18} />
+                      </button>
+                      <img
+                        src={previewThumb.src}
+                        alt={`Scene preview moment ${previewThumb.index + 1}`}
+                        className="video-storyboard-modal-img"
+                      />
+                      <div className="video-storyboard-modal-caption">
+                        <span>Scene Highlight #{previewThumb.index + 1} of {video.thumbs.length}</span>
+                        <div className="video-storyboard-modal-nav">
+                          <button
+                            type="button"
+                            className="storyboard-nav-btn"
+                            disabled={previewThumb.index <= 0}
+                            onClick={() => {
+                              const prev = previewThumb.index - 1;
+                              const prevSrc = typeof video.thumbs[prev] === 'string' ? video.thumbs[prev] : video.thumbs[prev]?.src;
+                              if (prevSrc) setPreviewThumb({ src: prevSrc, index: prev });
+                            }}
+                          >
+                            ◀ Prev
+                          </button>
+                          <button
+                            type="button"
+                            className="storyboard-nav-btn"
+                            disabled={previewThumb.index >= video.thumbs.length - 1}
+                            onClick={() => {
+                              const next = previewThumb.index + 1;
+                              const nextSrc = typeof video.thumbs[next] === 'string' ? video.thumbs[next] : video.thumbs[next]?.src;
+                              if (nextSrc) setPreviewThumb({ src: nextSrc, index: next });
+                            }}
+                          >
+                            Next ▶
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </section>
+            )}
 
             {/* Collapsible Details */}
             <details className="video-details-accordion" open>

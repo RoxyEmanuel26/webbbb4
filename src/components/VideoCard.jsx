@@ -26,8 +26,11 @@ const createSlug = (title) => {
 const VideoCard = ({ video, compact = false, priority = false }) => {
   const [thumbIdx, setThumbIdx] = useState(0);
   const [failedSrc, setFailedSrc] = useState("");
+  const [isScrubbing, setIsScrubbing] = useState(false);
+  const [scrubPercent, setScrubPercent] = useState(0);
   const hoverInterval = useRef(null);
   const isPrefetched = useRef(false);
+  const thumbWrapRef = useRef(null);
   
   const thumbs = video.thumbs || [];
   const src = thumbs[thumbIdx]?.src || video.default_thumb?.src || video.thumbnail || '/logo.webp';
@@ -44,33 +47,62 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
   const prefetchThumbs = () => {
     if (!isPrefetched.current && thumbs.length > 1) {
       thumbs.forEach((t) => {
-        const img = new Image();
-        img.src = t.src;
+        const thumbUrl = typeof t === 'string' ? t : t?.src;
+        if (thumbUrl) {
+          const img = new Image();
+          img.src = thumbUrl;
+        }
       });
       isPrefetched.current = true;
     }
   };
 
-  /* Hover & Touch: cycle through preview thumbs */
-  const handleStartInteraction = () => {
-    if (thumbs.length > 1) {
-      prefetchThumbs();
-      let currentIdx = 0;
-      if (!hoverInterval.current) {
-        hoverInterval.current = setInterval(() => {
-          currentIdx = (currentIdx + 1) % thumbs.length;
-          setThumbIdx(currentIdx);
-        }, 500); // cycle image every 500ms
-      }
-    }
-  };
-  
-  const handleEndInteraction = () => {
+  /* Storyboard Scrubber: Map mouse position to thumb index */
+  const handleMouseMove = (e) => {
+    if (thumbs.length <= 1) return;
+    prefetchThumbs();
     if (hoverInterval.current) {
       clearInterval(hoverInterval.current);
       hoverInterval.current = null;
     }
+    const rect = thumbWrapRef.current?.getBoundingClientRect();
+    if (!rect || rect.width <= 0) return;
+    const x = Math.min(Math.max(e.clientX - rect.left, 0), rect.width);
+    const ratio = x / rect.width;
+    const index = Math.min(Math.floor(ratio * thumbs.length), thumbs.length - 1);
+    setThumbIdx(index);
+    setScrubPercent(ratio * 100);
+    if (!isScrubbing) setIsScrubbing(true);
+  };
+
+  const handleMouseEnter = () => {
+    if (thumbs.length > 1) {
+      prefetchThumbs();
+      setIsScrubbing(true);
+    }
+  };
+  
+  const handleMouseLeave = () => {
+    if (hoverInterval.current) {
+      clearInterval(hoverInterval.current);
+      hoverInterval.current = null;
+    }
+    setIsScrubbing(false);
     setThumbIdx(0);
+    setScrubPercent(0);
+  };
+
+  const handleTouchMove = (e) => {
+    if (thumbs.length <= 1 || !e.touches || !e.touches[0]) return;
+    prefetchThumbs();
+    const rect = thumbWrapRef.current?.getBoundingClientRect();
+    if (!rect || rect.width <= 0) return;
+    const x = Math.min(Math.max(e.touches[0].clientX - rect.left, 0), rect.width);
+    const ratio = x / rect.width;
+    const index = Math.min(Math.floor(ratio * thumbs.length), thumbs.length - 1);
+    setThumbIdx(index);
+    setScrubPercent(ratio * 100);
+    if (!isScrubbing) setIsScrubbing(true);
   };
 
   const rating   = parseFloat(video.rate ?? video.rating ?? 0);
@@ -103,18 +135,21 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
   return (
     <div
       className={`vcard ${compact ? 'vcard--compact' : ''}`}
-      onMouseEnter={handleStartInteraction}
-      onMouseLeave={handleEndInteraction}
-      onTouchStart={handleStartInteraction}
-      onTouchEnd={handleEndInteraction}
-      onTouchCancel={handleEndInteraction}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onTouchStart={handleMouseEnter}
+      onTouchEnd={handleMouseLeave}
+      onTouchCancel={handleMouseLeave}
     >
-      {/* Thumbnail */}
+      {/* Thumbnail with Storyboard Scrubber */}
       <Link 
+        ref={thumbWrapRef}
         href={videoHref}
         prefetch={false}
         className="vcard__thumb-wrap" 
         aria-label={video.title}
+        onMouseMove={handleMouseMove}
+        onTouchMove={handleTouchMove}
         onContextMenu={(e) => e.preventDefault()}
       >
         <img
@@ -141,6 +176,21 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
         </span>
         {/* HD Badge */}
         <span className="vcard__hd-badge">HD</span>
+        {/* Storyboard Scrubber Progress Track */}
+        {thumbs.length > 1 && isScrubbing && (
+          <div className="vcard__scrub-track" aria-hidden="true">
+            <div
+              className="vcard__scrub-bar"
+              style={{ width: `${Math.max(scrubPercent, 4)}%` }}
+            />
+          </div>
+        )}
+        {/* Frame indicator badge */}
+        {thumbs.length > 1 && isScrubbing && (
+          <span className="vcard__frame-badge" aria-hidden="true">
+            {thumbIdx + 1}/{thumbs.length}
+          </span>
+        )}
       </Link>
 
       {/* Info */}
