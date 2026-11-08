@@ -7,6 +7,7 @@ import { ArrowLeft, Clock, Eye, Heart, Star, Download, ChevronDown } from 'lucid
 import VideoCard from '@/components/VideoCard';
 import VideoPlayerFacade from '@/components/VideoPlayerFacade';
 import { recordVisit, trackLocalEvent } from '@/lib/privacyMetrics';
+import { findModelInText } from '@/data/pornstars';
 import '../../pages/Pages.css';
 
 const API_BASE = 'https://www.eporner.com/api/v2/video';
@@ -212,6 +213,21 @@ export default function LiveWatchClient() {
           </div>
           <div className="video-info-block">
             <h1 className="video-info-title">{video.title}</h1>
+
+            {/* Starring Performer Badge if detected */}
+            {(() => {
+              const starringModel = findModelInText(`${video.title} ${video.description || ''} ${(video.tags || []).join(' ')}`);
+              return starringModel ? (
+                <div className="starring-model-banner">
+                  <Star size={13} fill="var(--color-accent)" style={{ color: 'var(--color-accent)' }} />
+                  <span>Starring: </span>
+                  <Link href={`/pornstar/${starringModel.slug}`} className="starring-model-link">
+                    {starringModel.name}
+                  </Link>
+                </div>
+              ) : null;
+            })()}
+
             <div className="video-info-meta">
               <span><Eye size={14} /> {formatViews(video.views)} views</span>
               {video.rating > 0 && <span><Star size={14} /> {video.rating.toFixed(2)}/5 rating</span>}

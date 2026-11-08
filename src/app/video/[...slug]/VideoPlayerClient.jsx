@@ -6,6 +6,7 @@ import { ArrowLeft, Calendar, Clock, Eye, Heart, Star, Download, ChevronDown } f
 import VideoCard from "@/components/VideoCard";
 import VideoPlayerFacade from "@/components/VideoPlayerFacade";
 import { recordVisit, trackLocalEvent } from "@/lib/privacyMetrics";
+import { findModelInText } from "@/data/pornstars";
 import "../../../pages/Pages.css";
 
 const FAVORITES_KEY = "nicevx_favorites_v1";
@@ -27,6 +28,10 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
   const videoTags = Array.isArray(video.tags) && video.tags.length > 0
     ? video.tags
     : (video.keywords ? String(video.keywords).split(',').map((t) => t.trim()).filter(Boolean) : []);
+
+  const starringModel = findModelInText(
+    `${video.title || ""} ${video.keywords || ""} ${(video.tags || []).join(" ")}`,
+  );
 
   useEffect(() => {
     recordVisit();
@@ -104,6 +109,18 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
             <h1 className="video-info-title">
               {video.title}
             </h1>
+
+            {/* Starring Performer Badge if detected */}
+            {starringModel && (
+              <div className="starring-model-banner">
+                <Star size={13} fill="var(--color-accent)" style={{ color: 'var(--color-accent)' }} />
+                <span>Starring: </span>
+                <Link href={`/pornstar/${starringModel.slug}`} className="starring-model-link">
+                  {starringModel.name}
+                </Link>
+              </div>
+            )}
+
             <div className="video-info-meta">
               <span>
                 <Eye size={14} /> {formatViews(video.views)} views

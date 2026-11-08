@@ -71,3 +71,5 @@ scripts/*
 !scripts/test-jsonld.cjs
 prompt-perbaikan-seo-website.md
 docs
+!scripts/build-models-sitemap.cjs
+

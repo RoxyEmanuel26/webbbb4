@@ -88,6 +88,15 @@ export function videoObjectSchema(video) {
   if (Array.isArray(video.tags) && video.tags.length > 0) {
     schema.keywords = video.tags.join(', ');
   }
+  if (video.actor || video.model) {
+    const actorName = video.actor || video.model;
+    const actorSlug = actorName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    schema.actor = {
+      '@type': 'Person',
+      name: actorName,
+      url: `${SITE_URL}/pornstar/${actorSlug}`,
+    };
+  }
   if (Number(video.views) > 0) {
     schema.interactionStatistic = {
       '@type': 'InteractionCounter',
@@ -97,6 +106,20 @@ export function videoObjectSchema(video) {
   }
 
   return schema;
+}
+
+export function personSchema({ name, slug, bio, image, topGenres }) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name,
+    url: `${SITE_URL}/pornstar/${slug}`,
+    description: bio,
+    jobTitle: 'Adult Film Performer & Model',
+    isFamilyFriendly: false,
+    ...(image && { image }),
+    ...(topGenres && topGenres.length > 0 && { knowsAbout: topGenres }),
+  };
 }
 
 export function itemListSchema({ name, url, items = [], maxItems = 36 }) {

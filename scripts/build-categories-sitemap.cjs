@@ -60,6 +60,18 @@ const videoXml = fs.readFileSync(path.join(__dirname, '../public/sitemaps/sitema
 const videoDates = Array.from(videoXml.matchAll(/<lastmod>([^<]+)<\/lastmod>/g), (m) => m[1]);
 const videoLastmod = latestDate(videoDates);
 
+const modelsSitemapPath = path.join(__dirname, '../public/sitemaps/sitemap-models.xml');
+let modelsEntry = '';
+if (fs.existsSync(modelsSitemapPath)) {
+  const modelsXml = fs.readFileSync(modelsSitemapPath, 'utf8');
+  const modelsDates = Array.from(modelsXml.matchAll(/<lastmod>([^<]+)<\/lastmod>/g), (m) => m[1]);
+  const modelsLastmod = latestDate(modelsDates);
+  modelsEntry = `  <sitemap>
+    <loc>${SITE_URL}/sitemaps/sitemap-models.xml</loc>
+    <lastmod>${modelsLastmod}</lastmod>
+  </sitemap>\n`;
+}
+
 const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
@@ -74,8 +86,8 @@ const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
     <loc>${SITE_URL}/sitemaps/sitemap-video-1.xml</loc>
     <lastmod>${videoLastmod}</lastmod>
   </sitemap>
-</sitemapindex>
+${modelsEntry}</sitemapindex>
 `;
 
 fs.writeFileSync(path.join(__dirname, '../public/sitemap.xml'), indexXml, 'utf8');
-console.log('Updated public/sitemap.xml with static, categories, and video sitemaps');
+console.log('Updated public/sitemap.xml with static, categories, video, and models sitemaps');
