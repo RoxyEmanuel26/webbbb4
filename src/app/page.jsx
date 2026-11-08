@@ -82,9 +82,25 @@ export default function Home() {
   return (
     <div className="home-page">
       <JsonLd data={[websiteSchema(), organizationSchema()]} />
+
+      {/* Top Feed: Trending Tags & Latest Videos with Sort & Duration Filter */}
+      <Suspense fallback={<SkeletonGrid />}>
+        <SearchResultsShared
+          query="all"
+          pageTitle="Latest videos"
+          headingLevel="h2"
+          seoTitle="Free HD Porn Videos & Curated Collections | NICEVX"
+          seoDesc="Watch free HD adult videos and curated collections on NICEVX. Stream high-definition scenes updated daily with verified durations, ratings, and smooth playback."
+          seoCanonical="https://www.nicevx.com/"
+          seoQuery="Videos"
+          trendTags={getTrendTags(10)}
+        />
+      </Suspense>
+
+      {/* Bottom Showcase: Curated Daily Picks, Popular Videos, Niche Discovery, Collections */}
       <section className="page-wrapper content-area" aria-labelledby="home-title">
         <h1 id="home-title" className="section-title">Free HD adult videos, curated daily</h1>
-        <p className="home-intro">Find videos worth watching, compare duration and ratings, then browse the latest additions below.</p>
+        <p className="home-intro">Find videos worth watching, compare duration and ratings across our curated catalog.</p>
         <h2 className="section-title">Popular videos</h2>
         <div className="video-grid home-picks-grid">
           {picks.map((video, index) => (
@@ -130,18 +146,6 @@ export default function Home() {
           </nav>
         )}
       </section>
-      <Suspense fallback={<SkeletonGrid />}>
-        <SearchResultsShared
-          query="all"
-          pageTitle="Latest videos"
-          headingLevel="h2"
-          seoTitle="Free HD Porn Videos & Curated Collections | NICEVX"
-          seoDesc="Watch free HD adult videos and curated collections on NICEVX. Stream high-definition scenes updated daily with verified durations, ratings, and smooth playback."
-          seoCanonical="https://www.nicevx.com/"
-          seoQuery="Videos"
-          trendTags={getTrendTags(10)}
-        />
-      </Suspense>
     </div>
   );
 }
