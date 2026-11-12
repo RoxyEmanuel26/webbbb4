@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import SearchResultsShared from '@/components/SearchResultsShared';
 import VideoCard from '@/components/VideoCard';
 import JsonLd from '@/components/JsonLd';
-import { breadcrumbListSchema, itemListSchema } from '@/lib/jsonld';
+import { breadcrumbListSchema, itemListSchema, faqPageSchema } from '@/lib/jsonld';
 import { getCollection, toVideoCard } from '@/lib/catalog';
 import {
   getCategoryVideos,
@@ -135,6 +135,23 @@ export default async function CategoryPage({ params }) {
     { name: titleCategory, url: `/cat/${slug}` },
   ];
 
+  const categoryFaqs = indexable
+    ? [
+        {
+          question: `What ${titleCategory} videos are featured on NICEVX?`,
+          answer: `This hub brings together ${stats.count > 0 ? stats.count : 'selected'} ${titleCategory} videos in HD, combining top-rated releases with fresh additions sorted by popularity, rating, and length.`,
+        },
+        {
+          question: `Can I filter ${titleCategory} videos by duration or sort order?`,
+          answer: `Yes. Use the interactive filter bar below the featured grid to sort ${titleCategory} clips by Latest, Top Rated, Most Viewed, or filter by short, medium, and full-length scenes.`,
+        },
+        {
+          question: `Where can I find full-length ${titleCategory} movies and performers?`,
+          answer: `You can jump from this category to NICEVX Full-Length Movies (25+ min), browse the Pornstars directory, or explore related topic collections.`,
+        },
+      ]
+    : [];
+
   const jsonLdData = [
     breadcrumbListSchema(breadcrumbs),
   ];
@@ -147,6 +164,9 @@ export default async function CategoryPage({ params }) {
         maxItems: 36,
       })
     );
+  }
+  if (categoryFaqs.length > 0) {
+    jsonLdData.push(faqPageSchema(categoryFaqs));
   }
 
   return (
@@ -217,6 +237,43 @@ export default async function CategoryPage({ params }) {
           headingLevel="h2"
         />
       </Suspense>
+
+      {categoryFaqs.length > 0 && (
+        <section className="page-wrapper" style={{ marginTop: '2.5rem', marginBottom: '1.5rem', maxWidth: '860px' }}>
+          <h2 className="related-cats-title" style={{ marginBottom: '1rem' }}>
+            About {titleCategory} Videos &amp; FAQ
+          </h2>
+          <div style={{ display: 'grid', gap: '0.9rem' }}>
+            {categoryFaqs.map((faq) => (
+              <div
+                key={faq.question}
+                style={{
+                  padding: '0.95rem 1.15rem',
+                  borderRadius: '10px',
+                  background: 'var(--color-surface, rgba(255,255,255,0.03))',
+                  border: '1px solid var(--color-border, rgba(255,255,255,0.08))',
+                }}
+              >
+                <h3 style={{ fontSize: '0.98rem', marginBottom: '0.35rem' }}>{faq.question}</h3>
+                <p style={{ margin: 0, color: 'var(--color-muted)', lineHeight: 1.6, fontSize: '0.92rem' }}>
+                  {faq.answer}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1.25rem' }}>
+            <Link href="/movies" prefetch={false} className="related-cat-link">
+              Full-Length Movies (25+ min)
+            </Link>
+            <Link href="/pornstars" prefetch={false} className="related-cat-link">
+              Popular Pornstars
+            </Link>
+            <Link href="/collections" prefetch={false} className="related-cat-link">
+              Topic Collections
+            </Link>
+          </div>
+        </section>
+      )}
 
       {related.length > 0 && (
         <nav className="related-cats" aria-label="Browse more categories">

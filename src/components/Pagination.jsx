@@ -57,6 +57,7 @@ const Pagination = ({ currentPage, totalPages }) => {
       <Link
         href={getPageLink(page)}
         prefetch={false}
+        rel="nofollow"
         className={`pager__btn ${extraClass}`}
         aria-label={ariaLabel}
         title={title}

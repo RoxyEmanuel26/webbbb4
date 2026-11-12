@@ -6,6 +6,19 @@ export const metadata = {
   title: "About NICEVX – Free HD Adult Video Platform | NICEVX",
   description: "Learn about NICEVX, an index of verified free adult videos, curated collections, privacy-first features, and content standards.",
   alternates: { canonical: "https://www.nicevx.com/about" },
+  openGraph: {
+    title: "About NICEVX – Free HD Adult Video Platform | NICEVX",
+    description: "Learn about NICEVX, an index of verified free adult videos, curated collections, privacy-first features, and content standards.",
+    url: "https://www.nicevx.com/about",
+    type: "website",
+    images: [{ url: "/favicon.png", width: 512, height: 512, alt: "About NICEVX" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About NICEVX – Free HD Adult Video Platform | NICEVX",
+    description: "Learn about NICEVX, an index of verified free adult videos, curated collections, privacy-first features, and content standards.",
+    images: ["/favicon.png"],
+  },
 };
 
 const FAQS = [
@@ -56,9 +69,24 @@ export default function Page() {
             ],
           },
           {
+            heading: "Content Standards & Discovery",
+            body: [
+              "NICEVX organizes its catalog into focused entry points including A-Z Categories, topic Collections, Full-Length Movies (25+ minutes), Performer profiles, and weekly Trending charts so visitors can locate high-definition scenes without clutter.",
+              "Every category and collection page exposes structured metadata, clear duration labels, and direct related links while keeping strict compliance with 18+ age restrictions and DMCA takedown procedures.",
+            ],
+          },
+          {
             heading: "Frequently Asked Questions",
             body: FAQS.flatMap((f) => ['Q: ' + f.question, f.answer]),
           },
+        ]}
+        relatedLinks={[
+          { href: "/collections", label: "Browse Collections" },
+          { href: "/cats", label: "All Categories A-Z" },
+          { href: "/movies", label: "Full-Length Movies" },
+          { href: "/pornstars", label: "Popular Pornstars" },
+          { href: "/trends/weekly", label: "Trending This Week" },
+          { href: "/privacy", label: "Privacy Policy" },
         ]}
       />
     </>

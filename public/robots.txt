@@ -7,6 +7,10 @@ Allow: /
 Disallow: /api/
 Disallow: /*?order=*
 Disallow: /*&order=*
+Disallow: /*?page=*
+Disallow: /*&page=*
+Disallow: /*?duration=*
+Disallow: /*&duration=*
 Disallow: /search?*
 Disallow: /saved
 

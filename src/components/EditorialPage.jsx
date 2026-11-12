@@ -1,7 +1,11 @@
 import Link from "next/link";
 import "../pages/Pages.css";
 
-export default function EditorialPage({ title, lead, sections }) {
+export default function EditorialPage({ title, lead, sections, relatedLinks }) {
+  const links = relatedLinks?.length
+    ? relatedLinks
+    : [{ href: "/collections", label: "Browse collections" }];
+
   return (
     <main className="page-wrapper legal-page editorial-page">
       <h1>{title}</h1>
@@ -14,9 +18,13 @@ export default function EditorialPage({ title, lead, sections }) {
           ))}
         </section>
       ))}
-      <p>
-        <Link href="/collections">Browse collections</Link>
-      </p>
+      <nav aria-label="Explore NICEVX hubs" style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem", marginTop: "1.5rem" }}>
+        {links.map((link) => (
+          <Link key={link.href} href={link.href} className="related-cat-link">
+            {link.label}
+          </Link>
+        ))}
+      </nav>
     </main>
   );
 }
