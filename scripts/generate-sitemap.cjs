@@ -5,6 +5,7 @@ const { MAX_EDITORIALS_PER_RUN, MIN_COLLECTION_VIDEOS, bootstrapCollections, bui
 const { buildModelsSitemap } = require('./build-models-sitemap.cjs');
 const { TAG_DENYLIST, toTagSlug, getQualifiedTagHubs } = require('../src/data/tagConfig.js');
 const { ALL_CATEGORIES } = require('../src/data/allCategories.js');
+const { PORNSTARS, MIN_PERFORMER_INDEX_VIDEOS, getVideosForPerformer } = require('../src/data/pornstars.js');
 
 const SITE_URL = 'https://www.nicevx.com';
 const API_BASE = 'https://www.eporner.com/api/v2';
@@ -72,29 +73,54 @@ try {
   }
 } catch (e) {}
 
+const GEMINI_MIN_INTERVAL_MS = Number.parseInt(process.env.GEMINI_MIN_INTERVAL_MS || '', 10) || 4300;
+let lastGeminiCallAt = 0;
+
 async function callGemini(prompt) {
   if (!GEMINI_API_KEY) throw new Error('GEMINI_API_KEY not configured');
   const model = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        responseMimeType: 'application/json',
-        temperature: 0.3
-      }
-    })
-  });
-  if (!res.ok) {
-    const errText = await res.text().catch(() => '');
-    throw new Error(`Gemini HTTP ${res.status}: ${errText.slice(0, 160)}`);
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const elapsed = Date.now() - lastGeminiCallAt;
+    const waitMs = lastGeminiCallAt > 0 ? Math.max(0, GEMINI_MIN_INTERVAL_MS - elapsed) : 0;
+    if (waitMs > 0) await new Promise((resolve) => setTimeout(resolve, waitMs));
+    lastGeminiCallAt = Date.now();
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: 'application/json',
+          temperature: 0.3
+        }
+      })
+    });
+
+    if ((res.status === 429 || res.status === 503) && attempt < 3) {
+      const retryAfterSec = Number.parseInt(res.headers.get('retry-after') || '', 10);
+      const backoffMs =
+        Number.isFinite(retryAfterSec) && retryAfterSec > 0
+          ? retryAfterSec * 1000
+          : res.status === 429
+            ? attempt * 15000
+            : attempt * 4000;
+      console.warn(`[Gemini] HTTP ${res.status} (attempt ${attempt}/3); retrying in ${Math.round(backoffMs / 1000)}s...`);
+      await new Promise((resolve) => setTimeout(resolve, backoffMs));
+      continue;
+    }
+
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '');
+      throw new Error(`Gemini HTTP ${res.status}: ${errText.slice(0, 160)}`);
+    }
+    const data = await res.json();
+    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!rawText) throw new Error('Empty Gemini response text');
+    return JSON.parse(rawText);
   }
-  const data = await res.json();
-  const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!rawText) throw new Error('Empty Gemini response text');
-  return JSON.parse(rawText);
 }
 
 async function callDeepSeek(prompt, maxTokens = 320, temperature = 0.3) {
@@ -326,7 +352,7 @@ Tasks:
 
 2. Keyword Cleanser: From the Tags/keywords above, return max 8 lowercase tags that are genuinely relevant to this specific video. Remove duplicates, typos, and tags unrelated to the title or content.
 
-3. Category: Pick the single most accurate category from this list ONLY: ${categoryList}. If nothing fits, use "adult porn".
+3. Category: Pick the single most specific category from this list ONLY: ${categoryList}. Avoid "adult porn" or "free porn" unless no specific act, performer trait, or niche applies.
 
 4. Spam Detection: Set isSpam: true ONLY if the title shows clear signs of deception — e.g. keywords completely unrelated to each other (spam stuffing), nonsensical random characters, or obvious clickbait with no real content signal. Content category (straight, gay, lesbian, trans, etc.) is NEVER a spam indicator.
 
@@ -361,7 +387,11 @@ Respond ONLY with raw JSON:
 
     const cleanedTags = Array.isArray(result.cleanedTags) ? [...new Set(result.cleanedTags.map((tag) => repairMojibake(tag).trim().toLowerCase()).filter((tag) => tag.length > 1 && tag.length <= 40))].slice(0, 8) : [];
     const normalizedCategory = repairMojibake(result.category).trim().toLowerCase();
-    const category = VALID_CATEGORIES.includes(normalizedCategory) ? normalizedCategory : 'adult porn';
+    const specificCategories = new Set(VALID_CATEGORIES.filter((c) => !['adult porn', 'free porn', 'hd porn'].includes(c)));
+    const tagFallbackCategory = cleanedTags.find((tag) => specificCategories.has(tag)) || null;
+    const category = specificCategories.has(normalizedCategory)
+      ? normalizedCategory
+      : tagFallbackCategory || (VALID_CATEGORIES.includes(normalizedCategory) ? normalizedCategory : 'adult porn');
 
     // Simpan secara atomik agar file tidak korup atau terkunci sementara di Windows.
     aiSeoData[video.id] = {
@@ -665,6 +695,17 @@ async function refreshCatalogBatch(catalog) {
     const fresh = refreshedById.get(video.id);
     if (!fresh) return video;
     const durationSeconds = Number.parseInt(fresh.length_sec, 10) || video.durationSeconds || 0;
+    const prevViews = Number(video.views) || 0;
+    const nextViews = Number.parseInt(fresh.views, 10) || 0;
+    const hasSignificantViewSurge =
+      prevViews > 0 && nextViews >= prevViews * 1.25 && nextViews - prevViews >= 1000;
+    const hasMaterialUpdate =
+      video.thumbnail !== fresh.default_thumb.src ||
+      video.embedUrl !== fresh.embed ||
+      (video.durationSeconds || 0) !== durationSeconds ||
+      video.sourceUrl !== fresh.url ||
+      hasSignificantViewSurge;
+
     return {
       ...video,
       thumbnail: fresh.default_thumb.src,
@@ -677,10 +718,11 @@ async function refreshCatalogBatch(catalog) {
       duration: isoDuration(durationSeconds),
       length_sec: durationSeconds,
       length_min: fresh.length_min || video.length_min,
-      views: Number.parseInt(fresh.views, 10) || 0,
+      views: nextViews,
       rating: Number.parseFloat(fresh.rate) || 0,
       rate: Number.parseFloat(fresh.rate) || 0,
       availability: 'available',
+      sitemapLastmod: hasMaterialUpdate ? RUN_TIMESTAMP : video.sitemapLastmod || video.uploadDate,
       syncedAt: RUN_TIMESTAMP
     };
   });
@@ -800,7 +842,7 @@ ${xmlUrls}
 
 function writeStaticSitemap(catalog, collections) {
   const qualifiedCollections = collections.filter((collection) => isQualified(collection, collections, catalog));
-  const catalogLastmod = latestDate(catalog.map((video) => video.syncedAt || video.uploadDate));
+  const catalogLastmod = latestDate(catalog.map((video) => video.sitemapLastmod || video.uploadDate));
   const collectionsLastmod = latestDate([
     catalogLastmod,
     gitLastModified('src/data/collections.json'),
@@ -865,7 +907,7 @@ function writeStaticSitemap(catalog, collections) {
       const lastmod = latestDate([
         collection.editorialUpdatedAt,
         collection.generatedAt,
-        ...collectionVideos.map((video) => video.syncedAt || video.uploadDate)
+        ...collectionVideos.map((video) => video.sitemapLastmod || video.uploadDate)
       ]);
       return `
   <url>
@@ -878,7 +920,7 @@ function writeStaticSitemap(catalog, collections) {
   const qualifiedTags = getQualifiedTagHubs(catalog, ALL_CATEGORIES, 12);
   const tagHubUrls = qualifiedTags
     .map((hub) => {
-      const lastmod = latestDate(hub.videos.map((v) => v.syncedAt || v.uploadDate));
+      const lastmod = latestDate(hub.videos.map((v) => v.sitemapLastmod || v.uploadDate));
       return `
   <url>
     <loc>${SITE_URL}/tag/${hub.slug}</loc>
@@ -922,7 +964,7 @@ function writeCategoriesSitemap(catalog) {
     });
 
     if (matches.length >= 12) {
-      const lastmod = latestDate(matches.map((v) => v.syncedAt || v.uploadDate));
+      const lastmod = latestDate(matches.map((v) => v.sitemapLastmod || v.uploadDate));
       qualifiedCategories.push({ slug, name: cat.name, count: matches.length, lastmod });
     }
   }
@@ -948,7 +990,7 @@ function writeModelsSitemap(catalog) {
   const result = buildModelsSitemap({
     catalogVideos: catalog,
     outputDir: sitemapOutputDir,
-    fallbackLastmod: latestDate(catalog.map((video) => video.syncedAt || video.uploadDate)),
+    fallbackLastmod: latestDate(catalog.map((video) => video.sitemapLastmod || video.uploadDate)),
   });
   modelsSitemapLastmod = result.lastmod;
   console.log(`[Quality Gate] ${result.totalUrls} URL model (${result.qualifiedStars} profil terindeks) masuk sitemap-models.xml.`);
@@ -964,7 +1006,7 @@ function writeIndexSitemap() {
   const maxChunk = currentChunkUrls.length > 0 ? currentChunkIndex : currentChunkIndex - 1;
 
   for (let i = 1; i <= maxChunk; i++) {
-    const lastmod = chunkLastmods.get(i) || latestDate(catalogCandidates.map((video) => video.syncedAt || video.uploadDate));
+    const lastmod = chunkLastmods.get(i) || latestDate(catalogCandidates.map((video) => video.sitemapLastmod || video.uploadDate));
     indexXml += `  <sitemap>\n    <loc>${SITE_URL}/sitemaps/sitemap-video-${i}.xml</loc>\n    <lastmod>${lastmod}</lastmod>\n  </sitemap>\n`;
   }
 
@@ -997,6 +1039,157 @@ async function publishSitemaps() {
   } finally {
     if (fs.existsSync(backupDir)) fs.rmSync(backupDir, { recursive: true, force: true });
   }
+}
+
+async function admitDiscoveryVideo(rawVideo, removedIds, preferredActor = null) {
+  const video = normalizeVideo(rawVideo);
+  if (!video?.id) return false;
+  // A provider may edit a title, but an existing NICEVX ID must keep
+  // its original canonical URL instead of creating a duplicate slug.
+  if (previouslyPublishedIds.has(video.id)) return false;
+  if (removedIds.has(video.id)) {
+    console.log(`[Gatekeeper] Video dilewati karena sudah dihapus Eporner: ${video.id}`);
+    return false;
+  }
+
+  const canonicalSlug = buildCanonicalSlug(video.title, video.id);
+  const url = `${SITE_URL}/video/${canonicalSlug}`;
+  if (seenUrls.has(url) || indexedVideoCount >= MAX_SITEMAP_VIDEOS) return false;
+
+  // ---> AI Curation Tembak Disini <---
+  await curateWithDeepSeek(video);
+
+  const aiData = aiSeoData[video.id];
+
+  // Existing AI output alone is not a publication authorization.
+  if (!previouslyPublishedIds.has(video.id) && !newlyCuratedIds.has(video.id)) {
+    skippedUncuratedCount++;
+    return false;
+  }
+
+  if (aiData && aiData.isSpam) {
+    skippedSpamCount++;
+    console.log(`[Gatekeeper] Video diblokir karena terdeteksi spam: ${video.title}`);
+    return false;
+  }
+
+  if (REQUIRE_AI_CURATION && !hasUsableCuration(aiData)) {
+    skippedUncuratedCount++;
+    return false;
+  }
+
+  const fallbackDesc = video.title + ' free HD porn video on NICEVX.';
+  const finalDesc = hasUsableCuration(aiData) ? aiData.seoDescription.trim() : fallbackDesc;
+  const finalTags = aiData && aiData.cleanedTags && aiData.cleanedTags.length > 0
+    ? aiData.cleanedTags.map((tag) => repairMojibake(tag)).slice(0, 32)
+    : [];
+
+  if ([video.title, finalDesc, ...finalTags].some(hasSuspiciousEncoding)) {
+    skippedEncodingCount++;
+    console.warn(`[Encoding] Video dilewati karena teks sumber masih rusak: ${video.id}`);
+    return false;
+  }
+
+  const publicationDate = getPublicationDate(video);
+  if (!publicationDate || !video.embed || !video.default_thumb?.src || !video.url) {
+    skippedInvalidDateCount++;
+    return false;
+  }
+
+  seenUrls.add(url);
+  indexedVideoCount++;
+
+  currentChunkUrls.push({
+    url,
+    lastmod: RUN_TIMESTAMP,
+    title: video.title,
+    description: finalDesc,
+    thumbnail_loc: video.default_thumb ? video.default_thumb.src : '',
+    player_loc: video.embed,
+    duration: video.length_sec || 0,
+    publication_date: publicationDate,
+    tags: finalTags
+  });
+
+  catalogCandidates.push({
+    id: video.id,
+    canonicalSlug,
+    canonicalUrl: url,
+    title: video.title,
+    description: finalDesc,
+    tags: finalTags,
+    keywords: finalTags.join(', '),
+    category: aiData?.category || 'adult porn',
+    ...(preferredActor ? { actor: preferredActor } : {}),
+    thumbnail: video.default_thumb.src,
+    default_thumb: video.default_thumb,
+    thumbs: Array.isArray(video.thumbs) ? video.thumbs : [],
+    embedUrl: video.embed,
+    embed: video.embed,
+    sourceUrl: video.url,
+    durationSeconds: Number.parseInt(video.length_sec, 10) || 0,
+    duration: isoDuration(video.length_sec),
+    length_sec: Number.parseInt(video.length_sec, 10) || 0,
+    length_min: video.length_min || '',
+    uploadDate: publicationDate,
+    views: Number.parseInt(video.views, 10) || 0,
+    rating: Number.parseFloat(video.rate) || 0,
+    rate: Number.parseFloat(video.rate) || 0,
+    availability: 'available',
+    sitemapLastmod: RUN_TIMESTAMP,
+    syncedAt: RUN_TIMESTAMP
+  });
+
+  if (currentChunkUrls.length >= URLS_PER_SITEMAP) {
+    writeChunk(currentChunkIndex, currentChunkUrls);
+    console.log(`Tersimpan: sitemap-video-${currentChunkIndex}.xml (${URLS_PER_SITEMAP} URLs) - RAM Dikeringkan.`);
+    currentChunkIndex++;
+    currentChunkUrls = [];
+  }
+  return true;
+}
+
+async function seedPerformerCandidates(removedIds, performerBudget) {
+  if (performerBudget <= 0) return 0;
+  let admittedForPerformers = 0;
+
+  const targets = PORNSTARS.map((star) => ({
+    star,
+    existingCount: getVideosForPerformer(star, catalogCandidates).length,
+  }))
+    .filter((entry) => entry.existingCount < MIN_PERFORMER_INDEX_VIDEOS)
+    .sort((a, b) => b.existingCount - a.existingCount || a.star.name.localeCompare(b.star.name))
+    .slice(0, 4);
+
+  for (const { star, existingCount } of targets) {
+    if (aiProcessedCount >= MAX_AI_PER_RUN || admittedForPerformers >= performerBudget || indexedVideoCount >= MAX_SITEMAP_VIDEOS) break;
+    const needed = Math.min(MIN_PERFORMER_INDEX_VIDEOS - existingCount, performerBudget - admittedForPerformers);
+    if (needed <= 0) continue;
+
+    console.log(`[Performer Seed] Mencari ${needed} scene untuk ${star.name} (${existingCount}/${MIN_PERFORMER_INDEX_VIDEOS})...`);
+    try {
+      const searchUrl = `${API_BASE}/video/search/?query=${encodeURIComponent(star.name)}&per_page=15&page=1&order=top-rated`;
+      const data = await fetchJson(searchUrl, `performer ${star.slug}`, { retries: 2, silent: true });
+      const results = Array.isArray(data?.videos) ? data.videos : [];
+      let addedForStar = 0;
+      const starNamePattern = new RegExp(`(?:^|[^a-z0-9])${star.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:$|[^a-z0-9])`, 'i');
+
+      for (const rawVideo of results) {
+        if (addedForStar >= needed || aiProcessedCount >= MAX_AI_PER_RUN || indexedVideoCount >= MAX_SITEMAP_VIDEOS) break;
+        const normalizedTitle = repairMojibake(rawVideo?.title || '');
+        const normalizedKw = repairMojibake(rawVideo?.keywords || '');
+        if (!starNamePattern.test(`${normalizedTitle} ${normalizedKw}`)) continue;
+        const admitted = await admitDiscoveryVideo(rawVideo, removedIds, star.name);
+        if (admitted) {
+          addedForStar++;
+          admittedForPerformers++;
+        }
+      }
+    } catch (err) {
+      console.warn(`[Performer Seed] Gagal mencari ${star.name}: ${err.message}`);
+    }
+  }
+  return admittedForPerformers;
 }
 
 async function run() {
@@ -1058,7 +1251,7 @@ async function run() {
     catalogCandidates.push(video);
     currentChunkUrls.push({
       url: video.canonicalUrl,
-      lastmod: video.syncedAt || video.uploadDate,
+      lastmod: video.sitemapLastmod || video.uploadDate,
       title: video.title,
       description: video.description,
       thumbnail_loc: video.thumbnail,
@@ -1077,7 +1270,20 @@ async function run() {
   console.log(`[Retention] ${indexedVideoCount} video lama dipertahankan sebelum menambah kandidat baru.`);
   const minimumNewForRun = Math.min(MIN_NEW_VIDEOS, Math.max(0, MAX_SITEMAP_VIDEOS - indexedVideoCount));
 
+  if (minimumNewForRun > 0 && MAX_AI_PER_RUN > 0 && indexedVideoCount < MAX_SITEMAP_VIDEOS) {
+    const performerBudget = Math.min(10, Math.max(0, Math.floor(MAX_AI_PER_RUN * 0.35)));
+    const seededPerformers = await seedPerformerCandidates(removedIds, performerBudget);
+    if (seededPerformers > 0) {
+      console.log(`[Performer Seed] Menambahkan ${seededPerformers} video untuk profil pornstar.`);
+    }
+  }
+
   for (let i = startPage; i <= MAX_PAGES && minimumNewForRun > 0; i += BATCH_SIZE) {
+    if (MAX_AI_PER_RUN > 0 && aiProcessedCount >= MAX_AI_PER_RUN) {
+      console.log(`[AI] Batas ${MAX_AI_PER_RUN} percobaan tercapai sebelum mengambil halaman berikutnya.`);
+      break;
+    }
+
     const batchPromises = [];
     const end = Math.min(i + BATCH_SIZE - 1, MAX_PAGES);
 
@@ -1100,114 +1306,7 @@ async function run() {
     for (const data of results) {
       if (data && data.videos) {
         for (const rawVideo of data.videos) {
-          const video = normalizeVideo(rawVideo);
-          // A provider may edit a title, but an existing NICEVX ID must keep
-          // its original canonical URL instead of creating a duplicate slug.
-          if (previouslyPublishedIds.has(video.id)) continue;
-          // GATEKEEPER 1: Skip if video has been removed by Eporner
-          if (removedIds.has(video.id)) {
-            console.log(`[Gatekeeper] dY~ Video dilewati karena sudah dihapus Eporner: ${video.id}`);
-            continue;
-          }
-
-          const canonicalSlug = buildCanonicalSlug(video.title, video.id);
-          const url = `${SITE_URL}/video/${canonicalSlug}`;
-
-          if (!seenUrls.has(url) && indexedVideoCount < MAX_SITEMAP_VIDEOS) {
-            // ---> AI Curation Tembak Disini <---
-            await curateWithDeepSeek(video);
-
-            const aiData = aiSeoData[video.id];
-
-            // Existing AI output alone is not a publication authorization.
-            // Preserve the published seed and admit new URLs only when they
-            // were deliberately curated in this run.
-            if (!previouslyPublishedIds.has(video.id) && !newlyCuratedIds.has(video.id)) {
-              skippedUncuratedCount++;
-              continue;
-            }
-
-            // GATEKEEPER: Buang video jika terdeteksi SPAM / Bukan Niche
-            if (aiData && aiData.isSpam) {
-              skippedSpamCount++;
-              console.log(`[Gatekeeper] 🚫 Video diblokir karena terdeteksi spam: ${video.title}`);
-              continue; // Langsung lompat ke video berikutnya, JANGAN dimasukkan ke sitemap
-            }
-
-            if (REQUIRE_AI_CURATION && !hasUsableCuration(aiData)) {
-              skippedUncuratedCount++;
-              continue;
-            }
-
-            const fallbackDesc = video.title + ' free HD porn video on NICEVX.';
-            const finalDesc = hasUsableCuration(aiData) ? aiData.seoDescription.trim() : fallbackDesc;
-            // Tags: gunakan cleanedTags dari AI jika tersedia (bermakna).
-            // API /search/ mengembalikan keywords = judul video (bukan tag asli),
-            // sehingga rawTags dari API tidak memiliki nilai SEO tambahan.
-            // Tag nyata hanya bisa didapat dari AI yang memproses data dari endpoint /video/id/.
-            const finalTags = aiData && aiData.cleanedTags && aiData.cleanedTags.length > 0 ? aiData.cleanedTags.map((tag) => repairMojibake(tag)).slice(0, 32) : [];
-
-            if ([video.title, finalDesc, ...finalTags].some(hasSuspiciousEncoding)) {
-              skippedEncodingCount++;
-              console.warn(`[Encoding] Video dilewati karena teks sumber masih rusak: ${video.id}`);
-              continue;
-            }
-
-            const publicationDate = getPublicationDate(video);
-            if (!publicationDate || !video.embed || !video.default_thumb?.src || !video.url) {
-              skippedInvalidDateCount++;
-              continue;
-            }
-
-            seenUrls.add(url);
-            indexedVideoCount++;
-
-            currentChunkUrls.push({
-              url: url,
-              lastmod: RUN_TIMESTAMP,
-              title: video.title,
-              description: finalDesc,
-              thumbnail_loc: video.default_thumb ? video.default_thumb.src : '',
-              player_loc: video.embed,
-              duration: video.length_sec || 0,
-              publication_date: publicationDate,
-              tags: finalTags
-            });
-
-            catalogCandidates.push({
-              id: video.id,
-              canonicalSlug,
-              canonicalUrl: url,
-              title: video.title,
-              description: finalDesc,
-              tags: finalTags,
-              keywords: finalTags.join(', '),
-              category: aiData?.category || 'adult porn',
-              thumbnail: video.default_thumb.src,
-              default_thumb: video.default_thumb,
-              thumbs: Array.isArray(video.thumbs) ? video.thumbs : [],
-              embedUrl: video.embed,
-              embed: video.embed,
-              sourceUrl: video.url,
-              durationSeconds: Number.parseInt(video.length_sec, 10) || 0,
-              duration: isoDuration(video.length_sec),
-              length_sec: Number.parseInt(video.length_sec, 10) || 0,
-              length_min: video.length_min || '',
-              uploadDate: publicationDate,
-              views: Number.parseInt(video.views, 10) || 0,
-              rating: Number.parseFloat(video.rate) || 0,
-              rate: Number.parseFloat(video.rate) || 0,
-              availability: 'available',
-              syncedAt: RUN_TIMESTAMP
-            });
-
-            if (currentChunkUrls.length >= URLS_PER_SITEMAP) {
-              writeChunk(currentChunkIndex, currentChunkUrls);
-              console.log(`💾 Tersimpan: sitemap-video-${currentChunkIndex}.xml (${URLS_PER_SITEMAP} URLs) - RAM Dikeringkan.`);
-              currentChunkIndex++;
-              currentChunkUrls = [];
-            }
-          }
+          await admitDiscoveryVideo(rawVideo, removedIds);
         }
       }
     }
@@ -1253,7 +1352,7 @@ async function run() {
       indexedVideoCount++;
       currentChunkUrls.push({
         url,
-        lastmod: entry.syncedAt || publicationDate,
+        lastmod: entry.sitemapLastmod || publicationDate,
         title: video.title,
         description,
         thumbnail_loc: video.default_thumb.src,
@@ -1286,6 +1385,7 @@ async function run() {
         rating: Number.parseFloat(video.rate) || 0,
         rate: Number.parseFloat(video.rate) || 0,
         availability: 'available',
+        sitemapLastmod: entry.sitemapLastmod || publicationDate,
         syncedAt: RUN_TIMESTAMP
       });
     }

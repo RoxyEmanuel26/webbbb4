@@ -56,12 +56,12 @@ jobs:
 
           if [[ "$EVENT_NAME" == "schedule" && "$EVENT_SCHEDULE" == "17 19 * * *" ]]; then
             mode="daily"
-            ai_batch=15
-            min_new=10
+            ai_batch=30
+            min_new=15
           elif [[ "$EVENT_NAME" == "workflow_dispatch" && "$REQUESTED_MODE" == "daily" ]]; then
             mode="daily"
-            ai_batch=15
-            min_new=10
+            ai_batch=30
+            min_new=15
           elif [[ "$EVENT_NAME" == "workflow_dispatch" && "$REQUESTED_MODE" == "collections" ]]; then
             mode="collections"
             collection_ai_batch=2
@@ -94,7 +94,8 @@ jobs:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           SITEMAP_AI_BATCH_SIZE: ${{ steps.publication.outputs.ai_batch }}
           COLLECTION_AI_BATCH_SIZE: ${{ steps.publication.outputs.collection_ai_batch }}
-          SITEMAP_MAX_VIDEOS: "4000"
+          # 7500 videos * 2 (.html + .txt) + ~2300 hub/asset files stays safely under Cloudflare Pages 20,000-file cap
+          SITEMAP_MAX_VIDEOS: "7500"
           SITEMAP_MIN_NEW_VIDEOS: ${{ steps.publication.outputs.min_new }}
           SITEMAP_REVALIDATE_BATCH_SIZE: "50"
           SITEMAP_REQUIRE_AI_CURATION: "true"
@@ -120,12 +121,12 @@ jobs:
             !video.sourceUrl || !video.embedUrl || !video.thumbnail ||
             Number.isNaN(Date.parse(video.uploadDate)) || video.availability !== 'available'
           );
-          if (videos.length > 4000) throw new Error(`Catalog publication limit exceeded: ${videos.length}/4000`);
+          if (videos.length > 7500) throw new Error(`Catalog publication limit exceeded: ${videos.length}/7500`);
           if (ids.size !== videos.length) throw new Error('Duplicate video IDs detected');
           if (urls.size !== videos.length) throw new Error('Duplicate canonical URLs detected');
           if (descriptions.size !== videos.length) throw new Error('Duplicate AI descriptions detected');
           if (invalid.length) throw new Error(`${invalid.length} catalog records failed required metadata gates`);
-          console.log(`Catalog gate passed: ${videos.length}/4000 verified videos`);
+          console.log(`Catalog gate passed: ${videos.length}/7500 verified videos`);
           NODE
 
       - name: Build before publication

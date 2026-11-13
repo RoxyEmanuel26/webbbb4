@@ -47,7 +47,7 @@ function buildModelsSitemap({ catalogVideos, outputDir, fallbackLastmod } = {}) 
 
   const fallback =
     toValidIsoDate(fallbackLastmod) ||
-    latestIsoDate(available.map((v) => v.syncedAt || v.uploadDate), new Date().toISOString());
+    latestIsoDate(available.map((v) => v.sitemapLastmod || v.uploadDate), new Date().toISOString());
 
   const directoryLastmod = latestIsoDate(
     [
@@ -65,7 +65,7 @@ function buildModelsSitemap({ catalogVideos, outputDir, fallbackLastmod } = {}) 
         slug: star.slug,
         count: matched.length,
         lastmod: latestIsoDate(
-          matched.map((v) => v.syncedAt || v.uploadDate),
+          matched.map((v) => v.sitemapLastmod || v.uploadDate),
           directoryLastmod
         ),
       });
