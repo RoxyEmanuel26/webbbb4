@@ -467,23 +467,63 @@ export function getAllPornstars() {
   return PORNSTARS;
 }
 
+export const MIN_PERFORMER_INDEX_VIDEOS = 3;
+
+function escapeRegex(value) {
+  return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function buildPerformerMatchers(star) {
+  const candidates = [
+    star?.name,
+    ...((Array.isArray(star?.aliases) ? star.aliases : []).filter((alias) => /\s/.test(String(alias || '').trim()))),
+  ]
+    .map((term) => String(term || '').trim())
+    .filter((term) => term.length >= 4);
+
+  return candidates.map(
+    (term) => new RegExp(`(?:^|[^a-z0-9])${escapeRegex(term)}(?:$|[^a-z0-9])`, 'i')
+  );
+}
+
+/**
+ * Determine whether a catalog video features a curated performer using
+ * full stage-name or multi-word alias word-boundary matching.
+ */
+export function matchesPerformerVideo(star, video) {
+  if (!star || !video) return false;
+  if (video.availability && video.availability !== 'available') return false;
+  const hay = [
+    video.actor,
+    video.model,
+    video.title,
+    ...(Array.isArray(video.tags) ? video.tags : []),
+  ]
+    .filter(Boolean)
+    .join(' ');
+  if (!hay) return false;
+
+  const exactActor = String(video.actor || video.model || '').trim().toLowerCase();
+  if (exactActor && exactActor === String(star.name || '').trim().toLowerCase()) {
+    return true;
+  }
+
+  return buildPerformerMatchers(star).some((pattern) => pattern.test(hay));
+}
+
+export function getVideosForPerformer(star, videos = []) {
+  return (Array.isArray(videos) ? videos : []).filter((video) => matchesPerformerVideo(star, video));
+}
+
 /**
  * Scan video metadata string (title + keywords + tags) to detect if a known pornstar stars in it
  */
 export function findModelInText(text) {
   if (!text || typeof text !== "string") return null;
-  const lower = text.toLowerCase();
 
   for (const star of PORNSTARS) {
-    // Check main name
-    if (lower.includes(star.name.toLowerCase())) {
+    if (buildPerformerMatchers(star).some((pattern) => pattern.test(text))) {
       return star;
-    }
-    // Check aliases
-    for (const alias of star.aliases || []) {
-      if (alias.length > 4 && lower.includes(alias.toLowerCase())) {
-        return star;
-      }
     }
   }
   return null;

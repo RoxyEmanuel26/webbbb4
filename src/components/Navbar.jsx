@@ -172,6 +172,7 @@ const Navbar = () => {
                 className={`navbar-link ${isActive(link.path) ? 'is-active' : ''}`}
                 href={link.path}
                 prefetch={false}
+                rel={link.path === '/saved' || link.path === '/random' ? 'nofollow' : undefined}
               >
                 {Icon && <Icon size={15} aria-hidden="true" />}
                 {link.label}

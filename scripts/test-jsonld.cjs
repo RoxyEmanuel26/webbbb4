@@ -37,10 +37,11 @@ assert.equal(catBreadcrumbs.itemListElement[2].name, 'Amateur');
 const catItemList = catSchemas.find((s) => s['@type'] === 'ItemList');
 assert(catItemList, 'Category hub must have ItemList schema');
 assert(catItemList.itemListElement.length >= 12, 'Category ItemList must list items');
-const firstItem = catItemList.itemListElement[0].item;
-assert(firstItem.description && firstItem.description.length > 10, 'Category VideoObject must have description');
-assert(firstItem.embedUrl && firstItem.embedUrl.startsWith('https://'), 'Category VideoObject must have embedUrl');
-assert.equal(firstItem.isFamilyFriendly, false, 'Category VideoObject must have isFamilyFriendly false');
+const firstItem = catItemList.itemListElement[0];
+assert.equal(firstItem['@type'], 'ListItem', 'Category ItemList element must be a lean ListItem');
+assert(firstItem.url && firstItem.url.startsWith('https://www.nicevx.com/'), 'Category ListItem must have canonical url');
+assert(firstItem.name && firstItem.name.length > 2, 'Category ListItem must have name');
+assert.equal(firstItem.item, undefined, 'Category ListItem must not embed heavy VideoObject');
 
 // 3. Collection Page
 const colHtml = read('collections/amateur.html');

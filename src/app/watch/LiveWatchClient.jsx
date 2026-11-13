@@ -355,13 +355,14 @@ export default function LiveWatchClient() {
                     <span className="video-tags-label">Tags:</span>
                     <div className="keyword-tags">
                       {video.tags.map((tag) => (
-                        <Link
+                        <button
                           key={tag}
-                          href={`/search?query=${encodeURIComponent(tag)}`}
+                          type="button"
+                          onClick={() => router.push(`/search?query=${encodeURIComponent(tag)}`)}
                           className="keyword-tag"
                         >
                           #{tag}
-                        </Link>
+                        </button>
                       ))}
                     </div>
                   </div>

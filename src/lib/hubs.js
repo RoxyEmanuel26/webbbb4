@@ -147,6 +147,17 @@ export function isCategoryIndexable(slugOrName) {
   return catVideos.length >= MIN_HUB_VIDEOS;
 }
 
+export function getTagHubHref(tagOrSlug) {
+  const slug = String(tagOrSlug || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+  if (!slug) return null;
+  if (isCategoryIndexable(slug)) return `/cat/${slug}`;
+  return null;
+}
+
 export function getCategoryStats(slugOrName) {
   const slug = toSlug(String(slugOrName || ""));
   if (categoryStatsCache.has(slug)) {

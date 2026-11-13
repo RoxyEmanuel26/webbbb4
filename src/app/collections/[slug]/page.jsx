@@ -69,13 +69,13 @@ export async function generateMetadata({ params }) {
       description,
       url,
       type: "website",
-      images: [{ url: "/favicon.png", width: 512, height: 512, alt: `${collection.name} Collection — NICEVX` }],
+      images: [{ url: "/og-default.jpg", width: 1200, height: 630, alt: `${collection.name} Collection — NICEVX` }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: ["/favicon.png"],
+      images: ["/og-default.jpg"],
     },
   };
 }

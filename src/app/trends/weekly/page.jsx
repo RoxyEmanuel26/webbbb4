@@ -22,13 +22,13 @@ export async function generateMetadata() {
       description,
       url: "https://www.nicevx.com/trends/weekly",
       type: "website",
-      images: [{ url: "/favicon.png", width: 512, height: 512, alt: "Trending This Week — NICEVX" }],
+      images: [{ url: "/og-default.jpg", width: 1200, height: 630, alt: "Trending This Week — NICEVX" }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: ["/favicon.png"],
+      images: ["/og-default.jpg"],
     },
   };
 }

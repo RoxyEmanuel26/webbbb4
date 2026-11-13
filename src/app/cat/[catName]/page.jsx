@@ -91,9 +91,9 @@ export async function generateMetadata({ params }) {
       locale: 'en_US',
       images: [
         {
-          url: '/favicon.png',
-          width: 512,
-          height: 512,
+          url: '/og-default.jpg',
+          width: 1200,
+          height: 630,
           alt: `${titleCategory} Videos — NICEVX`,
         },
       ],
@@ -102,7 +102,7 @@ export async function generateMetadata({ params }) {
       card: 'summary_large_image',
       title,
       description,
-      images: ['/favicon.png'],
+      images: ['/og-default.jpg'],
     },
   };
 }

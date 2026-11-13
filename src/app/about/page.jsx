@@ -11,13 +11,13 @@ export const metadata = {
     description: "Learn about NICEVX, an index of verified free adult videos, curated collections, privacy-first features, and content standards.",
     url: "https://www.nicevx.com/about",
     type: "website",
-    images: [{ url: "/favicon.png", width: 512, height: 512, alt: "About NICEVX" }],
+    images: [{ url: "/og-default.jpg", width: 1200, height: 630, alt: "About NICEVX" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "About NICEVX – Free HD Adult Video Platform | NICEVX",
     description: "Learn about NICEVX, an index of verified free adult videos, curated collections, privacy-first features, and content standards.",
-    images: ["/favicon.png"],
+    images: ["/og-default.jpg"],
   },
 };
 

@@ -48,7 +48,7 @@ const Footer = () => (
               <div className="footer-icon-glow"></div>
               <img
                 src="/logo.webp"
-                alt="Logo"
+                alt="NICEVX Logo"
                 width="36"
                 height="36"
                 style={{
@@ -72,20 +72,20 @@ const Footer = () => (
         <div className="footer-links-col">
           <h3 className="footer-col-heading">Browse</h3>
           <nav>
-            <Link href="/?order=latest" className="footer-nav-link">
-              Latest Videos
+            <Link href="/trends/weekly" className="footer-nav-link">
+              Trending This Week
             </Link>
-            <Link href="/?order=top-rated" className="footer-nav-link">
-              Top Rated
+            <Link href="/movies" className="footer-nav-link">
+              Full Movies
             </Link>
-            <Link href="/?order=most-popular" className="footer-nav-link">
-              Most Popular
+            <Link href="/pornstars" className="footer-nav-link">
+              Pornstars
             </Link>
-            <Link href="/?order=top-weekly" className="footer-nav-link">
-              Top This Week
+            <Link href="/collections" className="footer-nav-link">
+              Collections
             </Link>
-            <Link href="/?order=top-monthly" className="footer-nav-link">
-              Top This Month
+            <Link href="/cats" className="footer-nav-link">
+              All Categories
             </Link>
           </nav>
         </div>
@@ -131,7 +131,7 @@ const Footer = () => (
               href="https://www.missav-j.com/en"
               className="footer-nav-link footer-external-link"
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow noopener noreferrer"
             >
               Free JAV <ExternalLink size={13} aria-hidden="true" />
             </a>
@@ -139,7 +139,7 @@ const Footer = () => (
               href="https://www.lusthub.web.id/"
               className="footer-nav-link footer-external-link"
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow noopener noreferrer"
             >
               Alternatif Link <ExternalLink size={13} aria-hidden="true" />
             </a>

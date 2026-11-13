@@ -135,6 +135,7 @@ jobs:
         run: npm run test:seo-render
 
       - name: Commit verified publication
+        id: commit
         shell: bash
         env:
           PUBLICATION_MODE: ${{ steps.publication.outputs.mode }}
@@ -144,8 +145,26 @@ jobs:
           git add public/sitemap.xml public/sitemaps src/data/ai-seo.json src/data/collections.json src/data/curated-video-catalog.json src/data/discovery-snapshots.json
           if git diff --cached --quiet; then
             echo "No factual catalog changes to publish."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git commit -m "seo: ${PUBLICATION_MODE} discovery catalog refresh"
           git pull --rebase origin main
           git push origin HEAD:main
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Ping IndexNow for changed URLs
+        if: steps.commit.outputs.pushed == 'true'
+        continue-on-error: true
+        shell: bash
+        run: |
+          echo "Waiting for CDN/Pages deployment to serve fresh sitemap..."
+          sleep 90
+          for attempt in 1 2 3; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" https://www.nicevx.com/sitemap.xml || echo "000")
+            if [[ "$status" == "200" ]]; then
+              break
+            fi
+            sleep 30
+          done
+          node scripts/indexnow.cjs --changed

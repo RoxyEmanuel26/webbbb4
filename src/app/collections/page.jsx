@@ -18,9 +18,9 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/favicon.png",
-        width: 512,
-        height: 512,
+        url: "/og-default.jpg",
+        width: 1200,
+        height: 630,
         alt: "Video Collections — NICEVX",
       },
     ],
@@ -30,7 +30,7 @@ export const metadata = {
     title: "Video Collections & Curated Hubs — NICEVX",
     description:
       "Browse NICEVX video collections by topic and category. Explore HD clips, themed playlists, and top-rated picks organized for fast discovery.",
-    images: ["/favicon.png"],
+    images: ["/og-default.jpg"],
   },
 };
 

@@ -63,12 +63,12 @@ export function generateMetadata() {
       description: seoDesc,
       url: seoCanonical,
       type: "website",
-      images: [{ url: "/favicon.png", width: 512, height: 512, alt: "NICEVX" }],
+      images: [{ url: "/og-default.jpg", width: 1200, height: 630, alt: "NICEVX" }],
     },
     twitter: {
       title: seoTitle,
       description: seoDesc,
-      images: ["/favicon.png"],
+      images: ["/og-default.jpg"],
     },
   };
 }

@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const { MAX_EDITORIALS_PER_RUN, MIN_COLLECTION_VIDEOS, bootstrapCollections, buildFacts, discoverCandidates, getCollectionVideos, getOverlapBlocker, isQualified, trimEditorialIntro, validateManifest, wordCount } = require('./collection-engine.cjs');
+const { buildModelsSitemap } = require('./build-models-sitemap.cjs');
 
 const SITE_URL = 'https://www.nicevx.com';
 const API_BASE = 'https://www.eporner.com/api/v2';
@@ -116,6 +117,7 @@ async function callDeepSeek(prompt, maxTokens = 320, temperature = 0.3) {
 }
 
 const isResumeMode = process.argv.includes('--resume');
+const isRebuildLocalMode = process.argv.includes('--rebuild-local-sitemaps');
 
 const sitemapsDir = path.join(__dirname, '../public/sitemaps');
 const publicDir = path.join(__dirname, '../public');
@@ -139,6 +141,7 @@ const previouslyPublishedIds = new Set();
 const chunkLastmods = new Map();
 let staticSitemapLastmod = RUN_TIMESTAMP;
 let categoriesSitemapLastmod = RUN_TIMESTAMP;
+let modelsSitemapLastmod = RUN_TIMESTAMP;
 
 if (fs.existsSync(sitemapsDir)) {
   for (const file of fs.readdirSync(sitemapsDir).filter((name) => /^sitemap-video-\d+\.xml$/.test(name))) {
@@ -805,6 +808,7 @@ function writeStaticSitemap(catalog, collections) {
   const staticBaseUrls = [
     { route: '/', lastmod: catalogLastmod },
     { route: '/cats', lastmod: gitLastModified('src/data/allCategories.js') },
+    { route: '/movies', lastmod: latestDate([catalogLastmod, gitLastModified('src/app/movies/page.jsx')]) },
     {
       route: '/collections',
       lastmod: collectionsLastmod
@@ -925,11 +929,22 @@ function writeCategoriesSitemap(catalog) {
   console.log(`[Quality Gate] ${qualifiedCategories.length} category hub masuk sitemap-categories.xml.`);
 }
 
+function writeModelsSitemap(catalog) {
+  const result = buildModelsSitemap({
+    catalogVideos: catalog,
+    outputDir: sitemapOutputDir,
+    fallbackLastmod: latestDate(catalog.map((video) => video.syncedAt || video.uploadDate)),
+  });
+  modelsSitemapLastmod = result.lastmod;
+  console.log(`[Quality Gate] ${result.totalUrls} URL model (${result.qualifiedStars} profil terindeks) masuk sitemap-models.xml.`);
+}
+
 function writeIndexSitemap() {
   let indexXml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
   indexXml += `  <sitemap>\n    <loc>${SITE_URL}/sitemaps/sitemap-static.xml</loc>\n    <lastmod>${staticSitemapLastmod}</lastmod>\n  </sitemap>\n`;
   indexXml += `  <sitemap>\n    <loc>${SITE_URL}/sitemaps/sitemap-categories.xml</loc>\n    <lastmod>${categoriesSitemapLastmod}</lastmod>\n  </sitemap>\n`;
+  indexXml += `  <sitemap>\n    <loc>${SITE_URL}/sitemaps/sitemap-models.xml</loc>\n    <lastmod>${modelsSitemapLastmod}</lastmod>\n  </sitemap>\n`;
 
   const maxChunk = currentChunkUrls.length > 0 ? currentChunkIndex : currentChunkIndex - 1;
 
@@ -939,7 +954,7 @@ function writeIndexSitemap() {
   }
 
   indexXml += `</sitemapindex>`;
-  fs.writeFileSync(isResumeMode ? sitemapIndexFile : sitemapIndexStagingFile, indexXml, 'utf-8');
+  fs.writeFileSync(isResumeMode || isRebuildLocalMode ? sitemapIndexFile : sitemapIndexStagingFile, indexXml, 'utf-8');
 }
 
 async function publishSitemaps() {
@@ -970,6 +985,39 @@ async function publishSitemaps() {
 }
 
 async function run() {
+  if (isRebuildLocalMode) {
+    console.log('Rebuilding static, category, model, and index sitemaps from local catalog...');
+    const catalogPayload = readJsonFile(CATALOG_FILE, { videos: [] });
+    const finalized = (Array.isArray(catalogPayload.videos) ? catalogPayload.videos : []).filter(
+      (video) => video && video.availability === 'available'
+    );
+    const collectionsRaw = readJsonFile(COLLECTIONS_FILE, []);
+    const managedCollections = Array.isArray(collectionsRaw) ? collectionsRaw : collectionsRaw.collections || [];
+    catalogCandidates.push(...finalized);
+    sitemapOutputDir = sitemapsDir;
+    fs.mkdirSync(sitemapOutputDir, { recursive: true });
+    const chunkFiles = fs
+      .readdirSync(sitemapsDir)
+      .map((name) => name.match(/^sitemap-video-(\d+)\.xml$/))
+      .filter(Boolean)
+      .map((match) => ({ file: match[0], num: Number.parseInt(match[1], 10) }))
+      .sort((a, b) => a.num - b.num);
+    let maxChunkNum = 0;
+    for (const chunk of chunkFiles) {
+      const xml = fs.readFileSync(path.join(sitemapsDir, chunk.file), 'utf8');
+      const dates = Array.from(xml.matchAll(/<lastmod>([^<]+)<\/lastmod>/g), (m) => m[1]);
+      if (dates.length) chunkLastmods.set(chunk.num, latestDate(dates));
+      if (chunk.num > maxChunkNum) maxChunkNum = chunk.num;
+    }
+    currentChunkUrls = [];
+    currentChunkIndex = maxChunkNum + 1;
+    writeStaticSitemap(finalized, managedCollections);
+    writeCategoriesSitemap(finalized);
+    writeModelsSitemap(finalized);
+    writeIndexSitemap();
+    console.log(`Rebuilt local sitemaps (${finalized.length} videos, ${maxChunkNum} video chunks).`);
+    return;
+  }
   console.log('dYs? Memulai pengumpulan data dari Eporner API...');
 
   // The provider's removed endpoint is a ~150 MB newline-delimited file, not
@@ -1243,6 +1291,7 @@ async function run() {
   console.log('📦 Membuat sitemap-static.xml dan Index Sitemap...');
   writeStaticSitemap(finalized, managedCollections);
   writeCategoriesSitemap(finalized);
+  writeModelsSitemap(finalized);
   writeIndexSitemap();
   await publishSitemaps();
   await writeJsonAtomic(CATALOG_FILE, {

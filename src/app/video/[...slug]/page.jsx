@@ -12,6 +12,7 @@ import {
   isCollectionIndexable,
   toVideoCard,
 } from '@/lib/catalog';
+import { getTagHubHref, isCategoryIndexable } from '@/lib/hubs';
 
 export const dynamicParams = false;
 
@@ -100,9 +101,19 @@ export default async function VideoPage({ params }) {
     .map(({ slug: collectionSlug, name }) => ({ slug: collectionSlug, name }));
 
   const categorySlug = (video.category || 'amateur').toLowerCase().replace(/\s+/g, '-');
+  const categoryHref = isCategoryIndexable(categorySlug) ? `/cat/${categorySlug}` : '/cats';
+  const rawTags = Array.isArray(video.tags) && video.tags.length > 0
+    ? video.tags
+    : (video.keywords ? String(video.keywords).split(',').map((t) => t.trim()).filter(Boolean) : []);
+  const tagHubLinks = {};
+  for (const tag of rawTags) {
+    const href = getTagHubHref(tag);
+    if (href) tagHubLinks[tag] = href;
+  }
+
   const breadcrumbItems = [
     { name: 'Home', url: '/' },
-    { name: video.category || 'Videos', url: `/cat/${categorySlug}` },
+    { name: video.category || 'Videos', url: categoryHref },
     { name: video.title, url: video.canonicalUrl },
   ];
 
@@ -125,6 +136,8 @@ export default async function VideoPage({ params }) {
         initialRelated={getRelatedVideos(video).map(toVideoCard)}
         relatedCollections={relatedCollections}
         discoveryContext={getVideoContext(video)}
+        tagHubLinks={tagHubLinks}
+        categoryHref={categoryHref}
       />
     </article>
   );

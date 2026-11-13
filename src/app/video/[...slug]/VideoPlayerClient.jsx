@@ -36,7 +36,14 @@ function getNextVideoHref(v) {
   return `/watch?id=${encodeURIComponent(v.id)}`;
 }
 
-export default function VideoPlayerClient({ video, initialRelated = [], relatedCollections = [], discoveryContext = null }) {
+export default function VideoPlayerClient({
+  video,
+  initialRelated = [],
+  relatedCollections = [],
+  discoveryContext = null,
+  tagHubLinks = {},
+  categoryHref = null,
+}) {
   const router = useRouter();
   const [favorite, setFavorite] = useState(false);
   const [previewThumb, setPreviewThumb] = useState(null);
@@ -151,7 +158,7 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
       <nav className="breadcrumb-nav" aria-label="Breadcrumb" style={{ marginBottom: '1rem', fontSize: '0.875rem', color: 'var(--color-muted)' }}>
         <Link href="/" style={{ color: 'var(--color-muted)', textDecoration: 'none' }}>Home</Link>
         <span style={{ margin: '0 0.5rem' }}>/</span>
-        <Link href={`/cat/${(video.category || 'all').toLowerCase().replace(/\s+/g, '-')}`} style={{ color: 'var(--color-muted)', textDecoration: 'none' }}>
+        <Link href={categoryHref || `/cat/${(video.category || 'all').toLowerCase().replace(/\s+/g, '-')}`} style={{ color: 'var(--color-muted)', textDecoration: 'none' }}>
           {video.category ? video.category.replace(/\b\w/g, (l) => l.toUpperCase()) : 'Videos'}
         </Link>
         <span style={{ margin: '0 0.5rem' }}>/</span>
@@ -326,17 +333,37 @@ export default function VideoPlayerClient({ video, initialRelated = [], relatedC
                   <div className="video-tags-wrap">
                     <span className="video-tags-label">Tags:</span>
                     <div className="keyword-tags">
-                      {videoTags.map((tag) => (
-                        <Link
-                          key={tag}
-                          href={`/search?query=${encodeURIComponent(tag)}`}
-                          className="keyword-tag"
-                        >
-                          #{tag}
-                        </Link>
-                      ))}
+                      {videoTags.map((tag) => {
+                        const hubHref = tagHubLinks?.[tag];
+                        return hubHref ? (
+                          <Link
+                            key={tag}
+                            href={hubHref}
+                            className="keyword-tag"
+                          >
+                            #{tag}
+                          </Link>
+                        ) : (
+                          <button
+                            key={tag}
+                            type="button"
+                            onClick={() => router.push(`/search?query=${encodeURIComponent(tag)}`)}
+                            className="keyword-tag"
+                          >
+                            #{tag}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
+                )}
+                {categoryHref && video.category && (
+                  <p className="video-category-bridge" style={{ marginTop: '0.75rem', fontSize: '0.9rem' }}>
+                    Category:{' '}
+                    <Link href={categoryHref} style={{ color: 'var(--color-accent)', fontWeight: 600 }}>
+                      More {video.category} videos &rarr;
+                    </Link>
+                  </p>
                 )}
                 {discoveryContext && (
                   <section className="video-context" aria-labelledby="video-context-heading">

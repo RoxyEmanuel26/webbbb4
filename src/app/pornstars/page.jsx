@@ -18,9 +18,9 @@ export const metadata = {
     type: 'website',
     images: [
       {
-        url: '/favicon.png',
-        width: 512,
-        height: 512,
+        url: '/og-default.jpg',
+        width: 1200,
+        height: 630,
         alt: 'Adult Film Stars — NICEVX',
       },
     ],
@@ -29,7 +29,7 @@ export const metadata = {
     title: 'Top Adult Film Stars & Pornstars Directory A-Z | NICEVX',
     description:
       'Browse verified adult film stars, top performers, and models on NICEVX. Stream free high-definition clips and filmographies indexed from A to Z.',
-    images: ['/favicon.png'],
+    images: ['/og-default.jpg'],
   },
 };
 

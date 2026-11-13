@@ -23,6 +23,8 @@ for (const href of homepageVideos) {
 }
 assert(homepage.includes(`href="/collections/${qualifiedHub}"`), 'Homepage must link to an indexable collection');
 assert.doesNotMatch(homepage, /href="\/tag\//, 'Published cards must not link to noindex or missing tag pages');
+assert.doesNotMatch(homepage, /href="\/\?order=/, 'Homepage must not emit crawl-budget-wasting blocked ?order= internal links');
+assert.doesNotMatch(homepage, /href="\/search\?query=/, 'Homepage must not emit internal search-parameter links');
 assert.doesNotMatch(homepage, /<meta name="robots" content="noindex/, 'Homepage must remain indexable');
 
 const category = read(`cat/${qualifiedHub}.html`);
@@ -76,5 +78,7 @@ assert.match(watchPage, /VideoObject/, 'Watch page must retain video structured 
 assert.match(watchPage, /How this video compares/, 'Watch page must render a factual catalog comparison');
 assert.match(watchPage, /Similar length and tags/, 'Watch page must link to comparable videos');
 assert.doesNotMatch(watchPage, /median of NaN|ranks -1 of|undefined views/, 'Comparison must contain only factual numbers');
+assert.doesNotMatch(watchPage, /href="\/\?order=/, 'Watch page must not emit internal ?order= links');
+assert.doesNotMatch(watchPage, /href="\/search\?query=/, 'Watch page must not emit internal /search?query= links');
 
 console.log(`SEO render gate passed: ${homepageVideos.size} homepage videos, ${categoryVideos.size} category videos, collection guide, and a contextual watch page.`);

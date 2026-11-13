@@ -107,12 +107,37 @@ for (let index = 0; index < childUrls.length; index++) {
       assert(!duration || (duration > 0 && duration <= 28800), `Invalid video duration: ${loc}`);
     } else if (childUrl.pathname.includes('sitemap-categories')) {
       assert(parsed.pathname.startsWith('/cat/'), `Categories sitemap must contain only /cat/ URLs: ${loc}`);
+    } else if (childUrl.pathname.includes('sitemap-models')) {
+      assert(
+        parsed.pathname === '/pornstars' || /^\/pornstar\/[a-z0-9-]+$/.test(parsed.pathname),
+        `Models sitemap contains unexpected route: ${loc}`
+      );
     } else {
       assert(!parsed.pathname.startsWith('/watch'), 'Live noindex watch URLs must stay out of sitemap');
       assert(!parsed.pathname.startsWith('/cat/'), 'Category URLs belong in sitemap-categories.xml, not sitemap-static.xml');
     }
   }
 }
+
+assert(childUrls.some((u) => u.endsWith('/sitemaps/sitemap-models.xml')), 'Sitemap index must include sitemap-models.xml');
+assert(allPageUrls.has('https://www.nicevx.com/movies'), 'Sitemap must include /movies hub');
+assert(allPageUrls.has('https://www.nicevx.com/pornstars'), 'Sitemap must include /pornstars directory');
+
+const { PORNSTARS, MIN_PERFORMER_INDEX_VIDEOS, getVideosForPerformer } = require('../src/data/pornstars');
+const expectedModelSlugs = new Set(
+  PORNSTARS.filter((star) => getVideosForPerformer(star, catalogVideos).length >= MIN_PERFORMER_INDEX_VIDEOS)
+    .map((star) => star.slug)
+);
+const actualModelSlugs = new Set(
+  [...allPageUrls]
+    .filter((u) => u.startsWith('https://www.nicevx.com/pornstar/'))
+    .map((u) => u.replace('https://www.nicevx.com/pornstar/', ''))
+);
+assert.deepEqual(
+  [...actualModelSlugs].sort(),
+  [...expectedModelSlugs].sort(),
+  'sitemap-models.xml performer URLs must match indexable threshold'
+);
 
 assert.equal(videoUrlCount, canonicalVideos.size, `Video sitemap/catalog mismatch: ${videoUrlCount}/${canonicalVideos.size}`);
 console.log(`Sitemap validation passed: ${childUrls.length} child files, ${allPageUrls.size} canonical URLs, ${videoUrlCount} videos.`);

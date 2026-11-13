@@ -70,7 +70,7 @@ export function videoObjectSchema(video) {
     '@type': 'VideoObject',
     name: video.title,
     description: video.description || `Watch ${video.title} on NICEVX in full HD streaming.`,
-    thumbnailUrl: thumbs.length ? thumbs : [`${SITE_URL}/favicon.png`],
+    thumbnailUrl: thumbs.length ? thumbs : [`${SITE_URL}/og-default.jpg`],
     uploadDate: video.uploadDate,
     url: video.canonicalUrl || `${SITE_URL}/video/${video.canonicalSlug}`,
     isFamilyFriendly: false,
@@ -130,29 +130,12 @@ export function itemListSchema({ name, url, items = [], maxItems = 36 }) {
     name,
     url: url.startsWith('http') ? url : `${SITE_URL}${url}`,
     numberOfItems: sliced.length,
-    itemListElement: sliced.map((video, index) => {
-      const embedUrl = video.embedUrl || video.embed || (video.id ? `https://www.eporner.com/embed/${video.id}/` : undefined);
-      const description = video.description || `Watch ${video.title} on NICEVX in full HD. High definition streaming video with verified duration and smooth playback.`;
-      const thumbs = Array.isArray(video.thumbs) && video.thumbs.length > 0
-        ? video.thumbs.map((t) => (typeof t === 'string' ? t : t.src)).filter(Boolean)
-        : [video.thumbnail].filter(Boolean);
-
-      return {
-        '@type': 'ListItem',
-        position: index + 1,
-        item: {
-          '@type': 'VideoObject',
-          name: video.title,
-          description,
-          url: video.canonicalUrl || `${SITE_URL}/video/${video.canonicalSlug}`,
-          thumbnailUrl: thumbs.length ? thumbs : [`${SITE_URL}/favicon.png`],
-          ...(embedUrl && { embedUrl }),
-          ...(video.uploadDate && { uploadDate: video.uploadDate }),
-          ...(video.durationSeconds && { duration: formatIsoDuration(video) }),
-          isFamilyFriendly: false,
-        },
-      };
-    }),
+    itemListElement: sliced.map((video, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: video.canonicalUrl || `${SITE_URL}/video/${video.canonicalSlug}`,
+      name: video.title,
+    })),
   };
 }
 

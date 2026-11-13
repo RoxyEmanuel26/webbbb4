@@ -50,9 +50,9 @@ export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName 
 
   const ogImage = [
     {
-      url: '/favicon.png',
-      width: 512,
-      height: 512,
+      url: '/og-default.jpg',
+      width: 1200,
+      height: 630,
       alt: `${seoQuery} — NICEVX Free HD Videos`,
     },
   ];
@@ -75,7 +75,7 @@ export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName 
       card: 'summary_large_image',
       title: seoTitle,
       description: seoDesc,
-      images: ['/favicon.png'],
+      images: ['/og-default.jpg'],
     },
   };
 };

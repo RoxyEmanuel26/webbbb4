@@ -47,9 +47,9 @@ export const metadata = {
     locale: "en_US",
     images: [
       {
-        url: "/favicon.png",
-        width: 512,
-        height: 512,
+        url: "/og-default.jpg",
+        width: 1200,
+        height: 630,
         alt: "NICEVX — Free HD Porn Videos",
       },
     ],
@@ -59,7 +59,7 @@ export const metadata = {
     title: "NICEVX — Adult Videos",
     description:
       "Browse adult videos, popular categories, and new daily additions.",
-    images: ["/favicon.png"],
+    images: ["/og-default.jpg"],
   },
   icons: {
     icon: "/favicon.png",
@@ -69,7 +69,7 @@ export const metadata = {
   alternates: {
     canonical: "https://www.nicevx.com/",
   },
-  other: { rating: "adult" },
+  other: { rating: "RTA-5042-1996-1400-1577-RTA" },
 };
 
 export const viewport = {

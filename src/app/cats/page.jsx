@@ -18,9 +18,9 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/favicon.png",
-        width: 512,
-        height: 512,
+        url: "/og-default.jpg",
+        width: 1200,
+        height: 630,
         alt: "Adult Video Categories — NICEVX",
       },
     ],
@@ -30,7 +30,7 @@ export const metadata = {
     title: "Browse Adult Video Categories A-Z | NICEVX",
     description:
       "Explore hundreds of verified adult video categories on NICEVX. Stream free high-definition clips and curated collections indexed from A to Z.",
-    images: ["/favicon.png"],
+    images: ["/og-default.jpg"],
   },
 };
 
