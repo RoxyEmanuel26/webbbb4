@@ -11,6 +11,7 @@ import {
   isCollectionIndexable,
   toVideoCard,
 } from "@/lib/catalog";
+import { getTagHubHref } from "@/lib/hubs";
 import "../../../pages/Pages.css";
 
 export const dynamicParams = false;
@@ -214,11 +215,20 @@ export default async function CollectionPage({ params }) {
       )}
       <h2>Videos</h2>
       {videos.length ? (
-        <div className="video-grid">
-          {videos.slice(0, 180).map((video, index) => (
-            <VideoCard key={video.id} video={toVideoCard(video)} priority={index < 4} />
-          ))}
-        </div>
+        <>
+          <div className="video-grid">
+            {videos.slice(0, 48).map((video, index) => (
+              <VideoCard key={video.id} video={toVideoCard(video, { maxTags: 2 })} priority={index < 4} />
+            ))}
+          </div>
+          {videos.length > 48 && getTagHubHref(slug) && (
+            <div style={{ display: "flex", justifyContent: "center", margin: "1.5rem 0 0.5rem" }}>
+              <Link href={getTagHubHref(slug)} className="back-btn">
+                Browse all {videos.length} {collection.name} videos &rarr;
+              </Link>
+            </div>
+          )}
+        </>
       ) : (
         <p>More videos are coming soon.</p>
       )}

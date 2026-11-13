@@ -80,7 +80,9 @@ export function getCatalogVideos() {
 
 // Client grids need only card fields. Keeping large thumbnail arrays and embed
 // metadata out of RSC payloads prevents catalog growth from inflating HTML.
-export function toVideoCard(video) {
+export function toVideoCard(video, options = {}) {
+  const tags = Array.isArray(video.tags) ? video.tags : [];
+  const trimmedTags = Number.isInteger(options.maxTags) ? tags.slice(0, options.maxTags) : tags;
   return {
     id: video.id,
     canonicalSlug: video.canonicalSlug,
@@ -93,7 +95,7 @@ export function toVideoCard(video) {
     discoveryScore: video.discoveryScore,
     viewGrowth7d: video.viewGrowth7d,
     category: video.category,
-    tags: video.tags,
+    tags: trimmedTags,
     uploadDate: video.uploadDate,
   };
 }
