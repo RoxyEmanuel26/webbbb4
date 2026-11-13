@@ -54,13 +54,29 @@ export async function generateMetadata({ params }) {
   const videos = getCollectionVideos(collection);
   const stats = getCollectionStats(collection);
   const indexable = isCollectionIndexable(collection, videos);
+  const title = `Watch ${collection.name} HD Videos Collection — NICEVX`;
+  const description = collectionDescription(collection, stats);
+  const url = `https://www.nicevx.com/collections/${collection.slug}`;
   return {
-    title: `${collection.name} Videos — NICEVX`,
-    description: collectionDescription(collection, stats),
+    title,
+    description,
     alternates: {
-      canonical: `https://www.nicevx.com/collections/${collection.slug}`,
+      canonical: url,
     },
     robots: { index: indexable, follow: true },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website",
+      images: [{ url: "/favicon.png", width: 512, height: 512, alt: `${collection.name} Collection — NICEVX` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/favicon.png"],
+    },
   };
 }
 
