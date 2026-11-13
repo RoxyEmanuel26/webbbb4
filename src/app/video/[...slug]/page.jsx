@@ -12,7 +12,7 @@ import {
   isCollectionIndexable,
   toVideoCard,
 } from '@/lib/catalog';
-import { getTagHubHref, isCategoryIndexable } from '@/lib/hubs';
+import { getDisplayCategory, getTagHubHref, isCategoryIndexable } from '@/lib/hubs';
 
 export const dynamicParams = false;
 
@@ -24,12 +24,48 @@ function extractId(slug) {
   return slug?.join('/').match(/-([A-Za-z0-9]{11})$/)?.[1] || null;
 }
 
-function formatSeoTitle(rawTitle, category) {
-  const cleanTitle = String(rawTitle || '').trim();
+const PRESERVE_ACRONYMS = new Set([
+  'HD', '4K', 'UHD', 'POV', 'MILF', 'JAV', 'BBC', 'BBW', 'BDSM',
+  'PMV', 'DP', 'JOI', 'PAWG', 'ASS', 'CUM', 'XXX', 'VR', 'ASMR', 'FHD',
+]);
+
+function normalizeVideoTitle(rawTitle) {
+  const cleaned = String(rawTitle || '').replace(/\s+/g, ' ').trim();
+  if (!cleaned) return 'HD Video';
+  const letters = cleaned.match(/[A-Za-z]/g) || [];
+  const upperLetters = cleaned.match(/[A-Z]/g) || [];
+  const upperRatio = letters.length > 0 ? upperLetters.length / letters.length : 0;
+
+  // Normalize shouting ALLCAPS titles to readable Title Case while preserving industry acronyms.
+  if (letters.length >= 6 && upperRatio > 0.65) {
+    return cleaned
+      .split(' ')
+      .map((word) => {
+        const bare = word.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+        if (PRESERVE_ACRONYMS.has(bare)) return word.toUpperCase();
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      })
+      .join(' ');
+  }
+  return cleaned;
+}
+
+function formatSeoTitle(rawTitle, categoryName, lengthMin) {
+  const cleanTitle = normalizeVideoTitle(rawTitle);
   const siteSuffix = ' | NICEVX';
+  const cleanCat = String(categoryName || '').trim();
+  const cleanDur = String(lengthMin || '').trim();
+
+  if (cleanTitle.length < 25 && cleanCat) {
+    const expanded = cleanDur && `${cleanTitle} – ${cleanCat} (${cleanDur})${siteSuffix}`.length <= 60
+      ? `${cleanTitle} – ${cleanCat} (${cleanDur})${siteSuffix}`
+      : `${cleanTitle} – ${cleanCat}${siteSuffix}`;
+    if (expanded.length <= 60) return expanded;
+  }
+
   if (cleanTitle.length + siteSuffix.length <= 60) {
-    if (category) {
-      const withCat = `${cleanTitle} – ${category}${siteSuffix}`;
+    if (cleanCat) {
+      const withCat = `${cleanTitle} – ${cleanCat}${siteSuffix}`;
       if (withCat.length <= 60) return withCat;
     }
     return `${cleanTitle}${siteSuffix}`;
@@ -39,10 +75,12 @@ function formatSeoTitle(rawTitle, category) {
   return `${truncated}${siteSuffix}`;
 }
 
-function formatSeoDesc(rawDesc, video) {
+function formatSeoDesc(rawDesc, video, displayCatName) {
   let desc = String(rawDesc || '').trim();
   if (desc.length < 120) {
-    desc += ` Stream in high definition on NICEVX with verified ${video.length_min || 'full'} duration.`;
+    const durPart = video.length_min ? ` (${video.length_min})` : '';
+    const catPart = displayCatName ? ` in ${displayCatName}` : '';
+    desc += ` Stream in high definition${catPart}${durPart} on NICEVX with fast playback.`;
   }
   if (desc.length > 155) {
     desc = desc.slice(0, 151).replace(/\s+\S*$/, '...');
@@ -54,8 +92,9 @@ export async function generateMetadata({ params }) {
   const { slug = [] } = await params;
   const video = getVideoById(extractId(slug));
   if (!video) return { title: 'Video not found | NICEVX', robots: { index: false, follow: false } };
-  const title = formatSeoTitle(video.title, video.category);
-  const description = formatSeoDesc(video.description, video);
+  const displayCategory = getDisplayCategory(video);
+  const title = formatSeoTitle(video.title, displayCategory.name, video.length_min);
+  const description = formatSeoDesc(video.description, video, displayCategory.name);
   return {
     title,
     description,
@@ -100,7 +139,8 @@ export default async function VideoPage({ params }) {
     .slice(0, 3)
     .map(({ slug: collectionSlug, name }) => ({ slug: collectionSlug, name }));
 
-  const categorySlug = (video.category || 'amateur').toLowerCase().replace(/\s+/g, '-');
+  const displayCategory = getDisplayCategory(video);
+  const categorySlug = displayCategory.slug || 'amateur';
   const categoryHref = isCategoryIndexable(categorySlug) ? `/cat/${categorySlug}` : '/cats';
   const rawTags = Array.isArray(video.tags) && video.tags.length > 0
     ? video.tags
@@ -113,7 +153,7 @@ export default async function VideoPage({ params }) {
 
   const breadcrumbItems = [
     { name: 'Home', url: '/' },
-    { name: video.category || 'Videos', url: categoryHref },
+    { name: displayCategory.name || 'Videos', url: categoryHref },
     { name: video.title, url: video.canonicalUrl },
   ];
 
@@ -127,7 +167,7 @@ export default async function VideoPage({ params }) {
       />
       <JsonLd
         data={[
-          videoObjectSchema(video),
+          videoObjectSchema({ ...video, category: displayCategory.name }),
           breadcrumbListSchema(breadcrumbItems),
         ]}
       />
@@ -138,6 +178,7 @@ export default async function VideoPage({ params }) {
         discoveryContext={getVideoContext(video)}
         tagHubLinks={tagHubLinks}
         categoryHref={categoryHref}
+        displayCategory={displayCategory}
       />
     </article>
   );

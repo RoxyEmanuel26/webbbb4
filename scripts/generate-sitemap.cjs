@@ -3,6 +3,8 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 const { MAX_EDITORIALS_PER_RUN, MIN_COLLECTION_VIDEOS, bootstrapCollections, buildFacts, discoverCandidates, getCollectionVideos, getOverlapBlocker, isQualified, trimEditorialIntro, validateManifest, wordCount } = require('./collection-engine.cjs');
 const { buildModelsSitemap } = require('./build-models-sitemap.cjs');
+const { TAG_DENYLIST, toTagSlug, getQualifiedTagHubs } = require('../src/data/tagConfig.js');
+const { ALL_CATEGORIES } = require('../src/data/allCategories.js');
 
 const SITE_URL = 'https://www.nicevx.com';
 const API_BASE = 'https://www.eporner.com/api/v2';
@@ -873,12 +875,25 @@ function writeStaticSitemap(catalog, collections) {
     })
     .join('');
 
+  const qualifiedTags = getQualifiedTagHubs(catalog, ALL_CATEGORIES, 12);
+  const tagHubUrls = qualifiedTags
+    .map((hub) => {
+      const lastmod = latestDate(hub.videos.map((v) => v.syncedAt || v.uploadDate));
+      return `
+  <url>
+    <loc>${SITE_URL}/tag/${hub.slug}</loc>
+    <lastmod>${lastmod}</lastmod>
+  </url>`;
+    })
+    .join('');
+
   staticSitemapLastmod = latestDate([
     ...Array.from(staticBaseUrls.matchAll(/<lastmod>([^<]+)<\/lastmod>/g), (match) => match[1]),
-    ...Array.from(categoryUrls.matchAll(/<lastmod>([^<]+)<\/lastmod>/g), (match) => match[1])
+    ...Array.from(categoryUrls.matchAll(/<lastmod>([^<]+)<\/lastmod>/g), (match) => match[1]),
+    ...Array.from(tagHubUrls.matchAll(/<lastmod>([^<]+)<\/lastmod>/g), (match) => match[1])
   ]);
 
-  const staticXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${staticBaseUrls}\n${categoryUrls}\n</urlset>`;
+  const staticXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${staticBaseUrls}\n${categoryUrls}\n${tagHubUrls}\n</urlset>`;
   fs.writeFileSync(path.join(sitemapOutputDir, 'sitemap-static.xml'), staticXml, 'utf-8');
   console.log(`[Quality Gate] ${qualifiedCollections.length}/${collections.length} collection hub masuk sitemap.`);
 }

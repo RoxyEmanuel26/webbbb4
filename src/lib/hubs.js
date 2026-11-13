@@ -1,8 +1,18 @@
 import catalog from "@/data/curated-video-catalog.json";
 import { ALL_CATEGORIES } from "@/data/allCategories";
+import { TAG_DENYLIST, toTagSlug } from "@/data/tagConfig";
 
 const videos = Array.isArray(catalog.videos) ? catalog.videos : [];
 export const MIN_HUB_VIDEOS = 12;
+
+const GENERIC_CATEGORY_SLUGS = new Set([
+  "adult-porn",
+  "free-porn",
+  "hd-porn",
+  "porn",
+  "hd",
+  "",
+]);
 
 const normalizeSignal = (value) =>
   String(value || "")
@@ -147,24 +157,12 @@ export function isCategoryIndexable(slugOrName) {
   return catVideos.length >= MIN_HUB_VIDEOS;
 }
 
-export function getTagHubHref(tagOrSlug) {
-  const slug = String(tagOrSlug || "")
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-  if (!slug) return null;
-  if (isCategoryIndexable(slug)) return `/cat/${slug}`;
-  return null;
-}
+const tagVideosCache = new Map();
+const tagStatsCache = new Map();
+let tagHubsCache = null;
 
-export function getCategoryStats(slugOrName) {
-  const slug = toSlug(String(slugOrName || ""));
-  if (categoryStatsCache.has(slug)) {
-    return categoryStatsCache.get(slug);
-  }
-  const catVideos = getCategoryVideos(slug);
-  const durations = catVideos
+function computeVideoSetStats(videoList, excludeSlug) {
+  const durations = videoList
     .map((v) => Number(v.durationSeconds) || 0)
     .filter(Boolean)
     .sort((a, b) => a - b);
@@ -175,7 +173,7 @@ export function getCategoryStats(slugOrName) {
       : Math.round((durations[midpoint - 1] + durations[midpoint]) / 2)
     : 0;
 
-  const hdSignals = catVideos.filter((v) => typeof v.isHd === "boolean");
+  const hdSignals = videoList.filter((v) => typeof v.isHd === "boolean");
   const hdShare = hdSignals.length
     ? Math.round(
         (hdSignals.filter((v) => v.isHd).length / hdSignals.length) * 100
@@ -183,23 +181,24 @@ export function getCategoryStats(slugOrName) {
     : null;
 
   const tagCounts = new Map();
-  catVideos.forEach((v) => {
+  videoList.forEach((v) => {
     (v.tags || []).forEach((rawTag) => {
       const tag = normalizeSignal(rawTag);
-      if (tag && tag !== slug) {
+      const tagSlug = toTagSlug(tag);
+      if (tag && tagSlug !== excludeSlug && tag !== excludeSlug) {
         tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
       }
     });
   });
 
-  const latestSynced = catVideos.reduce(
+  const latestSynced = videoList.reduce(
     (latest, v) =>
       v.syncedAt && (!latest || v.syncedAt > latest) ? v.syncedAt : latest,
     catalog.generatedAt || new Date().toISOString()
   );
 
-  const stats = {
-    videoCount: catVideos.length,
+  return {
+    videoCount: videoList.length,
     medianDurationSeconds,
     hdShare,
     latestSynced,
@@ -208,7 +207,127 @@ export function getCategoryStats(slugOrName) {
       .slice(0, 8)
       .map(([tag]) => tag),
   };
+}
 
+export function getTagVideos(tagOrSlug) {
+  const slug = toTagSlug(tagOrSlug);
+  if (!slug) return [];
+  if (tagVideosCache.has(slug)) {
+    return tagVideosCache.get(slug);
+  }
+  const matches = videos
+    .filter(
+      (video) =>
+        video.availability === "available" &&
+        (video.tags || []).some((rawTag) => toTagSlug(rawTag) === slug)
+    )
+    .sort(
+      (a, b) =>
+        (Number(b.discoveryScore) || 0) - (Number(a.discoveryScore) || 0) ||
+        (Number(b.views) || 0) - (Number(a.views) || 0)
+    );
+  tagVideosCache.set(slug, matches);
+  return matches;
+}
+
+export function isTagIndexable(tagOrSlug) {
+  const slug = toTagSlug(tagOrSlug);
+  if (!slug || TAG_DENYLIST.has(slug) || categoryBySlug.has(slug)) {
+    return false;
+  }
+  return getTagVideos(slug).length >= MIN_HUB_VIDEOS;
+}
+
+export function getTagHubHref(tagOrSlug) {
+  const slug = toTagSlug(tagOrSlug);
+  if (!slug) return null;
+  if (isCategoryIndexable(slug)) return `/cat/${slug}`;
+  if (isTagIndexable(slug)) return `/tag/${slug}`;
+  return null;
+}
+
+export function getTagStats(tagOrSlug) {
+  const slug = toTagSlug(tagOrSlug);
+  if (tagStatsCache.has(slug)) {
+    return tagStatsCache.get(slug);
+  }
+  const stats = computeVideoSetStats(getTagVideos(slug), slug);
+  tagStatsCache.set(slug, stats);
+  return stats;
+}
+
+export function getTagIntro(tagOrSlug) {
+  const slug = toTagSlug(tagOrSlug);
+  if (EDITORIAL_INTROS[slug]) return EDITORIAL_INTROS[slug];
+  const label = slug.replace(/-/g, " ");
+  const stats = getTagStats(slug);
+  const mins = stats.medianDurationSeconds
+    ? Math.max(1, Math.round(stats.medianDurationSeconds / 60))
+    : 12;
+  return `Browse ${stats.videoCount} high-definition #${label} adult videos on NICEVX, averaging around ${mins} minutes per scene. Every listing features full runtime details, storyboard frame previews, and fast streaming across desktop and mobile.`;
+}
+
+export function getTagHubs() {
+  if (tagHubsCache) return tagHubsCache;
+  const counts = new Map();
+  for (const video of videos) {
+    if (video.availability !== "available") continue;
+    const seen = new Set();
+    for (const rawTag of video.tags || []) {
+      const slug = toTagSlug(rawTag);
+      if (!slug || seen.has(slug)) continue;
+      seen.add(slug);
+      counts.set(slug, (counts.get(slug) || 0) + 1);
+    }
+  }
+  tagHubsCache = [...counts.entries()]
+    .filter(([slug, count]) => count >= MIN_HUB_VIDEOS && isTagIndexable(slug))
+    .map(([slug, count]) => ({
+      slug,
+      name: slug.replace(/-/g, " "),
+      count,
+      stats: getTagStats(slug),
+      lastmod: getTagStats(slug).latestSynced,
+    }))
+    .sort((a, b) => b.count - a.count || a.slug.localeCompare(b.slug));
+  return tagHubsCache;
+}
+
+export function getDisplayCategory(video) {
+  const rawCat = String(video?.category || "").trim();
+  const rawSlug = toSlug(rawCat);
+  if (rawCat && !GENERIC_CATEGORY_SLUGS.has(rawSlug)) {
+    const matchedCat = categoryBySlug.get(rawSlug);
+    return {
+      name: matchedCat ? matchedCat.name : rawCat,
+      slug: rawSlug,
+    };
+  }
+  const tags = Array.isArray(video?.tags) ? video.tags : [];
+  for (const rawTag of tags) {
+    const tagSlug = toTagSlug(rawTag);
+    if (!tagSlug || GENERIC_CATEGORY_SLUGS.has(tagSlug)) continue;
+    if (isCategoryIndexable(tagSlug)) {
+      const catRecord = categoryBySlug.get(tagSlug);
+      return { name: catRecord ? catRecord.name : rawTag, slug: tagSlug };
+    }
+  }
+  for (const rawTag of tags) {
+    const tagSlug = toTagSlug(rawTag);
+    const catRecord = categoryBySlug.get(tagSlug);
+    if (catRecord && !GENERIC_CATEGORY_SLUGS.has(tagSlug)) {
+      return { name: catRecord.name, slug: tagSlug };
+    }
+  }
+  return { name: rawCat || "Adult Video", slug: rawSlug || "amateur" };
+}
+
+export function getCategoryStats(slugOrName) {
+  const slug = toSlug(String(slugOrName || ""));
+  if (categoryStatsCache.has(slug)) {
+    return categoryStatsCache.get(slug);
+  }
+  const stats = computeVideoSetStats(getCategoryVideos(slug), slug);
   categoryStatsCache.set(slug, stats);
   return stats;
 }
@@ -220,7 +339,7 @@ export function getCategoryIntro(slugOrName) {
   }
   const catRecord = categoryBySlug.get(slug);
   const displayName = catRecord ? catRecord.name : slug.replace(/-/g, " ");
-  return `Browse our curated directory of high-definition ${displayName} videos. Each clip in this section is selected from verified content providers and indexed with accurate duration and tags to help you quickly discover top-rated entertainment.`;
+  return `Browse our curated directory of high-definition ${displayName} videos. Each clip in this section is selected for clear resolution and accurate duration and tags to help you quickly discover top-rated entertainment.`;
 }
 
 export function getCategoryHubs() {

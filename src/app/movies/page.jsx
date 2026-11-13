@@ -5,7 +5,7 @@ import MoviesClient from './MoviesClient';
 
 export function generateMetadata() {
   const seoTitle = 'Full Movies & Extended Adult Feature Films | NICEVX';
-  const seoDesc = 'Stream full-length adult movies and uncut feature scenes running 45+ minutes in crisp high definition. Verified durations, ratings, and smooth streaming.';
+  const seoDesc = 'Stream full-length adult movies and uncut feature scenes running 45+ minutes in crisp high definition. Full runtimes, ratings, and smooth streaming.';
   const seoCanonical = 'https://www.nicevx.com/movies';
 
   return {
@@ -48,7 +48,11 @@ export default function MoviesPage() {
     .filter((v) => v.availability === 'available' && (Number(v.durationSeconds) || 0) >= 2700)
     .sort((a, b) => (Number(b.durationSeconds) || 0) - (Number(a.durationSeconds) || 0));
 
-  const initialVideoCards = allVideos.map(toVideoCard);
+  const initialVideoCards = allVideos.map((video) => ({
+    ...toVideoCard(video),
+    durationSeconds: Number(video.durationSeconds) || 0,
+    rate: Number(video.rating || video.rate) || 0,
+  }));
 
   const breadcrumbs = [
     { name: 'Home', url: '/' },

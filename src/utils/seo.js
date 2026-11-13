@@ -12,7 +12,15 @@ export const getCategorySlugForTag = (tagName = '') => {
     : null;
 };
 
-export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName }) => {
+export const getSearchMetadata = ({
+  query,
+  isCat,
+  isTag,
+  isIndexableTag = false,
+  page = 1,
+  catName,
+  tagName,
+}) => {
   const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
   const seoQuery = capitalize((query || '').replace(/-/g, ' '));
 
@@ -25,9 +33,9 @@ export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName 
     : `Search: ${seoQuery} – Free Adult Videos | NICEVX`;
 
   const seoDesc = isCat
-    ? `Watch free ${seoQuery} HD porn videos on NICEVX. Stream top-rated clips with verified durations, ratings, and smooth high-definition playback.`
+    ? `Watch free ${seoQuery} HD porn videos on NICEVX. Stream top-rated clips with accurate runtimes, ratings, and smooth high-definition playback.`
     : isTag
-    ? `Browse trending #${seoQuery} adult videos on NICEVX. Stream verified free HD clips with fast streaming and daily updates.`
+    ? `Browse trending #${seoQuery} adult videos on NICEVX. Stream free HD clips with smooth high-definition playback and full scene metadata.`
     : `Search results for "${seoQuery}" on NICEVX. Find matching free HD adult videos and curated clips with fast streaming.`;
 
   let seoCanonical = isCat
@@ -43,7 +51,7 @@ export const getSearchMetadata = ({ query, isCat, isTag, page, catName, tagName 
   const robots = (!isCat && !isTag)
     ? 'noindex, nofollow'   // search pages
     : isTag
-    ? 'noindex, follow'     // tag pages: canonical points to /cat/ so noindex to save crawl budget
+    ? (isIndexableTag && page <= 1 ? 'index, follow' : 'noindex, follow')
     : page > 1
     ? 'noindex, follow'     // paginated cat pages
     : 'index, follow';      // cat page 1

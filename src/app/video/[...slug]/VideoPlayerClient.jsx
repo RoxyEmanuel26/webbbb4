@@ -43,8 +43,10 @@ export default function VideoPlayerClient({
   discoveryContext = null,
   tagHubLinks = {},
   categoryHref = null,
+  displayCategory = null,
 }) {
   const router = useRouter();
+  const effectiveCategory = displayCategory?.name || video?.category || '';
   const [favorite, setFavorite] = useState(false);
   const [previewThumb, setPreviewThumb] = useState(null);
   const [autoplay, setAutoplay] = useState(true);
@@ -158,8 +160,8 @@ export default function VideoPlayerClient({
       <nav className="breadcrumb-nav" aria-label="Breadcrumb" style={{ marginBottom: '1rem', fontSize: '0.875rem', color: 'var(--color-muted)' }}>
         <Link href="/" style={{ color: 'var(--color-muted)', textDecoration: 'none' }}>Home</Link>
         <span style={{ margin: '0 0.5rem' }}>/</span>
-        <Link href={categoryHref || `/cat/${(video.category || 'all').toLowerCase().replace(/\s+/g, '-')}`} style={{ color: 'var(--color-muted)', textDecoration: 'none' }}>
-          {video.category ? video.category.replace(/\b\w/g, (l) => l.toUpperCase()) : 'Videos'}
+        <Link href={categoryHref || `/cat/${(effectiveCategory || 'all').toLowerCase().replace(/\s+/g, '-')}`} style={{ color: 'var(--color-muted)', textDecoration: 'none' }}>
+          {effectiveCategory ? effectiveCategory.replace(/\b\w/g, (l) => l.toUpperCase()) : 'Videos'}
         </Link>
         <span style={{ margin: '0 0.5rem' }}>/</span>
         <span style={{ color: 'var(--color-text)' }}>{video.title}</span>
@@ -326,9 +328,58 @@ export default function VideoPlayerClient({
                 <div className="video-description-wrap">
                   <h2 className="video-section-subtitle">Video Description</h2>
                   <p className="video-info-desc">
-                    {video.description || `Watch ${video.title} in full HD on NICEVX. Stream high definition scene with verified playback and crisp audio.`}
+                    {video.description || `Watch ${video.title} in full HD on NICEVX. Stream high definition scenes with smooth playback and crisp audio.`}
                   </p>
                 </div>
+                <dl
+                  className="video-scene-facts"
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+                    gap: '0.6rem 1rem',
+                    margin: '0.85rem 0',
+                    padding: '0.75rem',
+                    borderRadius: '8px',
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(255,255,255,0.07)',
+                    fontSize: '0.82rem',
+                  }}
+                >
+                  {video.length_min && (
+                    <div>
+                      <dt style={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>Runtime</dt>
+                      <dd style={{ margin: 0, fontWeight: 600 }}>{video.length_min}</dd>
+                    </div>
+                  )}
+                  {effectiveCategory && (
+                    <div>
+                      <dt style={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>Category</dt>
+                      <dd style={{ margin: 0, fontWeight: 600 }}>{effectiveCategory}</dd>
+                    </div>
+                  )}
+                  <div>
+                    <dt style={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>Quality</dt>
+                    <dd style={{ margin: 0, fontWeight: 600 }}>{video.isHd === false ? 'SD' : 'HD Streaming'}</dd>
+                  </div>
+                  {Number(video.views) > 0 && (
+                    <div>
+                      <dt style={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>Views</dt>
+                      <dd style={{ margin: 0, fontWeight: 600 }}>{formatViews(video.views)}</dd>
+                    </div>
+                  )}
+                  {Number(video.rating) > 0 && (
+                    <div>
+                      <dt style={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>Approval Rating</dt>
+                      <dd style={{ margin: 0, fontWeight: 600 }}>{video.rating}%</dd>
+                    </div>
+                  )}
+                  {video.uploadDate && (
+                    <div>
+                      <dt style={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>Published</dt>
+                      <dd style={{ margin: 0, fontWeight: 600 }}>{new Date(video.uploadDate).toLocaleDateString('en-US')}</dd>
+                    </div>
+                  )}
+                </dl>
                 {videoTags.length > 0 && (
                   <div className="video-tags-wrap">
                     <span className="video-tags-label">Tags:</span>
@@ -357,11 +408,11 @@ export default function VideoPlayerClient({
                     </div>
                   </div>
                 )}
-                {categoryHref && video.category && (
+                {categoryHref && effectiveCategory && (
                   <p className="video-category-bridge" style={{ marginTop: '0.75rem', fontSize: '0.9rem' }}>
                     Category:{' '}
                     <Link href={categoryHref} style={{ color: 'var(--color-accent)', fontWeight: 600 }}>
-                      More {video.category} videos &rarr;
+                      More {effectiveCategory} videos &rarr;
                     </Link>
                   </p>
                 )}

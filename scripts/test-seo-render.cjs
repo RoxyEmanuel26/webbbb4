@@ -6,6 +6,8 @@ const root = path.join(__dirname, '..');
 const read = (relativePath) => fs.readFileSync(path.join(root, 'out', relativePath), 'utf8');
 const catalog = require('../src/data/curated-video-catalog.json');
 const collections = require('../src/data/collections.json');
+const { getQualifiedTagHubs } = require('../src/data/tagConfig.js');
+const { ALL_CATEGORIES } = require('../src/data/allCategories.js');
 const publishedUrls = new Set(catalog.videos.map((video) => video.canonicalUrl));
 const staticSitemap = fs.readFileSync(path.join(root, 'public/sitemaps/sitemap-static.xml'), 'utf8');
 const qualifiedHub = staticSitemap.match(/<loc>https:\/\/www\.nicevx\.com\/collections\/([a-z0-9-]+)<\/loc>/)?.[1];
@@ -81,4 +83,22 @@ assert.doesNotMatch(watchPage, /median of NaN|ranks -1 of|undefined views/, 'Com
 assert.doesNotMatch(watchPage, /href="\/\?order=/, 'Watch page must not emit internal ?order= links');
 assert.doesNotMatch(watchPage, /href="\/search\?query=/, 'Watch page must not emit internal /search?query= links');
 
-console.log(`SEO render gate passed: ${homepageVideos.size} homepage videos, ${categoryVideos.size} category videos, collection guide, and a contextual watch page.`);
+const qualifiedTags = getQualifiedTagHubs(catalog.videos, ALL_CATEGORIES, 12);
+const qualifiedTagSlugSet = new Set(qualifiedTags.map((t) => t.slug));
+for (const tagMatch of watchPage.matchAll(/href="\/tag\/([a-z0-9-]+)"/g)) {
+  assert(
+    qualifiedTagSlugSet.has(tagMatch[1]),
+    `Watch page must not link to non-indexable tag page: /tag/${tagMatch[1]}`
+  );
+}
+
+if (qualifiedTags.length > 0) {
+  const topTagSlug = qualifiedTags[0].slug;
+  const tagHtml = read(`tag/${topTagSlug}.html`);
+  assert.equal((tagHtml.match(/<h1\b/g) || []).length, 1, 'Indexable tag hub must have one H1');
+  assert.doesNotMatch(tagHtml, /<meta name="robots" content="noindex/, `Qualified tag hub /tag/${topTagSlug} must be indexable`);
+  assert.match(tagHtml, /ItemList/, `Qualified tag hub /tag/${topTagSlug} must include ItemList JSON-LD`);
+  assert(localVideoLinks(tagHtml).size >= 12, `Qualified tag hub /tag/${topTagSlug} must render >=12 video links`);
+}
+
+console.log(`SEO render gate passed: ${homepageVideos.size} homepage videos, ${categoryVideos.size} category videos, ${qualifiedTags.length} indexable tag hubs, collection guide, and a contextual watch page.`);

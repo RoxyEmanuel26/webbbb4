@@ -18,10 +18,13 @@ const SORT_OPTIONS = [
   { id: 'rating', label: '⭐ Top Rated' },
 ];
 
+const INITIAL_VISIBLE_COUNT = 48;
+
 export default function MoviesClient({ initialVideos = [] }) {
   const [selectedTier, setSelectedTier] = useState('45');
   const [selectedSort, setSelectedSort] = useState('longest');
   const [searchQuery, setSearchQuery] = useState('');
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
 
   const filteredVideos = useMemo(() => {
     const tier = DURATION_TIERS.find((t) => t.id === selectedTier) || DURATION_TIERS[0];
@@ -48,6 +51,8 @@ export default function MoviesClient({ initialVideos = [] }) {
     return result;
   }, [initialVideos, selectedTier, selectedSort, searchQuery]);
 
+  const visibleVideos = filteredVideos.slice(0, visibleCount);
+
   return (
     <div className="page-wrapper movies-page">
       {/* Hero Header */}
@@ -59,7 +64,7 @@ export default function MoviesClient({ initialVideos = [] }) {
         <h1 className="movies-hero-title">Full Movies &amp; Feature-Length Adult Videos</h1>
         <p className="movies-hero-subtitle">
           Stream uncut, extended adult movies and full scenes running 45 minutes or longer in high definition.
-          Explore feature films from top performers and studios with verified runtimes and seamless streaming.
+          Explore feature films from top performers and studios with complete runtimes and seamless streaming.
         </p>
 
         {/* Filter & Search Bar */}
@@ -72,7 +77,10 @@ export default function MoviesClient({ initialVideos = [] }) {
                 role="tab"
                 aria-selected={selectedTier === tier.id}
                 className={`movies-pill-btn ${selectedTier === tier.id ? 'active' : ''}`}
-                onClick={() => setSelectedTier(tier.id)}
+                onClick={() => {
+                  setSelectedTier(tier.id);
+                  setVisibleCount(INITIAL_VISIBLE_COUNT);
+                }}
               >
                 <Clock size={12} /> {tier.label}
               </button>
@@ -85,7 +93,10 @@ export default function MoviesClient({ initialVideos = [] }) {
               type="text"
               placeholder="Filter movies by title or tag..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setVisibleCount(INITIAL_VISIBLE_COUNT);
+              }}
               className="movies-search-input"
               aria-label="Filter movies by title or tag"
             />
@@ -95,7 +106,7 @@ export default function MoviesClient({ initialVideos = [] }) {
         {/* Sort Options */}
         <div className="movies-sort-row">
           <span className="movies-count-label">
-            Showing <strong>{filteredVideos.length}</strong> full-length movies
+            Showing <strong>{visibleVideos.length}</strong> of <strong>{filteredVideos.length}</strong> full-length movies
           </span>
           <div className="movies-sort-pills">
             {SORT_OPTIONS.map((opt) => (
@@ -103,7 +114,10 @@ export default function MoviesClient({ initialVideos = [] }) {
                 key={opt.id}
                 type="button"
                 className={`movies-sort-btn ${selectedSort === opt.id ? 'active' : ''}`}
-                onClick={() => setSelectedSort(opt.id)}
+                onClick={() => {
+                  setSelectedSort(opt.id);
+                  setVisibleCount(INITIAL_VISIBLE_COUNT);
+                }}
               >
                 {opt.label}
               </button>
@@ -113,11 +127,23 @@ export default function MoviesClient({ initialVideos = [] }) {
       </header>
 
       {/* Video Grid */}
-      <main className="video-grid">
-        {filteredVideos.map((video) => (
-          <VideoCard key={video.id} video={video} />
+      <div className="video-grid">
+        {visibleVideos.map((video, index) => (
+          <VideoCard key={video.id} video={video} priority={index < 4} />
         ))}
-      </main>
+      </div>
+
+      {filteredVideos.length > visibleVideos.length && (
+        <div style={{ display: 'flex', justifyContent: 'center', margin: '2rem 0' }}>
+          <button
+            type="button"
+            className="back-btn"
+            onClick={() => setVisibleCount((prev) => prev + INITIAL_VISIBLE_COUNT)}
+          >
+            Show More Movies ({filteredVideos.length - visibleVideos.length} remaining)
+          </button>
+        </div>
+      )}
 
       {filteredVideos.length === 0 && (
         <div className="empty-block" style={{ margin: '3rem auto' }}>

@@ -124,6 +124,8 @@ assert(allPageUrls.has('https://www.nicevx.com/movies'), 'Sitemap must include /
 assert(allPageUrls.has('https://www.nicevx.com/pornstars'), 'Sitemap must include /pornstars directory');
 
 const { PORNSTARS, MIN_PERFORMER_INDEX_VIDEOS, getVideosForPerformer } = require('../src/data/pornstars');
+const { getQualifiedTagHubs } = require('../src/data/tagConfig.js');
+const { ALL_CATEGORIES } = require('../src/data/allCategories.js');
 const expectedModelSlugs = new Set(
   PORNSTARS.filter((star) => getVideosForPerformer(star, catalogVideos).length >= MIN_PERFORMER_INDEX_VIDEOS)
     .map((star) => star.slug)
@@ -137,6 +139,20 @@ assert.deepEqual(
   [...actualModelSlugs].sort(),
   [...expectedModelSlugs].sort(),
   'sitemap-models.xml performer URLs must match indexable threshold'
+);
+
+const expectedTagSlugs = new Set(
+  getQualifiedTagHubs(catalogVideos, ALL_CATEGORIES, 12).map((hub) => hub.slug)
+);
+const actualTagSlugs = new Set(
+  [...allPageUrls]
+    .filter((u) => u.startsWith('https://www.nicevx.com/tag/'))
+    .map((u) => u.replace('https://www.nicevx.com/tag/', ''))
+);
+assert.deepEqual(
+  [...actualTagSlugs].sort(),
+  [...expectedTagSlugs].sort(),
+  'sitemap-static.xml tag hub URLs must match indexable tag threshold'
 );
 
 assert.equal(videoUrlCount, canonicalVideos.size, `Video sitemap/catalog mismatch: ${videoUrlCount}/${canonicalVideos.size}`);
