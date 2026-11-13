@@ -1,1 +1,2 @@
 /video/:id/:slug /video/:slug-:id 301
+/cats/ https://www.nicevx.com/cats 301
