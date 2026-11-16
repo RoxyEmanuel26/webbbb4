@@ -2,13 +2,12 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import './Pagination.css';
 
-const Pagination = ({ currentPage, totalPages }) => {
+const Pagination = ({ currentPage, totalPages, currentSearch = '' }) => {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   if (!totalPages || totalPages <= 1) return null;
 
@@ -34,7 +33,9 @@ const Pagination = ({ currentPage, totalPages }) => {
   const pages = buildPages();
 
   const getPageLink = (page) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(
+      currentSearch || (typeof window !== 'undefined' ? window.location.search : '')
+    );
     params.set('page', page);
     return `${pathname}?${params.toString()}`;
   };

@@ -47,18 +47,25 @@ const TagsBar = ({ tags, onTagClick }) => {
             </button>
           )}
           <div className="tags-bar-scroll" ref={scrollRef} onScroll={checkScroll}>
-            {tags.map((tag) => (
-              <Link
-                key={tag}
-                href={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
-                prefetch={false}
-                className="tag-pill"
-                aria-label={`Browse ${tag}`}
-                style={{ textDecoration: 'none', color: 'inherit' }}
-              >
-                {tag}
-              </Link>
-            ))}
+            {tags.map((item) => {
+              const label = typeof item === 'string' ? item : item?.label;
+              const href = typeof item === 'string'
+                ? `/search?query=${encodeURIComponent(item)}`
+                : item?.href;
+              if (!label || !href) return null;
+              return (
+                <Link
+                  key={`${label}:${href}`}
+                  href={href}
+                  prefetch={false}
+                  className="tag-pill"
+                  aria-label={`Browse ${label}`}
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  {label}
+                </Link>
+              );
+            })}
           </div>
           {showRight && (
             <button className="tags-scroll-btn right" onClick={() => handleScroll('right')} aria-label="Scroll right">

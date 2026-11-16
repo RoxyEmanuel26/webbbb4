@@ -98,13 +98,13 @@ assert.equal(
 );
 
 const automaticCatalog = Array.from({ length: 12 }, (_, index) =>
-  makeVideo(index + 100, ["webcam"]),
+  makeVideo(index + 100, ["fetish"]),
 );
 const discovered = discoverCandidates([], automaticCatalog);
 assert.equal(
   discovered[0]?.slug,
-  "webcam",
-  "a safe exact tag at the threshold should be discovered",
+  "fetish",
+  "a safe non-category exact tag at the threshold should be discovered",
 );
 const blockedCatalog = Array.from({ length: 12 }, (_, index) =>
   makeVideo(index + 200, ["teens"]),

@@ -1,11 +1,22 @@
 import catalog from "@/data/curated-video-catalog.json";
 import collections from "@/data/collections.json";
+import { ALL_CATEGORIES } from "@/data/allCategories";
 
 const videos = Array.isArray(catalog.videos) ? catalog.videos : [];
 const MIN_COLLECTION_VIDEOS = 12;
 const MIN_EDITORIAL_WORDS = 400;
 const MAX_EDITORIAL_WORDS = 650;
 const MAX_COLLECTION_OVERLAP = 0.7;
+
+const categorySlugSet = new Set(
+  ALL_CATEGORIES.map((category) =>
+    String(category?.name || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, ""),
+  ),
+);
 
 const normalizeSignal = (value) =>
   String(value || "")
@@ -89,6 +100,7 @@ export function toVideoCard(video, options = {}) {
     canonicalUrl: video.canonicalUrl,
     title: video.title,
     thumbnail: video.thumbnail,
+    durationSeconds: video.durationSeconds,
     length_min: video.length_min,
     views: video.views,
     rating: video.rating,
@@ -157,6 +169,7 @@ export function isCollectionIndexable(
     .filter(Boolean).length;
   return (
     collection.status === "editorial-approved" &&
+    !categorySlugSet.has(collection.slug) &&
     collectionVideos.length >= MIN_COLLECTION_VIDEOS &&
     words >= MIN_EDITORIAL_WORDS &&
     words <= MAX_EDITORIAL_WORDS &&

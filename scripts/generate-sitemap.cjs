@@ -3,7 +3,13 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 const { MAX_EDITORIALS_PER_RUN, MIN_COLLECTION_VIDEOS, bootstrapCollections, buildFacts, discoverCandidates, getCollectionVideos, getOverlapBlocker, isQualified, trimEditorialIntro, validateManifest, wordCount } = require('./collection-engine.cjs');
 const { buildModelsSitemap } = require('./build-models-sitemap.cjs');
-const { TAG_DENYLIST, toTagSlug, getQualifiedTagHubs } = require('../src/data/tagConfig.js');
+const {
+  TAG_DENYLIST,
+  GENERIC_OR_BLOCKED_CATEGORY_SLUGS,
+  CANONICAL_SLUG_ALIASES,
+  toTagSlug,
+  getQualifiedTagHubs,
+} = require('../src/data/tagConfig.js');
 const { ALL_CATEGORIES } = require('../src/data/allCategories.js');
 const { PORNSTARS, MIN_PERFORMER_INDEX_VIDEOS, getVideosForPerformer } = require('../src/data/pornstars.js');
 
@@ -215,6 +221,23 @@ function repairMojibake(value) {
 
 function hasSuspiciousEncoding(value) {
   return mojibakeScore(value) > 0;
+}
+
+function isLowQualityOrSpamVideo(video) {
+  const title = repairMojibake(video?.title || '').trim();
+  const tagsText = Array.isArray(video?.tags) ? video.tags.join(' ') : repairMojibake(video?.keywords || '');
+  if (!title || title.length < 10) return 'short-title';
+  if (/[\u200B-\u200D\uFEFF]/.test(title)) return 'zero-width-spam';
+  if (/\b(chaturbate|stripchat|bongacams|camsoda|cam4|myfreecams|livejasmin|cb live)\b/i.test(`${title} ${tagsText}`)) return 'cam-brand';
+  if (/^\s*[\p{L}\p{N}._\-@]{2,36}\s+(?:20\d{2}[-_\s./]\d{2}[-_\s./]\d{2}|\d{2}[-/.]\d{2}[-/.]20\d{2})(?:\s|$|T)/iu.test(title)) return 'cam-date';
+  if (/^(?:BB\d+|HDR[A-Z0-9]+|[_A-Z0-9-]{4,14}|\d{6,}[a-z]?|link|thot|caty|chacha|goddess)$/i.test(title)) return 'bare-code';
+  if (/\b(?:see everything at|watch more at|netlify\.app|ex vporn|porn one)\b/i.test(title)) return 'linkbait';
+  if (/\d+(?:\.\d+)?[km]?\d*\s*days?\s+ago\b/i.test(title)) return 'scraped-age';
+  if (/[\u{1F130}-\u{1F1FF}✔¿ĐɆ₱ⱤɄ฿ᖶᖇᗩᘺᘻᓰᒪ᙭ᓍ]/u.test(title)) return 'obfuscated-unicode';
+  const nfkc = title.normalize('NFKC').trim();
+  if (/[\u1D00-\u1DBF\u0250-\u02AF\u2100-\u214F\u{1D400}-\u{1D7FF}]/u.test(nfkc)) return 'weird-glyphs';
+  if (/\$kv|Vv0|P4@11/i.test(title)) return 'leetspeak-spam';
+  return null;
 }
 
 function normalizeVideo(video) {
@@ -537,6 +560,7 @@ async function refreshCollections(catalog) {
 function slugify(text) {
   return (
     repairMojibake(text)
+      .normalize('NFKC')
       .toLowerCase()
       // Keep this transformation aligned with VideoCard.createSlug so sitemap
       // URLs and internal links always resolve to the same canonical URL.
@@ -956,6 +980,7 @@ function writeCategoriesSitemap(catalog) {
   const qualifiedCategories = [];
   for (const cat of ALL_CATEGORIES) {
     const slug = toSlug(cat.name);
+    if (GENERIC_OR_BLOCKED_CATEGORY_SLUGS.has(slug) || CANONICAL_SLUG_ALIASES[slug]) continue;
     const targetSignal = normalize(cat.name);
     const matches = catalog.filter((v) => {
       if (v.availability !== 'available') return false;
@@ -1049,6 +1074,12 @@ async function admitDiscoveryVideo(rawVideo, removedIds, preferredActor = null) 
   if (previouslyPublishedIds.has(video.id)) return false;
   if (removedIds.has(video.id)) {
     console.log(`[Gatekeeper] Video dilewati karena sudah dihapus Eporner: ${video.id}`);
+    return false;
+  }
+  const spamReason = isLowQualityOrSpamVideo(video);
+  if (spamReason) {
+    skippedSpamCount++;
+    console.log(`[Gatekeeper] Video diblokir (${spamReason}): ${video.title}`);
     return false;
   }
 
@@ -1194,36 +1225,51 @@ async function seedPerformerCandidates(removedIds, performerBudget) {
 
 async function run() {
   if (isRebuildLocalMode) {
-    console.log('Rebuilding static, category, model, and index sitemaps from local catalog...');
+    console.log('Rebuilding video, static, category, model, and index sitemaps from local catalog...');
     const catalogPayload = readJsonFile(CATALOG_FILE, { videos: [] });
     const finalized = (Array.isArray(catalogPayload.videos) ? catalogPayload.videos : []).filter(
-      (video) => video && video.availability === 'available'
+      (video) => video && video.availability === 'available' && !isLowQualityOrSpamVideo(video)
     );
     const collectionsRaw = readJsonFile(COLLECTIONS_FILE, []);
     const managedCollections = Array.isArray(collectionsRaw) ? collectionsRaw : collectionsRaw.collections || [];
     catalogCandidates.push(...finalized);
     sitemapOutputDir = sitemapsDir;
     fs.mkdirSync(sitemapOutputDir, { recursive: true });
-    const chunkFiles = fs
-      .readdirSync(sitemapsDir)
-      .map((name) => name.match(/^sitemap-video-(\d+)\.xml$/))
-      .filter(Boolean)
-      .map((match) => ({ file: match[0], num: Number.parseInt(match[1], 10) }))
-      .sort((a, b) => a.num - b.num);
-    let maxChunkNum = 0;
-    for (const chunk of chunkFiles) {
-      const xml = fs.readFileSync(path.join(sitemapsDir, chunk.file), 'utf8');
-      const dates = Array.from(xml.matchAll(/<lastmod>([^<]+)<\/lastmod>/g), (m) => m[1]);
-      if (dates.length) chunkLastmods.set(chunk.num, latestDate(dates));
-      if (chunk.num > maxChunkNum) maxChunkNum = chunk.num;
+    for (const stale of fs.readdirSync(sitemapsDir).filter((name) => /^sitemap-video-\d+\.xml$/.test(name))) {
+      fs.rmSync(path.join(sitemapsDir, stale), { force: true });
     }
+    currentChunkIndex = 1;
     currentChunkUrls = [];
-    currentChunkIndex = maxChunkNum + 1;
+    for (const video of finalized) {
+      if (!video?.id || !video.canonicalUrl || !video.title || !video.description || !video.thumbnail || !video.embedUrl || !video.uploadDate) continue;
+      if (seenUrls.has(video.canonicalUrl)) continue;
+      seenUrls.add(video.canonicalUrl);
+      currentChunkUrls.push({
+        url: video.canonicalUrl,
+        lastmod: video.sitemapLastmod || video.uploadDate,
+        title: video.title,
+        description: video.description,
+        thumbnail_loc: video.thumbnail,
+        player_loc: video.embedUrl,
+        duration: video.durationSeconds || video.length_sec || 0,
+        publication_date: video.uploadDate,
+        tags: Array.isArray(video.tags) ? video.tags : []
+      });
+      if (currentChunkUrls.length >= URLS_PER_SITEMAP) {
+        writeChunk(currentChunkIndex, currentChunkUrls);
+        currentChunkIndex++;
+        currentChunkUrls = [];
+      }
+    }
+    if (currentChunkUrls.length > 0) {
+      writeChunk(currentChunkIndex, currentChunkUrls);
+    }
+    const maxChunkDisplay = currentChunkUrls.length > 0 ? currentChunkIndex : Math.max(0, currentChunkIndex - 1);
     writeStaticSitemap(finalized, managedCollections);
     writeCategoriesSitemap(finalized);
     writeModelsSitemap(finalized);
     writeIndexSitemap();
-    console.log(`Rebuilt local sitemaps (${finalized.length} videos, ${maxChunkNum} video chunks).`);
+    console.log(`Rebuilt local sitemaps (${finalized.length} videos, ${maxChunkDisplay} video chunks).`);
     return;
   }
   console.log('dYs? Memulai pengumpulan data dari Eporner API...');
@@ -1244,6 +1290,7 @@ async function run() {
   for (const video of previousCatalog) {
     if (indexedVideoCount >= MAX_SITEMAP_VIDEOS) break;
     if (!video?.id || !video.canonicalUrl || !video.title || !video.description || !video.thumbnail || !video.embedUrl || !video.uploadDate) continue;
+    if (isLowQualityOrSpamVideo(video)) continue;
     if (seenUrls.has(video.canonicalUrl)) continue;
 
     seenUrls.add(video.canonicalUrl);
@@ -1339,6 +1386,7 @@ async function run() {
       if (indexedVideoCount >= MAX_SITEMAP_VIDEOS) break;
       if (!rawVideo?.id || removedIds.has(rawVideo.id)) continue;
       const video = normalizeVideo(rawVideo);
+      if (isLowQualityOrSpamVideo(video)) continue;
       const entry = aiSeoData[video.id];
       const publicationDate = getPublicationDate(video) || entry?.uploadDate || null;
       const description = entry?.seoDescription?.trim();

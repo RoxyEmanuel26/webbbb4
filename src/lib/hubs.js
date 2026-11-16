@@ -1,18 +1,15 @@
 import catalog from "@/data/curated-video-catalog.json";
 import { ALL_CATEGORIES } from "@/data/allCategories";
-import { TAG_DENYLIST, toTagSlug } from "@/data/tagConfig";
+import {
+  CANONICAL_SLUG_ALIASES,
+  COLLECTION_OWNED_SLUGS,
+  GENERIC_OR_BLOCKED_CATEGORY_SLUGS,
+  TAG_DENYLIST,
+  toTagSlug,
+} from "@/data/tagConfig";
 
 const videos = Array.isArray(catalog.videos) ? catalog.videos : [];
 export const MIN_HUB_VIDEOS = 12;
-
-const GENERIC_CATEGORY_SLUGS = new Set([
-  "adult-porn",
-  "free-porn",
-  "hd-porn",
-  "porn",
-  "hd",
-  "",
-]);
 
 const normalizeSignal = (value) =>
   String(value || "")
@@ -38,7 +35,7 @@ const signalsByVideoId = new Map(
 // Editorial descriptions for top hubs to provide genuine unique content
 const EDITORIAL_INTROS = {
   amateur:
-    "Explore our verified collection of authentic amateur videos, featuring real couples, candid bedroom moments, and unscripted passionate encounters. Each clip is curated for natural chemistry, spontaneous intimacy, and authentic adult entertainment without artificial studio setups.",
+    "Explore our hand-picked collection of authentic amateur videos, featuring real couples, candid bedroom moments, and unscripted passionate encounters. Each clip is selected for natural chemistry, spontaneous intimacy, and authentic adult entertainment without artificial studio setups.",
   blowjob:
     "Browse our hand-picked selection of top-tier oral sex scenes, featuring enthusiastic foreplay, intense deepthroat sessions, and sensual close-up techniques. From slow, teasing warmups to climactic finishes, find high-definition videos focused on passionate oral pleasure.",
   "big-ass":
@@ -117,8 +114,6 @@ const EDITORIAL_INTROS = {
     "Enjoy gorgeous, fair-skinned women with exceptional curves and prominent backsides. Celebrating the popular aesthetic of shapely figures and captivating performances.",
   stepmom:
     "Browse popular taboo-themed narratives and domestic fantasy roleplays. Featuring seductive storylines, forbidden tension, and passionate outcomes.",
-  teen:
-    "Watch young-adult performers of legal age (18+) exploring youthful energy and playful charm. All featured participants are verified legal adults in compliance with international standards.",
   indian:
     "Stream authentic Indian and South Asian adult videos, showcasing rich cultural beauty, passionate romance, and vibrant encounters.",
   lesbian:
@@ -153,6 +148,9 @@ export function getCategoryVideos(slugOrName) {
 
 export function isCategoryIndexable(slugOrName) {
   const slug = toSlug(String(slugOrName || ""));
+  if (!categoryBySlug.has(slug) || GENERIC_OR_BLOCKED_CATEGORY_SLUGS.has(slug)) {
+    return false;
+  }
   const catVideos = getCategoryVideos(slug);
   return catVideos.length >= MIN_HUB_VIDEOS;
 }
@@ -232,7 +230,12 @@ export function getTagVideos(tagOrSlug) {
 
 export function isTagIndexable(tagOrSlug) {
   const slug = toTagSlug(tagOrSlug);
-  if (!slug || TAG_DENYLIST.has(slug) || categoryBySlug.has(slug)) {
+  if (
+    !slug ||
+    TAG_DENYLIST.has(slug) ||
+    categoryBySlug.has(slug) ||
+    COLLECTION_OWNED_SLUGS.has(slug)
+  ) {
     return false;
   }
   return getTagVideos(slug).length >= MIN_HUB_VIDEOS;
@@ -240,8 +243,18 @@ export function isTagIndexable(tagOrSlug) {
 
 export function getTagHubHref(tagOrSlug) {
   const slug = toTagSlug(tagOrSlug);
-  if (!slug) return null;
+  if (!slug || GENERIC_OR_BLOCKED_CATEGORY_SLUGS.has(slug) || TAG_DENYLIST.has(slug)) {
+    const aliased = CANONICAL_SLUG_ALIASES[slug];
+    if (aliased && aliased.startsWith("/cat/")) {
+      const targetCat = aliased.slice(5);
+      return isCategoryIndexable(targetCat) ? aliased : null;
+    }
+    return null;
+  }
   if (isCategoryIndexable(slug)) return `/cat/${slug}`;
+  if (COLLECTION_OWNED_SLUGS.has(slug) && getTagVideos(slug).length >= MIN_HUB_VIDEOS) {
+    return `/collections/${slug}`;
+  }
   if (isTagIndexable(slug)) return `/tag/${slug}`;
   return null;
 }
@@ -296,30 +309,51 @@ export function getTagHubs() {
 export function getDisplayCategory(video) {
   const rawCat = String(video?.category || "").trim();
   const rawSlug = toSlug(rawCat);
-  if (rawCat && !GENERIC_CATEGORY_SLUGS.has(rawSlug)) {
+  if (rawCat && isCategoryIndexable(rawSlug)) {
     const matchedCat = categoryBySlug.get(rawSlug);
     return {
       name: matchedCat ? matchedCat.name : rawCat,
       slug: rawSlug,
+      href: `/cat/${rawSlug}`,
     };
   }
   const tags = Array.isArray(video?.tags) ? video.tags : [];
   for (const rawTag of tags) {
     const tagSlug = toTagSlug(rawTag);
-    if (!tagSlug || GENERIC_CATEGORY_SLUGS.has(tagSlug)) continue;
+    if (!tagSlug || GENERIC_OR_BLOCKED_CATEGORY_SLUGS.has(tagSlug)) continue;
     if (isCategoryIndexable(tagSlug)) {
       const catRecord = categoryBySlug.get(tagSlug);
-      return { name: catRecord ? catRecord.name : rawTag, slug: tagSlug };
+      return {
+        name: catRecord ? catRecord.name : rawTag,
+        slug: tagSlug,
+        href: `/cat/${tagSlug}`,
+      };
+    }
+  }
+  for (const rawTag of tags) {
+    const tagSlug = toTagSlug(rawTag);
+    const hubHref = getTagHubHref(tagSlug);
+    if (hubHref) {
+      const label = tagSlug.replace(/-/g, " ");
+      return {
+        name: label.replace(/\b\w/g, (l) => l.toUpperCase()),
+        slug: tagSlug,
+        href: hubHref,
+      };
     }
   }
   for (const rawTag of tags) {
     const tagSlug = toTagSlug(rawTag);
     const catRecord = categoryBySlug.get(tagSlug);
-    if (catRecord && !GENERIC_CATEGORY_SLUGS.has(tagSlug)) {
-      return { name: catRecord.name, slug: tagSlug };
+    if (catRecord && !GENERIC_OR_BLOCKED_CATEGORY_SLUGS.has(tagSlug)) {
+      return {
+        name: catRecord.name,
+        slug: tagSlug,
+        href: isCategoryIndexable(tagSlug) ? `/cat/${tagSlug}` : "/cats",
+      };
     }
   }
-  return { name: rawCat || "Adult Video", slug: rawSlug || "amateur" };
+  return { name: "Amateur", slug: "amateur", href: "/cat/amateur" };
 }
 
 export function getCategoryStats(slugOrName) {
@@ -334,18 +368,27 @@ export function getCategoryStats(slugOrName) {
 
 export function getCategoryIntro(slugOrName) {
   const slug = toSlug(String(slugOrName || ""));
-  if (EDITORIAL_INTROS[slug]) {
-    return EDITORIAL_INTROS[slug];
-  }
   const catRecord = categoryBySlug.get(slug);
   const displayName = catRecord ? catRecord.name : slug.replace(/-/g, " ");
-  return `Browse our curated directory of high-definition ${displayName} videos. Each clip in this section is selected for clear resolution and accurate duration and tags to help you quickly discover top-rated entertainment.`;
+  const stats = getCategoryStats(slug);
+  const relatedSnippet = stats.relatedTags?.length
+    ? ` Common accompanying themes in this section include ${stats.relatedTags.slice(0, 4).join(", ")}.`
+    : "";
+  const durationSnippet = stats.medianDurationSeconds
+    ? ` Typical scenes run around ${Math.max(1, Math.round(stats.medianDurationSeconds / 60))} minutes, letting you choose between brief previews and longer full-length features.`
+    : "";
+
+  if (EDITORIAL_INTROS[slug]) {
+    return `${EDITORIAL_INTROS[slug]}${durationSnippet}${relatedSnippet}`;
+  }
+  return `Browse our topic directory of ${displayName} videos on NICEVX. Every listing displays exact runtime, view popularity, approval ratings, and matching tags so you can compare entries quickly.${durationSnippet}${relatedSnippet}`;
 }
 
 export function getCategoryHubs() {
   const qualified = [];
   ALL_CATEGORIES.forEach((cat) => {
     const slug = toSlug(cat.name);
+    if (GENERIC_OR_BLOCKED_CATEGORY_SLUGS.has(slug)) return;
     const catVideos = getCategoryVideos(slug);
     if (catVideos.length >= MIN_HUB_VIDEOS) {
       qualified.push({

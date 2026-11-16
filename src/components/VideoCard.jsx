@@ -20,7 +20,11 @@ const ratingToPercent = (rate) => {
 
 const createSlug = (title) => {
   if (!title) return '';
-  return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+  return String(title)
+    .normalize('NFKC')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '');
 };
 
 const VideoCard = ({ video, compact = false, priority = false }) => {

@@ -4,11 +4,11 @@ import { faqPageSchema, breadcrumbListSchema } from "@/lib/jsonld";
 
 export const metadata = {
   title: "About NICEVX – Free HD Adult Video Platform | NICEVX",
-  description: "Learn about NICEVX, an index of verified free adult videos, curated collections, privacy-first features, and content standards.",
+  description: "Learn how NICEVX organizes free HD adult videos across clean categories, thematic collections, performer profiles, and privacy-first local storage.",
   alternates: { canonical: "https://www.nicevx.com/about" },
   openGraph: {
     title: "About NICEVX – Free HD Adult Video Platform | NICEVX",
-    description: "Learn about NICEVX, an index of verified free adult videos, curated collections, privacy-first features, and content standards.",
+    description: "Learn how NICEVX organizes free HD adult videos across clean categories, thematic collections, performer profiles, and privacy-first local storage.",
     url: "https://www.nicevx.com/about",
     type: "website",
     images: [{ url: "/og-default.jpg", width: 1200, height: 630, alt: "About NICEVX" }],
@@ -16,7 +16,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "About NICEVX – Free HD Adult Video Platform | NICEVX",
-    description: "Learn about NICEVX, an index of verified free adult videos, curated collections, privacy-first features, and content standards.",
+    description: "Learn how NICEVX organizes free HD adult videos across clean categories, thematic collections, performer profiles, and privacy-first local storage.",
     images: ["/og-default.jpg"],
   },
 };
@@ -24,19 +24,19 @@ export const metadata = {
 const FAQS = [
   {
     question: "What is NICEVX?",
-    answer: "NICEVX is a free adult streaming index and discovery platform that curates high-definition adult videos across verified categories, featuring client-side privacy controls, fast streaming playback, and curated topic collections.",
+    answer: "NICEVX is a free adult streaming index and discovery catalog that organizes high-definition adult videos into clear topic categories, specialized collections, performer profiles, and duration-filtered hubs.",
   },
   {
-    question: "Is NICEVX free to watch?",
-    answer: "Yes. All curated clips and streaming videos indexed on NICEVX are free to watch in high definition without requiring user registration, subscriptions, or credit card information.",
+    question: "How are video categories and collections structured?",
+    answer: "Instead of exposing hundreds of overlapping search archives, NICEVX separates primary genre categories from specialized thematic collections so every topic hub highlights distinct runtimes, related tags, and high-definition streaming listings.",
   },
   {
-    question: "Does NICEVX store personal browsing history?",
-    answer: "No. NICEVX uses a privacy-first architecture where watch history, saved favorites, and preferences are kept exclusively inside your browser's local storage and are never uploaded to a remote database.",
+    question: "Is NICEVX free to watch without creating an account?",
+    answer: "Yes. Every clip and full-length scene listed on NICEVX can be streamed directly without user registration, monthly subscriptions, or payment walls.",
   },
   {
-    question: "How does NICEVX curate video collections?",
-    answer: "NICEVX curates content using automated discovery algorithms combined with editorial review, evaluating video duration, view velocity, tag relevance, and HD stream availability to deliver topic-focused collections.",
+    question: "Does NICEVX store personal watch history on a server?",
+    answer: "No. Watch history, saved favorites, and age confirmation preferences stay strictly inside your local browser storage and can be cleared anytime from your device.",
   },
 ];
 
@@ -54,25 +54,33 @@ export default function Page() {
       />
       <EditorialPage
         title="About NICEVX"
-        lead="NICEVX helps adults browse videos by category, popularity, and recent additions."
+        lead="NICEVX is an adult streaming catalog built for fast browsing by genre, runtime, performer, and popularity without logins or clutter."
         sections={[
           {
-            heading: "What you can do here",
+            heading: "How the NICEVX Catalog Works",
             body: [
-              "Browse collections, open related videos, and save videos for later. Videos are provided by third-party sources and are not hosted by NICEVX.",
+              "Finding a specific scene on massive tube websites often means sifting through broken thumbnails, shouty spam titles, and unorganized search feeds. NICEVX focuses on a cleaner discovery experience where every indexed listing includes clear title formatting, accurate scene duration, tag groupings, and visual storyboard frame previews before playback begins.",
+              "Pages are organized into non-overlapping entry hubs: core genre categories (/cat/*), specialized thematic collections (/collections/*), full-length scenes running 25 minutes or longer (/movies), rising weekly highlights (/trends/weekly), and performer profiles (/pornstars).",
             ],
           },
           {
-            heading: "Privacy",
+            heading: "Third-Party Sources & Playback Standards",
             body: [
-              "Saved videos, recent viewing, and small event counters are kept in localStorage on the visitor’s device. Search terms and personal watch history are not sent to a NICEVX database. Aggregate traffic measurement uses the analytics service disclosed in the Privacy Policy.",
+              "NICEVX operates strictly as a metadata index and discovery layer. Video files and media streams are hosted and delivered directly by third-party providers such as Eporner through official embedded players rather than hosted on NICEVX servers.",
+              "Every embedded player loads only after an adult visitor confirms 18+ eligibility and explicitly starts playback, keeping initial browsing pages fast on both desktop browsers and mobile connections.",
             ],
           },
           {
-            heading: "Content Standards & Discovery",
+            heading: "Privacy-First Architecture",
             body: [
-              "NICEVX organizes its catalog into focused entry points including A-Z Categories, topic Collections, Full-Length Movies (25+ minutes), Performer profiles, and weekly Trending charts so visitors can locate high-definition scenes without clutter.",
-              "Every category and collection page exposes structured metadata, clear duration labels, and direct related links while keeping strict compliance with 18+ age restrictions and DMCA takedown procedures.",
+              "Bookmarks in Saved Videos, recent viewing history, and local playback settings such as autoplay preferences stay exclusively inside localStorage on your own device. Search inputs and personal watch activity are never written to a NICEVX user profile database.",
+            ],
+          },
+          {
+            heading: "Age Restrictions, Legal Compliance & Content Removal",
+            body: [
+              "NICEVX restricts access strictly to legal adults aged 18 or older (or the age of majority in your jurisdiction) and declares RTA classification headers across the site. All indexed listings must satisfy source availability and metadata checks.",
+              "If an upstream video goes offline, becomes mislabeled, or triggers a valid copyright or compliance notice, our DMCA and Content Reporting workflow provides direct removal paths.",
             ],
           },
           {

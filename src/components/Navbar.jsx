@@ -26,7 +26,7 @@ const TRENDING_SUGGESTIONS = [
   { name: 'Big Tits',   slug: 'big-tits' },
   { name: 'Creampie',   slug: 'creampie' },
   { name: 'POV',        slug: 'pov' },
-  { name: 'Cosplay',    slug: 'cosplay' },
+  { name: 'Latina',     slug: 'latina' },
   { name: 'Blowjob',    slug: 'blowjob' },
   { name: 'Ebony',      slug: 'ebony' },
   { name: 'Hardcore',   slug: 'hardcore' },

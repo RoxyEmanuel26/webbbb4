@@ -370,7 +370,11 @@ export default function VideoPlayerClient({
                   {Number(video.rating) > 0 && (
                     <div>
                       <dt style={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>Approval Rating</dt>
-                      <dd style={{ margin: 0, fontWeight: 600 }}>{video.rating}%</dd>
+                      <dd style={{ margin: 0, fontWeight: 600 }}>
+                        {Number(video.rating) <= 5
+                          ? `${Number(video.rating).toFixed(2)} / 5`
+                          : `${Math.round(Number(video.rating))}%`}
+                      </dd>
                     </div>
                   )}
                   {video.uploadDate && (

@@ -36,9 +36,8 @@ for (const absolutePath of appSources) {
 
 assert.match(read("src/app/tag/[tagName]/page.jsx"), /SearchResultsShared/);
 assert.match(read("src/app/page.jsx"), /SearchResultsShared/);
-assert.doesNotMatch(read("src/app/page.jsx"), /initialVideos=/);
 assert.match(read("src/app/cat/[catName]/page.jsx"), /SearchResultsShared/);
-assert.doesNotMatch(read("src/app/cat/[catName]/page.jsx"), /initialVideos=/);
+assert.match(read("src/components/SearchResultsShared.jsx"), /shouldUseLiveApi/);
 assert.match(read("src/components/SearchResultsShared.jsx"), /https:\/\/www\.eporner\.com\/api\/v2\/video/);
 assert.match(read("src/components/SearchResultsShared.jsx"), /data\.total_pages/);
 assert.match(read("src/components/VideoCard.jsx"), /video\.thumbnail/);

@@ -124,7 +124,11 @@ assert(allPageUrls.has('https://www.nicevx.com/movies'), 'Sitemap must include /
 assert(allPageUrls.has('https://www.nicevx.com/pornstars'), 'Sitemap must include /pornstars directory');
 
 const { PORNSTARS, MIN_PERFORMER_INDEX_VIDEOS, getVideosForPerformer } = require('../src/data/pornstars');
-const { getQualifiedTagHubs } = require('../src/data/tagConfig.js');
+const {
+  getQualifiedTagHubs,
+  GENERIC_OR_BLOCKED_CATEGORY_SLUGS,
+  CANONICAL_SLUG_ALIASES,
+} = require('../src/data/tagConfig.js');
 const { ALL_CATEGORIES } = require('../src/data/allCategories.js');
 const expectedModelSlugs = new Set(
   PORNSTARS.filter((star) => getVideosForPerformer(star, catalogVideos).length >= MIN_PERFORMER_INDEX_VIDEOS)
@@ -140,6 +144,27 @@ assert.deepEqual(
   [...expectedModelSlugs].sort(),
   'sitemap-models.xml performer URLs must match indexable threshold'
 );
+
+const actualCategorySlugs = [...allPageUrls]
+  .filter((u) => u.startsWith('https://www.nicevx.com/cat/'))
+  .map((u) => u.replace('https://www.nicevx.com/cat/', ''));
+const actualCollectionSlugs = [...allPageUrls]
+  .filter((u) => u.startsWith('https://www.nicevx.com/collections/'))
+  .map((u) => u.replace('https://www.nicevx.com/collections/', ''));
+
+for (const slug of actualCategorySlugs) {
+  assert(
+    !GENERIC_OR_BLOCKED_CATEGORY_SLUGS.has(slug) && !CANONICAL_SLUG_ALIASES[slug],
+    `sitemap-categories.xml must exclude blocked or duplicate category: /cat/${slug}`
+  );
+}
+const categorySlugSet = new Set(actualCategorySlugs);
+for (const slug of actualCollectionSlugs) {
+  assert(
+    !categorySlugSet.has(slug),
+    `Canonical overlap detected between /collections/${slug} and /cat/${slug}`
+  );
+}
 
 const expectedTagSlugs = new Set(
   getQualifiedTagHubs(catalogVideos, ALL_CATEGORIES, 12).map((hub) => hub.slug)

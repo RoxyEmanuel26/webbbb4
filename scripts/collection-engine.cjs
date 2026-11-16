@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const { ALL_CATEGORIES } = require("../src/data/allCategories.js");
 
 const MIN_COLLECTION_VIDEOS = 12;
 const MIN_EDITORIAL_WORDS = 400;
@@ -9,79 +10,50 @@ const MAX_COLLECTION_OVERLAP = 0.7;
 const MAX_NEW_COLLECTIONS_PER_RUN = 2;
 const MAX_EDITORIALS_PER_RUN = 2;
 
+const CATEGORY_SLUGS_SET = new Set(
+  ALL_CATEGORIES.map((category) =>
+    String(category?.name || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, ""),
+  ),
+);
+
 const BOOTSTRAP_TAGS = [
-  "blowjob",
   "brunette",
-  "big ass",
-  "toys",
-  "blonde",
-  "webcam",
   "cumshot",
-  "latina",
+  "big dick",
+  "fetish",
+  "facial",
+  "deep throat",
 ];
 const AUTO_COLLECTION_TAXONOMY = new Set([
-  "amateur",
-  "anal",
-  "asian",
-  "bbw",
-  "bdsm",
-  "big ass",
-  "big boobs",
-  "big natural tits",
-  "big tits",
-  "black",
-  "blonde",
-  "blowjob",
-  "bondage",
   "brunette",
-  "busty",
-  "cosplay",
-  "creampie",
   "cumshot",
+  "big dick",
   "deepthroat",
-  "dildo",
-  "double penetration",
-  "ebony",
+  "deep throat",
   "fetish",
-  "gangbang",
-  "german",
-  "group sex",
-  "hairy",
-  "handjob",
-  "hardcore",
-  "hentai",
-  "indian",
-  "interracial",
-  "japanese",
-  "latina",
-  "lesbian",
-  "lesbians",
-  "lingerie",
-  "massage",
-  "masturbation",
-  "mature",
-  "milf",
-  "orgasm",
-  "orgy",
-  "outdoor",
-  "petite",
-  "pov",
-  "redhead",
-  "rough",
-  "solo",
+  "facial",
   "squirt",
-  "stepmom",
-  "striptease",
-  "threesome",
-  "toys",
-  "vintage",
-  "vr",
-  "webcam",
+  "rimming",
+  "titjob",
+  "foot fetish",
+  "femdom",
 ]);
 const BLOCKED_TAGS = new Set([
   "adult porn",
   "free porn",
   "hd porn",
+  "porn",
+  "hd",
+  "stripchat",
+  "chaturbate",
+  "bongacams",
+  "myfreecams",
+  "camsoda",
+  "cam4",
   "teen",
   "teens",
   "teen anal",
@@ -224,6 +196,8 @@ function buildFacts(collection, catalog) {
 function isQualified(collection, collections, catalog) {
   return (
     collection.status === "editorial-approved" &&
+    !CATEGORY_SLUGS_SET.has(collection.slug) &&
+    !BLOCKED_TAGS.has(normalizeSignal(collection.name)) &&
     getCollectionVideos(collection, catalog).length >= MIN_COLLECTION_VIDEOS &&
     wordCount(collection.editorialIntro) >= MIN_EDITORIAL_WORDS &&
     wordCount(collection.editorialIntro) <= MAX_EDITORIAL_WORDS &&
@@ -325,6 +299,7 @@ function discoverCandidates(
         count >= MIN_COLLECTION_VIDEOS &&
         AUTO_COLLECTION_TAXONOMY.has(tag) &&
         !BLOCKED_TAGS.has(tag) &&
+        !CATEGORY_SLUGS_SET.has(slugify(tag)) &&
         !knownSignals.has(tag) &&
         slugify(tag),
     )

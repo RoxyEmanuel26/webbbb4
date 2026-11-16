@@ -44,7 +44,7 @@ assert(firstItem.name && firstItem.name.length > 2, 'Category ListItem must have
 assert.equal(firstItem.item, undefined, 'Category ListItem must not embed heavy VideoObject');
 
 // 3. Collection Page
-const colHtml = read('collections/amateur.html');
+const colHtml = read('collections/brunette.html');
 const colSchemas = extractSchemas(colHtml);
 assert(colSchemas.some((s) => s['@type'] === 'CollectionPage'), 'Collection must have CollectionPage schema');
 assert(colSchemas.some((s) => s['@type'] === 'BreadcrumbList'), 'Collection must have BreadcrumbList schema');

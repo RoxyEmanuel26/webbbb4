@@ -1,17 +1,48 @@
 /**
- * Shared configuration for non-category tag hubs.
+ * Shared configuration for categories, collections, and non-category tag hubs.
  * Imported by both Next.js app code (via hubs.js) and Node sitemap/validation scripts.
  */
 
-export const TAG_DENYLIST = new Set([
-  'pornstar',
-  'pornstars',
-  'chaturbate',
+export const GENERIC_OR_BLOCKED_CATEGORY_SLUGS = new Set([
   'adult-porn',
   'free-porn',
   'hd-porn',
   'porn',
   'hd',
+  'stripchat',
+  'chaturbate',
+  'bongacams',
+  'myfreecams',
+  'camsoda',
+  'cam4',
+  'lesbians',
+  'teen',
+  'teens',
+  'teen-anal',
+  'anal-teen',
+  '',
+]);
+
+export const COLLECTION_OWNED_SLUGS = new Set([
+  'brunette',
+  'cumshot',
+  'big-dick',
+  'fetish',
+  'facial',
+  'deep-throat',
+]);
+
+export const CANONICAL_SLUG_ALIASES = {
+  lesbians: '/cat/lesbian',
+  'anal-sex': '/cat/anal',
+  'pov-porn': '/cat/pov',
+};
+
+export const TAG_DENYLIST = new Set([
+  ...GENERIC_OR_BLOCKED_CATEGORY_SLUGS,
+  ...Object.keys(CANONICAL_SLUG_ALIASES),
+  'pornstar',
+  'pornstars',
 ]);
 
 export function toTagSlug(value = '') {
@@ -23,9 +54,9 @@ export function toTagSlug(value = '') {
 }
 
 /**
- * Compute all non-category tag slugs qualifying as indexable hubs (>= minVideos).
+ * Compute all non-category, non-collection tag slugs qualifying as indexable hubs (>= minVideos).
  */
-export function getQualifiedTagHubs(videos = [], allCategories = [], minVideos = 12) {
+export function getQualifiedTagHubs(videos = [], allCategories = [], minVideos = 12, extraExcluded = COLLECTION_OWNED_SLUGS) {
   const catSlugs = new Set(
     (allCategories || []).map((c) => toTagSlug(c?.name || ''))
   );
@@ -37,7 +68,7 @@ export function getQualifiedTagHubs(videos = [], allCategories = [], minVideos =
       const slug = toTagSlug(rawTag);
       if (!slug || seen.has(slug)) continue;
       seen.add(slug);
-      if (TAG_DENYLIST.has(slug) || catSlugs.has(slug)) continue;
+      if (TAG_DENYLIST.has(slug) || catSlugs.has(slug) || extraExcluded.has(slug)) continue;
       if (!grouped.has(slug)) grouped.set(slug, []);
       grouped.get(slug).push(video);
     }

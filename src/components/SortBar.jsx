@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Clock } from 'lucide-react';
 import './SortBar.css';
 
@@ -12,22 +12,24 @@ const DURATION_OPTIONS = [
   { value: 'long',   label: '25+ min' },
 ];
 
-const SortBar = ({ value, options, showDuration = true }) => {
+const SortBar = ({ value, options, showDuration = true, currentDuration = 'all', currentSearch = '' }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
-  const currentDuration = searchParams.get('duration') || 'all';
+  const buildParams = () =>
+    new URLSearchParams(
+      currentSearch || (typeof window !== 'undefined' ? window.location.search : '')
+    );
 
   const handleSortChange = (optValue) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = buildParams();
     params.set('order', optValue);
     params.set('page', '1');
     router.push(`${pathname}?${params.toString()}`);
   };
 
   const handleDurationChange = (durValue) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = buildParams();
     if (durValue === 'all') {
       params.delete('duration');
     } else {

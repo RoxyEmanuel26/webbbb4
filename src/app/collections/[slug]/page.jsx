@@ -157,6 +157,37 @@ export default async function CollectionPage({ params }) {
       </nav>
       <h1>{collection.name} Videos</h1>
       <p className="collection-lead">{collectionDescription(collection, stats)}</p>
+      {(() => {
+        const editorialParagraphs = String(collection.editorialIntro || "")
+          .split(/\n\s*\n/)
+          .map((paragraph) => paragraph.trim())
+          .filter(Boolean);
+        if (!editorialParagraphs.length) return null;
+        return (
+          <section
+            className="collection-editorial"
+            aria-labelledby="collection-editorial-heading"
+            style={{
+              margin: "1.25rem 0 1.5rem",
+              maxWidth: "78ch",
+              color: "var(--color-muted)",
+              lineHeight: 1.7,
+            }}
+          >
+            <h2
+              id="collection-editorial-heading"
+              style={{ fontSize: "1.15rem", color: "var(--color-text)", marginBottom: "0.6rem" }}
+            >
+              About this {collection.name} hub
+            </h2>
+            {editorialParagraphs.slice(0, 3).map((paragraph, index) => (
+              <p key={index} style={{ marginBottom: "0.75rem" }}>
+                {paragraph}
+              </p>
+            ))}
+          </section>
+        );
+      })()}
       <section
         className="collection-facts"
         aria-labelledby="collection-facts-heading"
@@ -221,7 +252,7 @@ export default async function CollectionPage({ params }) {
               <VideoCard key={video.id} video={toVideoCard(video, { maxTags: 2 })} priority={index < 4} />
             ))}
           </div>
-          {videos.length > 48 && getTagHubHref(slug) && (
+          {videos.length > 48 && getTagHubHref(slug) && getTagHubHref(slug) !== `/collections/${slug}` && (
             <div style={{ display: "flex", justifyContent: "center", margin: "1.5rem 0 0.5rem" }}>
               <Link href={getTagHubHref(slug)} className="back-btn">
                 Browse all {videos.length} {collection.name} videos &rarr;

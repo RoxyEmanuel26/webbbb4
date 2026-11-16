@@ -7,7 +7,7 @@ export default function EditorialPage({ title, lead, sections, relatedLinks }) {
     : [{ href: "/collections", label: "Browse collections" }];
 
   return (
-    <main className="page-wrapper legal-page editorial-page">
+    <div className="page-wrapper legal-page editorial-page">
       <h1>{title}</h1>
       <p className="collection-lead">{lead}</p>
       {sections.map((section) => (
@@ -25,6 +25,6 @@ export default function EditorialPage({ title, lead, sections, relatedLinks }) {
           </Link>
         ))}
       </nav>
-    </main>
+    </div>
   );
 }

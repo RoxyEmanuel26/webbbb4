@@ -1,12 +1,9 @@
-import { Suspense } from 'react';
-import SkeletonGrid from '@/components/SkeletonGrid';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import SearchResultsShared from '@/components/SearchResultsShared';
-import VideoCard from '@/components/VideoCard';
 import JsonLd from '@/components/JsonLd';
 import { breadcrumbListSchema, itemListSchema, faqPageSchema } from '@/lib/jsonld';
-import { getCollection, toVideoCard } from '@/lib/catalog';
+import { toVideoCard } from '@/lib/catalog';
 import {
   getCategoryVideos,
   isCategoryIndexable,
@@ -14,6 +11,7 @@ import {
   getCategoryIntro,
 } from '@/lib/hubs';
 import { ALL_CATEGORIES } from '@/data/allCategories';
+import { CANONICAL_SLUG_ALIASES } from '@/data/tagConfig';
 
 export const dynamicParams = false;
 
@@ -27,20 +25,24 @@ const toSlug = (name) => name.toLowerCase().replace(/\s+/g, '-');
 export function generateStaticParams() {
   return ALL_CATEGORIES
     .map((category) => toSlug(category.name))
+    .filter((catName) => !CANONICAL_SLUG_ALIASES[catName])
     .map((catName) => ({ catName }));
 }
 
-function getRelatedCategories(currentSlug, limit = 24) {
-  const others = ALL_CATEGORIES.filter((c) => toSlug(c.name) !== currentSlug);
-  if (others.length === 0) return [];
+function getRelatedCategories(currentSlug, limit = 18) {
+  const indexable = ALL_CATEGORIES.filter((c) => {
+    const candidateSlug = toSlug(c.name);
+    return candidateSlug !== currentSlug && isCategoryIndexable(candidateSlug);
+  });
+  if (indexable.length === 0) return [];
   let hash = 0;
   for (let i = 0; i < currentSlug.length; i++) {
     hash = (hash * 31 + currentSlug.charCodeAt(i)) >>> 0;
   }
-  const start = others.length ? hash % others.length : 0;
+  const start = indexable.length ? hash % indexable.length : 0;
   const picked = [];
-  for (let i = 0; i < Math.min(limit, others.length); i++) {
-    picked.push(others[(start + i) % others.length]);
+  for (let i = 0; i < Math.min(limit, indexable.length); i++) {
+    picked.push(indexable[(start + i) % indexable.length]);
   }
   return picked;
 }
@@ -116,18 +118,20 @@ export default async function CategoryPage({ params }) {
   if (!catName || !VALID_CAT_SLUGS.has(slug)) {
     notFound();
   }
+  if (CANONICAL_SLUG_ALIASES[slug]) {
+    permanentRedirect(CANONICAL_SLUG_ALIASES[slug]);
+  }
 
   const query = catName.replace(/-/g, ' ');
   const titleCategory = query.replace(/\b\w/g, (l) => l.toUpperCase());
   const related = getRelatedCategories(slug);
-  const collection = getCollection(slug);
   const catVideos = getCategoryVideos(slug);
   const stats = getCategoryStats(slug);
   const intro = getCategoryIntro(slug);
   const indexable = isCategoryIndexable(slug);
 
-  // Render top curated catalog videos in server HTML
-  const featured = catVideos.slice(0, 36).map(toVideoCard);
+  // Render top curated catalog videos directly inside SSR HTML (0 skeletons on cold render)
+  const featured = catVideos.slice(0, 48).map((video) => toVideoCard(video, { maxTags: 2 }));
 
   const breadcrumbs = [
     { name: 'Home', url: '/' },
@@ -201,42 +205,20 @@ export default async function CategoryPage({ params }) {
           </div>
         )}
 
-        <p className="category-description-text" style={{ maxWidth: '800px', lineHeight: '1.6', marginBottom: '1.5rem', color: 'var(--color-muted)' }}>
+        <p className="category-description-text" style={{ maxWidth: '800px', lineHeight: '1.65', marginBottom: '0.75rem', color: 'var(--color-muted)' }}>
           {intro}
         </p>
-
-        {featured.length > 0 && (
-          <>
-            <h2 className="section-title" style={{ fontSize: '1.25rem', marginTop: '1rem', marginBottom: '1rem' }}>
-              Curated {titleCategory} Videos
-            </h2>
-            <div className="video-grid category-picks-grid">
-              {featured.map((video, index) => (
-                <VideoCard key={video.id} video={video} priority={index < 4} />
-              ))}
-            </div>
-            {collection && (
-              <p className="category-collection-link" style={{ marginTop: '1rem' }}>
-                <Link href={`/collections/${collection.slug}`}>Browse the dedicated {collection.name} collection guide →</Link>
-              </p>
-            )}
-          </>
-        )}
       </section>
 
-      <Suspense fallback={<SkeletonGrid />}>
-        <SearchResultsShared 
-          isCat={true} 
-          isTag={false} 
-          query={query} 
-          seoTitle={`${titleCategory} Porn Videos – Free HD Clips | NICEVX`}
-          seoDesc={`Watch free ${titleCategory} HD porn videos on NICEVX.`}
-          seoCanonical={`https://www.nicevx.com/cat/${slug}`}
-          seoQuery={query}
-          pageTitle={`Explore More ${titleCategory} Videos`}
-          headingLevel="h2"
-        />
-      </Suspense>
+      <SearchResultsShared
+        isCat={true}
+        isTag={false}
+        query={query}
+        initialVideos={featured}
+        perPage={36}
+        pageTitle={`Curated ${titleCategory} Videos`}
+        headingLevel="h2"
+      />
 
       {categoryFaqs.length > 0 && (
         <section className="page-wrapper" style={{ marginTop: '2.5rem', marginBottom: '1.5rem', maxWidth: '860px' }}>

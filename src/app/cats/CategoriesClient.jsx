@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
-import { Layers, List } from "lucide-react";
+import { Layers, Search, FolderHeart } from "lucide-react";
 import { ALL_CATEGORIES } from "@/data/allCategories";
 
 import "../../pages/Pages.css";
@@ -165,107 +165,177 @@ const CATEGORIES = [
   },
 ];
 
-const ALPHABET = [
-  "#",
-  ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)),
-];
+const CategoriesClient = ({ activeCategories = [], featuredCollections = [] }) => {
+  const [topicFilter, setTopicFilter] = useState("");
 
-const CategoriesClient = () => {
-  const [activeLetter, setActiveLetter] = useState("A");
+  const featuredCards = useMemo(() => {
+    const activeBySlug = new Map(activeCategories.map((c) => [c.slug, c]));
+    return CATEGORIES.filter((cat) =>
+      activeBySlug.has(cat.name.toLowerCase().replace(/\s+/g, "-")),
+    ).map((cat) => {
+      const slug = cat.name.toLowerCase().replace(/\s+/g, "-");
+      const meta = activeBySlug.get(slug);
+      return {
+        slug,
+        name: cat.name,
+        image: cat.image,
+        count: meta?.count || 0,
+      };
+    });
+  }, [activeCategories]);
 
-  // Bucket every category by its leading letter (digits -> '#') so we can render
-  // ALL of them into the server HTML. The alphabet bar only toggles visibility
-  // (via the `hidden` attribute) — it never conditionally renders links. This
-  // keeps every /cat/<slug> link crawlable regardless of the active letter,
-  // which is what prevents these pages from being orphaned.
-  const letterOf = (cat) => {
-    const first = (cat.name || "").charAt(0).toLowerCase();
-    return /[0-9]/.test(first) ? "#" : first;
-  };
+  const matchingTopics = useMemo(() => {
+    const q = topicFilter.trim().toLowerCase();
+    if (!q) return [];
+    return ALL_CATEGORIES.filter((cat) => cat.name.toLowerCase().includes(q)).slice(0, 48);
+  }, [topicFilter]);
 
   return (
     <div className="categories-page">
       <div className="page-wrapper content-area">
         {/* Section Header */}
-        <div className="section-header">
+        <div className="section-header" style={{ flexDirection: "column", alignItems: "flex-start", gap: "0.5rem" }}>
           <div className="section-title-group">
             <Layers className="section-icon" size={28} />
             <h1 className="section-title">Browse Video Categories</h1>
           </div>
+          <p style={{ color: "var(--color-muted)", maxWidth: "74ch", margin: 0, lineHeight: 1.6 }}>
+            Explore {activeCategories.length} active genre hubs and {featuredCollections.length} specialized thematic collections with curated HD scenes, clear runtime metrics, and direct streaming access.
+          </p>
         </div>
 
-        {/* Categories Grid */}
+        {/* Visual Featured Categories Grid (only populated indexable hubs) */}
         <div className="cats-grid">
-          {CATEGORIES.map((cat) => (
+          {featuredCards.map((cat) => (
             <Link
-              href={`/cat/${cat.name.toLowerCase().replace(/\s+/g, "-")}`}
-              key={cat.name}
+              href={`/cat/${cat.slug}`}
+              key={cat.slug}
               prefetch={false}
               className="cat-card has-bg-img"
             >
               <img
                 className="cat-card-bg"
                 src={cat.image}
-                alt={cat.name}
+                alt={`${cat.name} videos`}
                 loading="lazy"
                 width="300"
                 height="170"
               />
               <div className="cat-card-overlay"></div>
               <div className="cat-card-content">
-                <h3 className="cat-name">{cat.name}</h3>
+                <h2 className="cat-name">{cat.name}</h2>
+                {cat.count > 0 && (
+                  <span style={{ fontSize: "0.78rem", opacity: 0.88 }}>{cat.count} videos</span>
+                )}
               </div>
             </Link>
           ))}
         </div>
 
-        {/* All Categories Section */}
-        <div
-          className="all-categories-section"
-          style={{ marginTop: "var(--space-8)" }}
-        >
+        {/* All Active Populated Categories Directory */}
+        {activeCategories.length > 0 && (
+          <section className="all-categories-section" style={{ marginTop: "var(--space-8)" }}>
+            <div className="section-header all-cats-header">
+              <div className="section-title-group">
+                <Layers className="section-icon" size={22} />
+                <h2 className="section-title">Active Categories Directory ({activeCategories.length})</h2>
+              </div>
+            </div>
+            <div className="all-cats-list">
+              {activeCategories.map((cat) => (
+                <Link
+                  href={`/cat/${cat.slug}`}
+                  key={cat.slug}
+                  prefetch={false}
+                  className="all-cat-item"
+                >
+                  <span className="all-cat-name">{cat.name}</span>
+                  <span className="all-cat-count">{cat.count}</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Thematic Collections Bridge */}
+        {featuredCollections.length > 0 && (
+          <section style={{ marginTop: "var(--space-8)" }}>
+            <div className="section-header all-cats-header">
+              <div className="section-title-group">
+                <FolderHeart className="section-icon" size={22} />
+                <h2 className="section-title">Specialized Theme Collections</h2>
+              </div>
+              <Link href="/collections" className="home-niche-see-all">
+                All collections &rarr;
+              </Link>
+            </div>
+            <div className="all-cats-list">
+              {featuredCollections.map((col) => (
+                <Link
+                  href={`/collections/${col.slug}`}
+                  key={col.slug}
+                  prefetch={false}
+                  className="all-cat-item"
+                >
+                  <span className="all-cat-name">{col.name}</span>
+                  <span className="all-cat-count">{col.count}</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Client-side Niche Finder (no hidden noindex links dumped in SSR HTML) */}
+        <section style={{ marginTop: "var(--space-8)" }}>
           <div className="section-header all-cats-header">
             <div className="section-title-group">
-              <List className="section-icon" size={24} />
-              <h2 className="section-title">All Categories</h2>
+              <Search className="section-icon" size={22} />
+              <h2 className="section-title">Find Niche Topics</h2>
             </div>
           </div>
-
-          <div className="alphabet-bar">
-            {ALPHABET.map((letter) => (
-              <button
-                key={letter}
-                className={`alphabet-btn ${activeLetter === letter ? "active" : ""}`}
-                onClick={() => setActiveLetter(letter)}
-              >
-                {letter}
-              </button>
-            ))}
-          </div>
-
-          <div className="all-cats-list">
-            {ALL_CATEGORIES.map((cat) => (
-              <Link
-                href={`/cat/${cat.name.toLowerCase().replace(/\s+/g, "-")}`}
-                key={cat.name}
-                prefetch={false}
-                className="all-cat-item"
-                data-letter={letterOf(cat)}
-                hidden={letterOf(cat) !== activeLetter.toLowerCase()}
-              >
-                <span className="all-cat-name">{cat.name}</span>
-                <span className="all-cat-count">{cat.count}</span>
-              </Link>
-            ))}
-            {!ALL_CATEGORIES.some(
-              (cat) => letterOf(cat) === activeLetter.toLowerCase(),
-            ) && (
-              <div className="no-cats-msg">
-                No categories found for {activeLetter}.
-              </div>
-            )}
-          </div>
-        </div>
+          <p style={{ color: "var(--color-muted)", marginBottom: "0.75rem", fontSize: "0.92rem" }}>
+            Type a niche keyword below to search {ALL_CATEGORIES.length}+ streaming tags across the live feed.
+          </p>
+          <input
+            type="search"
+            value={topicFilter}
+            onChange={(e) => setTopicFilter(e.target.value)}
+            placeholder="Filter niche topics (e.g., redhead, cosplay, compilation)..."
+            aria-label="Filter niche topics"
+            style={{
+              width: "100%",
+              maxWidth: "460px",
+              padding: "0.65rem 0.9rem",
+              borderRadius: "8px",
+              border: "1px solid var(--color-border)",
+              background: "var(--color-bg-card)",
+              color: "var(--color-text-primary)",
+              fontSize: "0.95rem",
+              marginBottom: "1rem",
+            }}
+          />
+          {matchingTopics.length > 0 && (
+            <div className="all-cats-list">
+              {matchingTopics.map((cat) => (
+                <Link
+                  href={`/search?query=${encodeURIComponent(cat.name.toLowerCase())}`}
+                  key={cat.name}
+                  prefetch={false}
+                  rel="nofollow"
+                  className="all-cat-item"
+                >
+                  <span className="all-cat-name">{cat.name}</span>
+                  <span className="all-cat-count">{cat.count}</span>
+                </Link>
+              ))}
+            </div>
+          )}
+          {topicFilter.trim() && matchingTopics.length === 0 && (
+            <div className="no-cats-msg">
+              No topic matched &quot;{topicFilter.trim()}&quot;.
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );

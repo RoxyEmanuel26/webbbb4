@@ -61,15 +61,28 @@ const collectionPage = fs.readFileSync(
   "utf8",
 );
 assert.equal(
-  collectionPage.includes("collection.editorialIntro"),
-  false,
-  "Internal editorial text must not be rendered",
-);
-assert.equal(
   collectionPage.includes("collection.intent"),
   false,
   "Internal collection intent must not be rendered",
 );
+assert.equal(
+  collectionPage.includes("collection.editorialIntro"),
+  true,
+  "Collection pages must render their unique editorial overview",
+);
+const collectionEntries = JSON.parse(
+  fs.readFileSync(path.join(root, "src/data/collections.json"), "utf8"),
+);
+for (const entry of collectionEntries) {
+  const introLower = String(entry.editorialIntro || "").toLowerCase();
+  for (const phrase of bannedPhrases) {
+    assert.equal(
+      introLower.includes(phrase),
+      false,
+      `collections.json (${entry.slug}) exposes internal copy: ${phrase}`,
+    );
+  }
+}
 const footer = fs.readFileSync(
   path.join(root, "src/components/Footer.jsx"),
   "utf8",

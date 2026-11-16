@@ -4,22 +4,26 @@ import { Flame, ExternalLink } from "lucide-react";
 import "./Footer.css";
 
 const HOT_SEARCHES = [
-  "japanese",
-  "amateur",
-  "lesbian",
-  "milf",
-  "asian",
-  "interracial",
-  "big-tits",
-  "masturbation",
-  "anal",
-  "pov",
-  "mature",
-  "threesome",
-].map((slug) => ({
-  label: slug.replace("-", " "),
-  href: `/collections/${slug}`,
-}));
+  ...[
+    "japanese",
+    "amateur",
+    "lesbian",
+    "milf",
+    "asian",
+    "interracial",
+    "big-tits",
+    "masturbation",
+    "anal",
+    "pov",
+    "mature",
+    "threesome",
+  ].map((slug) => ({
+    label: slug.replace("-", " "),
+    href: `/cat/${slug}`,
+  })),
+  { label: "brunette", href: "/collections/brunette" },
+  { label: "cumshot", href: "/collections/cumshot" },
+];
 
 const Footer = () => (
   <footer className="site-footer" role="contentinfo">

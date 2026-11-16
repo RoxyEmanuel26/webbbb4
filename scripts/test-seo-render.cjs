@@ -10,8 +10,11 @@ const { getQualifiedTagHubs } = require('../src/data/tagConfig.js');
 const { ALL_CATEGORIES } = require('../src/data/allCategories.js');
 const publishedUrls = new Set(catalog.videos.map((video) => video.canonicalUrl));
 const staticSitemap = fs.readFileSync(path.join(root, 'public/sitemaps/sitemap-static.xml'), 'utf8');
+const categoriesSitemap = fs.readFileSync(path.join(root, 'public/sitemaps/sitemap-categories.xml'), 'utf8');
 const qualifiedHub = staticSitemap.match(/<loc>https:\/\/www\.nicevx\.com\/collections\/([a-z0-9-]+)<\/loc>/)?.[1];
-assert(qualifiedHub, 'At least one qualified collection must exist in the sitemap');
+const qualifiedCategory = categoriesSitemap.match(/<loc>https:\/\/www\.nicevx\.com\/cat\/([a-z0-9-]+)<\/loc>/)?.[1];
+assert(qualifiedHub, 'At least one qualified collection must exist in sitemap-static.xml');
+assert(qualifiedCategory, 'At least one qualified category must exist in sitemap-categories.xml');
 const localVideoLinks = (html) => new Set(
   [...html.matchAll(/href="(\/video\/[^"?#]+)"/g)].map((match) => match[1]),
 );
@@ -24,26 +27,35 @@ for (const href of homepageVideos) {
   assert(publishedUrls.has(`https://www.nicevx.com${href}`), `Homepage links to an unpublished video: ${href}`);
 }
 assert(homepage.includes(`href="/collections/${qualifiedHub}"`), 'Homepage must link to an indexable collection');
-assert.doesNotMatch(homepage, /href="\/tag\//, 'Published cards must not link to noindex or missing tag pages');
+assert(homepage.includes(`href="/cat/${qualifiedCategory}"`), 'Homepage must link to an indexable category');
+assert.doesNotMatch(homepage, /href="\/tag\//, 'Published cards must not link to noindex or duplicate tag pages');
 assert.doesNotMatch(homepage, /href="\/\?order=/, 'Homepage must not emit crawl-budget-wasting blocked ?order= internal links');
 assert.doesNotMatch(homepage, /href="\/search\?query=/, 'Homepage must not emit internal search-parameter links');
+assert.doesNotMatch(homepage, /skeleton/i, 'Homepage initial HTML must not expose loading skeleton placeholders');
 assert.doesNotMatch(homepage, /<meta name="robots" content="noindex/, 'Homepage must remain indexable');
 
-const category = read(`cat/${qualifiedHub}.html`);
+const ageGateSource = fs.readFileSync(path.join(root, 'src/components/AgeGateModal.jsx'), 'utf8');
+assert.doesNotMatch(ageGateSource, /age-gate-overlay/, 'AgeGateModal must use non-blocking age bar instead of fullscreen blur overlay');
+
+const category = read(`cat/${qualifiedCategory}.html`);
 const categoryVideos = localVideoLinks(category);
 assert.equal((category.match(/<h1\b/g) || []).length, 1, 'Category must have one H1 in the initial HTML');
 assert(categoryVideos.size >= 12, `Featured category has only ${categoryVideos.size} canonical video links`);
 assert.doesNotMatch(category, /<meta name="robots" content="noindex/, 'Qualified category hub must be indexable');
+assert.doesNotMatch(category, /skeleton/i, 'Category initial HTML must not emit skeleton placeholders');
 const unqualifiedCategory = read('cat/1080p.html');
 assert.match(unqualifiedCategory, /<meta name="robots" content="noindex/, 'Unqualified category must remain noindex');
-assert(category.includes(`href="/collections/${qualifiedHub}"`), 'Category must link to its collection');
+const catsDirectory = read('cats.html');
+assert.doesNotMatch(catsDirectory, /class="all-cat-item"[^>]*hidden=""/, '/cats directory must not dump hidden noindex links in initial HTML');
 
 const collection = read(`collections/${qualifiedHub}.html`);
+assert.match(collection, /About this .* hub/, 'Collection must render its unique editorial overview');
 assert.match(collection, /Find something to watch/, 'Collection must offer a useful discovery guide');
 assert.match(collection, /Recently published/, 'Collection must show publication-based picks');
 assert.match(collection, /Most viewed/, 'Collection must show source-view-based picks');
 assert.match(collection, /Shorter videos/, 'Collection must show duration-based picks');
-for (const href of localVideoLinks(collection)) {
+const collectionVideoLinks = localVideoLinks(collection);
+for (const href of collectionVideoLinks) {
   assert(publishedUrls.has(`https://www.nicevx.com${href}`), `Collection links to an unpublished video: ${href}`);
 }
 const collectionRecord = collections.find((item) => item.slug === qualifiedHub);
@@ -72,7 +84,7 @@ assert.equal(firstVideoInGroup('Recently published'), `/video/${recent.canonical
 assert.equal(firstVideoInGroup('Most viewed'), `/video/${mostViewed.canonicalSlug}`);
 assert.equal(firstVideoInGroup('Shorter videos'), `/video/${shorter.canonicalSlug}`);
 
-const featuredVideoPath = [...categoryVideos][0];
+const featuredVideoPath = [...collectionVideoLinks][0] || [...categoryVideos][0];
 const watchPage = read(`${featuredVideoPath.slice(1)}.html`);
 assert.equal((watchPage.match(/<h1\b/g) || []).length, 1, 'Watch page must have one H1');
 assert(watchPage.includes(`href="/collections/${qualifiedHub}"`), 'Watch page must link back to its qualified collection');
@@ -82,6 +94,22 @@ assert.match(watchPage, /Similar length and tags/, 'Watch page must link to comp
 assert.doesNotMatch(watchPage, /median of NaN|ranks -1 of|undefined views/, 'Comparison must contain only factual numbers');
 assert.doesNotMatch(watchPage, /href="\/\?order=/, 'Watch page must not emit internal ?order= links');
 assert.doesNotMatch(watchPage, /href="\/search\?query=/, 'Watch page must not emit internal /search?query= links');
+assert.doesNotMatch(watchPage, /href="\/cat\/brunette"/, 'Watch page must never emit broken 404 /cat/brunette links');
+assert.doesNotMatch(watchPage, /Approval Rating<\/dt><dd[^>]*>(?:[1-5](?:\.\d+)?\s*%)/, 'Watch page Approval Rating must display / 5 scale instead of bogus percent');
+
+const validCategorySlugs = new Set(
+  ALL_CATEGORIES.map((c) => c.name.toLowerCase().replace(/\s+/g, '-'))
+);
+const videoHtmlFiles = fs.readdirSync(path.join(root, 'out/video')).filter((f) => f.endsWith('.html'));
+for (const file of videoHtmlFiles) {
+  const html = fs.readFileSync(path.join(root, 'out/video', file), 'utf8');
+  for (const catMatch of html.matchAll(/href="\/cat\/([a-z0-9-]+)"/g)) {
+    assert(
+      validCategorySlugs.has(catMatch[1]),
+      `Broken 404 internal category link /cat/${catMatch[1]} emitted on /video/${file}`
+    );
+  }
+}
 
 const qualifiedTags = getQualifiedTagHubs(catalog.videos, ALL_CATEGORIES, 12);
 const qualifiedTagSlugSet = new Set(qualifiedTags.map((t) => t.slug));

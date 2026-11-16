@@ -12,7 +12,7 @@ import {
   isCollectionIndexable,
   toVideoCard,
 } from '@/lib/catalog';
-import { getDisplayCategory, getTagHubHref, isCategoryIndexable } from '@/lib/hubs';
+import { getDisplayCategory, getTagHubHref } from '@/lib/hubs';
 
 export const dynamicParams = false;
 
@@ -140,8 +140,7 @@ export default async function VideoPage({ params }) {
     .map(({ slug: collectionSlug, name }) => ({ slug: collectionSlug, name }));
 
   const displayCategory = getDisplayCategory(video);
-  const categorySlug = displayCategory.slug || 'amateur';
-  const categoryHref = isCategoryIndexable(categorySlug) ? `/cat/${categorySlug}` : '/cats';
+  const categoryHref = displayCategory.href || '/cats';
   const rawTags = Array.isArray(video.tags) && video.tags.length > 0
     ? video.tags
     : (video.keywords ? String(video.keywords).split(',').map((t) => t.trim()).filter(Boolean) : []);

@@ -1,7 +1,5 @@
-import { Suspense } from "react";
 import Link from "next/link";
 import SearchResultsShared from "@/components/SearchResultsShared";
-import SkeletonGrid from "@/components/SkeletonGrid";
 import VideoCard from "@/components/VideoCard";
 import JsonLd from "@/components/JsonLd";
 import { websiteSchema, organizationSchema } from "@/lib/jsonld";
@@ -13,6 +11,7 @@ import {
   isCollectionIndexable,
   toVideoCard,
 } from "@/lib/catalog";
+import { getTagHubHref } from "@/lib/hubs";
 
 const POPULAR_NICHES = [
   { name: "Japanese", slug: "japanese", count: "10,000+" },
@@ -23,11 +22,43 @@ const POPULAR_NICHES = [
   { name: "Big Tits", slug: "big-tits", count: "20,000+" },
   { name: "Creampie", slug: "creampie", count: "15,000+" },
   { name: "POV", slug: "pov", count: "12,000+" },
-  { name: "Cosplay", slug: "cosplay", count: "5,000+" },
+  { name: "Latina", slug: "latina", count: "10,000+" },
   { name: "Blowjob", slug: "blowjob", count: "20,000+" },
   { name: "Ebony", slug: "ebony", count: "10,000+" },
   { name: "Hardcore", slug: "hardcore", count: "20,000+" },
 ];
+
+function getLatestHomepageVideos(limit = 48) {
+  return getCatalogVideos()
+    .filter((video) =>
+      video.availability === "available" &&
+      video.canonicalUrl &&
+      video.thumbnail &&
+      video.title?.length >= 10 &&
+      !/^(?:sku\b|untitled$|hidden$|video$)/i.test(video.title) &&
+      !/[\uFFFD\u0080-\u009F]/.test(video.title),
+    )
+    .sort((left, right) =>
+      Date.parse(right.uploadDate || 0) - Date.parse(left.uploadDate || 0) ||
+      (Number(right.discoveryScore) || 0) - (Number(left.discoveryScore) || 0) ||
+      left.id.localeCompare(right.id),
+    )
+    .slice(0, limit)
+    .map((video) => toVideoCard(video, { maxTags: 2 }));
+}
+
+function getHomepageTrendingLinks(limit = 10) {
+  const resolved = [];
+  const seenHrefs = new Set();
+  for (const tag of getTrendTags(30)) {
+    const href = getTagHubHref(tag);
+    if (!href || seenHrefs.has(href)) continue;
+    seenHrefs.add(href);
+    resolved.push({ label: tag, href });
+    if (resolved.length >= limit) break;
+  }
+  return resolved;
+}
 
 function getHomepagePicks() {
   return getCatalogVideos()
@@ -75,6 +106,8 @@ export function generateMetadata() {
 
 export default function Home() {
   const picks = getHomepagePicks();
+  const latestFeed = getLatestHomepageVideos(48);
+  const trendingHubs = getHomepageTrendingLinks(10);
   const collections = getCollections()
     .filter((collection) => isCollectionIndexable(collection, collection.videos))
     .slice(0, 8);
@@ -83,19 +116,15 @@ export default function Home() {
     <div className="home-page">
       <JsonLd data={[websiteSchema(), organizationSchema()]} />
 
-      {/* 1. Top Section: Trending Tags & Latest Videos Feed with Sort & Duration Filter */}
-      <Suspense fallback={<SkeletonGrid />}>
-        <SearchResultsShared
-          query="all"
-          pageTitle="Latest videos"
-          headingLevel="h2"
-          seoTitle="Free HD Porn Videos & Curated Collections | NICEVX"
-          seoDesc="Watch free HD adult videos and curated collections on NICEVX. Stream high-definition scenes updated daily with verified durations, ratings, and smooth playback."
-          seoCanonical="https://www.nicevx.com/"
-          seoQuery="Videos"
-          trendTags={getTrendTags(10)}
-        />
-      </Suspense>
+      {/* 1. Top Section: Trending Hubs & SSR Curated Latest Feed with Interactive Sort/Duration */}
+      <SearchResultsShared
+        query="all"
+        pageTitle="Latest videos"
+        headingLevel="h2"
+        initialVideos={latestFeed}
+        perPage={24}
+        trendTags={trendingHubs}
+      />
 
       {/* 2. Middle Section (Option 1): Unified Niche & Collections Discovery Bridge */}
       <div className="page-wrapper">

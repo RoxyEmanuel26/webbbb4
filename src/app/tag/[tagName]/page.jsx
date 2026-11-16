@@ -1,8 +1,5 @@
-import { Suspense } from 'react';
-import SkeletonGrid from '@/components/SkeletonGrid';
 import Link from 'next/link';
 import SearchResultsShared from '@/components/SearchResultsShared';
-import VideoCard from '@/components/VideoCard';
 import JsonLd from '@/components/JsonLd';
 import { permanentRedirect } from 'next/navigation';
 import { getCategorySlugForTag, getSearchMetadata } from '@/utils/seo';
@@ -15,6 +12,7 @@ import {
   getTagVideos,
   isTagIndexable,
 } from '@/lib/hubs';
+import { CANONICAL_SLUG_ALIASES, COLLECTION_OWNED_SLUGS } from '@/data/tagConfig';
 import { breadcrumbListSchema, faqPageSchema, itemListSchema } from '@/lib/jsonld';
 
 export const dynamicParams = false;
@@ -35,7 +33,9 @@ export function generateStaticParams() {
     .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
     .slice(0, 250)
     .forEach(([tagName]) => slugSet.add(tagName));
-  return [...slugSet].map((tagName) => ({ tagName }));
+  return [...slugSet]
+    .filter((tagName) => !COLLECTION_OWNED_SLUGS.has(tagName) && !CANONICAL_SLUG_ALIASES[tagName])
+    .map((tagName) => ({ tagName }));
 }
 
 export async function generateMetadata({ params }) {
@@ -55,26 +55,25 @@ export async function generateMetadata({ params }) {
 export default async function TagPage({ params }) {
   const resolvedParams = await params;
   const tagName = resolvedParams?.tagName || '';
+  const slug = toSlug(tagName);
   const categorySlug = getCategorySlugForTag(tagName);
 
-  // /tag/<category> redirects to /cat/<category>
+  // /tag/<category>, /tag/<collection>, and tag aliases redirect to their single canonical hub
   if (categorySlug) {
     permanentRedirect(`/cat/${categorySlug}`);
+  }
+  if (COLLECTION_OWNED_SLUGS.has(slug)) {
+    permanentRedirect(`/collections/${slug}`);
+  }
+  if (CANONICAL_SLUG_ALIASES[slug]) {
+    permanentRedirect(CANONICAL_SLUG_ALIASES[slug]);
   }
 
   const query = tagName.replace(/-/g, ' ');
   const indexableTag = isTagIndexable(tagName);
-  const seo = getSearchMetadata({
-    query,
-    isCat: false,
-    isTag: true,
-    isIndexableTag: indexableTag,
-    page: 1,
-    tagName,
-  });
   const allMatchingVideos = getTagVideos(tagName);
   const ssrLimit = indexableTag ? 24 : 18;
-  const tagVideos = allMatchingVideos.slice(0, ssrLimit).map(toVideoCard);
+  const tagVideos = allMatchingVideos.slice(0, ssrLimit).map((v) => toVideoCard(v, { maxTags: 2 }));
   const stats = getTagStats(tagName);
   const relatedHubLinks = (stats.relatedTags || [])
     .map((relTag) => ({ label: relTag, href: getTagHubHref(relTag) }))
@@ -165,35 +164,22 @@ export default async function TagPage({ params }) {
           </div>
         )}
 
-        {tagVideos.length > 0 && (
-          <>
-            {!indexableTag && (
-              <p style={{ color: 'var(--color-muted)', marginBottom: '1rem' }}>
-                Browse featured clips tagged #{query} in our catalog.
-              </p>
-            )}
-            <div className="video-grid tag-picks-grid" style={{ marginBottom: '2rem' }}>
-              {tagVideos.map((video, index) => (
-                <VideoCard key={video.id} video={video} priority={index < 4} />
-              ))}
-            </div>
-          </>
+        {!indexableTag && tagVideos.length > 0 && (
+          <p style={{ color: 'var(--color-muted)', marginBottom: '0.75rem' }}>
+            Browse featured clips tagged #{query} in our catalog.
+          </p>
         )}
       </section>
 
-      <Suspense fallback={<SkeletonGrid />}>
-        <SearchResultsShared
-          isCat={false}
-          isTag={true}
-          query={query}
-          seoTitle={seo.title}
-          seoDesc={seo.description}
-          seoCanonical={seo.alternates.canonical}
-          seoQuery={query}
-          pageTitle={`More #${query} videos`}
-          headingLevel="h2"
-        />
-      </Suspense>
+      <SearchResultsShared
+        isCat={false}
+        isTag={true}
+        query={query}
+        initialVideos={tagVideos}
+        perPage={24}
+        pageTitle={`#${query} scenes`}
+        headingLevel="h2"
+      />
     </div>
   );
 }
