@@ -73,6 +73,8 @@ export function videoObjectSchema(video) {
     thumbnailUrl: thumbs.length ? thumbs : [`${SITE_URL}/og-default.jpg`],
     uploadDate: video.uploadDate,
     url: video.canonicalUrl || `${SITE_URL}/video/${video.canonicalSlug}`,
+    inLanguage: 'en',
+    contentRating: '18+',
     isFamilyFriendly: false,
   };
 
@@ -108,7 +110,7 @@ export function videoObjectSchema(video) {
   return schema;
 }
 
-export function personSchema({ name, slug, bio, image, topGenres }) {
+export function personSchema({ name, slug, bio, image, topGenres, nationality }) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -117,8 +119,22 @@ export function personSchema({ name, slug, bio, image, topGenres }) {
     description: bio,
     jobTitle: 'Adult Film Performer & Model',
     isFamilyFriendly: false,
+    ...(nationality && { nationality: { '@type': 'Country', name: nationality } }),
     ...(image && { image }),
     ...(topGenres && topGenres.length > 0 && { knowsAbout: topGenres }),
+  };
+}
+
+export function buildCanonicalAlternates(canonicalUrl) {
+  const url = canonicalUrl.startsWith('http') ? canonicalUrl : `${SITE_URL}${canonicalUrl}`;
+  return {
+    canonical: url,
+    languages: {
+      'en-US': url,
+      'en-GB': url,
+      en: url,
+      'x-default': url,
+    },
   };
 }
 

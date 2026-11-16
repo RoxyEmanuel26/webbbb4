@@ -8,12 +8,12 @@ import '../../pages/Pages.css';
 
 const ALPHABET = ['ALL', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
 
-export default function PornstarsClient() {
+export default function PornstarsClient({ initialStars = PORNSTARS }) {
   const [selectedLetter, setSelectedLetter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredStars = useMemo(() => {
-    let result = PORNSTARS;
+    let result = initialStars;
 
     if (selectedLetter !== 'ALL') {
       result = result.filter((star) =>
@@ -32,14 +32,14 @@ export default function PornstarsClient() {
     }
 
     return result;
-  }, [selectedLetter, searchQuery]);
+  }, [initialStars, selectedLetter, searchQuery]);
 
   return (
     <div className="page-wrapper pornstars-directory-page">
       <div className="directory-header">
         <h1 className="directory-title">Adult Film Stars &amp; Performers</h1>
         <p className="directory-desc">
-          Browse verified adult models and performers on NICEVX. Stream full HD scenes and explore filmographies indexed from A to Z.
+          Browse featured adult models and performers on NICEVX. Stream full HD scenes and explore filmographies indexed from A to Z.
         </p>
 
         {/* Search Bar */}
@@ -90,7 +90,7 @@ export default function PornstarsClient() {
                   height="96"
                 />
                 <span className="pornstar-card-badge">
-                  <Star size={10} fill="currentColor" /> Verified
+                  <Star size={10} fill="currentColor" /> {star.videoCount ? `${star.videoCount} Videos` : 'Performer'}
                 </span>
               </div>
               <div className="pornstar-card-content">

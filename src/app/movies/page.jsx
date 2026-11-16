@@ -1,5 +1,5 @@
 import JsonLd from '@/components/JsonLd';
-import { breadcrumbListSchema, itemListSchema, faqPageSchema } from '@/lib/jsonld';
+import { breadcrumbListSchema, buildCanonicalAlternates, itemListSchema, faqPageSchema } from '@/lib/jsonld';
 import { getCatalogVideos, toVideoCard } from '@/lib/catalog';
 import MoviesClient from './MoviesClient';
 
@@ -12,7 +12,7 @@ export function generateMetadata() {
     title: seoTitle,
     description: seoDesc,
     robots: 'index, follow',
-    alternates: { canonical: seoCanonical },
+    alternates: buildCanonicalAlternates(seoCanonical),
     openGraph: {
       title: seoTitle,
       description: seoDesc,

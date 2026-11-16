@@ -63,9 +63,18 @@ assert(videoObj.thumbnailUrl?.length > 0, 'VideoObject must contain thumbnailUrl
 assert(videoObj.uploadDate, 'VideoObject must contain uploadDate');
 assert(videoObj.duration && /^PT/i.test(videoObj.duration), 'VideoObject must contain ISO 8601 duration');
 assert.equal(videoObj.isFamilyFriendly, false, 'VideoObject isFamilyFriendly must be false');
+assert.equal(videoObj.inLanguage, 'en', 'VideoObject inLanguage must be en');
+assert.equal(videoObj.contentRating, '18+', 'VideoObject contentRating must be 18+');
 const videoBreadcrumb = videoSchemas.find((s) => s['@type'] === 'BreadcrumbList');
 assert(videoBreadcrumb, 'Video page must have BreadcrumbList schema');
 assert.equal(videoBreadcrumb.itemListElement.length, 3, 'Video breadcrumbs must have 3 levels: Home > Category > Video');
+
+// 4b. Pornstar Page
+const starHtml = read('pornstar/abella-danger.html');
+const starSchemas = extractSchemas(starHtml);
+const personObj = starSchemas.find((s) => s['@type'] === 'Person');
+assert(personObj, 'Pornstar page must contain Person schema');
+assert.equal(personObj.nationality?.['@type'], 'Country', 'Person schema must include nationality Country');
 
 
 // 5. About Page (FAQPage Schema for AI Search)

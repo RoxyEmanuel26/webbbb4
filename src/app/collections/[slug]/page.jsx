@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import VideoCard from "@/components/VideoCard";
 import JsonLd from "@/components/JsonLd";
+import { buildCanonicalAlternates } from "@/lib/jsonld";
 import {
   getCollection,
   getCollectionHighlights,
@@ -61,9 +62,7 @@ export async function generateMetadata({ params }) {
   return {
     title,
     description,
-    alternates: {
-      canonical: url,
-    },
+    alternates: buildCanonicalAlternates(url),
     robots: { index: indexable, follow: true },
     openGraph: {
       title,

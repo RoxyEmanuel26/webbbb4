@@ -33,6 +33,15 @@ assert.doesNotMatch(homepage, /href="\/\?order=/, 'Homepage must not emit crawl-
 assert.doesNotMatch(homepage, /href="\/search\?query=/, 'Homepage must not emit internal search-parameter links');
 assert.doesNotMatch(homepage, /skeleton/i, 'Homepage initial HTML must not expose loading skeleton placeholders');
 assert.doesNotMatch(homepage, /<meta name="robots" content="noindex/, 'Homepage must remain indexable');
+assert.match(homepage, /hrefLang="en-US"/i, 'Homepage must include en-US hreflang');
+assert.match(homepage, /hrefLang="en-GB"/i, 'Homepage must include en-GB hreflang');
+assert.match(homepage, /hrefLang="x-default"/i, 'Homepage must include x-default hreflang');
+
+const starPage = read('pornstar/abella-danger.html');
+assert.equal((starPage.match(/<h1\b/g) || []).length, 1, 'Pornstar page must have one H1');
+assert.doesNotMatch(starPage, /skeleton/i, 'Pornstar initial HTML must not emit skeleton placeholders');
+assert.doesNotMatch(starPage, /href="\/watch\?id=/, 'Pornstar initial HTML must not emit non-curated /watch?id= links');
+assert.doesNotMatch(starPage, /<meta name="robots" content="noindex/, 'Qualified pornstar page must be indexable');
 
 const ageGateSource = fs.readFileSync(path.join(root, 'src/components/AgeGateModal.jsx'), 'utf8');
 assert.doesNotMatch(ageGateSource, /age-gate-overlay/, 'AgeGateModal must use non-blocking age bar instead of fullscreen blur overlay');

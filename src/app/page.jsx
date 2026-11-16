@@ -2,7 +2,7 @@ import Link from "next/link";
 import SearchResultsShared from "@/components/SearchResultsShared";
 import VideoCard from "@/components/VideoCard";
 import JsonLd from "@/components/JsonLd";
-import { websiteSchema, organizationSchema } from "@/lib/jsonld";
+import { websiteSchema, organizationSchema, buildCanonicalAlternates } from "@/lib/jsonld";
 import "../pages/Pages.css";
 import {
   getCatalogVideos,
@@ -12,6 +12,7 @@ import {
   toVideoCard,
 } from "@/lib/catalog";
 import { getTagHubHref } from "@/lib/hubs";
+import { PORNSTARS } from "@/data/pornstars";
 
 const POPULAR_NICHES = [
   { name: "Japanese", slug: "japanese", count: "10,000+" },
@@ -26,6 +27,10 @@ const POPULAR_NICHES = [
   { name: "Blowjob", slug: "blowjob", count: "20,000+" },
   { name: "Ebony", slug: "ebony", count: "10,000+" },
   { name: "Hardcore", slug: "hardcore", count: "20,000+" },
+  { name: "European", slug: "european", count: "8,000+" },
+  { name: "British", slug: "british", count: "5,000+" },
+  { name: "Stepsister", slug: "stepsister", count: "9,000+" },
+  { name: "Big Natural Tits", slug: "big-natural-tits", count: "12,000+" },
 ];
 
 function getLatestHomepageVideos(limit = 48) {
@@ -88,7 +93,7 @@ export function generateMetadata() {
     title: seoTitle,
     description: seoDesc,
     robots: "index, follow",
-    alternates: { canonical: seoCanonical },
+    alternates: buildCanonicalAlternates(seoCanonical),
     openGraph: {
       title: seoTitle,
       description: seoDesc,
@@ -176,6 +181,31 @@ export default function Home() {
               </nav>
             </div>
           )}
+
+          <div className="home-discovery-collections" style={{ marginTop: "1rem" }}>
+            <div className="home-discovery-collections-header">
+              <span className="home-discovery-collections-title">
+                Top US &amp; European Performers
+              </span>
+              <Link href="/pornstars" className="home-niche-see-all">
+                All pornstars &rarr;
+              </Link>
+            </div>
+            <nav className="home-discovery-pills" aria-label="Top performers">
+              {PORNSTARS.slice(0, 10).map((star) => (
+                <Link
+                  key={star.slug}
+                  href={`/pornstar/${star.slug}`}
+                  className="home-discovery-pill"
+                >
+                  {star.name}
+                </Link>
+              ))}
+              <Link href="/pornstars" className="home-discovery-pill view-all">
+                All A-Z &rarr;
+              </Link>
+            </nav>
+          </div>
         </section>
       </div>
 

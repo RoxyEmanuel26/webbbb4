@@ -184,10 +184,17 @@ if (fs.existsSync(sitemapsDir)) {
   }
 }
 
-// Daftar kategori valid (top 80 berdasarkan allCategories.js)
-const VALID_CATEGORIES = ['adult porn', 'amateur', 'american', 'anal', 'anal teen', 'asian', 'asian anal', 'bbc', 'bbc interracial', 'bbw', 'bdsm', 'big ass', 'big ass latina', 'big boobs', 'big natural tits', 'big tits', 'black', 'blonde', 'blowjob', 'bondage', 'busty', 'creampie', 'deepthroat', 'dildo', 'double penetration', 'ebony', 'ebony big ass', 'first time', 'free porn', 'gangbang', 'german', 'hairy', 'handjob', 'hardcore', 'hd porn', 'hentai', 'homemade', 'indian', 'indian homemade', 'interracial', 'interracial anal', 'japanese', 'japanese milf', 'japanese sex', 'latina', 'latina anal', 'lesbian', 'lesbians', 'lingerie', 'massage', 'masturbation', 'mature', 'mature anal', 'milf', 'milf mom', 'mom', 'old man', 'orgasm', 'orgy', 'outdoor', 'petite', 'POV', 'public', 'redhead', 'rough', 'solo', 'squirt', 'step', 'stepmom', 'teen', 'teen anal', 'threesome'];
+// Daftar kategori valid (termasuk kategori utama pasar US & EU berdasarkan allCategories.js)
+const VALID_CATEGORIES = ['adult porn', 'amateur', 'american', 'anal', 'anal teen', 'asian', 'asian anal', 'bbc', 'bbc interracial', 'bbw', 'bdsm', 'big ass', 'big ass latina', 'big boobs', 'big natural tits', 'big tits', 'black', 'blonde', 'blowjob', 'bondage', 'british', 'bukkake', 'busty', 'casting', 'cosplay', 'couple', 'creampie', 'cuckold', 'czech', 'deepthroat', 'dildo', 'double penetration', 'ebony', 'ebony big ass', 'european', 'female orgasm', 'fingering', 'first time', 'fisting', 'footjob', 'free porn', 'french', 'gangbang', 'german', 'hairy', 'handjob', 'hardcore', 'hd porn', 'hentai', 'homemade', 'hotwife', 'indian', 'indian homemade', 'interracial', 'interracial anal', 'italian', 'japanese', 'japanese milf', 'japanese sex', 'latina', 'latina anal', 'lesbian', 'lesbians', 'lingerie', 'massage', 'masturbation', 'mature', 'mature anal', 'milf', 'milf mom', 'mom', 'office', 'old man', 'orgasm', 'orgy', 'outdoor', 'pawg', 'petite', 'POV', 'public', 'redhead', 'rough', 'russian', 'solo', 'spanish', 'squirt', 'step', 'stepmom', 'stepsister', 'stockings', 'teen', 'teen anal', 'threesome'];
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const NON_LATIN_TEST_RE = /[\u0400-\u04FF\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF\u0600-\u06FF\u0900-\u097F]/;
+const NON_LATIN_STRIP_RE = /[\u0400-\u04FF\u3000-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF\u0600-\u06FF\u0900-\u097F\uFF00-\uFFEF…「」『』【】（）〜・]+/g;
+
+function normalizeUnicodeTypography(text) {
+  return String(text || '').replace(/[\u{1D400}-\u{1D7FF}\uFF01-\uFF5E]+/gu, (m) => m.normalize('NFKC'));
+}
 
 // Eporner occasionally returns UTF-8 bytes that were decoded as Latin-1.
 // Repair only when the candidate measurably removes mojibake markers, so valid
@@ -216,7 +223,93 @@ function repairMojibake(value) {
     current = candidate;
   }
 
-  return current.normalize('NFC');
+  return normalizeUnicodeTypography(current).normalize('NFC');
+}
+
+function toEnglishTitleCase(str) {
+  const ACRONYMS = new Set(['HD', '4K', 'UHD', 'POV', 'MILF', 'JAV', 'BBC', 'BBW', 'BDSM', 'PAWG', 'VR', 'BWC', 'H-CUP', 'G-CUP', 'E-CUP', 'F-CUP', 'DSVR', 'SONE', 'ED093', 'URVRSP']);
+  const MINOR = new Set(['a', 'an', 'the', 'and', 'or', 'for', 'in', 'on', 'with', 'to', 'by', 'at', 'of', 'from', 'as', 'into', 'her', 'his']);
+  return String(str || '')
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word, idx) => {
+      const clean = word.replace(/[^A-Za-z0-9-]/g, '');
+      const upper = clean.toUpperCase();
+      if (ACRONYMS.has(upper) || /^[A-Z]{2,6}-\d{2,4}$/.test(upper)) return upper;
+      const lower = clean.toLowerCase();
+      if (idx > 0 && MINOR.has(lower)) return lower;
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    })
+    .join(' ');
+}
+
+function needsEnglishTitleRepair(rawTitle, canonicalSlug = '') {
+  const cleanTitle = normalizeUnicodeTypography(rawTitle || '').trim();
+  const baseSlug = String(canonicalSlug || '').replace(/-[A-Za-z0-9]{11}$/, '');
+  const hasNonLatin = NON_LATIN_TEST_RE.test(cleanTitle);
+  const isCrypticHandle = /^badbarbiepriv\b/i.test(cleanTitle) || /^\d+[a-z]?$/i.test(cleanTitle);
+  return hasNonLatin || isCrypticHandle || baseSlug === 'video' || (baseSlug.length > 0 && baseSlug.length < 4) || /^\d+$/.test(baseSlug);
+}
+
+function synthesizeEnglishTitle(rawTitle, seoDescription, canonicalSlug = '') {
+  const nfkcTitle = normalizeUnicodeTypography(rawTitle || '').trim();
+  if (!needsEnglishTitleRepair(rawTitle, canonicalSlug)) {
+    return nfkcTitle;
+  }
+
+  const hasNonLatinAfterNfkc = NON_LATIN_TEST_RE.test(nfkcTitle);
+  const isCrypticAfterNfkc = /^badbarbiepriv\b/i.test(nfkcTitle) || /^\d+[a-z]?$/i.test(nfkcTitle);
+  const latinWordsAfterNfkc = nfkcTitle.match(/[A-Za-z]{3,}/g) || [];
+  if (!hasNonLatinAfterNfkc && !isCrypticAfterNfkc && latinWordsAfterNfkc.length >= 4) {
+    return toEnglishTitleCase(nfkcTitle);
+  }
+
+  const codeMatch = nfkcTitle.match(/\b([A-Z]{2,6}-?\d{2,4})\b/i);
+  const codePrefix = codeMatch && !/^MILF\d+/i.test(codeMatch[1]) ? codeMatch[1].toUpperCase() : '';
+
+  let desc = normalizeUnicodeTypography(seoDescription || '')
+    .replace(NON_LATIN_STRIP_RE, ' ')
+    .replace(/\bmilf\d+\b/gi, 'MILF')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!desc) return nfkcTitle || 'HD Adult Video';
+
+  desc = desc
+    .replace(/^(?:Watch|Experience|Explore|Discover|Enjoy|Stream)\s+(?:this\s+|a\s+|an\s+)?(?:exclusive\s+|raw\s+and\s+authentic\s+|raw\s+|vintage\s+)?/i, '')
+    .replace(/^This\s+(?:amateur\s+webcam\s+clip|Japanese\s+amateur\s+hardcore\s+video|busty\s+brunette\s+amateur|brunette\s+teen)\s+(?:features\s+|delivers\s+)?(?:a\s+|an\s+)?/i, (m) => {
+      return m.replace(/^This\s+/i, '').replace(/\s+(?:features|delivers)\s+(?:a\s+|an\s+)?/i, ' ');
+    })
+    .replace(/^A\s+suspicious\s+husband\s+sets\s+up\s+a\s+webcam\s+in\s+his\s+brother's\s+room\s+to\s+capture\s+/i, '');
+
+  let clause = desc.split(/[.!?]/)[0].trim();
+  clause = clause
+    .replace(/\s*,?\s*with\s+the\s+title\s+.*$/i, '')
+    .replace(/\s*,?\s*tagged\s+for\s+.*$/i, '')
+    .replace(/\s*,?\s*offering\s+Asian\s+fans.*$/i, '')
+    .replace(/\s*,?\s*delivering\s+an\s+intimate.*$/i, '')
+    .replace(/\s+in\s+this\s+(?:amateur\s+|hardcore\s+)?(?:video|clip|scene|shoot).*$/i, '')
+    .replace(/\s+stars\s+in\s+this\s+/i, ' in ')
+    .replace(/\s+features\s+a\s+/i, ' with ')
+    .replace(/\s+as\s+a\s+former\s+idol\s+/i, ' Former Idol ')
+    .trim();
+
+  const commaParts = clause.split(',');
+  if (commaParts.length > 1 && commaParts[0].trim().split(/\s+/).length >= 6) {
+    clause = commaParts[0].trim();
+  }
+
+  const words = clause.split(/\s+/).filter(Boolean);
+  let selected = words.slice(0, 11).join(' ').replace(/[,:;–-]+$/, '');
+  while (/\s+(?:with|in|on|for|by|and|or|to|from|at|as|while|before|after|under|between|during|her|his|their|my|a|an|the|this|that|of|into|featuring|using|showing|playing|sliding|holding|massaging|teasing|gently|deeply|two|natural|passionate|intimate|sensual|down|tiny|big|shy|public|rides|strips)$/i.test(selected)) {
+    selected = selected.replace(/\s+\S+$/, '').replace(/[,:;–-]+$/, '');
+  }
+
+  let finalTitle = toEnglishTitleCase(selected);
+  if (codePrefix && !finalTitle.toUpperCase().includes(codePrefix)) {
+    finalTitle = `${codePrefix} ${finalTitle}`;
+  }
+  return finalTitle || nfkcTitle || 'HD Adult Video';
 }
 
 function hasSuspiciousEncoding(value) {
@@ -1066,7 +1159,7 @@ async function publishSitemaps() {
   }
 }
 
-async function admitDiscoveryVideo(rawVideo, removedIds, preferredActor = null) {
+async function admitDiscoveryVideo(rawVideo, removedIds, preferredActor = null, preferredCategory = null) {
   const video = normalizeVideo(rawVideo);
   if (!video?.id) return false;
   // A provider may edit a title, but an existing NICEVX ID must keep
@@ -1083,9 +1176,7 @@ async function admitDiscoveryVideo(rawVideo, removedIds, preferredActor = null) 
     return false;
   }
 
-  const canonicalSlug = buildCanonicalSlug(video.title, video.id);
-  const url = `${SITE_URL}/video/${canonicalSlug}`;
-  if (seenUrls.has(url) || indexedVideoCount >= MAX_SITEMAP_VIDEOS) return false;
+  if (indexedVideoCount >= MAX_SITEMAP_VIDEOS) return false;
 
   // ---> AI Curation Tembak Disini <---
   await curateWithDeepSeek(video);
@@ -1111,11 +1202,21 @@ async function admitDiscoveryVideo(rawVideo, removedIds, preferredActor = null) 
 
   const fallbackDesc = video.title + ' free HD porn video on NICEVX.';
   const finalDesc = hasUsableCuration(aiData) ? aiData.seoDescription.trim() : fallbackDesc;
-  const finalTags = aiData && aiData.cleanedTags && aiData.cleanedTags.length > 0
-    ? aiData.cleanedTags.map((tag) => repairMojibake(tag)).slice(0, 32)
-    : [];
+  const rawCanonicalSlug = buildCanonicalSlug(video.title, video.id);
+  const finalTitle = synthesizeEnglishTitle(video.title, finalDesc, rawCanonicalSlug);
+  const canonicalSlug = buildCanonicalSlug(finalTitle, video.id);
+  const url = `${SITE_URL}/video/${canonicalSlug}`;
+  if (seenUrls.has(url)) return false;
 
-  if ([video.title, finalDesc, ...finalTags].some(hasSuspiciousEncoding)) {
+  const baseTags = aiData && aiData.cleanedTags && aiData.cleanedTags.length > 0
+    ? aiData.cleanedTags.map((tag) => repairMojibake(tag).toLowerCase().trim()).filter((tag) => tag && !NON_LATIN_TEST_RE.test(tag))
+    : [];
+  if (preferredCategory && !baseTags.includes(preferredCategory.toLowerCase())) {
+    baseTags.unshift(preferredCategory.toLowerCase());
+  }
+  const finalTags = [...new Set(baseTags)].slice(0, 32);
+
+  if ([finalTitle, finalDesc, ...finalTags].some(hasSuspiciousEncoding)) {
     skippedEncodingCount++;
     console.warn(`[Encoding] Video dilewati karena teks sumber masih rusak: ${video.id}`);
     return false;
@@ -1133,7 +1234,7 @@ async function admitDiscoveryVideo(rawVideo, removedIds, preferredActor = null) 
   currentChunkUrls.push({
     url,
     lastmod: RUN_TIMESTAMP,
-    title: video.title,
+    title: finalTitle,
     description: finalDesc,
     thumbnail_loc: video.default_thumb ? video.default_thumb.src : '',
     player_loc: video.embed,
@@ -1146,11 +1247,11 @@ async function admitDiscoveryVideo(rawVideo, removedIds, preferredActor = null) 
     id: video.id,
     canonicalSlug,
     canonicalUrl: url,
-    title: video.title,
+    title: finalTitle,
     description: finalDesc,
     tags: finalTags,
     keywords: finalTags.join(', '),
-    category: aiData?.category || 'adult porn',
+    category: preferredCategory || aiData?.category || 'adult porn',
     ...(preferredActor ? { actor: preferredActor } : {}),
     thumbnail: video.default_thumb.src,
     default_thumb: video.default_thumb,
@@ -1180,6 +1281,69 @@ async function admitDiscoveryVideo(rawVideo, removedIds, preferredActor = null) 
   return true;
 }
 
+const US_EU_PRIORITY_CATEGORIES = [
+  'stepsister',
+  'bondage',
+  'cosplay',
+  'hairy',
+  'british',
+  'german',
+  'french',
+  'czech',
+  'casting',
+  'couple',
+  'deepthroat',
+  'redhead',
+  'american',
+  'spanish',
+  'italian',
+];
+
+async function seedCategoryCandidates(removedIds, categoryBudget) {
+  if (categoryBudget <= 0) return 0;
+  let admittedForCategories = 0;
+  const normalize = (val) => String(val || '').trim().toLowerCase();
+
+  const targets = US_EU_PRIORITY_CATEGORIES.map((catName) => {
+    const slug = catName.replace(/\s+/g, '-');
+    const existingCount = catalogCandidates.filter((v) => {
+      if (v.availability !== 'available') return false;
+      const sigs = new Set([v.category, ...(v.tags || [])].map(normalize));
+      return sigs.has(catName) || sigs.has(slug);
+    }).length;
+    return { catName, slug, existingCount };
+  })
+    .filter((entry) => entry.existingCount < 12)
+    .sort((a, b) => b.existingCount - a.existingCount)
+    .slice(0, 6);
+
+  for (const { catName, existingCount } of targets) {
+    if (aiProcessedCount >= MAX_AI_PER_RUN || admittedForCategories >= categoryBudget || indexedVideoCount >= MAX_SITEMAP_VIDEOS) break;
+    const needed = Math.min(12 - existingCount, categoryBudget - admittedForCategories);
+    if (needed <= 0) continue;
+
+    console.log(`[Category Seed] Mencari ${needed} scene untuk kategori US/EU "${catName}" (${existingCount}/12)...`);
+    try {
+      const searchUrl = `${API_BASE}/video/search/?query=${encodeURIComponent(catName)}&per_page=15&page=1&order=top-weekly`;
+      const data = await fetchJson(searchUrl, `category ${catName}`, { retries: 2, silent: true });
+      const results = Array.isArray(data?.videos) ? data.videos : [];
+      let addedForCat = 0;
+
+      for (const rawVideo of results) {
+        if (addedForCat >= needed || aiProcessedCount >= MAX_AI_PER_RUN || indexedVideoCount >= MAX_SITEMAP_VIDEOS) break;
+        const admitted = await admitDiscoveryVideo(rawVideo, removedIds, null, catName);
+        if (admitted) {
+          addedForCat++;
+          admittedForCategories++;
+        }
+      }
+    } catch (err) {
+      console.warn(`[Category Seed] Gagal mencari ${catName}: ${err.message}`);
+    }
+  }
+  return admittedForCategories;
+}
+
 async function seedPerformerCandidates(removedIds, performerBudget) {
   if (performerBudget <= 0) return 0;
   let admittedForPerformers = 0;
@@ -1190,7 +1354,7 @@ async function seedPerformerCandidates(removedIds, performerBudget) {
   }))
     .filter((entry) => entry.existingCount < MIN_PERFORMER_INDEX_VIDEOS)
     .sort((a, b) => b.existingCount - a.existingCount || a.star.name.localeCompare(b.star.name))
-    .slice(0, 4);
+    .slice(0, 8);
 
   for (const { star, existingCount } of targets) {
     if (aiProcessedCount >= MAX_AI_PER_RUN || admittedForPerformers >= performerBudget || indexedVideoCount >= MAX_SITEMAP_VIDEOS) break;
@@ -1318,10 +1482,16 @@ async function run() {
   const minimumNewForRun = Math.min(MIN_NEW_VIDEOS, Math.max(0, MAX_SITEMAP_VIDEOS - indexedVideoCount));
 
   if (minimumNewForRun > 0 && MAX_AI_PER_RUN > 0 && indexedVideoCount < MAX_SITEMAP_VIDEOS) {
-    const performerBudget = Math.min(10, Math.max(0, Math.floor(MAX_AI_PER_RUN * 0.35)));
+    const performerBudget = Math.min(12, Math.max(0, Math.floor(MAX_AI_PER_RUN * 0.35)));
     const seededPerformers = await seedPerformerCandidates(removedIds, performerBudget);
     if (seededPerformers > 0) {
       console.log(`[Performer Seed] Menambahkan ${seededPerformers} video untuk profil pornstar.`);
+    }
+
+    const categoryBudget = Math.min(12, Math.max(0, Math.floor(MAX_AI_PER_RUN * 0.3)));
+    const seededCategories = await seedCategoryCandidates(removedIds, categoryBudget);
+    if (seededCategories > 0) {
+      console.log(`[Category Seed] Menambahkan ${seededCategories} video untuk kategori US/EU.`);
     }
   }
 

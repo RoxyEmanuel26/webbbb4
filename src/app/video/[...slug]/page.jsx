@@ -2,7 +2,7 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import Script from 'next/script';
 import VideoPlayerClient from './VideoPlayerClient';
 import JsonLd from '@/components/JsonLd';
-import { videoObjectSchema, breadcrumbListSchema } from '@/lib/jsonld';
+import { videoObjectSchema, breadcrumbListSchema, buildCanonicalAlternates } from '@/lib/jsonld';
 import {
   getCatalogVideos,
   getCollections,
@@ -13,6 +13,7 @@ import {
   toVideoCard,
 } from '@/lib/catalog';
 import { getDisplayCategory, getTagHubHref } from '@/lib/hubs';
+import { findModelInText } from '@/data/pornstars';
 
 export const dynamicParams = false;
 
@@ -50,13 +51,21 @@ function normalizeVideoTitle(rawTitle) {
   return cleaned;
 }
 
-function formatSeoTitle(rawTitle, categoryName, lengthMin) {
-  const cleanTitle = normalizeVideoTitle(rawTitle);
+function formatSeoTitle(rawTitle, categoryName, lengthMin, actorName) {
+  let cleanTitle = normalizeVideoTitle(rawTitle);
   const siteSuffix = ' | NICEVX';
   const cleanCat = String(categoryName || '').trim();
   const cleanDur = String(lengthMin || '').trim();
+  const cleanActor = String(actorName || '').trim();
 
-  if (cleanTitle.length < 25 && cleanCat) {
+  if (cleanActor && !cleanTitle.toLowerCase().includes(cleanActor.toLowerCase())) {
+    const withActor = `${cleanActor} – ${cleanTitle}`;
+    if (withActor.length + siteSuffix.length <= 60) {
+      cleanTitle = withActor;
+    }
+  }
+
+  if (cleanTitle.length < 28 && cleanCat) {
     const expanded = cleanDur && `${cleanTitle} – ${cleanCat} (${cleanDur})${siteSuffix}`.length <= 60
       ? `${cleanTitle} – ${cleanCat} (${cleanDur})${siteSuffix}`
       : `${cleanTitle} – ${cleanCat}${siteSuffix}`;
@@ -93,12 +102,15 @@ export async function generateMetadata({ params }) {
   const video = getVideoById(extractId(slug));
   if (!video) return { title: 'Video not found | NICEVX', robots: { index: false, follow: false } };
   const displayCategory = getDisplayCategory(video);
-  const title = formatSeoTitle(video.title, displayCategory.name, video.length_min);
+  const starringModel = findModelInText(
+    `${video.actor || ''} ${video.title || ''} ${video.description || ''} ${video.keywords || ''} ${(video.tags || []).join(' ')}`
+  );
+  const title = formatSeoTitle(video.title, displayCategory.name, video.length_min, video.actor || starringModel?.name);
   const description = formatSeoDesc(video.description, video, displayCategory.name);
   return {
     title,
     description,
-    alternates: { canonical: video.canonicalUrl },
+    alternates: buildCanonicalAlternates(video.canonicalUrl),
     robots: {
       index: true,
       follow: true,
@@ -155,6 +167,9 @@ export default async function VideoPage({ params }) {
     { name: displayCategory.name || 'Videos', url: categoryHref },
     { name: video.title, url: video.canonicalUrl },
   ];
+  const starringModel = findModelInText(
+    `${video.actor || ''} ${video.title || ''} ${video.description || ''} ${video.keywords || ''} ${(video.tags || []).join(' ')}`
+  );
 
   return (
     <article className="video-page-article">
@@ -166,7 +181,11 @@ export default async function VideoPage({ params }) {
       />
       <JsonLd
         data={[
-          videoObjectSchema({ ...video, category: displayCategory.name }),
+          videoObjectSchema({
+            ...video,
+            category: displayCategory.name,
+            actor: video.actor || starringModel?.name,
+          }),
           breadcrumbListSchema(breadcrumbItems),
         ]}
       />

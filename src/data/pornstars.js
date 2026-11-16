@@ -497,6 +497,8 @@ export function matchesPerformerVideo(star, video) {
     video.actor,
     video.model,
     video.title,
+    video.description,
+    video.keywords,
     ...(Array.isArray(video.tags) ? video.tags : []),
   ]
     .filter(Boolean)

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import SearchResultsShared from '@/components/SearchResultsShared';
 import JsonLd from '@/components/JsonLd';
-import { breadcrumbListSchema, itemListSchema, faqPageSchema } from '@/lib/jsonld';
+import { breadcrumbListSchema, buildCanonicalAlternates, itemListSchema, faqPageSchema } from '@/lib/jsonld';
 import { toVideoCard } from '@/lib/catalog';
 import {
   getCategoryVideos,
@@ -68,9 +68,7 @@ export async function generateMetadata({ params }) {
   return {
     title,
     description,
-    alternates: {
-      canonical: `https://www.nicevx.com/cat/${slug}`,
-    },
+    alternates: buildCanonicalAlternates(`https://www.nicevx.com/cat/${slug}`),
     robots: indexable
       ? {
           index: true,

@@ -1,13 +1,11 @@
-import { Suspense } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Star, Globe, Tag, Sparkles } from 'lucide-react';
-import SkeletonGrid from '@/components/SkeletonGrid';
 import SearchResultsShared from '@/components/SearchResultsShared';
-import VideoCard from '@/components/VideoCard';
 import JsonLd from '@/components/JsonLd';
 import {
   breadcrumbListSchema,
+  buildCanonicalAlternates,
   faqPageSchema,
   itemListSchema,
   personSchema,
@@ -56,7 +54,7 @@ export async function generateMetadata({ params }) {
       index: isIndexable,
       follow: true,
     },
-    alternates: { canonical: seoCanonical },
+    alternates: buildCanonicalAlternates(seoCanonical),
     openGraph: {
       title: seoTitle,
       description: seoDesc,
@@ -84,12 +82,20 @@ export default async function PornstarProfilePage({ params }) {
   const relatedStars = PORNSTARS
     .filter((other) => other.slug !== star.slug)
     .map((other) => {
+      const videoCount = getMatchedSortedVideos(other).length;
+      const isIndexable = videoCount >= MIN_PERFORMER_INDEX_VIDEOS ? 1 : 0;
       const overlap = (other.topGenres || []).filter((g) =>
         starGenres.has(String(g).toLowerCase())
       ).length;
-      return { other, overlap };
+      return { other, isIndexable, overlap, videoCount };
     })
-    .sort((a, b) => b.overlap - a.overlap || a.other.name.localeCompare(b.other.name))
+    .sort(
+      (a, b) =>
+        b.isIndexable - a.isIndexable ||
+        b.overlap - a.overlap ||
+        b.videoCount - a.videoCount ||
+        a.other.name.localeCompare(b.other.name)
+    )
     .slice(0, 8)
     .map(({ other }) => other);
 
@@ -118,6 +124,7 @@ export default async function PornstarProfilePage({ params }) {
       bio: star.bio,
       image: star.photo,
       topGenres: star.topGenres,
+      nationality: star.nationality,
     }),
     faqPageSchema(faqs),
   ];
@@ -203,34 +210,20 @@ export default async function PornstarProfilePage({ params }) {
             )}
           </div>
         </section>
-
-        {ssrCards.length > 0 && (
-          <section style={{ marginTop: '1.75rem', marginBottom: '1rem' }} aria-labelledby="star-catalog-heading">
-            <h2 id="star-catalog-heading" className="section-title" style={{ marginBottom: '1rem' }}>
-              Featured {star.name} Videos ({matchedVideos.length})
-            </h2>
-            <div className="video-grid">
-              {ssrCards.map((video, index) => (
-                <VideoCard key={video.id} video={video} priority={index < 4} />
-              ))}
-            </div>
-          </section>
-        )}
       </div>
 
-      {/* Live Performer Videos Feed */}
-      <Suspense fallback={<SkeletonGrid count={24} />}>
-        <SearchResultsShared
-          query={star.name}
-          pageTitle={ssrCards.length > 0 ? `More ${star.name} Clips` : `${star.name}'s HD Videos`}
-          headingLevel="h2"
-          seoTitle={`${star.name} HD Porn Videos — NICEVX`}
-          seoDesc={`Stream full HD porn videos starring ${star.name}. Browse high-definition scenes and playback clips on NICEVX.`}
-          seoCanonical={`https://www.nicevx.com/pornstar/${star.slug}`}
-          seoQuery={star.name}
-          trendTags={star.topGenres || []}
-        />
-      </Suspense>
+      {/* Performer Videos Feed */}
+      <SearchResultsShared
+        query={star.name}
+        pageTitle={`Featured ${star.name} Videos (${matchedVideos.length})`}
+        headingLevel="h2"
+        seoTitle={`${star.name} HD Porn Videos — NICEVX`}
+        seoDesc={`Stream full HD porn videos starring ${star.name}. Browse high-definition scenes and playback clips on NICEVX.`}
+        seoCanonical={`https://www.nicevx.com/pornstar/${star.slug}`}
+        seoQuery={star.name}
+        trendTags={star.topGenres || []}
+        initialVideos={ssrCards}
+      />
 
       {/* Related Performers Section */}
       <div className="page-wrapper" style={{ marginTop: '2rem', paddingBottom: '4rem' }}>
