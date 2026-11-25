@@ -112,6 +112,12 @@ for (let index = 0; index < childUrls.length; index++) {
         parsed.pathname === '/pornstars' || /^\/pornstar\/[a-z0-9-]+$/.test(parsed.pathname),
         `Models sitemap contains unexpected route: ${loc}`
       );
+    } else if (childUrl.pathname.includes('sitemap-eu')) {
+      assert(
+        /^\/(de|fr|es|it)(?:\/cat\/[a-z0-9-]+)?$/.test(parsed.pathname),
+        `EU sitemap contains unexpected route: ${loc}`
+      );
+      assert.match(block, /xhtml:link rel="alternate" hreflang="x-default"/, `EU sitemap entry missing x-default hreflang: ${loc}`);
     } else {
       assert(!parsed.pathname.startsWith('/watch'), 'Live noindex watch URLs must stay out of sitemap');
       assert(!parsed.pathname.startsWith('/cat/'), 'Category URLs belong in sitemap-categories.xml, not sitemap-static.xml');
@@ -120,8 +126,15 @@ for (let index = 0; index < childUrls.length; index++) {
 }
 
 assert(childUrls.some((u) => u.endsWith('/sitemaps/sitemap-models.xml')), 'Sitemap index must include sitemap-models.xml');
+assert(childUrls.some((u) => u.endsWith('/sitemaps/sitemap-eu.xml')), 'Sitemap index must include sitemap-eu.xml');
 assert(allPageUrls.has('https://www.nicevx.com/movies'), 'Sitemap must include /movies hub');
 assert(allPageUrls.has('https://www.nicevx.com/pornstars'), 'Sitemap must include /pornstars directory');
+assert(allPageUrls.has('https://www.nicevx.com/best'), 'Sitemap must include /best editorial guides hub');
+assert(allPageUrls.has('https://www.nicevx.com/de'), 'Sitemap must include /de German edition');
+assert(allPageUrls.has('https://www.nicevx.com/fr'), 'Sitemap must include /fr French edition');
+assert(allPageUrls.has('https://www.nicevx.com/es'), 'Sitemap must include /es Spanish edition');
+assert(allPageUrls.has('https://www.nicevx.com/it'), 'Sitemap must include /it Italian edition');
+assert(fs.existsSync(path.join(publicDir, 'feed.xml')), 'public/feed.xml RSS feed must exist');
 
 const { PORNSTARS, MIN_PERFORMER_INDEX_VIDEOS, getVideosForPerformer } = require('../src/data/pornstars');
 const {

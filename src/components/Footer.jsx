@@ -1,28 +1,38 @@
 import React from "react";
 import Link from "next/link";
-import { Flame, ExternalLink } from "lucide-react";
+import { Flame, ExternalLink, Globe } from "lucide-react";
 import "./Footer.css";
 
 const HOT_SEARCHES = [
   ...[
-    "japanese",
+    "european",
+    "british",
+    "german",
+    "french",
+    "czech",
     "amateur",
-    "lesbian",
     "milf",
-    "asian",
-    "interracial",
-    "big-tits",
-    "masturbation",
+    "big-natural-tits",
+    "stepsister",
     "anal",
     "pov",
-    "mature",
-    "threesome",
+    "japanese",
+    "lesbian",
+    "creampie",
   ].map((slug) => ({
-    label: slug.replace("-", " "),
+    label: slug.replace(/-/g, " "),
     href: `/cat/${slug}`,
   })),
   { label: "brunette", href: "/collections/brunette" },
   { label: "cumshot", href: "/collections/cumshot" },
+];
+
+const INTERNATIONAL_EDITIONS = [
+  { label: "English (US / UK)", href: "/", lang: "en" },
+  { label: "Deutsch (DE)", href: "/de", lang: "de" },
+  { label: "Français (FR)", href: "/fr", lang: "fr" },
+  { label: "Español (ES)", href: "/es", lang: "es" },
+  { label: "Italiano (IT)", href: "/it", lang: "it" },
 ];
 
 const Footer = () => (
@@ -44,22 +54,17 @@ const Footer = () => (
 
       <hr className="footer-divider" />
 
-      {/* Middle: Brand + SEO Text */}
+      {/* Middle: Brand + Navigation Columns */}
       <div className="footer-body">
         <div className="footer-brand-col">
           <Link href="/" className="footer-brand">
             <div className="footer-logo-mark">
-              <div className="footer-icon-glow"></div>
               <img
                 src="/logo.webp"
                 alt="NICEVX Logo"
                 width="36"
                 height="36"
-                style={{
-                  position: "relative",
-                  zIndex: 1,
-                  objectFit: "contain",
-                }}
+                style={{ objectFit: "contain" }}
               />
             </div>
             <div className="footer-brand-text">
@@ -68,22 +73,36 @@ const Footer = () => (
             </div>
           </Link>
           <p className="footer-brand-desc">
-            Browse adult videos by category, save videos for later, and
-            discover something new. Videos play through Eporner.
+            Free HD adult streaming catalog for US &amp; European audiences. Browse by
+            category, performer, or runtime with instant storyboard previews. Videos play
+            through Eporner.
           </p>
+          <div className="footer-editions">
+            <span className="footer-editions-label">
+              <Globe size={12} aria-hidden="true" /> Editions:
+            </span>
+            {INTERNATIONAL_EDITIONS.map((ed) => (
+              <Link key={ed.href} href={ed.href} hrefLang={ed.lang} className="footer-edition-pill">
+                {ed.label}
+              </Link>
+            ))}
+          </div>
         </div>
 
         <div className="footer-links-col">
-          <h3 className="footer-col-heading">Browse</h3>
+          <h3 className="footer-col-heading">Discover</h3>
           <nav>
+            <Link href="/best" className="footer-nav-link">
+              Top Ranked Guides
+            </Link>
             <Link href="/trends/weekly" className="footer-nav-link">
               Trending This Week
             </Link>
             <Link href="/movies" className="footer-nav-link">
-              Full Movies
+              Full Movies (45m+)
             </Link>
             <Link href="/pornstars" className="footer-nav-link">
-              Pornstars
+              Pornstars A–Z
             </Link>
             <Link href="/collections" className="footer-nav-link">
               Collections
@@ -114,6 +133,7 @@ const Footer = () => (
             </Link>
           </nav>
         </div>
+
         <div className="footer-links-col">
           <h3 className="footer-col-heading">NICEVX</h3>
           <nav>
@@ -126,8 +146,12 @@ const Footer = () => (
             <Link href="/editorial-policy" className="footer-nav-link">
               Editorial Policy
             </Link>
+            <a href="/feed.xml" className="footer-nav-link">
+              RSS Feed
+            </a>
           </nav>
         </div>
+
         <div className="footer-links-col">
           <h3 className="footer-col-heading">More Sites</h3>
           <nav aria-label="More websites">
@@ -161,8 +185,8 @@ const Footer = () => (
           All models appearing on this website are 18 years of age or older.
         </p>
         <p className="footer-disclaimer">
-          Videos are provided by <strong>Eporner</strong>. This website is for
-          adults only.
+          Videos are provided by <strong>Eporner</strong>. This website is for adults
+          only (RTA Rated).
         </p>
       </div>
     </div>

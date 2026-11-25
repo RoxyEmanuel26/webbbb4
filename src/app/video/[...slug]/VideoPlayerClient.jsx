@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Calendar, Clock, Eye, Heart, Star, Download, ChevronDown, Film, X, Play } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Eye, Heart, Star, Download, ChevronDown, Film, X, Play, Maximize2, Minimize2, Share2, Check, Globe } from "lucide-react";
 import VideoCard from "@/components/VideoCard";
 import VideoPlayerFacade from "@/components/VideoPlayerFacade";
 import { recordVisit, trackLocalEvent } from "@/lib/privacyMetrics";
@@ -48,12 +48,29 @@ export default function VideoPlayerClient({
   const router = useRouter();
   const effectiveCategory = displayCategory?.name || video?.category || '';
   const [favorite, setFavorite] = useState(false);
+  const [theaterMode, setTheaterMode] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
   const [previewThumb, setPreviewThumb] = useState(null);
   const [autoplay, setAutoplay] = useState(true);
   const [countdown, setCountdown] = useState(null);
   const [showStickyNext, setShowStickyNext] = useState(false);
   const [dismissSticky, setDismissSticky] = useState(false);
   const countdownTimer = useRef(null);
+
+  const handleShareCopy = async () => {
+    const shareUrl = video.canonicalUrl || (typeof window !== "undefined" ? window.location.href : "");
+    try {
+      if (navigator.share && typeof window !== "undefined" && window.innerWidth < 768) {
+        await navigator.share({ title: video.title, url: shareUrl });
+        return;
+      }
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2200);
+      }
+    } catch (_) {}
+  };
 
   const nextVideo = initialRelated && initialRelated.length > 0 ? initialRelated[0] : null;
 
@@ -169,7 +186,7 @@ export default function VideoPlayerClient({
       <Link className="back-btn" href="/">
         <ArrowLeft size={16} /> Back to videos
       </Link>
-      <div className="player-layout">
+      <div className={`player-layout ${theaterMode ? "is-theater" : ""}`}>
         <div className="player-main">
           <div className="player-box">
             <VideoPlayerFacade
@@ -182,15 +199,27 @@ export default function VideoPlayerClient({
               {video.title}
             </h1>
 
-            {/* Starring Performer Badge if detected */}
+            {/* Performer Spotlight Card if detected */}
             {starringModel && (
-              <div className="starring-model-banner">
-                <Star size={13} fill="var(--color-accent)" style={{ color: 'var(--color-accent)' }} />
-                <span>Starring: </span>
-                <Link href={`/pornstar/${starringModel.slug}`} className="starring-model-link">
-                  {starringModel.name}
-                </Link>
-              </div>
+              <Link href={`/pornstar/${starringModel.slug}`} className="performer-spotlight-card">
+                <img
+                  src={starringModel.photo}
+                  alt={starringModel.name}
+                  width="52"
+                  height="52"
+                  loading="lazy"
+                  className="performer-spotlight-avatar"
+                />
+                <div className="performer-spotlight-info">
+                  <div className="performer-spotlight-name">
+                    <Star size={12} fill="var(--color-accent)" style={{ color: "var(--color-accent)" }} />
+                    <span>{starringModel.name}</span>
+                  </div>
+                  <span className="performer-spotlight-meta">
+                    <Globe size={11} aria-hidden="true" /> {starringModel.nationality} · View full filmography &rarr;
+                  </span>
+                </div>
+              </Link>
             )}
 
             <div className="video-info-meta">
@@ -213,12 +242,31 @@ export default function VideoPlayerClient({
             <div className="video-actions">
               <button
                 type="button"
-                className="back-btn"
+                className={`back-btn ${favorite ? "is-saved-action" : ""}`}
                 onClick={toggleFavorite}
                 aria-pressed={favorite}
               >
-                <Heart size={16} fill={favorite ? "currentColor" : "none"} />{" "}
-                {favorite ? "Saved" : "Save video"}
+                <Heart size={15} fill={favorite ? "currentColor" : "none"} />{" "}
+                {favorite ? "Saved" : "Save"}
+              </button>
+              <button
+                type="button"
+                className="back-btn theater-toggle-btn"
+                onClick={() => setTheaterMode((prev) => !prev)}
+                aria-pressed={theaterMode}
+                title={theaterMode ? "Exit Theater Mode" : "Theater Mode"}
+              >
+                {theaterMode ? <Minimize2 size={15} /> : <Maximize2 size={15} />}{" "}
+                {theaterMode ? "Default View" : "Theater"}
+              </button>
+              <button
+                type="button"
+                className="back-btn"
+                onClick={handleShareCopy}
+                title="Copy video link"
+              >
+                {copiedLink ? <Check size={15} /> : <Share2 size={15} />}{" "}
+                {copiedLink ? "Copied" : "Share"}
               </button>
               <a
                 href="https://apiguinee.org/4/dc0dba53bc73a8f967e369df108afe96"
@@ -227,7 +275,7 @@ export default function VideoPlayerClient({
                 className="back-btn smartlink-btn"
                 title="Download HD Video"
               >
-                <Download size={16} /> Download HD
+                <Download size={15} /> Download HD
               </a>
             </div>
 

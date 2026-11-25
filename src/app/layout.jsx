@@ -1,31 +1,48 @@
+import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "../index.css";
 import "../App.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import AgeGateModal from "../components/AgeGateModal";
+import MobileBottomNav from "../components/MobileBottomNav";
 
 import Script from "next/script";
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-jakarta",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-mono",
+  display: "swap",
+});
 
 export const metadata = {
   metadataBase: new URL("https://www.nicevx.com/"),
   title: {
-    default: "NICEVX — Adult Videos",
+    default: "NICEVX — Free HD Adult Videos & International Streaming Catalog",
     template: "%s",
   },
   description:
-    "Browse adult videos, popular categories, and new daily additions on NICEVX.",
+    "Stream free HD adult videos, European & American categories, full-length movies, and top performer filmographies on NICEVX.",
   keywords: [
     "free porn videos",
     "HD porn",
     "adult videos",
-    "free sex videos",
-    "porn tube",
+    "European adult videos",
+    "American pornstars",
+    "full length adult movies",
     "NICEVX",
-    "watch porn online",
   ],
   authors: [{ name: "NICEVX" }],
   creator: "NICEVX",
   publisher: "NICEVX",
+  manifest: "/manifest.webmanifest",
   robots: {
     index: true,
     follow: true,
@@ -38,9 +55,9 @@ export const metadata = {
     },
   },
   openGraph: {
-    title: "NICEVX — Adult Videos",
+    title: "NICEVX — Free HD Adult Videos",
     description:
-      "Browse adult videos, popular categories, and new daily additions.",
+      "Browse curated HD adult videos, European & US categories, full movies, and top performer directories.",
     url: "https://www.nicevx.com/",
     siteName: "NICEVX",
     type: "website",
@@ -50,15 +67,15 @@ export const metadata = {
         url: "/og-default.jpg",
         width: 1200,
         height: 630,
-        alt: "NICEVX — Free HD Porn Videos",
+        alt: "NICEVX — Free HD Adult Videos",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "NICEVX — Adult Videos",
+    title: "NICEVX — Free HD Adult Videos",
     description:
-      "Browse adult videos, popular categories, and new daily additions.",
+      "Browse curated HD adult videos, European & US categories, full movies, and top performer directories.",
     images: ["/og-default.jpg"],
   },
   icons: {
@@ -66,14 +83,11 @@ export const metadata = {
     shortcut: "/favicon.png",
     apple: "/favicon.png",
   },
-  alternates: {
-    canonical: "https://www.nicevx.com/",
-  },
   other: { rating: "RTA-5042-1996-1400-1577-RTA" },
 };
 
 export const viewport = {
-  themeColor: "#0f0f11",
+  themeColor: "#09090b",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -81,14 +95,20 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${jakarta.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://static-ca-cdn.eporner.com" />
+        <link rel="dns-prefetch" href="https://static-ca-cdn.eporner.com" />
+        <link rel="alternate" type="application/rss+xml" title="NICEVX Latest HD Videos" href="/feed.xml" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
             (function() {
               try {
+                var savedTheme = localStorage.getItem('nicevx_theme');
+                if (savedTheme === 'light') {
+                  document.documentElement.setAttribute('data-theme', 'light');
+                }
                 var search = window.location.search;
                 if (search.includes('utm_') || search.includes('fbclid') || search.includes('gclid') || search.includes('ref=')) {
                   var params = new URLSearchParams(search);
@@ -125,6 +145,7 @@ export default function RootLayout({ children }) {
         <Navbar />
         <main id="main-content" className="site-main">{children}</main>
         <Footer />
+        <MobileBottomNav />
       </body>
     </html>
   );

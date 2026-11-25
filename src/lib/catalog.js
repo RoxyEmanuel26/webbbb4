@@ -89,17 +89,33 @@ export function getCatalogVideos() {
   return videos;
 }
 
-// Client grids need only card fields. Keeping large thumbnail arrays and embed
-// metadata out of RSC payloads prevents catalog growth from inflating HTML.
+function samplePreviewThumbs(rawThumbs, maxFrames = 5) {
+  if (!Array.isArray(rawThumbs) || rawThumbs.length === 0) return [];
+  const urls = rawThumbs
+    .map((item) => (typeof item === "string" ? item : item?.src))
+    .filter(Boolean);
+  if (urls.length <= maxFrames) return urls;
+  const sampled = [];
+  const step = (urls.length - 1) / (maxFrames - 1);
+  for (let i = 0; i < maxFrames; i += 1) {
+    sampled.push(urls[Math.round(i * step)]);
+  }
+  return sampled;
+}
+
+// Client grids need card fields plus 5 evenly spaced storyboard preview frames
+// so hover/touch scrubbing works across every static hub without bloating HTML.
 export function toVideoCard(video, options = {}) {
   const tags = Array.isArray(video.tags) ? video.tags : [];
   const trimmedTags = Number.isInteger(options.maxTags) ? tags.slice(0, options.maxTags) : tags;
+  const previewFrames = Number.isInteger(options.maxThumbs) ? options.maxThumbs : 5;
   return {
     id: video.id,
     canonicalSlug: video.canonicalSlug,
     canonicalUrl: video.canonicalUrl,
     title: video.title,
     thumbnail: video.thumbnail,
+    thumbs: previewFrames > 0 ? samplePreviewThumbs(video.thumbs, previewFrames) : [],
     durationSeconds: video.durationSeconds,
     length_min: video.length_min,
     views: video.views,
@@ -107,6 +123,7 @@ export function toVideoCard(video, options = {}) {
     discoveryScore: video.discoveryScore,
     viewGrowth7d: video.viewGrowth7d,
     category: video.category,
+    actor: video.actor || null,
     tags: trimmedTags,
     uploadDate: video.uploadDate,
   };

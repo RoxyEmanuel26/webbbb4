@@ -143,7 +143,7 @@ jobs:
         run: |
           git config user.name "nicevx-discovery-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add public/sitemap.xml public/sitemaps src/data/ai-seo.json src/data/collections.json src/data/curated-video-catalog.json src/data/discovery-snapshots.json
+          git add public/sitemap.xml public/sitemaps public/feed.xml src/data/ai-seo.json src/data/collections.json src/data/curated-video-catalog.json src/data/discovery-snapshots.json
           if git diff --cached --quiet; then
             echo "No factual catalog changes to publish."
             echo "pushed=false" >> "$GITHUB_OUTPUT"

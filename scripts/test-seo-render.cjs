@@ -52,10 +52,36 @@ assert.equal((category.match(/<h1\b/g) || []).length, 1, 'Category must have one
 assert(categoryVideos.size >= 12, `Featured category has only ${categoryVideos.size} canonical video links`);
 assert.doesNotMatch(category, /<meta name="robots" content="noindex/, 'Qualified category hub must be indexable');
 assert.doesNotMatch(category, /skeleton/i, 'Category initial HTML must not emit skeleton placeholders');
-const unqualifiedCategory = read('cat/1080p.html');
-assert.match(unqualifiedCategory, /<meta name="robots" content="noindex/, 'Unqualified category must remain noindex');
+assert.equal(
+  fs.existsSync(path.join(root, 'out/cat/1080p.html')),
+  false,
+  'Pruned non-indexable category stub /cat/1080p must not bloat static export'
+);
 const catsDirectory = read('cats.html');
 assert.doesNotMatch(catsDirectory, /class="all-cat-item"[^>]*hidden=""/, '/cats directory must not dump hidden noindex links in initial HTML');
+
+// Verify EU localized editions & bidirectional hreflang
+for (const lang of ['de', 'fr', 'es', 'it']) {
+  const euHome = read(`${lang}.html`);
+  assert.equal((euHome.match(/<h1\b/g) || []).length, 1, `/${lang} must have one H1`);
+  assert.doesNotMatch(euHome, /<meta name="robots" content="noindex/, `/${lang} must be indexable`);
+  assert.match(euHome, /hrefLang="x-default"/i, `/${lang} must emit x-default hreflang`);
+  assert.match(euHome, new RegExp(`hrefLang="${lang}"`, 'i'), `/${lang} must emit self hreflang`);
+}
+const deAmateur = read('de/cat/amateur.html');
+assert.equal((deAmateur.match(/<h1\b/g) || []).length, 1, '/de/cat/amateur must have one H1');
+assert.match(deAmateur, /hrefLang="en"/i, '/de/cat/amateur must link back to English hreflang');
+
+// Verify Editorial Best Guides (/best & /best/full-length-hd-movies)
+const bestIndex = read('best.html');
+assert.equal((bestIndex.match(/<h1\b/g) || []).length, 1, '/best must have one H1');
+const bestMovies = read('best/full-length-hd-movies.html');
+assert.equal((bestMovies.match(/<h1\b/g) || []).length, 1, '/best/full-length-hd-movies must have one H1');
+assert(localVideoLinks(bestMovies).size >= 12, '/best/full-length-hd-movies must link to >= 12 canonical videos');
+
+// Verify PWA manifest & RSS feed exist in static output
+assert(fs.existsSync(path.join(root, 'out/feed.xml')), 'out/feed.xml RSS feed must be exported');
+assert(fs.existsSync(path.join(root, 'out/manifest.webmanifest')), 'out/manifest.webmanifest must be exported');
 
 const collection = read(`collections/${qualifiedHub}.html`);
 assert.match(collection, /About this .* hub/, 'Collection must render its unique editorial overview');

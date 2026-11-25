@@ -1,16 +1,20 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
-import { Eye, Star, Clock } from 'lucide-react';
-import './VideoCard.css';
+import React, { useState, useRef, useEffect } from "react";
+import Link from "next/link";
+import { Eye, Star, Clock, Heart, Play } from "lucide-react";
+import "./VideoCard.css";
 
-const FORBIDDEN_REGEX = /\b(gay|shemale|tranny|ladyboy|ts|transsexual|transgender|boy|men|cock suck|cock sucking)\b/i;
+const FAVORITES_KEY = "nicevx_favorites_v1";
+const SAVED_VIDEOS_KEY = "nicevx_saved_videos_v2";
+const FORBIDDEN_REGEX =
+  /\b(gay|shemale|tranny|ladyboy|ts|transsexual|transgender|boy|men|cock suck|cock sucking)\b/i;
 
 const formatViews = (n) => {
-  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
-  if (n >= 1_000)     return (n / 1_000).toFixed(0) + 'K';
-  return String(n);
+  const num = Number(n) || 0;
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(0)}K`;
+  return String(num);
 };
 
 const ratingToPercent = (rate) => {
@@ -19,39 +23,47 @@ const ratingToPercent = (rate) => {
 };
 
 const createSlug = (title) => {
-  if (!title) return '';
+  if (!title) return "";
   return String(title)
-    .normalize('NFKC')
+    .normalize("NFKC")
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)+/g, '');
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
 };
+
+const getThumbUrl = (item) => (typeof item === "string" ? item : item?.src || "");
 
 const VideoCard = ({ video, compact = false, priority = false }) => {
   const [thumbIdx, setThumbIdx] = useState(0);
   const [failedSrc, setFailedSrc] = useState("");
   const [isScrubbing, setIsScrubbing] = useState(false);
   const [scrubPercent, setScrubPercent] = useState(0);
-  const hoverInterval = useRef(null);
+  const [saved, setSaved] = useState(false);
   const isPrefetched = useRef(false);
   const thumbWrapRef = useRef(null);
-  
-  const thumbs = video.thumbs || [];
-  const src = thumbs[thumbIdx]?.src || video.default_thumb?.src || video.thumbnail || '/logo.webp';
-  const displayedSrc = failedSrc === src ? '/logo.webp' : src;
 
-  // Cleanup interval on unmount
+  const thumbs = Array.isArray(video.thumbs) ? video.thumbs : [];
+  const activeThumb = getThumbUrl(thumbs[thumbIdx]);
+  const src =
+    activeThumb ||
+    video.default_thumb?.src ||
+    video.thumbnail ||
+    "/logo.webp";
+  const displayedSrc = failedSrc === src ? "/logo.webp" : src;
+
   useEffect(() => {
-    return () => {
-      if (hoverInterval.current) clearInterval(hoverInterval.current);
-    };
-  }, []);
+    try {
+      const favs = JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]");
+      if (Array.isArray(favs) && favs.includes(video.id)) {
+        setSaved(true);
+      }
+    } catch (_) {}
+  }, [video.id]);
 
-  /* Prefetch all images on interaction to prevent flicker */
   const prefetchThumbs = () => {
     if (!isPrefetched.current && thumbs.length > 1) {
       thumbs.forEach((t) => {
-        const thumbUrl = typeof t === 'string' ? t : t?.src;
+        const thumbUrl = getThumbUrl(t);
         if (thumbUrl) {
           const img = new Image();
           img.src = thumbUrl;
@@ -61,22 +73,21 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
     }
   };
 
-  /* Storyboard Scrubber: Map mouse position to thumb index */
-  const handleMouseMove = (e) => {
-    if (thumbs.length <= 1) return;
-    prefetchThumbs();
-    if (hoverInterval.current) {
-      clearInterval(hoverInterval.current);
-      hoverInterval.current = null;
-    }
+  const updateScrubFromClientX = (clientX) => {
     const rect = thumbWrapRef.current?.getBoundingClientRect();
     if (!rect || rect.width <= 0) return;
-    const x = Math.min(Math.max(e.clientX - rect.left, 0), rect.width);
+    const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
     const ratio = x / rect.width;
     const index = Math.min(Math.floor(ratio * thumbs.length), thumbs.length - 1);
     setThumbIdx(index);
     setScrubPercent(ratio * 100);
     if (!isScrubbing) setIsScrubbing(true);
+  };
+
+  const handleMouseMove = (e) => {
+    if (thumbs.length <= 1) return;
+    prefetchThumbs();
+    updateScrubFromClientX(e.clientX);
   };
 
   const handleMouseEnter = () => {
@@ -85,40 +96,64 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
       setIsScrubbing(true);
     }
   };
-  
+
   const handleMouseLeave = () => {
-    if (hoverInterval.current) {
-      clearInterval(hoverInterval.current);
-      hoverInterval.current = null;
-    }
     setIsScrubbing(false);
     setThumbIdx(0);
     setScrubPercent(0);
   };
 
   const handleTouchMove = (e) => {
-    if (thumbs.length <= 1 || !e.touches || !e.touches[0]) return;
+    if (thumbs.length <= 1 || !e.touches?.[0]) return;
     prefetchThumbs();
-    const rect = thumbWrapRef.current?.getBoundingClientRect();
-    if (!rect || rect.width <= 0) return;
-    const x = Math.min(Math.max(e.touches[0].clientX - rect.left, 0), rect.width);
-    const ratio = x / rect.width;
-    const index = Math.min(Math.floor(ratio * thumbs.length), thumbs.length - 1);
-    setThumbIdx(index);
-    setScrubPercent(ratio * 100);
-    if (!isScrubbing) setIsScrubbing(true);
+    updateScrubFromClientX(e.touches[0].clientX);
   };
 
-  const rating   = parseFloat(video.rate ?? video.rating ?? 0);
-  const duration = video.length_min || '—';
-  const views    = formatViews(video.views || 0);
+  const handleQuickSave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      const favorites = new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]"));
+      const existingSaved = JSON.parse(localStorage.getItem(SAVED_VIDEOS_KEY) || "[]");
+      const savedList = Array.isArray(existingSaved)
+        ? existingSaved.filter((item) => item?.id !== video.id)
+        : [];
+      if (favorites.has(video.id)) {
+        favorites.delete(video.id);
+        setSaved(false);
+      } else {
+        favorites.add(video.id);
+        savedList.unshift({
+          id: video.id,
+          canonicalSlug: video.canonicalSlug,
+          canonicalUrl: video.canonicalUrl,
+          title: video.title,
+          thumbnail: video.thumbnail || video.default_thumb?.src || displayedSrc,
+          views: video.views,
+          rating: video.rating ?? video.rate,
+          length_min: video.length_min,
+          category: video.category,
+          tags: video.tags,
+          uploadDate: video.uploadDate,
+          discoveryScore: video.discoveryScore,
+        });
+        setSaved(true);
+      }
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify([...favorites]));
+      localStorage.setItem(SAVED_VIDEOS_KEY, JSON.stringify(savedList.slice(0, 100)));
+    } catch (_) {}
+  };
+
+  const rating = parseFloat(video.rate ?? video.rating ?? 0);
+  const duration = video.length_min || "—";
+  const views = formatViews(video.views || 0);
   const ratingPct = ratingToPercent(rating);
-  const slug     = createSlug(video.title);
+  const slug = createSlug(video.title);
   const videoHref = (() => {
     if (!video.canonicalUrl) return `/watch?id=${encodeURIComponent(video.id)}`;
     try {
-      const canonical = new URL(video.canonicalUrl, 'https://www.nicevx.com');
-      if (canonical.hostname === 'www.nicevx.com' || canonical.hostname === 'nicevx.com') {
+      const canonical = new URL(video.canonicalUrl, "https://www.nicevx.com");
+      if (canonical.hostname === "www.nicevx.com" || canonical.hostname === "nicevx.com") {
         return `${canonical.pathname}${canonical.search}`;
       }
     } catch (_) {}
@@ -126,31 +161,37 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
   })();
 
   const getPrimaryKeyword = () => {
-    const keywordSource = video.keywords || (video.tags || []).join(',');
-    if (!keywordSource) return '';
+    if (video.actor) return video.actor;
+    const keywordSource = video.keywords || (video.tags || []).join(",");
+    if (!keywordSource) return "";
     const kws = String(keywordSource)
-      .split(',')
-      .map(k => k.trim())
-      .filter(k => k.length > 2 && k.length < 25 && k.split(/\s+/).length <= 2 && !FORBIDDEN_REGEX.test(k));
-    return kws[0] || '';
+      .split(",")
+      .map((k) => k.trim())
+      .filter(
+        (k) =>
+          k.length > 2 &&
+          k.length < 24 &&
+          k.split(/\s+/).length <= 2 &&
+          !FORBIDDEN_REGEX.test(k)
+      );
+    return kws[0] || "";
   };
   const primaryKeyword = getPrimaryKeyword();
 
   return (
-    <div
-      className={`vcard ${compact ? 'vcard--compact' : ''}`}
+    <article
+      className={`vcard ${compact ? "vcard--compact" : ""}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleMouseEnter}
       onTouchEnd={handleMouseLeave}
       onTouchCancel={handleMouseLeave}
     >
-      {/* Thumbnail with Storyboard Scrubber */}
-      <Link 
+      <Link
         ref={thumbWrapRef}
         href={videoHref}
         prefetch={false}
-        className="vcard__thumb-wrap" 
+        className="vcard__thumb-wrap"
         aria-label={video.title}
         onMouseMove={handleMouseMove}
         onTouchMove={handleTouchMove}
@@ -163,44 +204,56 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : "auto"}
           decoding="async"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           draggable="false"
           width="640"
           height="360"
           onError={() => setFailedSrc(src)}
         />
-        {/* Play Overlay */}
+        <div className="vcard__scrim" aria-hidden="true" />
         <div className="vcard__overlay" aria-hidden="true">
-          <div className="vcard__play-icon">▶</div>
+          <div className="vcard__play-icon">
+            <Play size={18} fill="currentColor" strokeWidth={1.5} />
+          </div>
         </div>
-        {/* Duration Badge */}
+        <span className="vcard__hd-badge">HD</span>
         <span className="vcard__duration" aria-label={`Duration: ${duration}`}>
           <Clock size={10} aria-hidden="true" />
           {duration}
         </span>
-        {/* HD Badge */}
-        <span className="vcard__hd-badge">HD</span>
-        {/* Storyboard Scrubber Progress Track */}
         {thumbs.length > 1 && isScrubbing && (
-          <div className="vcard__scrub-track" aria-hidden="true">
-            <div
-              className="vcard__scrub-bar"
-              style={{ width: `${Math.max(scrubPercent, 4)}%` }}
-            />
-          </div>
-        )}
-        {/* Frame indicator badge */}
-        {thumbs.length > 1 && isScrubbing && (
-          <span className="vcard__frame-badge" aria-hidden="true">
-            {thumbIdx + 1}/{thumbs.length}
-          </span>
+          <>
+            <div className="vcard__scrub-track" aria-hidden="true">
+              <div
+                className="vcard__scrub-bar"
+                style={{ width: `${Math.max(scrubPercent, 6)}%` }}
+              />
+            </div>
+            <span className="vcard__frame-badge" aria-hidden="true">
+              {thumbIdx + 1}/{thumbs.length}
+            </span>
+          </>
         )}
       </Link>
 
-      {/* Info */}
+      {!compact && (
+        <button
+          type="button"
+          className={`vcard__save-btn ${saved ? "is-saved" : ""}`}
+          onClick={handleQuickSave}
+          aria-label={saved ? "Remove from saved" : "Save video"}
+          aria-pressed={saved}
+          title={saved ? "Saved" : "Save for later"}
+        >
+          <Heart size={13} fill={saved ? "currentColor" : "none"} strokeWidth={2} />
+        </button>
+      )}
+
       <div className="vcard__info">
         <h3 className="vcard__title">
-          <Link href={videoHref} prefetch={false}>{video.title}</Link>
+          <Link href={videoHref} prefetch={false}>
+            {video.title}
+          </Link>
         </h3>
         <div className="vcard__meta">
           <span className="vcard__meta-item vcard__views">
@@ -208,22 +261,22 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
             {views}
           </span>
           {rating > 0 && (
-            <span className="vcard__meta-item vcard__rating">
-              <Star size={11} aria-hidden="true" />
+            <span
+              className="vcard__meta-item vcard__rating"
+              title={`${ratingPct}% approval`}
+            >
+              <Star size={11} fill="currentColor" aria-hidden="true" />
               {rating.toFixed(1)}
             </span>
           )}
           {primaryKeyword && (
-            <span
-              className="vcard__meta-item vcard__tag"
-              style={{ color: 'var(--color-accent)', marginLeft: 'auto', fontWeight: 600, letterSpacing: '0.02em' }}
-            >
-              #{primaryKeyword}
+            <span className="vcard__meta-item vcard__tag">
+              {video.actor ? primaryKeyword : `#${primaryKeyword}`}
             </span>
           )}
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 

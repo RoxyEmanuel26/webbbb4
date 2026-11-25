@@ -12,6 +12,8 @@ const {
 } = require('../src/data/tagConfig.js');
 const { ALL_CATEGORIES } = require('../src/data/allCategories.js');
 const { PORNSTARS, MIN_PERFORMER_INDEX_VIDEOS, getVideosForPerformer } = require('../src/data/pornstars.js');
+const { BEST_GUIDES } = require('../src/data/bestGuides.js');
+const { EU_LANGS, EU_LOCALIZED_CATEGORY_SLUGS } = require('../src/lib/i18n.js');
 
 const SITE_URL = 'https://www.nicevx.com';
 const API_BASE = 'https://www.eporner.com/api/v2';
@@ -176,6 +178,7 @@ const chunkLastmods = new Map();
 let staticSitemapLastmod = RUN_TIMESTAMP;
 let categoriesSitemapLastmod = RUN_TIMESTAMP;
 let modelsSitemapLastmod = RUN_TIMESTAMP;
+let euSitemapLastmod = RUN_TIMESTAMP;
 
 if (fs.existsSync(sitemapsDir)) {
   for (const file of fs.readdirSync(sitemapsDir).filter((name) => /^sitemap-video-\d+\.xml$/.test(name))) {
@@ -968,6 +971,11 @@ function writeStaticSitemap(catalog, collections) {
 
   const staticBaseUrls = [
     { route: '/', lastmod: catalogLastmod },
+    { route: '/best', lastmod: latestDate([catalogLastmod, gitLastModified('src/data/bestGuides.js')]) },
+    ...BEST_GUIDES.map((guide) => ({
+      route: `/best/${guide.slug}`,
+      lastmod: latestDate([catalogLastmod, gitLastModified('src/data/bestGuides.js')]),
+    })),
     { route: '/cats', lastmod: gitLastModified('src/data/allCategories.js') },
     { route: '/movies', lastmod: latestDate([catalogLastmod, gitLastModified('src/app/movies/page.jsx')]) },
     {
@@ -1114,12 +1122,113 @@ function writeModelsSitemap(catalog) {
   console.log(`[Quality Gate] ${result.totalUrls} URL model (${result.qualifiedStars} profil terindeks) masuk sitemap-models.xml.`);
 }
 
+function writeEuSitemap(catalog) {
+  const normalize = (value) => String(value || '').trim().toLowerCase();
+  const toSlug = (name) => name.toLowerCase().replace(/\s+/g, '-');
+  const signalsByVideo = new Map(
+    catalog.map((v) => [v.id, new Set([v.category, ...(v.tags || [])].map(normalize))])
+  );
+  const catalogLastmod = latestDate(catalog.map((video) => video.sitemapLastmod || video.uploadDate));
+
+  const qualifiedLocalizedCats = [];
+  for (const slug of EU_LOCALIZED_CATEGORY_SLUGS) {
+    if (GENERIC_OR_BLOCKED_CATEGORY_SLUGS.has(slug) || CANONICAL_SLUG_ALIASES[slug]) continue;
+    const targetName = slug.replace(/-/g, ' ');
+    const matches = catalog.filter((v) => {
+      if (v.availability !== 'available') return false;
+      const signals = signalsByVideo.get(v.id);
+      return signals && (signals.has(targetName) || signals.has(slug));
+    });
+    if (matches.length >= 12) {
+      const lastmod = latestDate(matches.map((v) => v.sitemapLastmod || v.uploadDate));
+      qualifiedLocalizedCats.push({ slug, lastmod });
+    }
+  }
+
+  const homeHreflangLinks = [
+    `    <xhtml:link rel="alternate" hreflang="en" href="${SITE_URL}/" />`,
+    `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}/" />`,
+    ...EU_LANGS.map((l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE_URL}/${l}" />`),
+  ].join('\n');
+
+  const urlBlocks = [];
+  for (const lang of EU_LANGS) {
+    urlBlocks.push(`
+  <url>
+    <loc>${SITE_URL}/${lang}</loc>
+    <lastmod>${catalogLastmod}</lastmod>
+${homeHreflangLinks}
+  </url>`);
+
+    for (const cat of qualifiedLocalizedCats) {
+      const catHreflangLinks = [
+        `    <xhtml:link rel="alternate" hreflang="en" href="${SITE_URL}/cat/${cat.slug}" />`,
+        `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}/cat/${cat.slug}" />`,
+        ...EU_LANGS.map((l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE_URL}/${l}/cat/${cat.slug}" />`),
+      ].join('\n');
+      urlBlocks.push(`
+  <url>
+    <loc>${SITE_URL}/${lang}/cat/${cat.slug}</loc>
+    <lastmod>${cat.lastmod}</lastmod>
+${catHreflangLinks}
+  </url>`);
+    }
+  }
+
+  euSitemapLastmod = latestDate([catalogLastmod, ...qualifiedLocalizedCats.map((c) => c.lastmod)]);
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urlBlocks.join('')}\n</urlset>`;
+  fs.writeFileSync(path.join(sitemapOutputDir, 'sitemap-eu.xml'), xml, 'utf-8');
+  console.log(`[Quality Gate] ${urlBlocks.length} URL multi-bahasa EU (${EU_LANGS.join('/')}) masuk sitemap-eu.xml.`);
+}
+
+function writeRssFeed(catalog) {
+  const latest = [...catalog]
+    .filter((v) => v && v.availability === 'available' && v.canonicalUrl && v.title && v.description && v.uploadDate)
+    .sort((a, b) => Date.parse(b.uploadDate) - Date.parse(a.uploadDate))
+    .slice(0, 50);
+
+  const pubDate = latest[0]?.uploadDate ? new Date(latest[0].uploadDate).toUTCString() : new Date().toUTCString();
+  const itemsXml = latest
+    .map((v) => {
+      const itemDate = new Date(v.uploadDate).toUTCString();
+      const thumbXml = v.thumbnail
+        ? `\n      <media:thumbnail url="${escapeXml(v.thumbnail)}" width="640" height="360" />`
+        : '';
+      return `    <item>
+      <title>${escapeXml(v.title)}</title>
+      <link>${escapeXml(v.canonicalUrl)}</link>
+      <guid isPermaLink="true">${escapeXml(v.canonicalUrl)}</guid>
+      <pubDate>${itemDate}</pubDate>
+      <category>${escapeXml(v.category || 'HD Adult')}</category>
+      <description>${escapeXml(v.description)}</description>${thumbXml}
+    </item>`;
+    })
+    .join('\n');
+
+  const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>NICEVX — Latest Free HD Adult Videos</title>
+    <link>${SITE_URL}/</link>
+    <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml" />
+    <description>Daily curated HD adult videos, full-length movies, and European &amp; American performer scenes on NICEVX.</description>
+    <language>en-us</language>
+    <lastBuildDate>${pubDate}</lastBuildDate>
+    <rating>(PICS-1.1 "http://www.classify.org/safesurf/" l r (SS~~000 9))</rating>
+${itemsXml}
+  </channel>
+</rss>`;
+  fs.writeFileSync(path.join(publicDir, 'feed.xml'), rssXml, 'utf-8');
+  console.log(`[RSS] feed.xml diperbarui dengan ${latest.length} video terbaru.`);
+}
+
 function writeIndexSitemap() {
   let indexXml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
   indexXml += `  <sitemap>\n    <loc>${SITE_URL}/sitemaps/sitemap-static.xml</loc>\n    <lastmod>${staticSitemapLastmod}</lastmod>\n  </sitemap>\n`;
   indexXml += `  <sitemap>\n    <loc>${SITE_URL}/sitemaps/sitemap-categories.xml</loc>\n    <lastmod>${categoriesSitemapLastmod}</lastmod>\n  </sitemap>\n`;
   indexXml += `  <sitemap>\n    <loc>${SITE_URL}/sitemaps/sitemap-models.xml</loc>\n    <lastmod>${modelsSitemapLastmod}</lastmod>\n  </sitemap>\n`;
+  indexXml += `  <sitemap>\n    <loc>${SITE_URL}/sitemaps/sitemap-eu.xml</loc>\n    <lastmod>${euSitemapLastmod}</lastmod>\n  </sitemap>\n`;
 
   const maxChunk = currentChunkUrls.length > 0 ? currentChunkIndex : currentChunkIndex - 1;
 
@@ -1432,6 +1541,8 @@ async function run() {
     writeStaticSitemap(finalized, managedCollections);
     writeCategoriesSitemap(finalized);
     writeModelsSitemap(finalized);
+    writeEuSitemap(finalized);
+    writeRssFeed(finalized);
     writeIndexSitemap();
     console.log(`Rebuilt local sitemaps (${finalized.length} videos, ${maxChunkDisplay} video chunks).`);
     return;
@@ -1625,6 +1736,8 @@ async function run() {
   writeStaticSitemap(finalized, managedCollections);
   writeCategoriesSitemap(finalized);
   writeModelsSitemap(finalized);
+  writeEuSitemap(finalized);
+  writeRssFeed(finalized);
   writeIndexSitemap();
   await publishSitemaps();
   await writeJsonAtomic(CATALOG_FILE, {

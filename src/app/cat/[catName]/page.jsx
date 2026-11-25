@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import SearchResultsShared from '@/components/SearchResultsShared';
 import JsonLd from '@/components/JsonLd';
-import { breadcrumbListSchema, buildCanonicalAlternates, itemListSchema, faqPageSchema } from '@/lib/jsonld';
+import { breadcrumbListSchema, itemListSchema, faqPageSchema } from '@/lib/jsonld';
 import { toVideoCard } from '@/lib/catalog';
 import {
   getCategoryVideos,
@@ -12,6 +12,7 @@ import {
 } from '@/lib/hubs';
 import { ALL_CATEGORIES } from '@/data/allCategories';
 import { CANONICAL_SLUG_ALIASES } from '@/data/tagConfig';
+import { EU_CATEGORY_LABELS, buildMultilingualCategoryAlternates } from '@/lib/i18n';
 
 export const dynamicParams = false;
 
@@ -22,10 +23,12 @@ const VALID_CAT_SLUGS = new Set(
 
 const toSlug = (name) => name.toLowerCase().replace(/\s+/g, '-');
 
+// Index Bloat Pruning: only pre-render populated, indexable categories (>= 12 videos)
+// so Googlebot sees a >95% high-quality indexable domain instead of 630+ thin noindex stubs.
 export function generateStaticParams() {
   return ALL_CATEGORIES
     .map((category) => toSlug(category.name))
-    .filter((catName) => !CANONICAL_SLUG_ALIASES[catName])
+    .filter((catName) => !CANONICAL_SLUG_ALIASES[catName] && isCategoryIndexable(catName))
     .map((catName) => ({ catName }));
 }
 
@@ -68,7 +71,11 @@ export async function generateMetadata({ params }) {
   return {
     title,
     description,
-    alternates: buildCanonicalAlternates(`https://www.nicevx.com/cat/${slug}`),
+    alternates: buildMultilingualCategoryAlternates(
+      slug,
+      'en',
+      indexable && Boolean(EU_CATEGORY_LABELS[slug])
+    ),
     robots: indexable
       ? {
           index: true,

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Award, Film, Globe, Sparkles, Star } from "lucide-react";
 import SearchResultsShared from "@/components/SearchResultsShared";
 import VideoCard from "@/components/VideoCard";
 import JsonLd from "@/components/JsonLd";
@@ -15,47 +16,65 @@ import { getTagHubHref } from "@/lib/hubs";
 import { PORNSTARS } from "@/data/pornstars";
 
 const POPULAR_NICHES = [
-  { name: "Japanese", slug: "japanese", count: "10,000+" },
-  { name: "Milf", slug: "milf", count: "20,000+" },
-  { name: "Anal", slug: "anal", count: "20,000+" },
-  { name: "Asian", slug: "asian", count: "15,000+" },
-  { name: "Amateur", slug: "amateur", count: "20,000+" },
-  { name: "Big Tits", slug: "big-tits", count: "20,000+" },
-  { name: "Creampie", slug: "creampie", count: "15,000+" },
-  { name: "POV", slug: "pov", count: "12,000+" },
-  { name: "Latina", slug: "latina", count: "10,000+" },
-  { name: "Blowjob", slug: "blowjob", count: "20,000+" },
-  { name: "Ebony", slug: "ebony", count: "10,000+" },
-  { name: "Hardcore", slug: "hardcore", count: "20,000+" },
-  { name: "European", slug: "european", count: "8,000+" },
-  { name: "British", slug: "british", count: "5,000+" },
-  { name: "Stepsister", slug: "stepsister", count: "9,000+" },
-  { name: "Big Natural Tits", slug: "big-natural-tits", count: "12,000+" },
+  { name: "Amateur", slug: "amateur", badge: "US & EU" },
+  { name: "European", slug: "european", badge: "EU Hub" },
+  { name: "British", slug: "british", badge: "UK Hub" },
+  { name: "German", slug: "german", badge: "DE Hub" },
+  { name: "French", slug: "french", badge: "FR Hub" },
+  { name: "Czech", slug: "czech", badge: "CZ Hub" },
+  { name: "MILF", slug: "milf", badge: "Top Rated" },
+  { name: "Big Natural Tits", slug: "big-natural-tits", badge: "Trending" },
+  { name: "Stepsister", slug: "stepsister", badge: "Popular" },
+  { name: "Anal", slug: "anal", badge: "HD" },
+  { name: "POV", slug: "pov", badge: "1st Person" },
+  { name: "Creampie", slug: "creampie", badge: "Popular" },
+  { name: "Japanese", slug: "japanese", badge: "JAV" },
+  { name: "Latina", slug: "latina", badge: "HD" },
+  { name: "Lesbian", slug: "lesbian", badge: "HD" },
+  { name: "Hardcore", slug: "hardcore", badge: "HD" },
 ];
 
-function getLatestHomepageVideos(limit = 48) {
+const FEATURED_GUIDES = [
+  { slug: "full-length-hd-movies", label: "Best Full-Length Movies (45m+)" },
+  { slug: "top-rated-european-scenes", label: "Best European & British Scenes" },
+  { slug: "top-rated-american-pornstars", label: "Top American Pornstars" },
+  { slug: "highest-rated-pov-videos", label: "Highest Rated POV Scenes" },
+  { slug: "best-milf-stepmom-scenes", label: "Top MILF & Stepmom Scenes" },
+  { slug: "best-big-natural-tits", label: "Best Big Natural Tits HD" },
+];
+
+const EU_EDITIONS = [
+  { code: "DE", label: "Deutsch", href: "/de" },
+  { code: "FR", label: "Français", href: "/fr" },
+  { code: "ES", label: "Español", href: "/es" },
+  { code: "IT", label: "Italiano", href: "/it" },
+];
+
+function getLatestHomepageVideos(limit = 36) {
   return getCatalogVideos()
-    .filter((video) =>
-      video.availability === "available" &&
-      video.canonicalUrl &&
-      video.thumbnail &&
-      video.title?.length >= 10 &&
-      !/^(?:sku\b|untitled$|hidden$|video$)/i.test(video.title) &&
-      !/[\uFFFD\u0080-\u009F]/.test(video.title),
+    .filter(
+      (video) =>
+        video.availability === "available" &&
+        video.canonicalUrl &&
+        video.thumbnail &&
+        video.title?.length >= 10 &&
+        !/^(?:sku\b|untitled$|hidden$|video$)/i.test(video.title) &&
+        !/[\uFFFD\u0080-\u009F]/.test(video.title)
     )
-    .sort((left, right) =>
-      Date.parse(right.uploadDate || 0) - Date.parse(left.uploadDate || 0) ||
-      (Number(right.discoveryScore) || 0) - (Number(left.discoveryScore) || 0) ||
-      left.id.localeCompare(right.id),
+    .sort(
+      (left, right) =>
+        Date.parse(right.uploadDate || 0) - Date.parse(left.uploadDate || 0) ||
+        (Number(right.discoveryScore) || 0) - (Number(left.discoveryScore) || 0) ||
+        left.id.localeCompare(right.id)
     )
     .slice(0, limit)
     .map((video) => toVideoCard(video, { maxTags: 2 }));
 }
 
-function getHomepageTrendingLinks(limit = 10) {
+function getHomepageTrendingLinks(limit = 12) {
   const resolved = [];
   const seenHrefs = new Set();
-  for (const tag of getTrendTags(30)) {
+  for (const tag of getTrendTags(36)) {
     const href = getTagHubHref(tag);
     if (!href || seenHrefs.has(href)) continue;
     seenHrefs.add(href);
@@ -65,35 +84,51 @@ function getHomepageTrendingLinks(limit = 10) {
   return resolved;
 }
 
-function getHomepagePicks() {
+function getHomepagePicks(excludeIds = new Set()) {
   return getCatalogVideos()
-    .filter((video) =>
-      video.availability === "available" &&
-      video.canonicalUrl &&
-      video.thumbnail &&
-      video.title?.length >= 14 &&
-      !/^(?:sku\b|untitled$|hidden$|video$)/i.test(video.title) &&
-      !/[\uFFFD\u0080-\u009F]/.test(video.title),
+    .filter(
+      (video) =>
+        video.availability === "available" &&
+        video.canonicalUrl &&
+        video.thumbnail &&
+        !excludeIds.has(video.id) &&
+        video.title?.length >= 14 &&
+        !/^(?:sku\b|untitled$|hidden$|video$)/i.test(video.title) &&
+        !/[\uFFFD\u0080-\u009F]/.test(video.title)
     )
-    .sort((left, right) =>
-      (Number(right.discoveryScore) || 0) - (Number(left.discoveryScore) || 0) ||
-      (Number(right.views) || 0) - (Number(left.views) || 0) ||
-      left.id.localeCompare(right.id),
+    .sort(
+      (left, right) =>
+        (Number(right.discoveryScore) || 0) - (Number(left.discoveryScore) || 0) ||
+        (Number(right.views) || 0) - (Number(left.views) || 0) ||
+        left.id.localeCompare(right.id)
     )
-    .slice(0, 24)
-    .map(toVideoCard);
+    .slice(0, 16)
+    .map((video) => toVideoCard(video, { maxTags: 2 }));
 }
 
 export function generateMetadata() {
-  const seoTitle = "Free HD Porn Videos & Curated Collections | NICEVX";
-  const seoDesc = "Watch free HD adult videos and curated collections on NICEVX. Stream daily updated clips with verified durations, ratings, and smooth playback.";
+  const seoTitle = "Free HD Adult Videos, European & US Performers | NICEVX";
+  const seoDesc =
+    "Watch free HD adult videos, full-length movies, European & American categories, and top performer scenes with instant storyboard previews on NICEVX.";
   const seoCanonical = "https://www.nicevx.com/";
 
   return {
     title: seoTitle,
     description: seoDesc,
     robots: "index, follow",
-    alternates: buildCanonicalAlternates(seoCanonical),
+    alternates: {
+      ...buildCanonicalAlternates(seoCanonical),
+      languages: {
+        "en-US": "https://www.nicevx.com/",
+        "en-GB": "https://www.nicevx.com/",
+        en: "https://www.nicevx.com/",
+        de: "https://www.nicevx.com/de",
+        fr: "https://www.nicevx.com/fr",
+        es: "https://www.nicevx.com/es",
+        it: "https://www.nicevx.com/it",
+        "x-default": "https://www.nicevx.com/",
+      },
+    },
     openGraph: {
       title: seoTitle,
       description: seoDesc,
@@ -110,9 +145,11 @@ export function generateMetadata() {
 }
 
 export default function Home() {
-  const picks = getHomepagePicks();
-  const latestFeed = getLatestHomepageVideos(48);
-  const trendingHubs = getHomepageTrendingLinks(10);
+  const totalVideos = getCatalogVideos().length;
+  const latestFeed = getLatestHomepageVideos(36);
+  const latestIds = new Set(latestFeed.map((v) => v.id));
+  const picks = getHomepagePicks(latestIds);
+  const trendingHubs = getHomepageTrendingLinks(12);
   const collections = getCollections()
     .filter((collection) => isCollectionIndexable(collection, collection.videos))
     .slice(0, 8);
@@ -121,22 +158,58 @@ export default function Home() {
     <div className="home-page">
       <JsonLd data={[websiteSchema(), organizationSchema()]} />
 
-      {/* 1. Top Section: Trending Hubs & SSR Curated Latest Feed with Interactive Sort/Duration */}
+      {/* 1. Above-the-Fold Compact Cinema Command Header (Primary H1) */}
+      <section className="home-command-hero" aria-labelledby="home-title">
+        <div className="page-wrapper home-command-inner">
+          <div className="home-command-copy">
+            <h1 id="home-title" className="home-command-title">
+              Free HD Adult Videos, Ranked &amp; Organized Daily
+            </h1>
+            <p className="home-command-sub">
+              {totalVideos.toLocaleString()}+ hand-indexed scenes, 45 US &amp; European star filmographies, and instant storyboard previews.
+            </p>
+          </div>
+          <div className="home-command-actions">
+            <Link href="/best" className="home-cmd-pill is-accent">
+              <Award size={14} aria-hidden="true" />
+              Top Ranked Guides
+            </Link>
+            <Link href="/movies" className="home-cmd-pill">
+              <Film size={14} aria-hidden="true" />
+              Full Movies 45m+
+            </Link>
+            <Link href="/pornstars" className="home-cmd-pill">
+              <Star size={14} aria-hidden="true" />
+              45 Stars A–Z
+            </Link>
+            <div className="home-eu-editions" aria-label="European language editions">
+              <Globe size={13} aria-hidden="true" />
+              {EU_EDITIONS.map((ed) => (
+                <Link key={ed.code} href={ed.href} className="home-eu-link" hrefLang={ed.code.toLowerCase()}>
+                  {ed.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Immediate Video Feed Above-the-Fold */}
       <SearchResultsShared
         query="all"
-        pageTitle="Latest videos"
+        pageTitle="Latest HD Additions"
         headingLevel="h2"
         initialVideos={latestFeed}
         perPage={24}
         trendTags={trendingHubs}
       />
 
-      {/* 2. Middle Section (Option 1): Unified Niche & Collections Discovery Bridge */}
+      {/* 3. Asymmetric US & EU Discovery Bento */}
       <div className="page-wrapper">
         <section className="home-discovery-bridge" aria-labelledby="mid-discovery-title">
           <div className="home-niche-header">
             <h2 id="mid-discovery-title" className="home-niche-title">
-              Explore Popular Categories
+              Explore US &amp; European Categories
             </h2>
             <Link href="/cats" className="home-niche-see-all">
               All categories &rarr;
@@ -150,16 +223,40 @@ export default function Home() {
                 className="home-niche-card"
               >
                 <span className="home-niche-name">{niche.name}</span>
-                <span className="home-niche-count">{niche.count}</span>
+                <span className="home-niche-count">{niche.badge}</span>
               </Link>
             ))}
           </div>
 
+          {/* Editorial Best-Of Guides */}
+          <div className="home-discovery-collections" style={{ marginTop: "1.25rem" }}>
+            <div className="home-discovery-collections-header">
+              <span className="home-discovery-collections-title">
+                <Award size={14} aria-hidden="true" /> Editorial Top-Ranked Guides
+              </span>
+              <Link href="/best" className="home-niche-see-all">
+                All 12 guides &rarr;
+              </Link>
+            </div>
+            <nav className="home-discovery-pills" aria-label="Editorial guides">
+              {FEATURED_GUIDES.map((guide) => (
+                <Link
+                  key={guide.slug}
+                  href={`/best/${guide.slug}`}
+                  className="home-discovery-pill"
+                >
+                  {guide.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Featured Topic Collections */}
           {collections.length > 0 && (
-            <div className="home-discovery-collections">
+            <div className="home-discovery-collections" style={{ marginTop: "1.1rem" }}>
               <div className="home-discovery-collections-header">
                 <span className="home-discovery-collections-title">
-                  Featured Topic Collections
+                  <Sparkles size={14} aria-hidden="true" /> Specialized Topic Collections
                 </span>
                 <Link href="/collections" className="home-niche-see-all">
                   All collections &rarr;
@@ -182,41 +279,55 @@ export default function Home() {
             </div>
           )}
 
-          <div className="home-discovery-collections" style={{ marginTop: "1rem" }}>
+          {/* Featured US & European Performers with Portraits */}
+          <div className="home-discovery-collections" style={{ marginTop: "1.25rem" }}>
             <div className="home-discovery-collections-header">
               <span className="home-discovery-collections-title">
-                Top US &amp; European Performers
+                <Star size={14} aria-hidden="true" /> Top US &amp; European Performers
               </span>
               <Link href="/pornstars" className="home-niche-see-all">
-                All pornstars &rarr;
+                All 45 stars &rarr;
               </Link>
             </div>
-            <nav className="home-discovery-pills" aria-label="Top performers">
+            <div className="home-stars-strip">
               {PORNSTARS.slice(0, 10).map((star) => (
                 <Link
                   key={star.slug}
                   href={`/pornstar/${star.slug}`}
-                  className="home-discovery-pill"
+                  className="home-star-tile"
                 >
-                  {star.name}
+                  <img
+                    src={star.photo}
+                    alt={star.name}
+                    width="56"
+                    height="56"
+                    loading="lazy"
+                    className="home-star-avatar"
+                  />
+                  <span className="home-star-name">{star.name}</span>
+                  <span className="home-star-nat">{star.nationality}</span>
                 </Link>
               ))}
-              <Link href="/pornstars" className="home-discovery-pill view-all">
-                All A-Z &rarr;
-              </Link>
-            </nav>
+            </div>
           </div>
         </section>
       </div>
 
-      {/* 3. Bottom Section: Curated Daily Picks ("Popular Videos" 24 cards) */}
-      <section className="page-wrapper content-area" aria-labelledby="home-title">
-        <h1 id="home-title" className="section-title">Free HD adult videos, curated daily</h1>
-        <p className="home-intro">Find videos worth watching, compare duration and ratings across our curated catalog.</p>
-        <h2 className="section-title">Popular videos</h2>
+      {/* 4. Top-Rated Catalog Highlights */}
+      <section className="page-wrapper content-area" aria-labelledby="popular-picks-title">
+        <div className="section-header">
+          <div className="section-title-group">
+            <h2 id="popular-picks-title" className="section-title">
+              Highest Rated Catalog Picks
+            </h2>
+          </div>
+          <Link href="/trends/weekly" className="home-niche-see-all">
+            Trending this week &rarr;
+          </Link>
+        </div>
         <div className="video-grid home-picks-grid">
-          {picks.map((video, index) => (
-            <VideoCard key={video.id} video={video} priority={index < 4} />
+          {picks.map((video) => (
+            <VideoCard key={video.id} video={video} />
           ))}
         </div>
       </section>

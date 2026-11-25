@@ -59,6 +59,44 @@
 /about
   Cache-Control: public, max-age=300, s-maxage=86400, stale-while-revalidate=604800
 
+/best
+  Cache-Control: public, max-age=300, s-maxage=86400, stale-while-revalidate=604800
+
+/best/*
+  Cache-Control: public, max-age=300, s-maxage=86400, stale-while-revalidate=604800
+
+/de
+  Cache-Control: public, max-age=300, s-maxage=86400, stale-while-revalidate=604800
+
+/de/*
+  Cache-Control: public, max-age=300, s-maxage=86400, stale-while-revalidate=604800
+
+/fr
+  Cache-Control: public, max-age=300, s-maxage=86400, stale-while-revalidate=604800
+
+/fr/*
+  Cache-Control: public, max-age=300, s-maxage=86400, stale-while-revalidate=604800
+
+/es
+  Cache-Control: public, max-age=300, s-maxage=86400, stale-while-revalidate=604800
+
+/es/*
+  Cache-Control: public, max-age=300, s-maxage=86400, stale-while-revalidate=604800
+
+/it
+  Cache-Control: public, max-age=300, s-maxage=86400, stale-while-revalidate=604800
+
+/it/*
+  Cache-Control: public, max-age=300, s-maxage=86400, stale-while-revalidate=604800
+
+/feed.xml
+  Content-Type: application/rss+xml; charset=utf-8
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/manifest.webmanifest
+  Content-Type: application/manifest+json; charset=utf-8
+  Cache-Control: public, max-age=86400
+
 /random
   Cache-Control: public, max-age=300, s-maxage=86400, stale-while-revalidate=604800
 

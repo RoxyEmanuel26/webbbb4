@@ -2,6 +2,7 @@
 
 import React, { Suspense, useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Search as SearchIcon } from 'lucide-react';
 import VideoCard from '@/components/VideoCard';
 import SkeletonCard from '@/components/SkeletonCard';
 import Pagination from '@/components/Pagination';
@@ -13,12 +14,12 @@ import '../pages/Pages.css';
 const API_BASE = 'https://www.eporner.com/api/v2/video';
 
 const SORT_OPTIONS = [
-  { value: 'latest',       label: '🕐 Latest' },
-  { value: 'top-rated',    label: '⭐ Top Rated' },
-  { value: 'most-popular', label: '🔥 Most Viewed' },
-  { value: 'longest',      label: '🎬 Longest' },
-  { value: 'top-weekly',   label: '📈 This Week' },
-  { value: 'top-monthly',  label: '📅 This Month' },
+  { value: 'latest',       label: 'Latest' },
+  { value: 'top-rated',    label: 'Top Rated' },
+  { value: 'most-popular', label: 'Most Viewed' },
+  { value: 'longest',      label: 'Longest' },
+  { value: 'top-weekly',   label: 'This Week' },
+  { value: 'top-monthly',  label: 'This Month' },
 ];
 
 const FORBIDDEN_REGEX = /\b(gay|shemale|tranny|ladyboy|ts|transsexual|transgender|boy|men|cock suck|cock sucking)\b/i;
@@ -261,7 +262,7 @@ export default function SearchResultsShared({
           </>
         ) : (
           <div className="empty-block">
-            <p style={{ fontSize: '2rem' }}>🔍</p>
+            <SearchIcon size={32} strokeWidth={1.5} style={{ color: 'var(--color-text-muted)' }} aria-hidden="true" />
             <p>No videos found for <strong style={{ textTransform: 'capitalize' }}>&quot;{query}&quot;</strong>{durationFilter !== 'all' ? ` in selected duration (${durationFilter})` : ''}</p>
             <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
               {hasServerCatalog && !shouldUseLiveApi

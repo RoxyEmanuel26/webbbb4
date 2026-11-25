@@ -84,4 +84,16 @@ const faqObj = aboutSchemas.find((s) => s['@type'] === 'FAQPage');
 assert(faqObj, 'About page must contain FAQPage schema');
 assert(faqObj.mainEntity?.length >= 3, 'FAQPage must contain at least 3 Q&A entities');
 
+// 6. EU Localized Hub (/de) & Editorial Guide (/best/full-length-hd-movies)
+const deHtml = read('de.html');
+const deSchemas = extractSchemas(deHtml);
+assert(deSchemas.some((s) => s['@type'] === 'CollectionPage' && s.inLanguage === 'de'), '/de must contain German CollectionPage schema');
+assert(deSchemas.some((s) => s['@type'] === 'ItemList'), '/de must contain ItemList schema');
+
+const bestGuideHtml = read('best/full-length-hd-movies.html');
+const bestGuideSchemas = extractSchemas(bestGuideHtml);
+assert(bestGuideSchemas.some((s) => s['@type'] === 'CollectionPage'), '/best/full-length-hd-movies must contain CollectionPage schema');
+assert(bestGuideSchemas.some((s) => s['@type'] === 'ItemList'), '/best/full-length-hd-movies must contain ItemList schema');
+assert(bestGuideSchemas.some((s) => s['@type'] === 'FAQPage'), '/best/full-length-hd-movies must contain FAQPage schema');
+
 console.log('All JSON-LD Structured Data tests passed successfully!');

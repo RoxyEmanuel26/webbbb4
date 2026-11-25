@@ -20,22 +20,12 @@ export const dynamicParams = false;
 const toSlug = (value = '') =>
   String(value).trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
+// Index Bloat Pruning: pre-render only qualified indexable tag hubs (>= 12 videos)
 export function generateStaticParams() {
-  const tags = new Map();
-  getCatalogVideos().forEach((video) => {
-    (video.tags || []).forEach((tag) => {
-      const slug = toSlug(tag);
-      if (slug) tags.set(slug, (tags.get(slug) || 0) + 1);
-    });
-  });
-  const slugSet = new Set(getTagHubs().map((hub) => hub.slug));
-  [...tags.entries()]
-    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
-    .slice(0, 250)
-    .forEach(([tagName]) => slugSet.add(tagName));
-  return [...slugSet]
-    .filter((tagName) => !COLLECTION_OWNED_SLUGS.has(tagName) && !CANONICAL_SLUG_ALIASES[tagName])
-    .map((tagName) => ({ tagName }));
+  const qualified = getTagHubs()
+    .map((hub) => hub.slug)
+    .filter((tagName) => !COLLECTION_OWNED_SLUGS.has(tagName) && !CANONICAL_SLUG_ALIASES[tagName]);
+  return qualified.map((tagName) => ({ tagName }));
 }
 
 export async function generateMetadata({ params }) {

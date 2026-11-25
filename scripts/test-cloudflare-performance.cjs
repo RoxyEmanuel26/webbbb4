@@ -11,6 +11,9 @@ const staticDynamicRoutes = [
   "src/app/collections/[slug]/page.jsx",
   "src/app/cat/[catName]/page.jsx",
   "src/app/tag/[tagName]/page.jsx",
+  "src/app/best/[slug]/page.jsx",
+  "src/app/[lang]/page.jsx",
+  "src/app/[lang]/cat/[catName]/page.jsx",
 ];
 
 for (const route of staticDynamicRoutes) {

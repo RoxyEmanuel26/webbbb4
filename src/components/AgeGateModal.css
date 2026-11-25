@@ -1,17 +1,19 @@
-/* ─ Non-Blocking 18+ Age Confirmation Bar ─ */
+/* ─ Non-Blocking 18+ Age Confirmation Bar (High-Contrast Cinema Glass) ─ */
 .age-gate-bar {
   position: fixed;
   left: 50%;
-  bottom: 16px;
+  bottom: 18px;
   transform: translateX(-50%);
   width: calc(100% - 24px);
-  max-width: 720px;
-  z-index: 800;
-  background: rgba(18, 18, 26, 0.96);
-  border: 1px solid var(--color-border-card);
+  max-width: 740px;
+  z-index: 850;
+  background: rgba(15, 15, 22, 0.96);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: var(--radius-lg, 14px);
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
-  padding: 12px 16px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.72), 0 0 0 1px rgba(225, 29, 72, 0.18);
+  padding: 14px 18px;
 }
 
 .age-gate-bar-inner {
@@ -19,26 +21,27 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
 }
 
 .age-gate-copy {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   flex: 1 1 260px;
   text-align: left;
 }
 
 .age-gate-copy strong {
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: #ffffff;
+  letter-spacing: -0.01em;
 }
 
 .age-gate-copy span {
   font-size: 0.82rem;
-  color: var(--color-text-secondary);
+  color: #c4c4cf;
   line-height: 1.45;
 }
 
@@ -50,44 +53,46 @@
 }
 
 .age-gate-bar .btn-primary {
-  background: var(--color-accent);
-  color: #fff;
+  background: var(--color-accent, #e11d48);
+  color: #ffffff;
   border: none;
-  padding: 8px 18px;
-  border-radius: var(--radius-sm);
+  padding: 9px 18px;
+  border-radius: var(--radius-sm, 8px);
   font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
+  white-space: nowrap;
   transition: background var(--ease-fast), transform var(--ease-fast);
 }
 
 .age-gate-bar .btn-primary:hover {
-  background: var(--color-accent-hover);
+  background: var(--color-accent-hover, #be123c);
   transform: translateY(-1px);
 }
 
 .age-gate-bar .btn-secondary {
-  background: transparent;
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
-  padding: 8px 14px;
-  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.06);
+  color: #e4e4e7;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 9px 14px;
+  border-radius: var(--radius-sm, 8px);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
   transition: all var(--ease-fast);
 }
 
 .age-gate-bar .btn-secondary:hover {
-  background: var(--color-bg-sidebar);
-  color: var(--color-text-primary);
-  border-color: var(--color-text-muted);
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.32);
 }
 
-@media (max-width: 560px) {
+@media (max-width: 767px) {
   .age-gate-bar {
-    bottom: 10px;
-    padding: 10px 12px;
+    bottom: calc(var(--mobile-nav-height, 60px) + 10px);
+    padding: 12px 14px;
   }
 
   .age-gate-actions {
