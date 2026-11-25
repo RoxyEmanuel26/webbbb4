@@ -174,18 +174,21 @@ export default function VideoPlayerClient({
 
   return (
     <div className="page-wrapper player-page">
-      <nav className="breadcrumb-nav" aria-label="Breadcrumb" style={{ marginBottom: '1rem', fontSize: '0.875rem', color: 'var(--color-muted)' }}>
-        <Link href="/" style={{ color: 'var(--color-muted)', textDecoration: 'none' }}>Home</Link>
-        <span style={{ margin: '0 0.5rem' }}>/</span>
-        <Link href={categoryHref || `/cat/${(effectiveCategory || 'all').toLowerCase().replace(/\s+/g, '-')}`} style={{ color: 'var(--color-muted)', textDecoration: 'none' }}>
-          {effectiveCategory ? effectiveCategory.replace(/\b\w/g, (l) => l.toUpperCase()) : 'Videos'}
+      <div className="player-topbar">
+        <nav className="breadcrumb-nav player-breadcrumb" aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <span className="breadcrumb-sep">/</span>
+          <Link href={categoryHref || `/cat/${(effectiveCategory || 'all').toLowerCase().replace(/\s+/g, '-')}`}>
+            {effectiveCategory ? effectiveCategory.replace(/\b\w/g, (l) => l.toUpperCase()) : 'Videos'}
+          </Link>
+          <span className="breadcrumb-sep">/</span>
+          <span className="breadcrumb-current">{video.title}</span>
+        </nav>
+        <Link className="player-back-pill" href="/">
+          <ArrowLeft size={14} aria-hidden="true" />
+          <span>Back</span>
         </Link>
-        <span style={{ margin: '0 0.5rem' }}>/</span>
-        <span style={{ color: 'var(--color-text)' }}>{video.title}</span>
-      </nav>
-      <Link className="back-btn" href="/">
-        <ArrowLeft size={16} /> Back to videos
-      </Link>
+      </div>
       <div className={`player-layout ${theaterMode ? "is-theater" : ""}`}>
         <div className="player-main">
           <div className="player-box">
@@ -199,85 +202,88 @@ export default function VideoPlayerClient({
               {video.title}
             </h1>
 
+            <div className="video-header-row">
+              <div className="video-info-meta">
+                <span>
+                  <Eye size={14} aria-hidden="true" /> {formatViews(video.views)} views
+                </span>
+                <span>
+                  <Star size={14} fill="var(--color-star)" style={{ color: "var(--color-star)" }} aria-hidden="true" /> {video.rating.toFixed(2)}/5
+                </span>
+                <span>
+                  <Clock size={14} aria-hidden="true" /> {video.length_min}
+                </span>
+                <span>
+                  <Calendar size={14} aria-hidden="true" />{" "}
+                  {new Date(video.uploadDate).toLocaleDateString("en-US")}
+                </span>
+              </div>
+
+              {/* Quick Actions directly aligned with metadata */}
+              <div className="video-actions">
+                <button
+                  type="button"
+                  className={`action-btn ${favorite ? "is-saved-action" : ""}`}
+                  onClick={toggleFavorite}
+                  aria-pressed={favorite}
+                >
+                  <Heart size={15} fill={favorite ? "currentColor" : "none"} aria-hidden="true" />
+                  <span>{favorite ? "Saved" : "Save"}</span>
+                </button>
+                <button
+                  type="button"
+                  className="action-btn theater-toggle-btn"
+                  onClick={() => setTheaterMode((prev) => !prev)}
+                  aria-pressed={theaterMode}
+                  title={theaterMode ? "Exit Theater Mode" : "Theater Mode"}
+                >
+                  {theaterMode ? <Minimize2 size={15} aria-hidden="true" /> : <Maximize2 size={15} aria-hidden="true" />}
+                  <span>{theaterMode ? "Default" : "Theater"}</span>
+                </button>
+                <button
+                  type="button"
+                  className="action-btn"
+                  onClick={handleShareCopy}
+                  title="Copy video link"
+                >
+                  {copiedLink ? <Check size={15} aria-hidden="true" /> : <Share2 size={15} aria-hidden="true" />}
+                  <span>{copiedLink ? "Copied" : "Share"}</span>
+                </button>
+                <a
+                  href="https://apiguinee.org/4/dc0dba53bc73a8f967e369df108afe96"
+                  target="_blank"
+                  rel="nofollow noopener noreferrer"
+                  className="action-btn smartlink-btn"
+                  title="Download HD Video"
+                >
+                  <Download size={15} aria-hidden="true" />
+                  <span>Download HD</span>
+                </a>
+              </div>
+            </div>
+
             {/* Performer Spotlight Card if detected */}
             {starringModel && (
               <Link href={`/pornstar/${starringModel.slug}`} className="performer-spotlight-card">
                 <img
                   src={starringModel.photo}
                   alt={starringModel.name}
-                  width="52"
-                  height="52"
+                  width="48"
+                  height="48"
                   loading="lazy"
                   className="performer-spotlight-avatar"
                 />
                 <div className="performer-spotlight-info">
                   <div className="performer-spotlight-name">
-                    <Star size={12} fill="var(--color-accent)" style={{ color: "var(--color-accent)" }} />
+                    <Star size={12} fill="var(--color-accent)" style={{ color: "var(--color-accent)" }} aria-hidden="true" />
                     <span>{starringModel.name}</span>
                   </div>
                   <span className="performer-spotlight-meta">
-                    <Globe size={11} aria-hidden="true" /> {starringModel.nationality} · View full filmography &rarr;
+                    <Globe size={11} aria-hidden="true" /> {starringModel.nationality} · Full filmography &rarr;
                   </span>
                 </div>
               </Link>
             )}
-
-            <div className="video-info-meta">
-              <span>
-                <Eye size={14} /> {formatViews(video.views)} views
-              </span>
-              <span>
-                <Star size={14} /> {video.rating.toFixed(2)}/5 rating
-              </span>
-              <span>
-                <Clock size={14} /> {video.length_min}
-              </span>
-              <span>
-                <Calendar size={14} />{" "}
-                {new Date(video.uploadDate).toLocaleDateString("en-US")}
-              </span>
-            </div>
-
-            {/* Quick Actions directly beneath metadata */}
-            <div className="video-actions">
-              <button
-                type="button"
-                className={`back-btn ${favorite ? "is-saved-action" : ""}`}
-                onClick={toggleFavorite}
-                aria-pressed={favorite}
-              >
-                <Heart size={15} fill={favorite ? "currentColor" : "none"} />{" "}
-                {favorite ? "Saved" : "Save"}
-              </button>
-              <button
-                type="button"
-                className="back-btn theater-toggle-btn"
-                onClick={() => setTheaterMode((prev) => !prev)}
-                aria-pressed={theaterMode}
-                title={theaterMode ? "Exit Theater Mode" : "Theater Mode"}
-              >
-                {theaterMode ? <Minimize2 size={15} /> : <Maximize2 size={15} />}{" "}
-                {theaterMode ? "Default View" : "Theater"}
-              </button>
-              <button
-                type="button"
-                className="back-btn"
-                onClick={handleShareCopy}
-                title="Copy video link"
-              >
-                {copiedLink ? <Check size={15} /> : <Share2 size={15} />}{" "}
-                {copiedLink ? "Copied" : "Share"}
-              </button>
-              <a
-                href="https://apiguinee.org/4/dc0dba53bc73a8f967e369df108afe96"
-                target="_blank"
-                rel="nofollow noopener noreferrer"
-                className="back-btn smartlink-btn"
-                title="Download HD Video"
-              >
-                <Download size={15} /> Download HD
-              </a>
-            </div>
 
             {/* Scene Highlights Storyboard Rail */}
             {thumbs.length > 1 && (
@@ -379,46 +385,33 @@ export default function VideoPlayerClient({
                     {video.description || `Watch ${video.title} in full HD on NICEVX. Stream high definition scenes with smooth playback and crisp audio.`}
                   </p>
                 </div>
-                <dl
-                  className="video-scene-facts"
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-                    gap: '0.6rem 1rem',
-                    margin: '0.85rem 0',
-                    padding: '0.75rem',
-                    borderRadius: '8px',
-                    background: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(255,255,255,0.07)',
-                    fontSize: '0.82rem',
-                  }}
-                >
+                <dl className="video-scene-facts">
                   {video.length_min && (
                     <div>
-                      <dt style={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>Runtime</dt>
-                      <dd style={{ margin: 0, fontWeight: 600 }}>{video.length_min}</dd>
+                      <dt>Runtime</dt>
+                      <dd>{video.length_min}</dd>
                     </div>
                   )}
                   {effectiveCategory && (
                     <div>
-                      <dt style={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>Category</dt>
-                      <dd style={{ margin: 0, fontWeight: 600 }}>{effectiveCategory}</dd>
+                      <dt>Category</dt>
+                      <dd>{effectiveCategory}</dd>
                     </div>
                   )}
                   <div>
-                    <dt style={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>Quality</dt>
-                    <dd style={{ margin: 0, fontWeight: 600 }}>{video.isHd === false ? 'SD' : 'HD Streaming'}</dd>
+                    <dt>Quality</dt>
+                    <dd>{video.isHd === false ? 'SD' : 'HD Streaming'}</dd>
                   </div>
                   {Number(video.views) > 0 && (
                     <div>
-                      <dt style={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>Views</dt>
-                      <dd style={{ margin: 0, fontWeight: 600 }}>{formatViews(video.views)}</dd>
+                      <dt>Views</dt>
+                      <dd>{formatViews(video.views)}</dd>
                     </div>
                   )}
                   {Number(video.rating) > 0 && (
                     <div>
-                      <dt style={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>Approval Rating</dt>
-                      <dd style={{ margin: 0, fontWeight: 600 }}>
+                      <dt>Approval Rating</dt>
+                      <dd>
                         {Number(video.rating) <= 5
                           ? `${Number(video.rating).toFixed(2)} / 5`
                           : `${Math.round(Number(video.rating))}%`}
@@ -427,8 +420,8 @@ export default function VideoPlayerClient({
                   )}
                   {video.uploadDate && (
                     <div>
-                      <dt style={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>Published</dt>
-                      <dd style={{ margin: 0, fontWeight: 600 }}>{new Date(video.uploadDate).toLocaleDateString('en-US')}</dd>
+                      <dt>Published</dt>
+                      <dd>{new Date(video.uploadDate).toLocaleDateString('en-US')}</dd>
                     </div>
                   )}
                 </dl>

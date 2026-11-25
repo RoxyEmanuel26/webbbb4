@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { ArrowLeft, Clock, Eye, Heart, Star, Download, ChevronDown, Film, X, Play } from 'lucide-react';
+import { ArrowLeft, Clock, Eye, Heart, Star, Download, ChevronDown, Film, X, Play, Maximize2, Minimize2, Share2, Check } from 'lucide-react';
 import VideoCard from '@/components/VideoCard';
 import VideoPlayerFacade from '@/components/VideoPlayerFacade';
 import { recordVisit, trackLocalEvent } from '@/lib/privacyMetrics';
@@ -83,6 +83,19 @@ export default function LiveWatchClient() {
   const [favorite, setFavorite] = useState(false);
   const [previewThumb, setPreviewThumb] = useState(null);
   const [autoplay, setAutoplay] = useState(true);
+  const [theaterMode, setTheaterMode] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  const handleShareCopy = async () => {
+    try {
+      const shareUrl = window.location.href;
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      }
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch (_) {}
+  };
 
   useEffect(() => {
     if (!videoId) {
@@ -183,7 +196,7 @@ export default function LiveWatchClient() {
       <div className="page-wrapper player-page">
         <div className="player-layout">
           <div className="player-main">
-            <div className="player-box skeleton" style={{ minHeight: '360px' }} />
+            <div className="player-box skeleton" />
           </div>
         </div>
       </div>
@@ -204,8 +217,18 @@ export default function LiveWatchClient() {
 
   return (
     <div className="page-wrapper player-page">
-      <Link className="back-btn" href="/"><ArrowLeft size={16} /> Back to videos</Link>
-      <div className="player-layout">
+      <div className="player-topbar">
+        <nav className="breadcrumb-nav player-breadcrumb" aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <span className="breadcrumb-sep">/</span>
+          <span className="breadcrumb-current">{video.title}</span>
+        </nav>
+        <Link className="player-back-pill" href="/">
+          <ArrowLeft size={14} aria-hidden="true" />
+          <span>Back</span>
+        </Link>
+      </div>
+      <div className={`player-layout ${theaterMode ? 'is-theater' : ''}`}>
         <div className="player-main">
           <div className="player-box">
             <VideoPlayerFacade
@@ -216,41 +239,76 @@ export default function LiveWatchClient() {
           <div className="video-info-block">
             <h1 className="video-info-title">{video.title}</h1>
 
-            {/* Starring Performer Badge if detected */}
+            <div className="video-header-row">
+              <div className="video-info-meta">
+                <span><Eye size={14} aria-hidden="true" /> {formatViews(video.views)} views</span>
+                {video.rating > 0 && <span><Star size={14} fill="var(--color-star)" style={{ color: 'var(--color-star)' }} aria-hidden="true" /> {video.rating.toFixed(2)}/5</span>}
+                <span><Clock size={14} aria-hidden="true" /> {video.length_min || '—'}</span>
+              </div>
+
+              {/* Quick Actions directly aligned with metadata */}
+              <div className="video-actions">
+                <button type="button" className={`action-btn ${favorite ? 'is-saved-action' : ''}`} onClick={toggleFavorite} aria-pressed={favorite}>
+                  <Heart size={15} fill={favorite ? 'currentColor' : 'none'} aria-hidden="true" />
+                  <span>{favorite ? 'Saved' : 'Save'}</span>
+                </button>
+                <button
+                  type="button"
+                  className="action-btn theater-toggle-btn"
+                  onClick={() => setTheaterMode((prev) => !prev)}
+                  aria-pressed={theaterMode}
+                  title={theaterMode ? 'Exit Theater Mode' : 'Theater Mode'}
+                >
+                  {theaterMode ? <Minimize2 size={15} aria-hidden="true" /> : <Maximize2 size={15} aria-hidden="true" />}
+                  <span>{theaterMode ? 'Default' : 'Theater'}</span>
+                </button>
+                <button
+                  type="button"
+                  className="action-btn"
+                  onClick={handleShareCopy}
+                  title="Copy video link"
+                >
+                  {copiedLink ? <Check size={15} aria-hidden="true" /> : <Share2 size={15} aria-hidden="true" />}
+                  <span>{copiedLink ? 'Copied' : 'Share'}</span>
+                </button>
+                <a
+                  href="https://apiguinee.org/4/dc0dba53bc73a8f967e369df108afe96"
+                  target="_blank"
+                  rel="nofollow noopener noreferrer"
+                  className="action-btn smartlink-btn"
+                  title="Download HD Video"
+                >
+                  <Download size={15} aria-hidden="true" />
+                  <span>Download HD</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Performer Spotlight Card if detected */}
             {(() => {
               const starringModel = findModelInText(`${video.title} ${video.description || ''} ${(video.tags || []).join(' ')}`);
               return starringModel ? (
-                <div className="starring-model-banner">
-                  <Star size={13} fill="var(--color-accent)" style={{ color: 'var(--color-accent)' }} />
-                  <span>Starring: </span>
-                  <Link href={`/pornstar/${starringModel.slug}`} className="starring-model-link">
-                    {starringModel.name}
-                  </Link>
-                </div>
+                <Link href={`/pornstar/${starringModel.slug}`} className="performer-spotlight-card">
+                  <img
+                    src={starringModel.photo}
+                    alt={starringModel.name}
+                    width="48"
+                    height="48"
+                    loading="lazy"
+                    className="performer-spotlight-avatar"
+                  />
+                  <div className="performer-spotlight-info">
+                    <div className="performer-spotlight-name">
+                      <Star size={12} fill="var(--color-accent)" style={{ color: 'var(--color-accent)' }} aria-hidden="true" />
+                      <span>{starringModel.name}</span>
+                    </div>
+                    <span className="performer-spotlight-meta">
+                      {starringModel.nationality} · Full filmography &rarr;
+                    </span>
+                  </div>
+                </Link>
               ) : null;
             })()}
-
-            <div className="video-info-meta">
-              <span><Eye size={14} /> {formatViews(video.views)} views</span>
-              {video.rating > 0 && <span><Star size={14} /> {video.rating.toFixed(2)}/5 rating</span>}
-              <span><Clock size={14} /> {video.length_min || '—'}</span>
-            </div>
-
-            {/* Quick Actions directly beneath metadata */}
-            <div className="video-actions">
-              <button type="button" className="back-btn" onClick={toggleFavorite} aria-pressed={favorite}>
-                <Heart size={16} fill={favorite ? 'currentColor' : 'none'} /> {favorite ? 'Saved' : 'Save video'}
-              </button>
-              <a
-                href="https://apiguinee.org/4/dc0dba53bc73a8f967e369df108afe96"
-                target="_blank"
-                rel="nofollow noopener noreferrer"
-                className="back-btn smartlink-btn"
-                title="Download HD Video"
-              >
-                <Download size={16} /> Download HD
-              </a>
-            </div>
 
             {/* Scene Highlights Storyboard Rail */}
             {Array.isArray(video.thumbs) && video.thumbs.length > 1 && (

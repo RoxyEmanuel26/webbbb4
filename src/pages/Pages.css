@@ -2633,3 +2633,496 @@
   margin: 0;
   line-height: 1.6;
 }
+
+/* =========================================================
+   Video Watch Page — Responsive Polish (PC / Tablet / Phone)
+   Fixes CSS Grid minmax(0,1fr) overflow, action buttons,
+   edge-to-edge mobile player, tablet 2-col sidebar, and
+   sticky-next-bar clearance above mobile bottom nav.
+   ========================================================= */
+
+.player-page {
+  padding-top: 14px;
+  padding-bottom: 56px;
+}
+
+/* Unified Single-Row Top Bar (Breadcrumb + Back Pill) */
+.player-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  min-width: 0;
+}
+
+.player-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.player-breadcrumb a {
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+  transition: color var(--ease-fast);
+}
+
+.player-breadcrumb a:hover {
+  color: var(--color-accent);
+}
+
+.breadcrumb-sep {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.breadcrumb-current {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.player-back-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  transition: all var(--ease-fast);
+}
+
+.player-back-pill:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-2);
+}
+
+/* Rock-Solid PC / Tablet / Phone Player Grid (Zero Horizontal Blowout!) */
+.player-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 368px;
+  gap: 24px;
+  align-items: start;
+}
+
+.player-main,
+.player-sidebar {
+  min-width: 0;
+  width: 100%;
+}
+
+.player-sidebar {
+  position: sticky;
+  top: calc(var(--navbar-height) + 16px);
+}
+
+.player-layout.is-theater {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.player-layout.is-theater .player-box {
+  max-height: 78vh;
+}
+
+.player-layout.is-theater .player-sidebar {
+  position: static;
+}
+
+.player-layout.is-theater .related-video-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* Video Box & Info Surface */
+.player-box {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+  margin-bottom: 16px;
+}
+
+[data-theme="light"] .player-box {
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.16);
+}
+
+.video-info-block {
+  padding: 20px 22px;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-card);
+}
+
+.video-info-title {
+  font-size: clamp(1.12rem, 1.8vw, 1.45rem);
+  font-weight: 800;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  margin: 0 0 14px;
+  overflow-wrap: anywhere;
+}
+
+/* Aligned Metadata + Action Bar */
+.video-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.video-info-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+}
+
+.video-info-meta > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono-stack);
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.video-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: all var(--ease-fast);
+}
+
+.action-btn:hover {
+  background: var(--color-bg-card-hover, rgba(255, 255, 255, 0.08));
+  border-color: var(--color-border-strong);
+  transform: translateY(-1px);
+}
+
+[data-theme="light"] .action-btn:hover {
+  background: var(--color-border);
+}
+
+.vcard--compact .vcard__info {
+  min-width: 0;
+}
+
+.action-btn:active {
+  transform: scale(0.97);
+}
+
+.action-btn.is-saved-action {
+  background: var(--color-accent-light);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.action-btn.smartlink-btn {
+  background: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  color: #ffffff !important;
+  box-shadow: var(--shadow-btn);
+}
+
+.action-btn.smartlink-btn:hover {
+  background: var(--color-accent-hover) !important;
+  border-color: var(--color-accent-hover) !important;
+  color: #ffffff !important;
+}
+
+/* Scene Facts Grid (Theme-Aware Dark & Light) */
+.video-scene-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  font-size: 0.82rem;
+}
+
+.video-scene-facts dt {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.video-scene-facts dd {
+  margin: 0;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-family: var(--font-mono-stack);
+  font-size: 0.82rem;
+}
+
+/* Performer Spotlight Polish */
+.performer-spotlight-card {
+  width: 100%;
+  max-width: 440px;
+  margin-bottom: 16px;
+}
+
+/* Storyboard Rail Polish */
+.video-storyboard-section {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin: 0 0 16px;
+  overflow: hidden;
+}
+
+.video-storyboard-rail {
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Sidebar Headings & Cards */
+.up-next-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-card);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-card);
+}
+
+.sidebar-heading {
+  font-size: 0.96rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 12px;
+}
+
+/* ── Tablet Viewport (641px – 1120px) ── */
+@media (max-width: 1120px) {
+  .player-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .player-sidebar {
+    position: static;
+  }
+
+  .theater-toggle-btn {
+    display: none;
+  }
+
+  .related-video-list,
+  .player-layout.is-theater .related-video-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .vcard--compact .vcard__thumb-wrap {
+    width: 136px;
+  }
+
+  .up-next-body {
+    gap: 14px;
+  }
+
+  .up-next-thumb-link {
+    flex: 0 0 148px;
+  }
+}
+
+/* ── Phone Viewport (<= 767px) ── */
+@media (max-width: 767px) {
+  .player-page {
+    padding-top: 8px;
+    padding-bottom: 40px;
+  }
+
+  .player-topbar {
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+
+  .player-breadcrumb {
+    font-size: 0.75rem;
+  }
+
+  .player-back-pill {
+    padding: 4px 10px;
+    font-size: 0.74rem;
+  }
+
+  /* Edge-to-edge full-bleed cinema player on phone */
+  .player-box {
+    margin-left: calc(var(--content-px) * -1);
+    margin-right: calc(var(--content-px) * -1);
+    width: calc(100% + var(--content-px) * 2);
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    margin-bottom: 12px;
+  }
+
+  .play-icon-circle {
+    width: 60px;
+    height: 60px;
+  }
+
+  .video-info-block {
+    padding: 14px;
+    border-radius: var(--radius-md);
+  }
+
+  .video-info-title {
+    font-size: 1.08rem;
+    line-height: 1.32;
+    margin-bottom: 10px;
+  }
+
+  .video-header-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+  }
+
+  .video-info-meta {
+    gap: 8px 12px;
+  }
+
+  .video-info-meta > span {
+    font-size: 0.74rem;
+  }
+
+  /* Balanced 2-col button grid on phone with full-width Download HD CTA */
+  .video-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+  }
+
+  .action-btn {
+    width: 100%;
+    height: 38px;
+    padding: 0 10px;
+    font-size: 0.8rem;
+  }
+
+  .action-btn.smartlink-btn {
+    grid-column: 1 / -1;
+    height: 40px;
+    font-size: 0.84rem;
+  }
+
+  .performer-spotlight-card {
+    max-width: none;
+    padding: 9px 12px;
+  }
+
+  .video-storyboard-section {
+    padding: 10px;
+  }
+
+  .video-storyboard-item {
+    flex: 0 0 118px;
+  }
+
+  .video-details-summary {
+    padding: 11px 12px;
+  }
+
+  .video-details-body {
+    padding: 4px 12px 14px;
+  }
+
+  .video-scene-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .video-context {
+    padding: 12px;
+  }
+
+  .related-video-list,
+  .player-layout.is-theater .related-video-list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .vcard--compact .vcard__thumb-wrap {
+    width: 132px;
+  }
+
+  .up-next-thumb-link {
+    flex: 0 0 116px;
+  }
+
+  /* Sit cleanly ABOVE MobileBottomNav instead of overlapping it! */
+  .sticky-next-bar {
+    bottom: calc(var(--mobile-nav-height, 60px) + env(safe-area-inset-bottom, 0px));
+    padding: 8px 12px;
+    z-index: 890;
+  }
+
+  .sticky-next-inner {
+    gap: 10px;
+  }
+
+  .sticky-play-btn {
+    padding: 6px 12px;
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+}
