@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { Eye, Star, Clock, Heart, Play } from "lucide-react";
+import { Eye, Star, Clock, Heart, Play, Film } from "lucide-react";
 import "./VideoCard.css";
 
 const FAVORITES_KEY = "nicevx_favorites_v1";
@@ -35,21 +35,36 @@ const getThumbUrl = (item) => (typeof item === "string" ? item : item?.src || ""
 
 const VideoCard = ({ video, compact = false, priority = false }) => {
   const [thumbIdx, setThumbIdx] = useState(0);
-  const [failedSrc, setFailedSrc] = useState("");
+  const [failedUrls, setFailedUrls] = useState(() => new Set());
   const [isScrubbing, setIsScrubbing] = useState(false);
   const [scrubPercent, setScrubPercent] = useState(0);
   const [saved, setSaved] = useState(false);
   const isPrefetched = useRef(false);
   const thumbWrapRef = useRef(null);
 
-  const thumbs = Array.isArray(video.thumbs) ? video.thumbs : [];
-  const activeThumb = getThumbUrl(thumbs[thumbIdx]);
-  const src =
-    activeThumb ||
-    video.default_thumb?.src ||
-    video.thumbnail ||
-    "/logo.webp";
-  const displayedSrc = failedSrc === src ? "/logo.webp" : src;
+  const rawThumbs = Array.isArray(video.thumbs) ? video.thumbs : [];
+  const thumbs = rawThumbs.filter((t) => {
+    const url = getThumbUrl(t);
+    return Boolean(url) && !failedUrls.has(url);
+  });
+  const activeThumb = getThumbUrl(thumbs[Math.min(thumbIdx, Math.max(0, thumbs.length - 1))]);
+  const fallbackCandidates = [
+    activeThumb,
+    video.default_thumb?.src,
+    video.thumbnail,
+    ...thumbs.map(getThumbUrl),
+  ].filter((url) => Boolean(url) && !failedUrls.has(url));
+  const displayedSrc = fallbackCandidates[0] || "";
+
+  const handleThumbError = () => {
+    if (!displayedSrc) return;
+    setFailedUrls((prev) => {
+      if (prev.has(displayedSrc)) return prev;
+      const next = new Set(prev);
+      next.add(displayedSrc);
+      return next;
+    });
+  };
 
   useEffect(() => {
     try {
@@ -197,19 +212,25 @@ const VideoCard = ({ video, compact = false, priority = false }) => {
         onTouchMove={handleTouchMove}
         onContextMenu={(e) => e.preventDefault()}
       >
-        <img
-          src={displayedSrc}
-          alt={video.title}
-          className="vcard__thumb"
-          loading={priority ? "eager" : "lazy"}
-          fetchPriority={priority ? "high" : "auto"}
-          decoding="async"
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          draggable="false"
-          width="640"
-          height="360"
-          onError={() => setFailedSrc(src)}
-        />
+        {displayedSrc ? (
+          <img
+            src={displayedSrc}
+            alt={video.title}
+            className="vcard__thumb"
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
+            decoding="async"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            draggable="false"
+            width="640"
+            height="360"
+            onError={handleThumbError}
+          />
+        ) : (
+          <div className="vcard__thumb-fallback" aria-hidden="true">
+            <Film size={28} strokeWidth={1.6} />
+          </div>
+        )}
         <div className="vcard__scrim" aria-hidden="true" />
         <div className="vcard__overlay" aria-hidden="true">
           <div className="vcard__play-icon">

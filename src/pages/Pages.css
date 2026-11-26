@@ -3118,3 +3118,161 @@
     white-space: nowrap;
   }
 }
+
+/* =========================================================
+   Unavailable Video Recovery Panel (Inside .player-box)
+   Prevents competitor embed error screens and keeps users
+   watching live HD videos on NICEVX.
+   ========================================================= */
+.video-facade-poster-fallback {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, #1b1b24 0%, #09090b 100%);
+}
+
+.video-unavailable-panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  background: radial-gradient(circle at top, #181822 0%, #0b0b0f 100%);
+  text-align: center;
+  overflow-y: auto;
+}
+
+.video-unavailable-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  max-width: 520px;
+}
+
+.video-unavailable-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-light);
+  border: 1px solid rgba(225, 29, 72, 0.35);
+  color: var(--color-accent);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.video-unavailable-msg {
+  margin: 0;
+  font-size: 0.86rem;
+  color: var(--color-text-secondary);
+  line-height: 1.45;
+}
+
+.video-unavailable-picks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  max-width: 680px;
+}
+
+.video-unavailable-pick {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: left;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  padding-bottom: 6px;
+  transition: transform var(--ease-fast), border-color var(--ease-fast);
+}
+
+.video-unavailable-pick:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-accent);
+}
+
+.video-unavailable-pick-thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #14141b;
+  overflow: hidden;
+}
+
+.video-unavailable-pick-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-unavailable-pick-dur {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(9, 9, 11, 0.86);
+  color: #fff;
+  font-family: var(--font-mono-stack);
+  font-size: 0.62rem;
+  font-weight: 600;
+}
+
+.video-unavailable-pick-title {
+  padding: 0 7px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.3;
+}
+
+.video-unavailable-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-btn);
+  transition: background var(--ease-fast);
+}
+
+.video-unavailable-cta:hover {
+  background: var(--color-accent-hover);
+}
+
+@media (max-width: 640px) {
+  .video-unavailable-panel {
+    padding: 14px 12px;
+    gap: 10px;
+    justify-content: flex-start;
+  }
+
+  .video-unavailable-msg {
+    font-size: 0.76rem;
+  }
+
+  .video-unavailable-picks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .video-unavailable-pick:nth-child(3) {
+    display: none;
+  }
+}

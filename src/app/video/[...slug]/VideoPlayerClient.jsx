@@ -51,6 +51,7 @@ export default function VideoPlayerClient({
   const [theaterMode, setTheaterMode] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [previewThumb, setPreviewThumb] = useState(null);
+  const [failedThumbUrls, setFailedThumbUrls] = useState(() => new Set());
   const [autoplay, setAutoplay] = useState(true);
   const [countdown, setCountdown] = useState(null);
   const [showStickyNext, setShowStickyNext] = useState(false);
@@ -78,7 +79,21 @@ export default function VideoPlayerClient({
     ? video.tags
     : (video.keywords ? String(video.keywords).split(',').map((t) => t.trim()).filter(Boolean) : []);
 
-  const thumbs = Array.isArray(video.thumbs) ? video.thumbs : [];
+  const rawThumbs = Array.isArray(video.thumbs) ? video.thumbs : [];
+  const thumbs = rawThumbs.filter((thumb) => {
+    const thumbSrc = typeof thumb === "string" ? thumb : thumb?.src;
+    return Boolean(thumbSrc) && !failedThumbUrls.has(thumbSrc);
+  });
+
+  const markThumbFailed = (url) => {
+    if (!url) return;
+    setFailedThumbUrls((prev) => {
+      if (prev.has(url)) return prev;
+      const next = new Set(prev);
+      next.add(url);
+      return next;
+    });
+  };
 
   const starringModel = findModelInText(
     `${video.title || ""} ${video.keywords || ""} ${(video.tags || []).join(" ")}`,
@@ -194,6 +209,9 @@ export default function VideoPlayerClient({
           <div className="player-box">
             <VideoPlayerFacade
               video={video}
+              relatedVideos={initialRelated}
+              categoryHref={categoryHref || `/cat/${(effectiveCategory || "all").toLowerCase().replace(/\s+/g, "-")}`}
+              categoryName={effectiveCategory}
               onPlayStart={() => trackLocalEvent("play_start")}
             />
           </div>
@@ -313,6 +331,7 @@ export default function VideoPlayerClient({
                           width="160"
                           height="90"
                           className="video-storyboard-img"
+                          onError={() => markThumbFailed(thumbSrc)}
                         />
                         <span className="video-storyboard-badge">#{idx + 1}</span>
                       </button>

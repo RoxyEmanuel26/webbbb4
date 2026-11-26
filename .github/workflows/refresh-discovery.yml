@@ -88,6 +88,9 @@ jobs:
             exit 1
           fi
 
+      - name: Prune deleted Eporner videos and refresh thumbnails
+        run: node scripts/sync-eporner-removed.cjs --no-rebuild
+
       - name: Refresh catalog and curate controlled candidates
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

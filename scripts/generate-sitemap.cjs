@@ -792,60 +792,78 @@ function isoDuration(seconds) {
 async function refreshCatalogBatch(catalog) {
   if (!REVALIDATE_BATCH_SIZE || catalog.length === 0) return catalog;
   const count = Math.min(REVALIDATE_BATCH_SIZE, catalog.length);
-  const dayNumber = Math.floor(Date.parse(`${RUN_TIMESTAMP.slice(0, 10)}T00:00:00.000Z`) / 86400000);
-  const start = (dayNumber * count) % catalog.length;
-  const selectedIds = Array.from({ length: count }, (_, offset) => catalog[(start + offset) % catalog.length].id);
+  // Always revalidate the oldest-synced videos first so dead videos are caught systematically.
+  const orderedByAge = [...catalog].sort(
+    (left, right) => (Date.parse(left.syncedAt || 0) || 0) - (Date.parse(right.syncedAt || 0) || 0)
+  );
+  const selectedIds = orderedByAge.slice(0, count).map((v) => v.id);
   const refreshedById = new Map();
+  const confirmedDeadIds = new Set();
 
   for (let offset = 0; offset < selectedIds.length; offset += 10) {
     const ids = selectedIds.slice(offset, offset + 10);
-    const details = await Promise.all(ids.map((id) =>
-      fetchJson(`${API_BASE}/video/id/?id=${id}&thumbsize=big&format=json`, `refresh video ${id}`, {
-        retries: 2,
-        silent: true
-      }).catch(() => null)
-    ));
-    for (const raw of details) {
-      if (raw?.id && raw?.embed && raw?.default_thumb?.src && raw?.url) refreshedById.set(raw.id, normalizeVideo(raw));
+    const details = await Promise.all(ids.map(async (id) => {
+      try {
+        const raw = await fetchJson(`${API_BASE}/video/id/?id=${id}&thumbsize=big&format=json`, `refresh video ${id}`, {
+          retries: 2,
+          silent: true
+        });
+        return { id, status: 'ok', raw };
+      } catch (_) {
+        return { id, status: 'error', raw: null };
+      }
+    }));
+
+    for (const item of details) {
+      if (item.status !== 'ok') continue;
+      const raw = item.raw;
+      // Eporner API v2 returns [] when a video has been permanently removed.
+      if (!raw || Array.isArray(raw) || !raw.id || !raw.embed || !raw.default_thumb?.src || !raw.url) {
+        confirmedDeadIds.add(item.id);
+        continue;
+      }
+      refreshedById.set(raw.id, normalizeVideo(raw));
     }
   }
 
-  console.log(`[Refresh] ${refreshedById.size}/${count} video lama diperbarui dari detail API.`);
-  return catalog.map((video) => {
-    const fresh = refreshedById.get(video.id);
-    if (!fresh) return video;
-    const durationSeconds = Number.parseInt(fresh.length_sec, 10) || video.durationSeconds || 0;
-    const prevViews = Number(video.views) || 0;
-    const nextViews = Number.parseInt(fresh.views, 10) || 0;
-    const hasSignificantViewSurge =
-      prevViews > 0 && nextViews >= prevViews * 1.25 && nextViews - prevViews >= 1000;
-    const hasMaterialUpdate =
-      video.thumbnail !== fresh.default_thumb.src ||
-      video.embedUrl !== fresh.embed ||
-      (video.durationSeconds || 0) !== durationSeconds ||
-      video.sourceUrl !== fresh.url ||
-      hasSignificantViewSurge;
+  console.log(`[Refresh] ${refreshedById.size}/${count} video diperbarui, ${confirmedDeadIds.size} video mati dihapus dari katalog.`);
+  return catalog
+    .filter((video) => !confirmedDeadIds.has(video.id))
+    .map((video) => {
+      const fresh = refreshedById.get(video.id);
+      if (!fresh) return video;
+      const durationSeconds = Number.parseInt(fresh.length_sec, 10) || video.durationSeconds || 0;
+      const prevViews = Number(video.views) || 0;
+      const nextViews = Number.parseInt(fresh.views, 10) || 0;
+      const hasSignificantViewSurge =
+        prevViews > 0 && nextViews >= prevViews * 1.25 && nextViews - prevViews >= 1000;
+      const hasMaterialUpdate =
+        video.thumbnail !== fresh.default_thumb.src ||
+        video.embedUrl !== fresh.embed ||
+        (video.durationSeconds || 0) !== durationSeconds ||
+        video.sourceUrl !== fresh.url ||
+        hasSignificantViewSurge;
 
-    return {
-      ...video,
-      thumbnail: fresh.default_thumb.src,
-      default_thumb: fresh.default_thumb,
-      thumbs: Array.isArray(fresh.thumbs) ? fresh.thumbs : video.thumbs,
-      embedUrl: fresh.embed,
-      embed: fresh.embed,
-      sourceUrl: fresh.url,
-      durationSeconds,
-      duration: isoDuration(durationSeconds),
-      length_sec: durationSeconds,
-      length_min: fresh.length_min || video.length_min,
-      views: nextViews,
-      rating: Number.parseFloat(fresh.rate) || 0,
-      rate: Number.parseFloat(fresh.rate) || 0,
-      availability: 'available',
-      sitemapLastmod: hasMaterialUpdate ? RUN_TIMESTAMP : video.sitemapLastmod || video.uploadDate,
-      syncedAt: RUN_TIMESTAMP
-    };
-  });
+      return {
+        ...video,
+        thumbnail: fresh.default_thumb.src,
+        default_thumb: fresh.default_thumb,
+        thumbs: Array.isArray(fresh.thumbs) ? fresh.thumbs : video.thumbs,
+        embedUrl: fresh.embed,
+        embed: fresh.embed,
+        sourceUrl: fresh.url,
+        durationSeconds,
+        duration: isoDuration(durationSeconds),
+        length_sec: durationSeconds,
+        length_min: fresh.length_min || video.length_min,
+        views: nextViews,
+        rating: Number.parseFloat(fresh.rate) || 0,
+        rate: Number.parseFloat(fresh.rate) || 0,
+        availability: 'available',
+        sitemapLastmod: hasMaterialUpdate ? RUN_TIMESTAMP : video.sitemapLastmod || video.uploadDate,
+        syncedAt: RUN_TIMESTAMP
+      };
+    });
 }
 
 function buildDiscoveryCatalog(videos) {

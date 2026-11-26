@@ -1,14 +1,63 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Play, Clock } from "lucide-react";
+import { useEffect, useState, useMemo } from "react";
+import Link from "next/link";
+import { Play, Clock, Film, ArrowRight } from "lucide-react";
 
 const AGE_VERIFIED_EVENT = "nicevx:age-verified";
+const EPORNER_ID_API = "https://www.eporner.com/api/v2/video/id/";
 
-export default function VideoPlayerFacade({ video, onPlayStart }) {
+function getVideoHref(v) {
+  if (!v) return "/";
+  if (v.canonicalSlug) return `/video/${v.canonicalSlug}`;
+  if (v.canonicalUrl) {
+    try {
+      const u = new URL(v.canonicalUrl, "https://www.nicevx.com");
+      return `${u.pathname}${u.search}`;
+    } catch (_) {}
+  }
+  return `/watch?id=${encodeURIComponent(v.id)}`;
+}
+
+export default function VideoPlayerFacade({
+  video,
+  onPlayStart,
+  relatedVideos = [],
+  categoryHref = "/",
+  categoryName = "",
+}) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [needsAgeConfirm, setNeedsAgeConfirm] = useState(false);
   const [ageVerified, setAgeVerified] = useState(false);
+  const [isUnavailable, setIsUnavailable] = useState(false);
+  const [liveEmbedUrl, setLiveEmbedUrl] = useState(video.embedUrl || "");
+  const [livePosterUrl, setLivePosterUrl] = useState(video.thumbnail || "");
+  const [posterFallbackIdx, setPosterFallbackIdx] = useState(0);
+  const [posterBroken, setPosterBroken] = useState(false);
+
+  const posterCandidates = useMemo(() => {
+    const rawList = [
+      livePosterUrl,
+      video.thumbnail,
+      video.default_thumb?.src,
+      ...(Array.isArray(video.thumbs)
+        ? video.thumbs.map((t) => (typeof t === "string" ? t : t?.src))
+        : []),
+    ].filter(Boolean);
+    return [...new Set(rawList)];
+  }, [livePosterUrl, video.thumbnail, video.default_thumb, video.thumbs]);
+
+  const activePoster = posterCandidates[posterFallbackIdx] || "";
+
+  useEffect(() => {
+    setIsPlaying(false);
+    setNeedsAgeConfirm(false);
+    setIsUnavailable(false);
+    setLiveEmbedUrl(video.embedUrl || "");
+    setLivePosterUrl(video.thumbnail || "");
+    setPosterFallbackIdx(0);
+    setPosterBroken(false);
+  }, [video.id, video.embedUrl, video.thumbnail]);
 
   useEffect(() => {
     try {
@@ -22,13 +71,60 @@ export default function VideoPlayerFacade({ video, onPlayStart }) {
     return () => window.removeEventListener(AGE_VERIFIED_EVENT, onVerified);
   }, []);
 
+  // Silent live availability check so visitors never see Eporner's removed-video screen.
+  useEffect(() => {
+    if (!video?.id) return;
+    let cancelled = false;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+
+    fetch(`${EPORNER_ID_API}?id=${encodeURIComponent(video.id)}&thumbsize=big&format=json`, {
+      signal: controller.signal,
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (cancelled || data === null) return;
+        if (!data || Array.isArray(data) || !data.id || !data.embed) {
+          setIsUnavailable(true);
+          setIsPlaying(false);
+          return;
+        }
+        if (data.embed && data.embed !== video.embedUrl) {
+          setLiveEmbedUrl(data.embed);
+        }
+        if (data.default_thumb?.src && data.default_thumb.src !== video.thumbnail) {
+          setLivePosterUrl(data.default_thumb.src);
+          setPosterFallbackIdx(0);
+          setPosterBroken(false);
+        }
+      })
+      .catch(() => {})
+      .finally(() => clearTimeout(timer));
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [video?.id, video?.embedUrl, video?.thumbnail]);
+
+  const handlePosterError = () => {
+    if (posterFallbackIdx + 1 < posterCandidates.length) {
+      setPosterFallbackIdx((prev) => prev + 1);
+    } else {
+      setPosterBroken(true);
+    }
+  };
+
   const startPlayback = () => {
+    if (isUnavailable) return;
     setNeedsAgeConfirm(false);
     setIsPlaying(true);
     if (onPlayStart) onPlayStart();
   };
 
   const handlePlay = () => {
+    if (isUnavailable) return;
     if (ageVerified) {
       startPlayback();
       return;
@@ -46,9 +142,61 @@ export default function VideoPlayerFacade({ video, onPlayStart }) {
     startPlayback();
   };
 
-  const embedWithAutoplay = video.embedUrl
-    ? `${video.embedUrl}${video.embedUrl.includes('?') ? '&' : '?'}autoplay=1`
-    : '';
+  if (isUnavailable) {
+    const recoveryPicks = (Array.isArray(relatedVideos) ? relatedVideos : [])
+      .filter((item) => item && item.id !== video.id && (item.thumbnail || item.default_thumb?.src))
+      .slice(0, 3);
+    const browseLabel = categoryName
+      ? `Browse ${categoryName.replace(/\b\w/g, (l) => l.toUpperCase())} Videos`
+      : "Browse Latest HD Videos";
+
+    return (
+      <div className="video-unavailable-panel" role="status" aria-live="polite">
+        <div className="video-unavailable-head">
+          <span className="video-unavailable-badge">
+            <Film size={14} aria-hidden="true" /> Video Removed by Host
+          </span>
+          <p className="video-unavailable-msg">
+            This video is no longer available from the upstream provider. Pick a similar HD video below:
+          </p>
+        </div>
+
+        {recoveryPicks.length > 0 && (
+          <div className="video-unavailable-picks">
+            {recoveryPicks.map((item) => (
+              <Link
+                key={item.id}
+                href={getVideoHref(item)}
+                prefetch={false}
+                className="video-unavailable-pick"
+              >
+                <div className="video-unavailable-pick-thumb">
+                  <img
+                    src={item.thumbnail || item.default_thumb?.src}
+                    alt={item.title}
+                    loading="lazy"
+                  />
+                  {item.length_min && (
+                    <span className="video-unavailable-pick-dur">{item.length_min}</span>
+                  )}
+                </div>
+                <span className="video-unavailable-pick-title">{item.title}</span>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        <Link href={categoryHref || "/"} className="video-unavailable-cta">
+          <span>{browseLabel}</span>
+          <ArrowRight size={15} aria-hidden="true" />
+        </Link>
+      </div>
+    );
+  }
+
+  const embedWithAutoplay = liveEmbedUrl
+    ? `${liveEmbedUrl}${liveEmbedUrl.includes("?") ? "&" : "?"}autoplay=1`
+    : "";
 
   if (isPlaying) {
     return (
@@ -75,16 +223,21 @@ export default function VideoPlayerFacade({ video, onPlayStart }) {
       role="region"
       aria-label={`Video player for ${video.title}`}
     >
-      <img
-        src={video.thumbnail}
-        alt={video.title}
-        className="video-facade-poster"
-        width="1280"
-        height="720"
-        loading="eager"
-        fetchPriority="high"
-        decoding="async"
-      />
+      {!posterBroken && activePoster ? (
+        <img
+          src={activePoster}
+          alt={video.title}
+          className="video-facade-poster"
+          width="1280"
+          height="720"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          onError={handlePosterError}
+        />
+      ) : (
+        <div className="video-facade-poster-fallback" aria-hidden="true" />
+      )}
       <div className="video-facade-overlay" />
       {needsAgeConfirm ? (
         <div
@@ -109,7 +262,7 @@ export default function VideoPlayerFacade({ video, onPlayStart }) {
               type="button"
               onClick={handleConfirmAgeAndPlay}
               style={{
-                background: "var(--color-accent, #ff3355)",
+                background: "var(--color-accent, #e11d48)",
                 color: "#fff",
                 border: "none",
                 padding: "8px 18px",
@@ -157,7 +310,7 @@ export default function VideoPlayerFacade({ video, onPlayStart }) {
       )}
       {durationText && (
         <span className="video-facade-duration">
-          <Clock size={12} aria-hidden="true" style={{ marginRight: '4px', verticalAlign: '-1px' }} />
+          <Clock size={12} aria-hidden="true" style={{ marginRight: "4px", verticalAlign: "-1px" }} />
           {durationText}
         </span>
       )}

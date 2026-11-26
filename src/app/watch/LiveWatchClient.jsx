@@ -82,6 +82,7 @@ export default function LiveWatchClient() {
   const [error, setError] = useState(null);
   const [favorite, setFavorite] = useState(false);
   const [previewThumb, setPreviewThumb] = useState(null);
+  const [failedThumbUrls, setFailedThumbUrls] = useState(() => new Set());
   const [autoplay, setAutoplay] = useState(true);
   const [theaterMode, setTheaterMode] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
@@ -233,6 +234,9 @@ export default function LiveWatchClient() {
           <div className="player-box">
             <VideoPlayerFacade
               video={video}
+              relatedVideos={related}
+              categoryHref="/"
+              categoryName={video.category}
               onPlayStart={() => trackLocalEvent('play_start')}
             />
           </div>
@@ -311,25 +315,31 @@ export default function LiveWatchClient() {
             })()}
 
             {/* Scene Highlights Storyboard Rail */}
-            {Array.isArray(video.thumbs) && video.thumbs.length > 1 && (
+            {(() => {
+              const liveThumbs = (Array.isArray(video.thumbs) ? video.thumbs : []).filter((thumb) => {
+                const thumbSrc = typeof thumb === 'string' ? thumb : thumb?.src;
+                return Boolean(thumbSrc) && !failedThumbUrls.has(thumbSrc);
+              });
+              if (liveThumbs.length <= 1) return null;
+              return (
               <section className="video-storyboard-section" aria-label="Scene Highlights Storyboard">
                 <div className="video-storyboard-header">
                   <h2 className="video-storyboard-title">
-                    <Film size={15} style={{ color: 'var(--color-accent)' }} /> Scene Highlights ({video.thumbs.length} Key Moments)
+                    <Film size={15} style={{ color: 'var(--color-accent)' }} /> Scene Highlights ({liveThumbs.length} Key Moments)
                   </h2>
                   <span className="video-storyboard-tip">Click frame to preview</span>
                 </div>
                 <div className="video-storyboard-rail" tabIndex={0} role="region" aria-label="Scene thumbnails carousel">
-                  {video.thumbs.map((thumb, idx) => {
+                  {liveThumbs.map((thumb, idx) => {
                     const thumbSrc = typeof thumb === 'string' ? thumb : thumb?.src;
                     if (!thumbSrc) return null;
                     return (
                       <button
-                        key={idx}
+                        key={thumbSrc}
                         type="button"
                         className={`video-storyboard-item ${previewThumb?.index === idx ? 'active' : ''}`}
                         onClick={() => setPreviewThumb({ src: thumbSrc, index: idx })}
-                        aria-label={`View scene frame ${idx + 1} of ${video.thumbs.length}`}
+                        aria-label={`View scene frame ${idx + 1} of ${liveThumbs.length}`}
                       >
                         <img
                           src={thumbSrc}
@@ -338,6 +348,14 @@ export default function LiveWatchClient() {
                           width="160"
                           height="90"
                           className="video-storyboard-img"
+                          onError={() =>
+                            setFailedThumbUrls((prev) => {
+                              if (prev.has(thumbSrc)) return prev;
+                              const next = new Set(prev);
+                              next.add(thumbSrc);
+                              return next;
+                            })
+                          }
                         />
                         <span className="video-storyboard-badge">#{idx + 1}</span>
                       </button>
@@ -363,7 +381,7 @@ export default function LiveWatchClient() {
                         className="video-storyboard-modal-img"
                       />
                       <div className="video-storyboard-modal-caption">
-                        <span>Scene Highlight #{previewThumb.index + 1} of {video.thumbs.length}</span>
+                        <span>Scene Highlight #{previewThumb.index + 1} of {liveThumbs.length}</span>
                         <div className="video-storyboard-modal-nav">
                           <button
                             type="button"
@@ -371,7 +389,7 @@ export default function LiveWatchClient() {
                             disabled={previewThumb.index <= 0}
                             onClick={() => {
                               const prev = previewThumb.index - 1;
-                              const prevSrc = typeof video.thumbs[prev] === 'string' ? video.thumbs[prev] : video.thumbs[prev]?.src;
+                              const prevSrc = typeof liveThumbs[prev] === 'string' ? liveThumbs[prev] : liveThumbs[prev]?.src;
                               if (prevSrc) setPreviewThumb({ src: prevSrc, index: prev });
                             }}
                           >
@@ -380,10 +398,10 @@ export default function LiveWatchClient() {
                           <button
                             type="button"
                             className="storyboard-nav-btn"
-                            disabled={previewThumb.index >= video.thumbs.length - 1}
+                            disabled={previewThumb.index >= liveThumbs.length - 1}
                             onClick={() => {
                               const next = previewThumb.index + 1;
-                              const nextSrc = typeof video.thumbs[next] === 'string' ? video.thumbs[next] : video.thumbs[next]?.src;
+                              const nextSrc = typeof liveThumbs[next] === 'string' ? liveThumbs[next] : liveThumbs[next]?.src;
                               if (nextSrc) setPreviewThumb({ src: nextSrc, index: next });
                             }}
                           >
@@ -395,7 +413,8 @@ export default function LiveWatchClient() {
                   </div>
                 )}
               </section>
-            )}
+              );
+            })()}
 
             {/* Collapsible Details */}
             <details className="video-details-accordion" open>
