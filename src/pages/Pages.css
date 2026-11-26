@@ -2757,10 +2757,6 @@
   margin-bottom: 16px;
 }
 
-[data-theme="light"] .player-box {
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.16);
-}
-
 .video-info-block {
   padding: 20px 22px;
   border-radius: var(--radius-lg);
@@ -2845,10 +2841,6 @@
   transform: translateY(-1px);
 }
 
-[data-theme="light"] .action-btn:hover {
-  background: var(--color-border);
-}
-
 .vcard--compact .vcard__info {
   min-width: 0;
 }
@@ -2876,7 +2868,7 @@
   color: #ffffff !important;
 }
 
-/* Scene Facts Grid (Theme-Aware Dark & Light) */
+/* Scene Facts Grid (Dark Obsidian) */
 .video-scene-facts {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));

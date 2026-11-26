@@ -105,10 +105,8 @@ export default function RootLayout({ children }) {
             __html: `
             (function() {
               try {
-                var savedTheme = localStorage.getItem('nicevx_theme');
-                if (savedTheme === 'light') {
-                  document.documentElement.setAttribute('data-theme', 'light');
-                }
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.removeItem('nicevx_theme');
                 var search = window.location.search;
                 if (search.includes('utm_') || search.includes('fbclid') || search.includes('gclid') || search.includes('ref=')) {
                   var params = new URLSearchParams(search);

@@ -11,8 +11,6 @@ import {
   ArrowRight,
   Star,
   Globe,
-  Sun,
-  Moon,
   Award,
 } from "lucide-react";
 import { PORNSTARS } from "@/data/pornstars";
@@ -67,7 +65,6 @@ const Navbar = () => {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
-  const [theme, setTheme] = useState("dark");
   const [activeIndex, setActiveIndex] = useState(-1);
 
   const router = useRouter();
@@ -82,26 +79,6 @@ const Navbar = () => {
     const match = pathname.match(/^\/(de|fr|es|it)(?:\/|$)/);
     return match ? match[1].toUpperCase() : "EN";
   }, [pathname]);
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("nicevx_theme");
-      if (saved === "light") setTheme("light");
-    } catch (_) {}
-  }, []);
-
-  const toggleTheme = () => {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    try {
-      localStorage.setItem("nicevx_theme", next);
-    } catch (_) {}
-    if (next === "light") {
-      document.documentElement.setAttribute("data-theme", "light");
-    } else {
-      document.documentElement.removeAttribute("data-theme");
-    }
-  };
 
   const matchingStars = useMemo(() => {
     if (!trimmedQuery) return [];
@@ -378,17 +355,6 @@ const Navbar = () => {
               </div>
             )}
           </div>
-
-          {/* Theme Toggle */}
-          <button
-            type="button"
-            className="navbar-icon-btn"
-            onClick={toggleTheme}
-            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            title={theme === "dark" ? "Light mode" : "Dark mode"}
-          >
-            {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
-          </button>
         </div>
       </div>
     </header>

@@ -168,39 +168,30 @@
   background: var(--color-accent-hover);
 }
 
-/* Locale & Theme Icon Controls */
+/* Locale Selector Control */
 .navbar-lang-wrap {
   position: relative;
 }
 
-.navbar-icon-pill,
-.navbar-icon-btn {
+.navbar-icon-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
   height: 36px;
+  padding: 0 10px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-sm);
   color: #e4e4e7;
+  font-family: var(--font-mono-stack);
   font-size: 0.76rem;
   font-weight: 700;
   cursor: pointer;
   transition: all var(--ease-fast);
 }
 
-.navbar-icon-pill {
-  padding: 0 10px;
-  font-family: var(--font-mono-stack);
-}
-
-.navbar-icon-btn {
-  width: 36px;
-}
-
-.navbar-icon-pill:hover,
-.navbar-icon-btn:hover {
+.navbar-icon-pill:hover {
   background: rgba(255, 255, 255, 0.12);
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.24);
@@ -362,8 +353,7 @@
 @media (max-width: 520px) {
   .navbar-inner { gap: 8px; }
   .brand-text { display: none; }
-  .navbar-icon-btn { width: 32px; height: 34px; }
-  .navbar-icon-pill { padding: 0 7px; height: 34px; }
+  .navbar-icon-pill { padding: 0 8px; height: 34px; }
   .navbar-search { height: 34px; }
-  .navbar-autosuggest { right: -44px; width: calc(100vw - 24px); }
+  .navbar-autosuggest { right: -54px; width: calc(100vw - 24px); }
 }
