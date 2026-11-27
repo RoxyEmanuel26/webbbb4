@@ -335,25 +335,47 @@
   font-weight: 600;
 }
 
-/* Responsive Breakpoints */
-@media (max-width: 1120px) {
+/* Responsive Breakpoints — Seamless PC / Tablet / Phone Handoff */
+@media (max-width: 1180px) {
+  .navbar-inner { gap: 10px; }
   .navbar-search { width: 190px; }
   .navbar-search.is-focused { width: 220px; }
   .navbar-link { padding: 0 8px; font-size: 0.82rem; }
 }
 
-@media (max-width: 920px) {
+/* Tablet Portrait & Landscape (768px – 960px): Keep nav links visible so tablet users never lose navigation! */
+@media (max-width: 960px) and (min-width: 768px) {
+  .navbar-inner { gap: 8px; }
+  .brand-text { font-size: 1.15rem; }
+  .navbar-links { gap: 2px; }
+  .navbar-link {
+    padding: 0 7px;
+    font-size: 0.78rem;
+    height: 32px;
+  }
+  .navbar-link svg { display: none; }
+  .navbar-search { width: 162px; height: 34px; }
+  .navbar-search.is-focused { width: 185px; }
+  .search-submit-btn { padding: 0 9px; font-size: 0.74rem; }
+  .navbar-icon-pill { height: 34px; padding: 0 8px; }
+}
+
+/* Phone (<= 767px): MobileBottomNav takes over primary navigation; top bar prioritizes Brand + Search + Locale */
+@media (max-width: 767px) {
+  .navbar-root {
+    height: 58px;
+  }
+  .navbar-inner { gap: 8px; }
   .navbar-links { display: none; }
-  .navbar-controls { flex: 1; justify-content: flex-end; }
-  .navbar-search-wrapper { flex: 1; max-width: 340px; }
+  .navbar-controls { flex: 1; justify-content: flex-end; min-width: 0; }
+  .navbar-search-wrapper { flex: 1; max-width: 420px; min-width: 0; }
   .navbar-search,
-  .navbar-search.is-focused { width: 100%; }
+  .navbar-search.is-focused { width: 100%; height: 36px; }
+  .navbar-autosuggest { right: -56px; width: calc(100vw - 24px); }
 }
 
 @media (max-width: 520px) {
-  .navbar-inner { gap: 8px; }
   .brand-text { display: none; }
-  .navbar-icon-pill { padding: 0 8px; height: 34px; }
-  .navbar-search { height: 34px; }
-  .navbar-autosuggest { right: -54px; width: calc(100vw - 24px); }
+  .navbar-icon-pill { padding: 0 8px; height: 36px; }
+  .search-submit-btn { padding: 0 10px; }
 }

@@ -91,12 +91,21 @@
 
 @media (max-width: 767px) {
   .age-gate-bar {
-    bottom: calc(var(--mobile-nav-height, 60px) + 10px);
+    bottom: calc(var(--mobile-nav-height, 60px) + env(safe-area-inset-bottom, 0px) + 10px);
     padding: 12px 14px;
   }
 
   .age-gate-actions {
     width: 100%;
-    justify-content: flex-end;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .age-gate-bar .btn-primary,
+  .age-gate-bar .btn-secondary {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
   }
 }

@@ -7,11 +7,14 @@
   /* Core Cinema Obsidian Palette (Default Dark) */
   --color-bg:             #09090b;
   --color-bg-card:        #121217;
+  --color-bg-card-hover:  #1b1b24;
+  --color-surface:        #16161d;
   --color-surface-2:      #1a1a22;
-  --color-bg-navbar:      rgba(9, 9, 11, 0.88);
+  --color-bg-subtle:      #18181f;
+  --color-bg-navbar:      rgba(9, 9, 11, 0.9);
   --color-bg-search:      #18181f;
   --color-bg-sidebar:     #16161d;
-  --color-bg-footer:      #0d0d11;
+  --color-bg-footer:      #0c0c10;
 
   /* Text Hierarchy (WCAG AA/AAA Contrast) */
   --color-text-primary:   #f4f4f5;
@@ -26,6 +29,7 @@
 
   /* Single Locked Cinema Accent — Crimson Rose */
   --color-accent:         #e11d48;
+  --color-primary:        #e11d48;
   --color-accent-hover:   #be123c;
   --color-accent-badge:   #e11d48;
   --color-accent-light:   rgba(225, 29, 72, 0.14);
@@ -73,6 +77,7 @@
   --space-4: 16px;
   --space-5: 20px;
   --space-6: 24px;
+  --space-7: 28px;
   --space-8: 32px;
   --space-10: 40px;
   --space-12: 48px;
@@ -82,7 +87,7 @@
   --navbar-height:     64px;
   --mobile-nav-height: 60px;
   --page-max-width:    1380px;
-  --content-px:        20px;
+  --content-px:        24px;
 
   /* Transitions */
   --ease-fast:    0.15s cubic-bezier(0.22, 1, 0.36, 1);
@@ -126,6 +131,7 @@ main {
 a { text-decoration: none; color: inherit; }
 button, input, select { font-family: inherit; }
 img { max-width: 100%; display: block; }
+h1, h2 { text-wrap: balance; }
 
 :focus-visible {
   outline: 2px solid var(--color-accent);
@@ -149,6 +155,12 @@ img { max-width: 100%; display: block; }
   margin-right: auto;
   padding-left: var(--content-px);
   padding-right: var(--content-px);
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --content-px: 18px;
+  }
 }
 
 @media (max-width: 640px) {

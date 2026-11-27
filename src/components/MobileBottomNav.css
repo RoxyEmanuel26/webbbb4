@@ -21,6 +21,7 @@
   }
 
   .mobile-nav-item {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -31,11 +32,22 @@
     font-size: 0.67rem;
     font-weight: 600;
     letter-spacing: 0.01em;
-    transition: color var(--ease-fast);
+    transition: color var(--ease-fast), transform var(--ease-fast);
   }
 
   .mobile-nav-item.is-active {
     color: var(--color-accent);
+  }
+
+  .mobile-nav-item.is-active::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 24%;
+    right: 24%;
+    height: 2px;
+    border-radius: 0 0 4px 4px;
+    background: var(--color-accent);
   }
 
   .mobile-nav-item:active {
